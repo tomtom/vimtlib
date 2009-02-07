@@ -1,0 +1,4 @@
+doc/tassert.txt
+plugin/05tlog.vim
+plugin/07tassert.vim
+test/tassert.vim

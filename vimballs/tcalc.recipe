@@ -1,0 +1,5 @@
+autoload/tcalc.vim
+syntax/tcalc.vim
+plugin/tcalc.vim
+ruby/tcalc.rb
+doc/tcalc.txt

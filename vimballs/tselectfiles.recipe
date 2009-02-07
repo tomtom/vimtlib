@@ -1,0 +1,3 @@
+doc/tselectfiles.txt
+plugin/tselectfiles.vim
+autoload/tselectfiles.vim

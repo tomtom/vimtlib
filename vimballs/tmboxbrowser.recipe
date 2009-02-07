@@ -1,0 +1,3 @@
+autoload/tmboxbrowser.vim
+plugin/tmboxbrowser.vim
+doc/tmboxbrowser.txt

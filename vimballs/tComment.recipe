@@ -1,0 +1,3 @@
+doc/tComment.txt
+plugin/tComment.vim
+autoload/tcomment.vim

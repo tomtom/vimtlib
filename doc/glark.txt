@@ -1,0 +1,46 @@
+*glark.txt*  Glark -- a wrapper for the glark command
+Author of the vim plugin: Thomas Link, micathom AT gmail com?subject=vim
+
+                                                    *:Glark*
+Command~
+This plugin provides one wrapper command for the glark command:
+
+    :Glark <args>
+
+The arguments are passed to the glark command.
+
+It displays the output of the glark command (see below) in a window, 
+does some highlighting and provides some handy key maps.
+
+glark (a ruby-based, grep-like utility) was made by Jeff Pace and can be 
+downloaded from:
+
+    http://glark.sourceforge.net
+
+Make sure your version is >= 1.7.5.
+
+                                                    *glark-keymap*
+Keymap~
+    o, <cr>  ... Open file in other window
+    p        ... Preview file
+    r        ... Open file in this window (replace current buffer)
+    f        ... Open file in a full size (=only) window
+    q, <esc> ... Close the glark window
+
+                                                    *glark-options*
+Options~
+                                                    *glarkCommand*
+    g:glarkCommand, b:glarkCommand ('glark') :: The command name
+    
+                                                    *glarkArgs*
+    g:glarkArgs, b:glarkArgs ('-q -H -U') :: The default arguments
+
+                                                    *glarkHeight*
+    g:glarkHeight (&lines / 2) :: The default height of the output  
+    window. If the result window is less that this value, the window 
+    will be reduces appropriately.
+
+                                                    *glarkMultiWin*
+    g:glarkMultiWin (0) :: If non-null, maintain a window for each 
+    query.
+

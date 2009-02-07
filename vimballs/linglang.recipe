@@ -1,0 +1,6 @@
+autoload/linglang.vim
+autoload/linglang/de.latin1
+autoload/linglang/de.utf8
+autoload/linglang/en.latin1
+plugin/linglang.vim
+doc/linglang.txt

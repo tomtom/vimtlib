@@ -1,0 +1,3 @@
+doc/setsyntax.txt
+plugin/setsyntax.vim
+autoload/setsyntax.vim

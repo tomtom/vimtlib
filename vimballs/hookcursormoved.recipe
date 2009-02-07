@@ -1,0 +1,3 @@
+autoload/hookcursormoved.vim
+plugin/hookcursormoved.vim
+doc/hookcursormoved.txt

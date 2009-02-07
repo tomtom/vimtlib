@@ -1,0 +1,138 @@
+*tAssert.txt*           Simple Assertions
+                        Thomas Link (micathom AT gmail com?subject=vim)
+
+
+                                                    *tAssert-intro*
+Introduction:
+This plugin defines a command |:TAssert| that takes an expression as 
+argument and throws an exception if this expression evaluates to 
+|empty()|. You can insert these comments throughout your code whenever 
+something potentially could go wrong in your vim scripts. The exception 
+is then thrown right where to problem occurs.
+
+To some extent you can also write some sort of primitive "unit" tests 
+(ie scripts testing other scripts).
+
+                                                    *g:TASSERT*
+In order to minimize the speed penalty, these assertions are only 
+evaluated when g:TASSERT is non-null. Otherwise assertions are fully 
+ignored.
+
+When changing the value of g:TASSERT, you have to reload the plugin to 
+make this change effective. This is automatically done by using the 
+convenience commands listed below.
+
+
+Assert Commands:
+                                                    *:TAssert*
+    TAssert[!] {expr} ... Test that an expression doesn't evaluate to 
+    something |empty()|. If used after a |:TAssertBegin| command, any 
+    occurrences of "<SID>" in the expression is replaced with the 
+    current script's |<SNR>|. With [!] failures are logged according to 
+    the setting of |g:tAssertLog|.
+
+
+Convenience Commands:
+                            *:TAssertOn* *:TAssertOff* *:TAssertToggle*
+    TAssertOn, TAssertOff, TAssertToggle ... Switch assertions on or off 
+    and reload the plugin.
+
+                                                    *:TAssertSource*
+    TAssertSource [{file}] ... Source file (or current buffer if none 
+    provided, while temporarily setting |g:TASSERT| to 1.
+
+                                *:TAssertComment* *:TAssertUncomment*
+    TAssertComment, TAssertUncomment ... (Un-)Comment TAssert* commands 
+    and all lines between a TAssertBegin and a TAssertEnd command.
+
+                                                    *:TAssertBegin*
+    TAssertBegin[!] [{message}], [{script context}] ... Marks the 
+    beginning of a sequence some assertions and takes an optional 
+    message string as argument. The second command (a regexp) can be 
+    used to evaluate functions prefixed with |<SID>| in a different 
+    context.
+    This command is optional. It serves primarily as marker for use with 
+    the :TAssertComment command. With [!] the {message} is echoed, which 
+    can be useful in unit testing kind of scripts.
+
+                                                    *:TAssertEnd*
+    TAssertEnd [{variable1} {function1()}...] ... Mark the end of a 
+    sequence of assertions. Call |:unlet| for temporary variables or 
+    |:delfunction| for temporary functions named on the command line.
+
+
+Convenience Function:
+    IsNumber(arg)
+    IsString(arg)
+    IsFuncref(arg)
+    IsList(arg)
+    IsDictionary(arg)
+    IsEqual(arg1, arg2)
+    IsNotEqual(arg1, arg2)
+    IsMatch(arg1, arg2)
+    IsException(expr)
+    IsError(expr, rx)
+
+
+                                                    *tAssert-logging*
+Logging:
+Logging is done by 00tLog.vim.
+                                                    *g:tlog*
+The variable g:tlog can have the following values:
+
+    echom ... Print messages in the echo area.
+    file  ... Print messages in g:tAssertLogFile
+    Decho ... Print messages via Decho (vimscript#642)
+
+This affects the commands TAssertBegin! and TAssert! with the |<bang>|.
+
+
+                                                    *tAssert-examples*
+Examples: >
+    TAssertBegin "General"
+    fun! <SID>TestFunction(a, b)
+        return a:a + a:b
+    endf
+    TAssert 0 == 0
+    TAssert "bla" == "bla"
+    TAssert IsNumber(1)
+    TAssert IsString("foo")
+    TAssert IsFuncref(function('IsFuncref'))
+    TAssert IsList([1,2,3])
+    TAssert IsDictionary({1:2})
+    TAssert !IsNumber("Foo")
+    TAssert !IsString(1)
+    TAssert !IsFuncref({1:2})
+    TAssert !IsList(function('IsFuncref'))
+    TAssert !IsDictionary([1,2,3])
+    TAssert DoRaise('0 + [1]') =~ ':E745:'
+    TAssert <SID>TestFunction(1, 2) == 3
+    TAssertEnd var varl vard
+
+    TAssertBegin "Switching context", '.\{-}/plugin/00tAssert.vim'
+    TAssert <SID>Test(1) == 2
+    TAssertEnd
+
+
+                                                    *tAssert-install*
+Install:
+Save this file as plugin/00tAssert.vim (the convenience commands 
+currently expect to find it there). If g:TASSERT is 0, the impact of 
+this script on startup time should be minimal.
+
+
+                                                    *tAssert-redistribute*
+Compatibility:
+If you want to redistribute files containing assertions but don't want 
+to have people install this plugin, insert this close to the top of 
+your file: >
+
+    if exists(':TAssert')
+        exec TAssertInit()
+    else
+        command! -nargs=* -bang TAssert :
+        command! -nargs=* -bang TAssertBegin :
+        command! -nargs=* -bang TAssertEnd :
+    endif
+
+

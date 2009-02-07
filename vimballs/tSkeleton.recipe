@@ -1,0 +1,9 @@
+doc/tSkeleton.txt
+autoload/tskeleton/abbreviations.vim
+autoload/tskeleton/functions.vim
+autoload/tskeleton/mini.vim
+autoload/tskeleton/skeleton.vim
+autoload/tskeleton/tags.vim
+autoload/tskeleton.vim
+plugin/tSkeleton.vim
+syntax/tskeleton.vim

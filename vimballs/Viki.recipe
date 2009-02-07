@@ -1,0 +1,12 @@
+autoload/viki.vim
+autoload/viki_anyword.vim
+autoload/viki_latex.vim
+autoload/viki_viki.vim
+compiler/deplate.vim
+doc/viki.txt
+ftplugin/bib/viki.vim
+ftplugin/viki.vim
+indent/viki.vim
+plugin/viki.vim
+syntax/viki.vim
+syntax/texmath.vim

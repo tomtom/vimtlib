@@ -1,0 +1,4 @@
+autoload/loremipsum.vim
+autoload/loremipsum.txt
+plugin/loremipsum.vim
+doc/loremipsum.txt

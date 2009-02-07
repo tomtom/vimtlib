@@ -1,0 +1,97 @@
+*loremipsum.txt*    A dummy text generator
+                    Author: Thomas Link, micathom at gmail com
+
+Insert a dummy text of a certain length. Actually, the text isn't 
+generated but selected from some text. By default, the following text is 
+used, which is included in the archive:
+http://www.lorem-ipsum-dolor-sit-amet.com/lorem-ipsum-dolor-sit-amet.html
+
+NOTE: The webpage didn't contain any copyright message but there is a 
+statement that one should copy & paste the text. I thus assume it's ok 
+to include it in the archive. If not, please let me know.
+
+-----------------------------------------------------------------------
+Install~
+
+Edit the vba file and type: >
+
+    :so %
+
+See :help vimball for details. If you have difficulties or use vim 7.0, 
+please make sure, you have the current version of vimball (vimscript 
+#1502) installed or update your runtime.
+
+
+========================================================================
+Contents~
+
+    plugin/loremipsum.vim
+        g:loremipsum_paragraph_template ... |g:loremipsum_paragraph_template|
+        g:loremipsum_marker ............... |g:loremipsum_marker|
+        g:loremipsum_words ................ |g:loremipsum_words|
+        g:loremipsum_files ................ |g:loremipsum_files|
+        :Loremipsum ....................... |:Loremipsum|
+        :Loreplace ........................ |:Loreplace|
+    autoload/loremipsum.vim
+        loremipsum#Generate ............... |loremipsum#Generate()|
+        loremipsum#GenerateInline ......... |loremipsum#GenerateInline()|
+        loremipsum#Insert ................. |loremipsum#Insert()|
+        loremipsum#Replace ................ |loremipsum#Replace()|
+
+
+========================================================================
+plugin/loremipsum.vim~
+
+                                                    *g:loremipsum_paragraph_template*
+g:loremipsum_paragraph_template
+    A dictionary of filetypes and paragraph templates (as format 
+    strings for |printf()|).
+
+                                                    *g:loremipsum_marker*
+g:loremipsum_marker            (default: {})
+    A dictionary of filetypes and array containing the prefix and the 
+    postfix for the inserted text:
+    [prefix, postfix, no_inline?]
+
+                                                    *g:loremipsum_words*
+g:loremipsum_words             (default: 100)
+    Default length.
+
+                                                    *g:loremipsum_files*
+g:loremipsum_files             (default: {})
+                                                      *b:loremipsum_file*
+    If b:loremipsum_file exists, it will be used as source. Otherwise, 
+    g:loremipsum_files[&spelllang] will be checked. As a fallback, 
+    ~/vimfiles/autoload/loremipsum.txt will be used.
+
+                                                    *:Loremipsum*
+:Loremipsum[!] [COUNT] [PARAGRAPH_TEMPLATE] [PREFIX] [POSTFIX]
+    With [!], insert the text "inline", don't apply paragraph templates.
+    If the paragraph template is *, use the default template from 
+    |g:loremipsum_paragraph_template| (in case you want to change 
+    PREFIX and POSTFIX). If it is _, use no paragraph template.
+    If PREFIX is _, don't use markers.
+
+                                                    *:Loreplace*
+:Loreplace [REPLACEMENT] [PREFIX] [POSTFIX]
+    Replace loremipsum text with something else. Or simply remove it.
+
+
+========================================================================
+autoload/loremipsum.vim~
+
+                                                    *loremipsum#Generate()*
+loremipsum#Generate(nwords, template)
+
+                                                    *loremipsum#GenerateInline()*
+loremipsum#GenerateInline(nwords)
+
+                                                    *loremipsum#Insert()*
+loremipsum#Insert(?inline=0, ?nwords=100, " ?template='', ?pre='', ?post='')
+
+                                                    *loremipsum#Replace()*
+loremipsum#Replace(...)
+
+
+
+vim:tw=78:fo=tcq2:isk=!-~,^*,^|,^":ts=8:ft=help:norl:

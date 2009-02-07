@@ -1,0 +1,81 @@
+*tmboxbrowser.txt*      A mbox browser
+                        Thomas Link (micathom AT gmail com)
+
+Features~
+    - Show an index of e-mails contained in a mbox file
+    - Mark e-mails as read and don't show them again in the index
+    - View e-mails
+        - display single parts of a multipart message
+        - decode quoted printables
+        - filter html mails through an external program; in the default 
+          setup, this requires "w3m" (|g:tmboxbrowser_convert_html|)
+        - view base64 encoded attachments; this also requires "base64" 
+          (|g:tmboxbrowser_convert_base64|) to be installed
+            - if viki (vimscript #861) is installed, use 
+              |VikiOpenSpecialFile()|
+            - otherwise the file will be opened with 
+              |g:netrw_browsex_viewer|
+
+Usage~
+    0. After installation check the values of:
+        - |g:tmboxbrowser_attachments_dir|
+        - |g:tmboxbrowser_datadir|
+        - |g:tmboxbrowser_path|
+    1. Open an mbox file
+    2. Type :TMboxBrowser<cr>
+
+                                                    *:TMboxBrowser*
+:TMBoxBrowser[!] [FILE]
+    Open a index list with the e-mails in the currently opened mbox.
+    With [!], read items are displayed too. In this mode, no e-mails are 
+    marked as read.
+    If [FILE] is given, the file is (newly) edited.
+    I.e. if you open a mbox, mark all items as read and then want to 
+    browse the file again, you'll have to type>
+
+        :TMBoxBrowser! %
+
+    Alternatively, press <c-t> in the list view to show/hide read mails.
+
+                                                    *:TMBoxSelect*
+:TMBoxSelect[!]
+    Show a list of mbox files (as defined in |g:tmboxbrowser_path|). 
+    Open a mbox & call |:TMBoxBrowser|.
+
+
+                                                    *g:tmboxbrowser_convert_html*
+g:tmboxbrowser_convert_html (Default: '!w3m -dump -T text/html')
+    The ex command used to convert html mails.
+
+                                                    *g:tmboxbrowser_convert_base64*
+g:tmboxbrowser_convert_base64 (Default: '!base64 -i -d %s > %s')
+    The ex command (as format string for |printf|) used to convert 
+    base64 encoded messages.
+
+                                                    *g:tmboxbrowser_attachments_dir*
+g:tmboxbrowser_attachments_dir (Default: fnamemodify(tempname(), ':p:h'))
+    Where to save decoded attachments.
+
+                                                    *g:tmboxbrowser_datadir*
+g:tmboxbrowser_datadir (Default: split(&runtimepath, ',')[0] .'/tmbox')
+    Where to save auxiliary data.
+
+                                                    *g:tmboxbrowser_path*
+g:tmboxbrowser_path (Default: "")
+    The (comma-separated) path to your mboxes.
+
+
+Key maps~
+These are effective in the __MBOX_Browser__ window:
+
+    i        ... Display the index list (in gvim, you can also use <esc>)
+    p        ... Select parts or re-view mail
+    q        ... Quit the browser
+    ?        ... Help
+    <space>  ... Page down
+    <bs>     ... Page up
+
+
+Requirements~
+    tlib (vimscript#1863) is required.
+

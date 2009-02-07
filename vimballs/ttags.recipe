@@ -1,0 +1,3 @@
+plugin/ttags.vim
+autoload/ttags.vim
+doc/ttags.txt

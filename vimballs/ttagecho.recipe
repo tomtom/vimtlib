@@ -1,0 +1,3 @@
+autoload/ttagecho.vim
+plugin/ttagecho.vim
+doc/ttagecho.txt
