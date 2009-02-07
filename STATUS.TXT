@@ -1,0 +1,49 @@
+* Status
+
+    #A bbcode
+    #A checksyntax
+    #A cmdlinehelp
+    #A hookcursormoved
+    #A loremipsum
+    #A scalefont
+    #A shymenu
+    #A tAssert
+    #A tbibtools
+    #A tcalc
+    #A tcalc
+    #A tComment
+    #A tgpg
+    #A tlib
+    #A tmarks
+    #A tmru
+    #A toptions/tstatus
+    #A trag
+    #A tregisters
+    #A tselectbuffer
+    #A tselectfiles
+    #A tSkeleton
+    #A ttagecho
+    #A ttags
+    #A ttoc
+    #A Viki
+    #B EvalSelection
+    #B localvariables
+    #B tmboxbrowser
+    #B ttagcomplete
+    #C tEchoPair
+    #E glark
+    #E linglang
+    #E setsyntax
+    #E TortoiseSVN
+
+
+Legend:
+
+    #A ... Works for me (minor quirks)
+    #B ... Minor problems
+    #C ... Major problems
+    #D ... Unfinished work
+    #E ... Not in use
+
+% 2009-02-07; @Last Change: 2009-02-07.
+% vi: ft=viki:tw=72:ts=4

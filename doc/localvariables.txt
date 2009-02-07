@@ -1,0 +1,180 @@
+*localvariables.txt*	File local variables
+
+Author: Thomas Link (micathom AT gmail com?subject=vim)
+
+
+                                                    *localvariables*
+Description:
+This plugin tries to mimic Emacs's file local variables feature. File local 
+variables are kept in a section in the last g:localVariablesRange 
+(default=30) lines of a file (this variable also defines the maximum number 
+of file local variables). E.g., in this example >
+
+    Local Variables:
+    foo:1
+    bar:"bla"
+    End:
+
+the variable b:foo will be set to "1" (which, in vim, equals 1), b:bar 
+to "bla" after opening the file.
+
+The beginning of the section is marked with g:localVariablesBegText 
+(default="Local Variables:"), the end with g:localVariablesEndText 
+(default="End:"). These markers can be surrounded by arbitrary prefix and 
+suffix markers. These (optional) prefixes and suffixes must be consistent for 
+the whole section. The prefix and suffix are defined by the end-marker. 
+Example: >
+
+    ### Local Variables: ###
+    ### foo:1 ###
+    ### bar:"bla" ###
+    ### End: ###
+<
+                                                    *g:localVariablesDownCaseHyphenedNames*
+                                                    *localvariables-hyphens*
+If a variable name contains a hyphen ("-"), the variable name will be 
+translated into a buffer local variable in camel case, i.e. "comment-start" 
+becomes "b:commentStart". A hyphendized variable's scope is always "b". If 
+g:localVariablesDownCaseHyphenedNames (default=1) is true, then the variable 
+name will be downcased first for compatibility reasons -- as (emacs) lisp is 
+case insensitive. I.e., "COMMENT-START" becomes "b:commentStart", too.
+
+                                                    *g:localVariablesVimlet*
+If g:localVariablesVimlet evaluates to true, then lines like: >
+
+    vimlet: var1=val1 | var2=val2
+
+are allowed too. These lines are simply evaluated (after doing some 
+simple replacements). The variables are always made buffer local.
+
+                                                    *localvariables-values*
+A small note on value handling: For security reasons, all normal values 
+(i.e., anything but |localvariables-special|) are put in quotes unless 
+the value already matches "^\"[^\"]*\"$\\|^'[^']*'$".
+
+
+                                                    *localvariables-transpose*
+In order to be "compatible" with, e.g, Emacs's file local variables, it might be 
+necessary to translate some variable names.
+
+You can use also variables with the prefix "g:localVariableX" for 
+translating variable names without scope definitions. Example: >
+
+    let g:localVariableXtabWidth = "&tabstop"
+    ---
+    ### Local Variables: ###
+    ### tab-width:4 ###
+    ### End: ###
+
+This would set the buffer-local option |tabstop| to 4. (Which could of course 
+be achieved with a vim line, too.)
+
+As an alternative, you can also define a function with the prefix 
+"LocalVariableX" which will be called with the value as single argument.  
+This provides a controlled way for executing commands when loading/editing 
+a file. By defining a function "LocalVariableXmode", this can be used to 
+reuse Emacs's mode annotations for files that don't match the usual file 
+patterns. Example: >
+
+    fun! LocalVariableXfoo(arg)
+        if a:arg == "0"
+            GoFoo
+        elseif a:arg == "1"
+            GoBar
+        endif
+    endfun
+    ---
+    ### Local Variables: ###
+    ### foo:0 ###
+    ### End: ###
+
+This example would execute GoFoo or GoBar depending on the value of the file 
+local variable foo.
+
+
+                                                    *localvariables-definition*
+A variable definition has the form (as regexp): >
+
+	((scope char:)?(variable|special name)|hyphened name):value
+
+If no scope character is given, the variable is buffer local ("b"-scope).
+
+If the scope character is "&", |setlocal| will be used to set the variable.
+
+                                                      *localvariables-special*
+If the scope is ":", the variable name is interpreted as a special name:
+
+                                                      *localvariables-execute*
+- execute: The value of s:localVariablesAllowExec can't be changed by this 
+  script. (The first 4 letters of "execute" are essential.)
+
+                                                      *localvariables-events*
+                                                      *LocalVariablesRegisterHook*
+- On{event}: The value is registered for execution when the denoted 
+  autocommand event occurs. You have to register LocalVariables for use with 
+  this event by using the command >
+
+  	:LocalVariablesRegisterHook EVENT
+<
+  Use this feature, e.g., for recompiling some files after saving.
+
+                                                      *s:localVariablesAllowExec*
+The value of s:localVariablesAllowExec (default=1) defines if the execution 
+of special variables is allowed. Values: >
+
+	0 ... disable
+	1 ... query user, default = no
+	2 ... query user, default = yes
+	3 ... allow
+
+NOTE: You most likely have to edit the plugin to change this variable.
+
+NOTE: A change from 0 to [1-3] takes effect only after reloading the plugin!
+
+NOTE: |input()| appears to make problems when opening a file - vim (6.2) 
+appears to hang. When a gui is running, use |inputdialog()| for querying 
+the user. I don't know if |input()| works on a terminal.
+
+                                                      *localvariables-security-risks*
+CAVEAT: Be aware that "special values" are evaluated with |execute|.  
+This potentially pushes vim ahead in the era of computer viruses/worms. 
+Take care.
+
+Example:
+Execute >
+
+	LocalVariablesRegisterHook! BufWritePre
+	
+and put something like this at the end of a file: >
+
+	### Local Variables: ###
+	### b:variable1:1 ###
+	### g:variable2:"2" ###
+	### variable3:"three" ###
+	### tab-width:4 ###
+	### ::exec:echo "Got it!" ###
+	### ::OnBufWritePre:call inputdialog("You shouldn't have written this text") ###
+	### End: ###
+
+<
+                                                      *localvariables-install*
+Usage:
+
+1. Extract the archive to your vimfiles directory. Run |helptags| on this directory.
+
+2. Insert something like this into your .vimrc: >
+
+	autocmd BufReadPost * call LocalVariablesCheck()
+	
+Or rather: >
+
+	autocmd BufEnter    * call LocalVariablesCheck()
+
+3. Optionally, read |localvariables-security-risks| and register some events as in: >
+
+	LocalVariablesRegisterHook! BufWritePre
+
+When calling LocalVariablesCheck(), the buffer will only be scanned once.  
+Force an re-evaluation of file local variables by calling 
+LocalVariablesReCheck().
+

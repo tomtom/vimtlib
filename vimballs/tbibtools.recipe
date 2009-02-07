@@ -1,0 +1,5 @@
+doc/tbibtools.txt
+ftplugin/bib/bibFindIndex.vim
+plugin/tbibtools.vim
+ruby/tbibtools.rb
+ruby/tvimtools.rb

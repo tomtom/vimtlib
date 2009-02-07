@@ -1,0 +1,297 @@
+*tbibtools.txt*      tbibtools -- bibtex related tools (sort, filter ...)
+Author: (c) 2007, Thomas Link, micathom AT gmail com?subject=vim
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  
+USA
+
+
+
+Introduction~
+
+tbibtools provide a simple regexp-based bibtex parser. Please be aware 
+that this script makes a few assumptions on how a bib file should look 
+like and that it may fail on files formatted in unusual ways. Failure 
+may lead to loss of bib entries and malformed or incomplete output.  
+Comments and other text will be stripped when reformatting entries. Any 
+feature of bibtex I don't know and/or don't use myself is most likely 
+not supported by this script/class.
+
+Please take care when using this script. Make backups and check the 
+output, especially when using the -f command-line option. Don't blame me 
+if you lose information or end up with corrupted bib files.
+
+General features:
+
+    - Sort bib files
+    - Reformat bib files
+    - List keys in a bib file
+    - Show bib entries matching a regular expression
+    - Merge bib files
+
+Features of the Vim plugin:
+
+    - |:TBibTools|
+        - Sort/reformat selected entries (or the whole buffer)
+    - |:TBibList|
+        - List a bibtex buffer's contents
+        - Filter listed entries on the basis of author names, title, keywords
+        - Preview/jump to specified entries
+        - Copy the keys of selected entries to @*
+
+
+
+Install as Vim plugin~
+
+Extract the archive to ~/.vim or ~/vimfiles (Windows).
+
+A Vim with compiled-in ruby support is required.
+
+
+
+Install as shell script~
+
+The file tbibtools.rb provides the class TBibTools than can be used to 
+read, parse, and sort bib files or strings.
+
+There is also a rudimentary makefile: >
+
+    make -f Makefile.tbibtools install
+
+
+
+From the commands line~
+
+The ruby directory contains a file tbibtools.rb that can be used as a 
+stand-alone script from the command line. For command-line use, only the 
+file tbibtools.rb and a ruby interpreter is needed.
+
+    tbibtools.rb [OPTIONS] [FILES] < IN > OUT
+
+
+
+For Vim users~
+The file plugin/tbibtools.vim provides some commands that 
+filters the selected text or the whole buffer through tbibtools.rb. The 
+command line options are the same as for the script.
+
+                                                    *:TBibTools*
+   :'<,'>TBibTools [OPTIONS]
+        Filter the selected text or the whole buffer through
+        tbibtools.rb. The command line options are the same as for the
+        script.
+
+                                                    *:TBibList*
+    :'<,'>TBibList[!] [OPTIONS]
+        List keys in a bibtex file (mostly the same as TBibTools --ls
+        but lets you select an entry and jump to its position in the
+        bibtex file).
+
+        The listing is only built the first time you call this command. 
+        In order to refresh the listing later on use [!].
+
+        In the list view:
+        Press <c-p> to quickly preview an entry in the bibtex file.
+        Press <c-c> to copy the keys of the selected entries to @*.
+        Press <cr> (Enter) to jump to the specified entry.
+        Press ? for additional help.
+
+        You can type some text to filter the list of listed entries 
+        according to author, title, or keywords.
+
+
+
+Configuration~
+
+If a file /etc/tbibtools.rb, $USERPROFILE/tbibtools.rb, and 
+$HOME/.tbibtools exist, they are evaluated in an instance of 
+TBibTools::Configuration. These are normal ruby files. Please see the 
+class documentation for available methods that can be used in the 
+configuration file.
+
+For further details, go to the ruby directory, type >
+
+    make -f Makefile.tbibtools rdoc
+
+and read the documentation on TBibTools::Configuration.
+
+Simple-minded example: >
+
+    # Define a default format. If no -f option is given, we'll always 
+    # use this one.
+    default_format 'tml'
+
+    # Define a shortcut; use it as in: tbibtools -f bar
+    shortcut :bar => ['downcaseType', 'unwrap', 'foo', 
+                      'quote', 'align', 'indent']
+
+    # Define a new format. Usually the body will do something with the 
+    # v(alue).
+    def_format :foo do |a, e, k, v|
+        [e, k, "foo #{v}"]
+    end
+
+
+
+Formats~
+
+Formats can be easily plugged in by defining a method (see 
+TBibTools#format). As the formatters process the entry one after the 
+other, the order given on the command line matters.
+
+Please scrutinize the output carefully as an incomplete set of 
+formatters can easily result in a corrupted bib file that bibtex 
+cannot read.
+
+For a complete list see: tbibtools -h
+
+    align
+        Align the = sign.
+
+    bracket
+        Enclose non-numeric values in curly braces.
+
+    canonicAuthors
+        Try to format author and editor fields like: NAME SURNAME and ...
+
+    canonicKeywords
+        In fields "keyword" or "keywords" that don't contain a 
+        semi-colon but only commas, replace the commas with semi-colons.
+
+    canonicPages
+        Convert page fields like "NN - NN" or "NN--NN" to "NN-NN". Also detect 
+        wrong hyphen-like characters that look.
+
+    canonicQuotes
+        Convert " and ' to `` or '.
+
+    downcaseKey, upcaseKey
+        Change the keys case.
+
+    gsub=FROM1:TO2:FROM2:TO2...
+        Replace text in the value.
+
+    indent, indent=N (default=4)
+        Indent the entry's key-value pairs.
+
+    nil
+        Don't print any output.
+
+    quote
+        Enclose non-numeric values in double quotes.
+
+    stripRedundantTitel
+        If an entry has a title and a booktitle field with the same value, 
+        only the booktitle field will be propagated.
+
+    stripEmpty
+        Drop fields with empty values.
+
+    unwrap
+        Put wrapped text into a single line.
+
+    wrap
+        Try to wrap the value (without taking too much effort to do it 
+        right).
+
+    check
+        Print a warning on invalid entries
+
+    downcaseType, upcaseType
+        Put the bibtex type in lower/upper case letters.
+
+    list
+        List keys only.
+
+    nnIsYear
+        Try to correctly sort two-digit numbers in the key, i.e. sort 
+        example99 before example00.
+
+    selectCrossref, unselectCrossref
+        View only entries that are crossreferenced by other entries 
+        or entries that aren't.
+
+    sortCrossref
+        Put cross-referred entries to the back.
+
+    stripPrelude
+        Drop any prelude (useful in conjunction with "list").
+
+
+
+Shortcuts~
+
+Shortcuts are a collection of formatting options that can be referred 
+to with a single name. They can be used as if they were normal 
+formatting options.
+
+A shortcut called NAME can be declared by using the "shortcut" method 
+(see TBibTools::Configuration#shortcut) in your configuration file.
+
+Known shortcuts:
+tml, ls
+
+See tbibtools -h for more details.
+
+
+
+Examples~
+
+Reformat the bib file >
+
+    tbibtools -f tml < monos.bib > monos_sorted.bib
+    tbibtools -f gsub=ä:\"a:ö:\"o:ü:\"u < monos.bib > monos_sorted.bib
+
+List the contents (see also TBibTools#shortcut_ls) >
+
+    tbibtools --ls < monos.bib
+    tbibtools --ls -l "#{_lineno}: #{author|editor|institution}: #{title|booktitle}" < monos.bib
+
+
+Extract a few entries >
+
+    tbibtools -P -e Hugo < monos.bib
+    tbibtools -P -q author=Adorno -q keywords=Adorno < monos.bib
+    tbibtools -P -q author="Husserl|Merleau-Ponty" < monos.bib
+
+
+
+Changes~
+
+0.1
+- Initial version
+
+0.2
+- The configuration file is always loaded (also when called from Vim)
+- The configuration file is evaluated in the context of the configuration object (use some kind of configuration DSL)
+- Use optargs for parsing command line arguments (i.e. command line options have slightly changed)
+- Improved simple_bibtex_parser()
+
+0.3
+- Syntax of the query command has changed: query FIELD1 => RX1, FIELD2 => RX2 ...
+- Merge duplicate entries
+- Merge certain conflicting fields
+- FIX: Problem with --ls
+
+0.4
+- sortCrossref: Put cross-referenced entries to the back.
+- New format: (un)selectCrossref: View only entries that are (not) cross-referenced
+- VIM: Improved TBibList (include keywords in list; if g:tbibUseCache is set, the listing will be cached between editing sessions)
+
+0.5
+- VIM: Require tlib 0.9
+
+0.6
+- Format "squeeze": Remove redundant whitespace
+
