@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-16.
-" @Last Change: 2009-02-06.
-" @Revision:    583
+" @Last Change: 2009-02-07.
+" @Revision:    586
 " GetLatestVimScripts: 1865 1 tselectfiles.vim
 
 if &cp || exists("loaded_tselectfile")
@@ -203,7 +203,9 @@ rx in the current buffer's filename.
 
 0.9
 - Don't assume s:select_files_pattern.limit is set
-- Include .* files (but hide them by default; thanks to naquad/Daniil 
-F.).
 - Include .* in tselectfiles_hidden_rx
+- FIX: Include .* files (but hide them by default; thanks to 
+naquad/Daniil F.).
+- FIX: Is 'splitbelow' is false, opening buffers in split view didn't 
+properly work (thanks to naquad/Daniil F.)
 

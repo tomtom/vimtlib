@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-06-30.
-" @Last Change: 2008-12-01.
-" @Revision:    0.0.620
+" @Last Change: 2009-02-07.
+" @Revision:    0.0.629
 
 if &cp || exists("loaded_tlib_input_autoload")
     finish
@@ -411,6 +411,7 @@ function! tlib#input#ListW(world, ...) "{{{3
         endwh
 
         " TLogVAR world.state
+        " TLogDBG string(tlib#win#List())
         " TLogDBG 'exit while loop'
         " TLogVAR world.list
         " TLogVAR world.sel_idx
@@ -433,6 +434,7 @@ function! tlib#input#ListW(world, ...) "{{{3
             " TLogDBG 'return agent'
             " TLogVAR world.return_agent
             call world.CloseScratch()
+            " TLogDBG "return_agent ". string(tlib#win#List())
             " TAssert IsNotEmpty(world.scratch)
             return call(world.return_agent, [world, world.GetSelectedItems(world.rv)])
         elseif stridx(world.type, 'w') != -1
@@ -460,9 +462,11 @@ function! tlib#input#ListW(world, ...) "{{{3
         " TLogDBG 'finally 2'
         " TLogDBG string(world.Methods())
         " TLogVAR world.state
+        " TLogDBG string(tlib#win#List())
         if world.state !~ '\<suspend\>'
             " TLogVAR world.sticky
             if world.sticky
+                " TLogDBG "sticky"
                 " TLogVAR world.bufnr
                 " TLogDBG bufwinnr(world.bufnr)
                 if bufwinnr(world.bufnr) == -1
@@ -471,6 +475,7 @@ function! tlib#input#ListW(world, ...) "{{{3
                 endif
                 let world = tlib#agent#SuspendToParentWindow(world, world.GetSelectedItems(world.rv))
             else
+                " TLogDBG "non sticky"
                 " TLogVAR world.state, world.win_wnr, world.bufnr
                 if world.CloseScratch()
                     " TLogVAR world.winview

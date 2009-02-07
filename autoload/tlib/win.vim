@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-08-24.
-" @Last Change: 2008-10-03.
-" @Revision:    0.0.40
+" @Last Change: 2009-02-07.
+" @Revision:    0.0.46
 
 if &cp || exists("loaded_tlib_win_autoload")
     finish
@@ -17,10 +17,12 @@ function! tlib#win#Set(winnr) "{{{3
     if a:winnr > 0
         " TLogVAR a:winnr
         " TLogDBG winnr()
+        " TLogDBG string(tlib#win#List())
         if winnr() != a:winnr && winbufnr(a:winnr) != -1
             let rv = winnr().'wincmd w'
             exec a:winnr .'wincmd w'
             " TLogVAR rv
+            " TLogDBG string(tlib#win#List())
             return rv
         endif
     endif
@@ -47,6 +49,7 @@ endf
 function! tlib#win#SetLayout(layout) "{{{3
     if a:layout.winnr == winnr('$')
         " TLogVAR a:layout.winrestcmd
+        " TLogDBG string(tlib#win#List())
         exec a:layout.winrestcmd
         if !empty(a:layout.views)
             let winnr = winnr()
@@ -60,9 +63,19 @@ function! tlib#win#SetLayout(layout) "{{{3
         if a:layout.cmdheight != &cmdheight
             let &cmdheight = a:layout.cmdheight
         endif
+        " TLogDBG string(tlib#win#List())
         return 1
     endif
     return 0
+endf
+
+
+function! tlib#win#List() "{{{3
+    let wl = {}
+    for wn in range(1, winnr('$'))
+        let wl[wn] = bufname(winbufnr(wn))
+    endfor
+    return wl
 endf
 
 

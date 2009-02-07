@@ -3,8 +3,8 @@
 " @Website:     http://members.a1.net/t.link/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-05-01.
-" @Last Change: 2008-12-01.
-" @Revision:    0.1.669
+" @Last Change: 2009-02-07.
+" @Revision:    0.1.680
 
 " :filedoc:
 " A prototype used by |tlib#input#List|.
@@ -791,6 +791,7 @@ endf
 
 " :nodoc:
 function! s:prototype.SwitchWindow(where) dict "{{{3
+    " TLogDBG string(tlib#win#List())
     let wnr = get(self, a:where.'_wnr')
     " TLogVAR self, wnr
     return tlib#win#Set(wnr)
@@ -834,13 +835,32 @@ endf
 function! s:prototype.RestoreOrigin(...) dict "{{{3
     TVarArg ['winview', 0]
     if winview
+        " TLogVAR winview
         call tlib#win#SetLayout(self.winview)
     endif
-    " TLogVAR self.win_wnr, self.bufnr, self.cursor
-    if self.win_wnr != winnr()
-        exec self.win_wnr .'wincmd w'
+    " TLogVAR self.win_wnr, self.bufnr, self.cursor, &splitbelow
+    " TLogDBG "RestoreOrigin0 ". string(tlib#win#List())
+    " If &splitbelow is false, we cannot rely on self.win_wnr to be our 
+    " source buffer since, e.g, opening a buffer in a split window 
+    " changes the whole layout.
+    " Possible solutions:
+    " - Restrict buffer switching to cases when the number of windows 
+    "   hasn't changed.
+    " - Guess the right window, which we try to do here.
+    if &splitbelow == 0
+        let wn = bufwinnr(self.bufnr)
+        " TLogVAR wn
+        if wn == -1
+            let wn = 1
+        end
+    else
+        let wn = self.win_wnr
+    endif
+    if wn != winnr()
+        exec wn .'wincmd w'
     endif
     exec 'buffer! '. self.bufnr
     call setpos('.', self.cursor)
+    " TLogDBG "RestoreOrigin1 ". string(tlib#win#List())
 endf
 

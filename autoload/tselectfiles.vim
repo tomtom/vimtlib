@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-10-15.
-" @Last Change: 2009-02-06.
-" @Revision:    0.0.243
+" @Last Change: 2009-02-07.
+" @Revision:    0.0.246
 
 if &cp || exists("loaded_tselectfiles_autoload")
     finish
@@ -214,8 +214,10 @@ endf
 
 function! tselectfiles#ViewFile(world, selected) "{{{3
     " TLogVAR a:selected
+    " TLogDBG "ViewFile0 ". string(tlib#win#List())
     if empty(a:selected)
         call a:world.RestoreOrigin()
+        " TLogDBG "ViewFile1 ". string(tlib#win#List())
         return a:world
     else
         " call a:world.SetOrigin()
