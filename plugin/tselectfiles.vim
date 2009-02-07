@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-16.
 " @Last Change: 2009-02-07.
-" @Revision:    586
+" @Revision:    587
 " GetLatestVimScripts: 1865 1 tselectfiles.vim
 
 if &cp || exists("loaded_tselectfile")
@@ -206,6 +206,6 @@ rx in the current buffer's filename.
 - Include .* in tselectfiles_hidden_rx
 - FIX: Include .* files (but hide them by default; thanks to 
 naquad/Daniil F.).
-- FIX: Is 'splitbelow' is false, opening buffers in split view didn't 
+- FIX: If 'splitbelow' is false, opening buffers in split view didn't 
 properly work (thanks to naquad/Daniil F.)
 
