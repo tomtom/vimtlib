@@ -1,0 +1,1 @@
+assert_in_delta(<+CURSOR+>, <+CALCULATED_FLOAT+>, <+DELTA+>, "<+MESSAGE+>")<++>

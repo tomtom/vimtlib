@@ -1,0 +1,3 @@
+it '<+CURSOR+>' do
+    <+BODY+>
+end<++>

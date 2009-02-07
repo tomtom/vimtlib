@@ -1,0 +1,3 @@
+before(<+select("s:type", [":each", ":all"])+>) do
+    <+CURSOR+>
+end<++>

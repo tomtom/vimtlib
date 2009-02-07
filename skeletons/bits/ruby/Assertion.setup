@@ -1,0 +1,5 @@
+def setup<+CURSOR+>
+end
+
+def teardown
+end<++>

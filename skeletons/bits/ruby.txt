@@ -1,0 +1,16 @@
+alias alias <+CURSOR+> <+ORIGINALMETHOD+>
+attr_accessor attr_accessor :<+CURSOR+>
+attr_reader attr_reader :<+CURSOR+>
+attr_writer attr_writer :<+CURSOR+>
+collect collect {|<+CURSOR+>| <+BODY+>}<++>
+delete_if delete_if {|<+CURSOR+>| <+BODY+>}<++>
+detect detect {|<+CURSOR+>| <+BODY+>}<++>
+find find {|<+CURSOR+>| <+BODY+>}<++>
+find_all find_all {|<+CURSOR+>| <+BODY+>}<++>
+inject inject {|<+CURSOR+>| <+BODY+>}<++>
+include include? {|<+CURSOR+>| <+BODY+>}<++>
+map map {|<+CURSOR+>| <+BODY+>}<++>
+partition partition {|<+CURSOR+>| <+BODY+>}<++>
+reject reject {|<+CURSOR+>| <+BODY+>}<++>
+select select {|<+CURSOR+>| <+BODY+>}<++>
+{ {|<+CURSOR+>| <+BODY+>}<++>

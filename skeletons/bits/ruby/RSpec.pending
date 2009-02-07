@@ -1,0 +1,3 @@
+pending('<+CURSOR+>') do
+    <+SHOULD+>
+end<++>

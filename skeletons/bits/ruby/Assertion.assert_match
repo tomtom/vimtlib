@@ -1,0 +1,1 @@
+assert_match(<+CURSOR+><+REGEXP+>, <+STRING+>, "<+MESSAGE+>")<++>

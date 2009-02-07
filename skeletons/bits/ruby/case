@@ -1,0 +1,7 @@
+case <+CURSOR+>
+when <+CASE+>
+    <+DO+>
+else
+    <+/raise ArgumentError, "incomplete case statement"+>
+end
+<++>
