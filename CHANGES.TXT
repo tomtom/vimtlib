@@ -1,0 +1,7 @@
+2009-02-08  Thomas Link (micathom at gmail com)
+	* 07tassert.vim (s:GetSNR): Make sure backslashes match against 
+	slashes.
+
+
+
+vi: ft=changelog:tw=72:ts=4

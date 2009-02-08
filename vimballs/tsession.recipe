@@ -1,0 +1,3 @@
+doc/tsession.txt
+plugin/tsession.vim
+autoload/tsession.vim
