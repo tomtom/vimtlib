@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2006-12-12.
-" @Last Change: 2009-02-07.
-" @Revision:    0.4.606
+" @Last Change: 2009-02-08.
+" @Revision:    0.4.625
 "
 " GetLatestVimScripts: 1730 1 07tAssert.vim
 "
@@ -35,28 +35,39 @@ let g:tassertEvaluators = {}
 
 if g:TASSERT
     TLogOn
-    command! -range -nargs=1 -bang TAssert 
+
+    function! s:Reset() "{{{3
+        let s:assertMsg = ''
+        let s:assertFile = ''
+        let s:assertSetup = ''
+        let s:assertTeardown = ''
+    endf
+
+    call s:Reset()
+
+    command! -nargs=1 -bang TAssert 
                 \ let s:assertReason = [] |
+                \ exec s:assertSetup |
                 \ try |
                 \ let s:assertFailed = empty(eval(s:ResolveSIDs(<q-args>))) |
                 \ catch |
                 \ call insert(s:assertReason, v:exception) | 
                 \ let s:assertFailed = 1 |
                 \ endtry |
+                \ exec s:assertTeardown |
                 \ if s:assertFailed | 
-                \ call s:InsertLocationList(expand("<sfile>:p"), <line1>, <q-args>) | 
                 \ call insert(s:assertReason, <q-args>) | 
                 \ call insert(s:assertReason, s:assertMsg) | 
+                \ let s:assertReasonS = join(s:assertReason, ': ') |
+                \ call s:InsertLocationList(expand("<sfile>:p"), <line1>, s:assertReasonS) | 
                 \ if "<bang>" != '' | 
-                \ call TLog(join(s:assertReason, ': ')) | 
+                \ call TLog(s:assertReasonS) | 
                 \ else |
-                \ throw join(s:assertReason, ': ') | 
+                \ throw s:assertReasonS | 
                 \ endif | 
                 \ endif
-    command! -nargs=* -bang TAssertBegin let s:assertArgs = [<args>] | 
+    command! -nargs=* -bang TAssertBegin let s:assertArgs = s:ParseArgs([<args>]) | 
                 \ cexpr [] | 
-                \ let s:assertMsg = get(s:assertArgs, 0, '') | 
-                \ let s:assertFile = get(s:assertArgs, 1, expand("<sfile>:p")) | 
                 \ if "<bang>" != '' | call TLog('tAssert: '. s:assertMsg) | endif
     command! -nargs=* -bang TAssertEnd for v in split(<q-args>, '\s\+') | 
                 \ if v =~ '()$' |
@@ -66,9 +77,8 @@ if g:TASSERT
                 \ endif | 
                 \ endfor | 
                 \ if exists('s:assertMsg') && !empty(s:assertMsg) | call TLog('tAssert: '. s:assertMsg .' ... done') | endif |
-                \ let s:assertMsg = '' | let s:assertFile = ''
-    command! -nargs=1 -bang TAssertExec exec <q-args>
-    TAssertEnd
+                \ call s:Reset()
+    command! -nargs=1 -bang TAssertExec exec <q-args> TAssertEnd
 else
     command! -nargs=* -bang TAssert :
     command! -nargs=* -bang TAssertBegin :
@@ -114,6 +124,21 @@ fun! TAssertVal(script, expr)
     endif
 endf
 
+function! s:ParseArgs(args) "{{{3
+    let s:assertMsg = get(a:args, 0, '')
+    let file = expand("<sfile>:p")
+    let arg1 = get(a:args, 1, file)
+    if type(arg1) == 4
+        let s:assertFile  = get(arg1, 'file', file)
+        let s:assertSetup = get(arg1, 'setup', '')
+        let s:assertTeardown = get(arg1, 'teardown', '')
+    else
+        let s:assertFile = arg1
+        let s:assertSetup = ''
+        let s:assertTeardown = ''
+    endif
+endf
+
 fun! s:InitSNR(update)
     if a:update || !exists('s:scripts')
         redir => scriptnames
@@ -144,8 +169,9 @@ fun! s:GetSNR(file, ...)
     let update = a:0 >= 1 ? a:1 : 0
     call s:InitSNR(update)
     " echom "DBG ". string(s:scripts)
+    let file = substitute(a:file, '[/\\]', '[\\\\/]', 'g')
     for fn in s:scripts
-        if fn[1] =~ a:file.'$'
+        if fn[1] =~ file.'$'
             return fn[0]
         endif
     endfor
@@ -195,6 +221,7 @@ fun! s:CommentRegion(mode, line1, line2)
 endf
 
 fun! s:InsertLocationList(file, line, reason)
+    " TLogVAR a:reason
     let bn = bufnr(a:file)
     if bn >= 0
         let qfl = getqflist()
@@ -408,5 +435,8 @@ TLog(Un)Comment.
 - TLogVAR: take a comma-separated variable list as argument; display a 
 time-stamp (if +reltime); show only the g:tlogBacktrace'th last items of 
 the backtrace.
+
+
+Doesn't work yet: Line number?
 - Integration with the quickfix list.
 

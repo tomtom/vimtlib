@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2006-12-13.
-" @Last Change: 2009-02-07.
-" @Revision:    0.61
+" @Last Change: 2009-02-08.
+" @Revision:    0.66
 
 fun! <SID>TestFunction(a, b)
     return a:a + a:b
@@ -17,6 +17,7 @@ fun! TAssertTemporaryFunction(a, b)
 endf
 
 TAssert! 0 == 0
+TAssert! 0 == 1
 TAssert! IsEqual(0, 1)
 TAssert! "bla" == "bla"
 TAssert IsA(1, 'Number')
