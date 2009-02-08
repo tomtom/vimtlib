@@ -1,49 +1,54 @@
 * Status
 
-    #A bbcode
-    #A checksyntax
-    #A cmdlinehelp
-    #A hookcursormoved
-    #A loremipsum
-    #A scalefont
-    #A shymenu
-    #A tAssert
-    #A tbibtools
-    #A tcalc
-    #A tcalc
-    #A tComment
-    #A tgpg
-    #A tlib
-    #A tmarks
-    #A tmru
-    #A toptions/tstatus
-    #A trag
-    #A tregisters
-    #A tselectbuffer
-    #A tselectfiles
-    #A tSkeleton
-    #A ttagecho
-    #A ttags
-    #A ttoc
-    #A Viki
-    #B EvalSelection
-    #B localvariables
-    #B tmboxbrowser
-    #B ttagcomplete
-    #C tEchoPair
-    #E glark
-    #E linglang
-    #E setsyntax
-    #E TortoiseSVN
+    #A bbcode           -- syntax & templates
+    #A checksyntax      -- Check syntax when saving a file (php etc.)
+    #A cmdlinehelp      -- Display help on the command in the command line
+    #A hookcursormoved  -- Call functions when the cursor position changed
+    #A livetimestamp    -- Change a time stamp when saving a file
+    #A loremipsum       -- A dummy text generator
+    #A scalefont        -- Switch between your favourite font/gui settings
+    #A shymenu          -- Show the menu bar only when pressing an accelerator key
+    #A tAssert          -- Simple Assertions
+    #A tbibtools        -- bibtex related tools (sort, filter ...)
+    #A tcalc            -- A simple ruby-based RPN calculator with a vim frontend
+    #A tComment         -- An easily extensible & universal comment plugin
+    #A tgpg             -- Yet another plugin for encrypting files with gpg
+    #A tlib             -- A library of vim functions
+    #A tmarks           -- A simple marks browser
+    #A tmru             -- Most Recently Used Files
+    #A toptions/tstatus -- display changed options in the status line (toptions should be sourced from vimrc)
+    #A trag             -- Jump to a file registered in your tags
+    #A tregisters       -- List, edit, and run/execute registers/clipboards
+    #A tselectbuffer    -- A simplicistic buffer selector/switcher
+    #A tselectfiles     -- A simplicistic files selector/browser (sort of)
+    #A tSkeleton        -- File Templates and Code Skeletons
+    #A ttagecho         -- Show current tag information
+    #A ttags            -- Tag list browser (List, filter, preview, jump to tags)
+    #A ttoc             -- Display a "table of contents"
+    #A Viki             -- Some kind of personal wiki for Vim
+    #B Eval\Selection   -- evaluate selected vim/ruby/... code
+    #B localvariables   -- Set/let per-file-variables à la Emacs
+    #B tmboxbrowser     -- A mbox browser
+    #B ttagcomplete     -- Context-sensitive tag completion
+    #C tEchoPair        -- Display matching parenthesis in the echo area
+    #D concordance      -- Concordance table (sort of)
+    #D pim              -- The vim pim (not really useful yet)
+    #D tbak             -- Yet another simple backup plugin using diff
+    #D tsession         -- An alternativ approach to sessions
+    #E glark            -- a wrapper for the glark command (superseded by trag)
+    #E linglang         -- Perform actions on basis of the current line's language
+    #E setsyntax        -- Set options specific for the syntax group under cursor
+    #E TortoiseSVN      -- Support for TortoiseSVN (a subversion client for Windows)
 
 
 Legend:
 
-    #A ... Works for me (minor quirks)
+    #A ... Works for me (there may be some minor quirks)
     #B ... Minor problems
-    #C ... Major problems
+    #C ... Major known problems, not in use
     #D ... Unfinished work
     #E ... Not in use
 
-% 2009-02-07; @Last Change: 2009-02-07.
-% vi: ft=viki:tw=72:ts=4
+
+% 2009-02-07; @Last Change: 2009-02-08.
+% vi: ft=viki:tw=0:ts=4
