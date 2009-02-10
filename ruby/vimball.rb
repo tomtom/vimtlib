@@ -30,7 +30,7 @@ require 'zlib'
 
 class Vimball
 
-    VERSION = '1.0.59'
+    VERSION = '1.0.60'
 
     class AppLog
         def initialize(output=$stdout)
@@ -233,6 +233,7 @@ HEADER
                 # end
 
                 filename = Pathname.new(filename).relative_path_from(Pathname.new(@opts['vimfiles'])).to_s
+                filename.gsub!(/\\/, '/')
 
                 rewrite = @opts['rewrite']
                 if rewrite
