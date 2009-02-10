@@ -45,7 +45,6 @@ This script requires tlib (vimscript #1863) to be installed.
 ========================================================================
 Contents~
 
-    plugin/hookcursormoved.vim
         g:hookcursormoved_linechange ................... |g:hookcursormoved_linechange|
         g:hookcursormoved_parenthesis .................. |g:hookcursormoved_parenthesis|
         g:hookcursormoved_parenthesis_round ............ |g:hookcursormoved_parenthesis_round|
@@ -54,7 +53,6 @@ Contents~
         g:hookcursormoved_syntaxchange ................. |g:hookcursormoved_syntaxchange|
         g:hookcursormoved_syntaxleave .................. |g:hookcursormoved_syntaxleave|
         g:hookcursormoved_syntaxleave_oneline .......... |g:hookcursormoved_syntaxleave_oneline|
-    autoload/hookcursormoved.vim
         hookcursormoved#Enable ......................... |hookcursormoved#Enable()|
         hookcursormoved#Register ....................... |hookcursormoved#Register()|
         hookcursormoved#Test_linechange ................ |hookcursormoved#Test_linechange()|
@@ -67,8 +65,6 @@ Contents~
         hookcursormoved#Test_syntaxleave_oneline ....... |hookcursormoved#Test_syntaxleave_oneline()|
 
 
-========================================================================
-plugin/hookcursormoved.vim~
 
 
 Modes:
@@ -110,8 +106,6 @@ g:hookcursormoved_syntaxleave_oneline (default: 'hookcursormoved#Test_syntaxleav
     changes.
 
 
-========================================================================
-autoload/hookcursormoved.vim~
 
                                                     *hookcursormoved#Enable()*
 hookcursormoved#Enable(condition)

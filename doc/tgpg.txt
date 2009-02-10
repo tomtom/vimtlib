@@ -74,11 +74,10 @@ Double-check the following variables for correct values:
 ========================================================================
 Contents~
 
-    plugin/tGpg.vim
         g:tgpg_timeout ............. |g:tgpg_timeout|
         g:tgpg_gpg_cmd ............. |g:tgpg_gpg_cmd|
-        g:tgpg_gpg_md5_sum ......... |g:tgpg_gpg_md5_sum|
         g:tgpg_gpg_md5_check ....... |g:tgpg_gpg_md5_check|
+        g:tgpg_gpg_md5_sum ......... |g:tgpg_gpg_md5_sum|
         g:tgpg_options ............. |g:tgpg_options|
         g:tgpg_registers ........... |g:tgpg_registers|
         g:tgpgCachePW .............. |g:tgpgCachePW|
@@ -111,25 +110,24 @@ Contents~
         TGpgWrite_clearsign ........ |TGpgWrite_clearsign()|
 
 
-========================================================================
-plugin/tGpg.vim~
 
                                                     *g:tgpg_timeout*
 g:tgpg_timeout                 (default: 1800)
     Reset cached passwords after N seconds.
+    1800 ... 30 Minutes
 
                                                     *g:tgpg_gpg_cmd*
 g:tgpg_gpg_cmd                 (default: '/usr/bin/gpg')
     The gpg command. Should be a full filename.
 
+                                                    *g:tgpg_gpg_md5_check*
+g:tgpg_gpg_md5_check           (default: 'md5sum '. s:tgpg_gpg_cmd)
+    The command to calculate the md5 checksum.
+
                                                     *g:tgpg_gpg_md5_sum*
 g:tgpg_gpg_md5_sum             (default: '')
     The known md5 checksum of gpg binary.
     If empty, the binary's integrity won't be checked.
-
-                                                    *g:tgpg_gpg_md5_check*
-g:tgpg_gpg_md5_check           (default: 'md5sum '. g:tgpg_gpg_cmd)
-    The command to calculate the md5 checksum.
 
                                                     *g:tgpg_options*
 g:tgpg_options                 (default: {'verbosefile': '', 'verbose': 0,})
@@ -257,3 +255,5 @@ TGpgWrite(parms)
 TGpgWrite_clearsign(parms)
 
 
+
+vim:tw=78:fo=tcq2:isk=!-~,^*,^|,^":ts=8:ft=help:norl:

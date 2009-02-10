@@ -1,0 +1,21 @@
+* Install from GIT
+
+** runtimepath
+
+The easiest way would be to check out the repository and append the path 
+to your local copy to ''runtimepath''. You could then still disable 
+certain plugins, by setting the variable ''loaded_{PLUGIN_NAME}'' in 
+your vimrc file.
+
+
+** vimballs
+
+In the vimballs, subdirectory you'll find recipes for building vimballs. 
+You could then install those vimballs wherever you want. But ... those 
+recipes assume you have already installed the plugins. =8-O
+
+As an alternative, the ruby script ruby/vimball.rb can be used to create 
+and install vimballs without vim.
+
+
+% vi: ft=viki:tw=72:ts=4

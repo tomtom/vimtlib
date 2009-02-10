@@ -67,7 +67,6 @@ Suggested maps (to be set in ~/.vimrc): >
 ========================================================================
 Contents~
 
-    plugin/tselectfiles.vim
         g:tselectfiles_use_cache ............ |g:tselectfiles_use_cache|
         g:tselectfiles_no_cache_rx .......... |g:tselectfiles_no_cache_rx|
         g:tselectfiles_filter_rx ............ |g:tselectfiles_filter_rx|
@@ -84,8 +83,6 @@ Contents~
         :TSelectFilesInSubdirs .............. |:TSelectFilesInSubdirs|
 
 
-========================================================================
-plugin/tselectfiles.vim~
 
                                                     *g:tselectfiles_use_cache*
 g:tselectfiles_use_cache       (default: 1)
@@ -99,7 +96,9 @@ g:tselectfiles_no_cache_rx     (default: '')
 
                                                     *g:tselectfiles_filter_rx*
 g:tselectfiles_filter_rx       (default: '')
-    Retain only files matching this rx. (per window, per buffer, global)
+    Retain only files matching this regexp. (per window, per buffer, global)
+    Regexp |magic| must match the setting of |g:tlib_inputlist_match|.
+    Check: :echo tlib#Filter_{g:tlib_inputlist_match}#New().FilterRxPrefix()
 
                                                     *g:tselectfiles_part_subst*
 g:tselectfiles_part_subst      (default: {})
@@ -130,11 +129,12 @@ g:tselectfiles_world           (default: {)
 g:tselectfiles_suffixes        (default: printf('\(%s\)\$', join(map(split(&suffixes, ','), 'v:val'), '\|')))
 
                                                     *g:tselectfiles_hidden_rx*
-g:tselectfiles_hidden_rx       (default: '\V\(/.\|/CVS\|/.attic\|.svn\|'. g:tselectfiles_suffixes .'\)\(\[\\/]\|\$\)')
+g:tselectfiles_hidden_rx       (default: '\V\(/.\|/CVS/\|/.attic/\|/.svn/\|/vimfiles\(/\[^/]\+\)\{-}/cache/\|'. tlib#rx#Suffixes('V') .'\)')
+    Don't include files matching this regexp.
 
                                                     *g:tselectfiles_show_quickfix_list*
 g:tselectfiles_show_quickfix_list (default: 'TRagcw')
-    " TBD: cwindow doesn't currently work as expected
+    " TODO: cwindow doesn't currently work as expected
     TLet g:tselectfiles_show_quickfix_list = exists(':TRagcw') ? 'TRagcw' : 'cwindow'
     The command that is run to show the quickfix list after running grep.
 

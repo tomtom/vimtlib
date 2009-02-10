@@ -2,20 +2,33 @@
                     Author: Thomas Link, micathom at gmail com
 
 
-These functions provide a IMHO simpler alternative to vim's session 
-handling. Filenames are stored as full names, which helps to avoid some 
-problems, e.g. with autochangedir-like settings.
+These functions provide an alternative to vim's session handling to 
+which I never got accustomed. Filenames are stored as full names, which 
+helps to avoid some problems, e.g. with autochangedir-like settings.
 
 Other than vim's own |:mksession|, these commands will only restore 
 the buffer list and the window layout. This script relies on filetype 
 plugins etc. to re-establish the original keymaps, buffer-local 
 settings etc. This may or may not be what you want.
 
-Currently, the following won't be restored:
-- Variables, options (but this can be configured)
-- Tab pages
+Currently, the following won't be restored automatically:
+
+    - Variables, options (you can select to set certain 
+      variables/options in |g:tsession_save_global| and related 
+      parameters)
+    - Tab pages (tab pages will be ignored; don't use this plugin if you 
+      use tabs)
 
 The session info is stored in: &runtimepath[0]/cache/sessions
+
+If a file SESSION_NAME.vim exists in this directory, it is loaded after 
+setting a session. If a variable g:tsession_begin_{SESSION_NAME} exists, 
+it is |:execute|d afterwards.
+
+If a variable g:tsession_end_{SESSION_NAME} exists, it is |:execute|d 
+before switching to another session.
+
+The pseudo session "NONE" ends the current session.
 
 
 -----------------------------------------------------------------------
@@ -32,34 +45,65 @@ installed.
 This script requires tlib (vimscript #1863) to be installed.
 
 
-------------------------------------------------------------------------
+========================================================================
 Contents~
-    plugin/tsession.vim
-        g:tsession_save_global ........ |g:tsession_save_global|
-        g:tsession_save_buf ........... |g:tsession_save_buf|
-        g:tsession_save_win ........... |g:tsession_save_win|
-        g:tsession_current ............ |g:tsession_current|
-        g:tsession_register_special ... |g:tsession_register_special|
-        g:tsession_swap ............... |g:tsession_swap|
-        :SessionComplete .............. |:TSessionSave|
-        :SessionComplete .............. |:TSessionLoad|
-        :TSessionBrowse ............... |:TSessionBrowse|
+
+        g:tsession_dir ................. |g:tsession_dir|
+        g:tsession_suffix .............. |g:tsession_suffix|
+        g:tsession_save_global ......... |g:tsession_save_global|
+        g:tsession_save_global_extra ... |g:tsession_save_global_extra|
+        g:tsession_save_buf ............ |g:tsession_save_buf|
+        g:tsession_save_buf_extra ...... |g:tsession_save_buf_extra|
+        g:tsession_save_win ............ |g:tsession_save_win|
+        g:tsession_save_win_extra ...... |g:tsession_save_win_extra|
+        g:tsession_current ............. |g:tsession_current|
+        g:tsession_register_special .... |g:tsession_register_special|
+        g:tsession_swap ................ |g:tsession_swap|
+        g:tsession_world ............... |g:tsession_world|
+        :TSession ...................... |:TSession|
 
 
-------------------------------------------------------------------------
-plugin/tsession.vim~
+
+                                                    *g:tsession_dir*
+g:tsession_dir                 (default: '')
+    Where to save sessions. By default, the data will be saved in 
+    |g:tlib_cache|.'/sessions'.
+    If a session name starts with an underscore ("_"), it will be saved in 
+    the b:tsession_dir directory -- if defined. Otherwise the global/cache 
+    directory will be used.
+    Global or buffer local.
+
+                                                    *g:tsession_suffix*
+g:tsession_suffix              (default: '.tsess')
+    The suffix for sessions files.
+    Currently, it's only function is to prevent name clashes with regular 
+    files.
 
                                                     *g:tsession_save_global*
-g:tsession_save_global         (default: ['&co', '&lines', '&go', '&fdc', '&fdl', '&fen'])
+g:tsession_save_global         (default: ['&co', '&lines', '&go', '&fdc', '&fdl', '&fen', '&guiheadroom'])
     The global options to store with session data.
+
+                                                    *g:tsession_save_global_extra*
+g:tsession_save_global_extra   (default: [)
+    A list of expressions that create commands to restore other global settings.
 
                                                     *g:tsession_save_buf*
 g:tsession_save_buf            (default: [])
     The buffer-local options to store with session data.
 
+                                                    *g:tsession_save_buf_extra*
+g:tsession_save_buf_extra      (default: [])
+    A list of expressions that create commands to restore other 
+    buffer-local settings.
+
                                                     *g:tsession_save_win*
-g:tsession_save_win            (default: ['&fdc', '&fdl', '&fen'])
+g:tsession_save_win            (default: ['&fdc', '&fdl', '&fen', '&scb'])
     The window-local options to store with session data.
+
+                                                    *g:tsession_save_win_extra*
+g:tsession_save_win_extra      (default: [])
+    A list of expressions that create commands to restore other 
+    window-local settings.
 
                                                     *g:tsession_current*
 g:tsession_current             (default: 'vim')
@@ -71,19 +115,33 @@ g:tsession_register_special    (default: {'buftype': '', 'unlisted': 0, 'unloade
 g:tsession_swap                (default: 0)
     When loading a session, hide buffers not in the current session.
 
-                                                    *:TSessionSave*
-TSessionSave [SESSION]
+                                                    *g:tsession_world*
+g:tsession_world               (default: {)
 
-                                                    *:TSessionLoad*
+
+TSessionSave [SESSION]
+    See also |tsession#Save|.
+    EXAMPLES: >
+      TSessionSave example
+<
+
+
 TSessionLoad[!] [SESSION]
     With !, buffers not registered in the session will be deleted if 
     |g:tsession_swap| is false. If g:tsession_swap is true, the meaning of 
     ! is inverted.
+    See also |tsession#Load|.
+    EXAMPLES: >
+      TSessionLoad example
+<
 
-                                                    *:TSessionBrowse*
-TSessionBrowse[!]
+                                                    *:TSession*
+TSession[!]
     With !, buffers not registered in the session will be deleted if 
     |g:tsession_swap| is false. If g:tsession_swap is true, the meaning of 
     ! is inverted.
+    See also |tsession#Browse|.
 
 
+
+vim:tw=78:fo=tcq2:isk=!-~,^*,^|,^":ts=8:ft=help:norl:

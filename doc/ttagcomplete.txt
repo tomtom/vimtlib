@@ -1,14 +1,19 @@
 *ttagcomplete.txt*  Context-sensitive tags-based completion and code skeletons
                     Author: Thomas Link, micathom at gmail com
 
-Basically, this plugin provides a framework for context-sensitive 
+In theory, this plugin provides a framework for context-sensitive 
 tags-based completion and code skeletons (requires tSkeleton vimscript 
-#1160). I.e. the completion function check the context and filter the 
-available tags accordingly.
+#1160). I.e. the completion function checks the context and filters the 
+available tags accordingly. You should thus get only those tags included 
+in the list that are actually useful in a given context (eg because the 
+are valid methods of a certain class).
 
 In practice, the context sensitivity is currently only implemented for 
 Java and requires a tags file for the JDK sources to be created (see the 
-notes on |tlib#tag#Retrieve()| for details).
+notes on |tlib#tag#Retrieve()| for details). It also makes certain 
+assumption about how variable declarations look like, e.g. the 
+class/type name should be in the same line as the variable name; class 
+names start with an upper-case letter etc.
 
 It shouldn't be too difficult to adapt this for other statically typed 
 languages with formal variable declarations. As the source code isn't 
@@ -49,16 +54,14 @@ Suggested setup for java (best set in ~/vimfiles/after/ftplugin/java.vim): >
     endif
 
 
-------------------------------------------------------------------------
+========================================================================
 Contents~
 
-    plugin/ttagcomplete.vim
         g:ttagcomplete_constraints ......... |g:ttagcomplete_constraints|
         g:ttagecho_use_extra ............... |g:ttagecho_use_extra|
         g:ttagecho_min_chars ............... |g:ttagecho_min_chars|
         :TTagCompleteOn .................... |:TTagCompleteOn|
         :TTagCompleteOff ................... |:TTagCompleteOff|
-    autoload/ttagcomplete.vim
         ttagcomplete#On .................... |ttagcomplete#On()|
         ttagcomplete#Off ................... |ttagcomplete#Off()|
         ttagcomplete#CompleteSkeletons ..... |ttagcomplete#CompleteSkeletons()|
@@ -68,12 +71,11 @@ Contents~
         ttagcomplete#FindJavaClassInTags ... |ttagcomplete#FindJavaClassInTags()|
 
 
-------------------------------------------------------------------------
-plugin/ttagcomplete.vim~
 
                                                     *g:ttagcomplete_constraints*
 g:ttagcomplete_constraints     (default: {})
-    A dictionnary of constraints that tags have to satisfy.
+    A dictionnary of constraints that tags have to satisfy. See notes on 
+    |tlib#tag#Collect()|.
 
                                                     *g:ttagecho_use_extra*
 g:ttagecho_use_extra           (default: 1)
@@ -92,31 +94,31 @@ g:ttagecho_min_chars           (default: 1)
 :TTagCompleteOff
 
 
-------------------------------------------------------------------------
-autoload/ttagcomplete.vim~
 
                                                     *ttagcomplete#On()*
-ttagcomplete#On
+ttagcomplete#On(...)
     function! ttagcomplete#On(?option="omni")
     If option is "complete", set 'completefunc' instead of 'omnifunc' (the 
     default).
 
                                                     *ttagcomplete#Off()*
-ttagcomplete#Off
+ttagcomplete#Off(...)
 
                                                     *ttagcomplete#CompleteSkeletons()*
-ttagcomplete#CompleteSkeletons
+ttagcomplete#CompleteSkeletons(...)
 
                                                     *ttagcomplete#Complete()*
-ttagcomplete#Complete
+ttagcomplete#Complete(findstart, base)
 
                                                     *ttagcomplete#Java()*
-ttagcomplete#Java
+ttagcomplete#Java(constraints, base, context)
 
                                                     *ttagcomplete#FindJavaClass()*
-ttagcomplete#FindJavaClass
+ttagcomplete#FindJavaClass(name)
 
                                                     *ttagcomplete#FindJavaClassInTags()*
-ttagcomplete#FindJavaClassInTags
+ttagcomplete#FindJavaClassInTags(name)
 
 
+
+vim:tw=78:fo=tcq2:isk=!-~,^*,^|,^":ts=8:ft=help:norl:

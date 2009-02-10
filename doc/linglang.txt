@@ -1,9 +1,11 @@
 *linglang.txt*      Perform actions on basis of the current line's language
                     Author: Thomas Link, micathom at gmail com
 
-The command |:Linglang| installs an autocommand that checks the 
-current line's language. If the language changes, a user-defined 
-action (e.g., set spelllang) will be executed.
+The command |:Linglang| installs a buffer-local autocommand that checks 
+the current line's language. I.e. enabling linglang for the current 
+buffer won't affect other buffers. If the language of the line under the 
+cursor changes, a user-defined action (e.g., set spelllang) will be 
+executed.
 
 :Linglang[!] [LANGS ...]
     Toggle linglang support for the current buffer.
@@ -44,16 +46,12 @@ This script requires hookcursormoved (vimscript #2037) to be installed.
 ========================================================================
 Contents~
 
-    plugin/linglang.vim
         g:linglang_actions ...... |g:linglang_actions|
         :Linglang ............... |:Linglang|
-    autoload/linglang.vim
         linglang#Linglang ....... |linglang#Linglang()|
         linglang#Set ............ |linglang#Set()|
 
 
-========================================================================
-plugin/linglang.vim~
 
                                                     *g:linglang_actions*
 g:linglang_actions
@@ -65,8 +63,6 @@ g:linglang_actions
     With [!], suppress message.
 
 
-========================================================================
-autoload/linglang.vim~
 
                                                     *linglang#Linglang()*
 linglang#Linglang(...)

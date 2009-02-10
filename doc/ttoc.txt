@@ -84,7 +84,6 @@ Key maps in the list view:
 ========================================================================
 Contents~
 
-    plugin/ttoc.vim
         g:ttoc_markers ......... |g:ttoc_markers|
         g:ttoc_rx .............. |g:ttoc_rx|
         g:ttoc_rx_bib .......... |g:ttoc_rx_bib|
@@ -114,8 +113,6 @@ Contents~
         :Ttocbg ................ |:Ttocbg|
 
 
-========================================================================
-plugin/ttoc.vim~
 
                                                     *g:ttoc_markers*
 g:ttoc_markers                 (default: 1)

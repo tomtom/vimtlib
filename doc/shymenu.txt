@@ -38,7 +38,6 @@ please make sure, you have the current version of vimball
 ========================================================================
 Contents~
 
-    plugin/shymenu.vim
         g:shymenu_emenu ............... |g:shymenu_emenu|
         g:shymenu_termalt ............. |g:shymenu_termalt|
         g:shymenu_wildcharm ........... |g:shymenu_wildcharm|
@@ -50,8 +49,6 @@ Contents~
         ShyMenu ....................... |ShyMenu()|
 
 
-========================================================================
-plugin/shymenu.vim~
 
                                                     *g:shymenu_emenu*
 g:shymenu_emenu                (default: !has('gui_running'))

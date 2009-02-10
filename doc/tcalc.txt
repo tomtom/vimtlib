@@ -28,7 +28,7 @@ Input:
         Vector   :: http://www.ruby-doc.org/core/classes/Vector.html
         Math     :: http://www.ruby-doc.org/core/classes/Math.html
     - #N (pull the item at position N to the top)
-    - Commands: COMMAND[COUNT][,ARGUMENT]
+    - Call words: WORD[COUNT][@ARRITY][,ARGUMENT]
         - If COUNT is "#", the top element will be used.
     - Enter, escape => exit
 
@@ -362,9 +362,20 @@ Arrays:
         (e.g. "plot,a").
         NOTE: I admit there is some room for improvements.
         Example: >
-            0 2 PI * 0.1 Sequence (( a: ) a sin a cos 0 ) mmap 10 10 plot
-            => Some sort of sinus + cosinus plot on a 10x10 ASCII canvas. The 
-            "0" after "sin" will make tcalc plot the x-axis too.
+            0 2 PI * 0.1 seq (( a: ) a sin a cos 0 ) mmap 10 10 plot
+            =>
+                  1.00: ****   1356890                       ***
+                  0.78:    **80      134                   **   
+                  0.56:    57 **        6                **     
+                  0.33:   34    *        79            **       
+                  0.11: 02+++++++*+++++++++0++++++++++*+++++++++
+                 -0.11:           **        23      ***       01
+                 -0.33:            ***       456   **        99 
+                 -0.56:              **        78**        68   
+                 -0.78:                **      **02      345    
+                 -1.00:                  *******   356801       
+                   .    +      +     +     +     +      +     ++
+                   .    0      1     2     3     4      5     66
 <  
     ARRAY ELEMENT array_push
     ARRAY array_pop
@@ -439,22 +450,18 @@ Simple-minded primes generator: >
     ;
 
 
-------------------------------------------------------------------------
+========================================================================
 Contents~
 
-    plugin/tcalc.vim
         g:tcalc_initialize ... |g:tcalc_initialize|
         g:tcalc_lines ........ |g:tcalc_lines|
         g:tcalc_dir .......... |g:tcalc_dir|
         :TCalc ............... |:TCalc|
-    autoload/tcalc.vim
         tcalc#Calculator ..... |tcalc#Calculator()|
         tcalc#Eval ........... |tcalc#Eval()|
         tcalc#Complete ....... |tcalc#Complete()|
 
 
-------------------------------------------------------------------------
-plugin/tcalc.vim~
 
                                                     *g:tcalc_initialize*
 g:tcalc_initialize
@@ -474,8 +481,6 @@ TCalc[!]
     With !, reset stack & input queue.
 
 
-------------------------------------------------------------------------
-autoload/tcalc.vim~
 
                                                     *tcalc#Calculator()*
 tcalc#Calculator(reset, initial_args)
@@ -487,3 +492,5 @@ tcalc#Eval(initial_args)
 tcalc#Complete(ArgLead, CmdLine, CursorPos)
 
 
+
+vim:tw=78:fo=tcq2:isk=!-~,^*,^|,^":ts=8:ft=help:norl:

@@ -24,33 +24,35 @@ This script requires hookcursormoved (vimscript #2037) and tlib
 (vimscript #1863) to be installed.
 
 
-------------------------------------------------------------------------
+========================================================================
 Contents~
 
-    plugin/setsyntax.vim
         g:setsyntax_options ...... |g:setsyntax_options|
         :SetSyntax ............... |:SetSyntax|
-    autoload/setsyntax.vim
         setsyntax#Initialize ..... |setsyntax#Initialize()|
         setsyntax#SetSyntax ...... |setsyntax#SetSyntax()|
         setsyntax#Set ............ |setsyntax#Set()|
 
 
-------------------------------------------------------------------------
-plugin/setsyntax.vim~
 
                                                     *g:setsyntax_options*
-g:setsyntax_options            (default: {})
+g:setsyntax_options
     This variable is a dictionary of dictionaries of dictionaries.
     {FILETYPE => {SYNREGEXP => {OPTION/VARIABLE: VALUE}}}
+    Be aware that VALUE is an expression that will be passed through 
+    |eval()|.
     
     Example: >
       let g:setsyntax_options['tex'] = {'^texMathZone': {'&l:tw': 0}}
 <
 
                                                     *:SetSyntax*
-:SetSyntax SYNTAX,... VAR VALUE ... or :SetSyntax /REGEXP/ VAR VALUE ...
-    Set syntax-specific options for the current buffer. When using a 
+:SetSyntax SYNTAX,... VAR VALUE ...
+    Alternative forms: >
+      :SetSyntax /REGEXP/ VAR VALUE ...
+      :SetSyntax SYNTAX1,SYNTAX2,... VAR=VALUE ...
+      :SetSyntax /REGEXP/ VAR=VALUE ...
+<    Set syntax-specific options for the current buffer. When using a 
     REGEXP, the syntax names have to be already defined, i.e. you can use 
     the REGEXP only after the syntax file was loaded.
     
@@ -60,15 +62,19 @@ g:setsyntax_options            (default: {})
 <    but instead use: >
       SetSyntax /^texMath/ &l:spelllang ""
 <    
+    If VAR is "+", evaluate the expression when entering a syntax 
+    regions, when VAR is "-", evaluate the expression when leaving a 
+    syntax.
+    Example: >
+      SetSyntax /^texMath/ + echo\ "Enter\ Math" - echo\ "Leave\ Math"
+<    
     VALUE actually is an expression that will be evaluated when setting 
     the variable.
     
-    NOTE: Blanks in VALUE must be escaped with a backslash. See the help 
-    page on <f-args> for details.
+    NOTE: Blanks and backslashes in VALUE must be escaped with a 
+    backslash. See the help page on <f-args> for details.
 
 
-------------------------------------------------------------------------
-autoload/setsyntax.vim~
 
                                                     *setsyntax#Initialize()*
 setsyntax#Initialize()
@@ -82,3 +88,5 @@ setsyntax#SetSyntax(syntax_names, VAR1, VALUE1, ...)
 setsyntax#Set(mode, ?condition_name=b:hookcursormoved_syntax)
 
 
+
+vim:tw=78:fo=tcq2:isk=!-~,^*,^|,^":ts=8:ft=help:norl:

@@ -63,26 +63,40 @@ Kinds~
 
 Certain commands take a "kind" as argument. A "kind" in the context of 
 trag means a way how the expression is interpreted and (in the future) 
-how the lines are scanned.
+how the lines are scanned. The meaning of the letter is specific for a 
+certain filetype. In general, the following list should serve as a 
+common base:
 
-These kinds are:
     c ... class definitions
     d ... function/method definitions
-    f ... function call/definition
+    f ... function calls
     i ... ignored lines, comments etc.
     l ... variable definition
     m ... module definitions
     r ... variable assignment (e.g. "= WORD")
     w ... find as word
+    x ... subclasses
 
     fuzzy ... use a typo-tolerant regexp
+    todo  ... TODO markers etc.
 
 Modifiers:
     # ... escape a literal expression as regexp (place it somewhere in the 
           kinds argument)
-    ! ... negate -- skip "bad" lines
-          Note: If you use negations, you should also give a positive kind
-          (use . as fallback).
+
+Negation: -, ! ... negate/skip uninteresting lines.
+
+Positive (must match) and negative (must not match) patterns are joined 
+with "-" or "!". Positive and negative conditions must both be 
+satisfied. The positive regexp determines the speed of the operation. 
+I.e. trag first searches for matching lines and only then decides 
+whether to skip "bad" ones.
+
+    POSITIVE1,POSITIVE2a.POSITIVE2b...-NEGATIVE...
+
+Note: If you use negations, you should also give a positive kind (use . 
+as fallback). The use of negations causes trag to use it's own grep 
+procedure which is slightly slower than the standard vimgrep command.
 
 EXPERIMENTAL: Kinds can be joined as comma-separated list (OR) of 
 period-seprated list (CONTAIN). This may be unintuitive but that's the 
@@ -96,21 +110,13 @@ effect that the current solution is less well tested. If you stumble
 over wrong search result, please tell me about the problem. Most likely 
 it's a problem with the regexp not being properly updated.
 
-Positive (must match) and negative (must not match) patterns are joined 
-with !. Positive and negative conditions must both be satisfied. The 
-positive regexp determines the speed of the operation. I.e. trag first 
-searches for matching lines and only then decides whether to skip "bad" 
-ones.
-
-    POSITIVE1,POSITIVE2a.POSITIVE2b...!NEGATIVE...
-
 Example:
     i   ... comment/ignored text that CONTAINs a word
     i.w ... comment/ignored text that CONTAINs a word
     l,r ... a word either on the left OR right hand side of an 
             assignment
-    w!i ... word that is NOT contained in a comment
-    w!i,l,r ... word but NOT in assignments (left OR right hand) OR in 
+    w-i ... word that is NOT contained in a comment
+    w-i,l,r ... word but NOT in assignments (left OR right hand) OR in 
             comments
 
 More examples:
@@ -159,25 +165,31 @@ See |trag#Grep()| for details of how to use this.
 ========================================================================
 Contents~
 
-    plugin/trag.vim
         g:trag_search_mode ....... |g:trag_search_mode|
         g:trag_get_files ......... |g:trag_get_files|
+        g:trag_get_files_java .... |g:trag_get_files_java|
+        g:trag_get_files_c ....... |g:trag_get_files_c|
+        g:trag_get_files_cpp ..... |g:trag_get_files_cpp|
         :TRagDefKind ............. |:TRagDefKind|
         :TRagKeyword ............. |:TRagKeyword|
         :TRagDefFiletype ......... |:TRagDefFiletype|
         :TRag .................... |:TRag|
+        :Trag .................... |:Trag|
         :TRagfile ................ |:TRagfile|
+        :Tragfile ................ |:Tragfile|
         :TRagcw .................. |:TRagcw|
+        :Tragcw .................. |:Tragcw|
         :TRagsearch .............. |:TRagsearch|
+        :Tragsearch .............. |:Tragsearch|
         :TRaggrep ................ |:TRaggrep|
+        :Traggrep ................ |:Traggrep|
         g:trag_files ............. |g:trag_files|
         g:trag_glob .............. |g:trag_glob|
-        g:trag_proj .............. |g:trag_proj|
-        g:trag_proj_ruby ......... |g:trag_proj_ruby|
+        g:trag_project ........... |g:trag_project|
+        g:trag_project_ruby ...... |g:trag_project_ruby|
         :TRagsetfiles ............ |:TRagsetfiles|
         :TRagaddfiles ............ |:TRagaddfiles|
         :TRagclearfiles .......... |:TRagclearfiles|
-    autoload/trag.vim
         trag#ClearFiles .......... |trag#ClearFiles()|
         trag#AddFiles ............ |trag#AddFiles()|
         trag#SetFiles ............ |trag#SetFiles()|
@@ -189,14 +201,15 @@ Contents~
         trag#AgentPreviewQFE ..... |trag#AgentPreviewQFE()|
         trag#AgentGotoQFE ........ |trag#AgentGotoQFE()|
         trag#AgentWithSelected ... |trag#AgentWithSelected()|
+        trag#RunCmdOnSelected .... |trag#RunCmdOnSelected()|
         trag#AgentSplitBuffer .... |trag#AgentSplitBuffer()|
         trag#AgentTabBuffer ...... |trag#AgentTabBuffer()|
         trag#AgentVSplitBuffer ... |trag#AgentVSplitBuffer()|
+        trag#AgentRefactor ....... |trag#AgentRefactor()|
         trag#CWord ............... |trag#CWord()|
+        trag#RefactorRename ...... |trag#RefactorRename()|
 
 
-========================================================================
-plugin/trag.vim~
 
                                                     *g:trag_search_mode*
 g:trag_search_mode             (default: 2)
@@ -212,6 +225,15 @@ g:trag_search_mode             (default: 2)
 g:trag_get_files               (default: 'split(glob("*"), "\n")')
     If no project files are defined, evaluate this expression as 
     fallback-strategy.
+
+                                                    *g:trag_get_files_java*
+g:trag_get_files_java          (default: 'split(glob("**/*.java"), "\n")')
+
+                                                    *g:trag_get_files_c*
+g:trag_get_files_c             (default: 'split(glob("**/*.[ch]"), "\n")')
+
+                                                    *g:trag_get_files_cpp*
+g:trag_get_files_cpp           (default: 'split(glob("**/*.[ch]"), "\n")')
 
                                                     *:TRagDefKind*
 :TRagDefKind KIND FILETYPE /REGEXP_FORMAT/
@@ -237,30 +259,45 @@ TRagDefFiletype FILETYPE EXTENSION ... FILENAME ...
 <
 
                                                     *:TRag*
-:TRag[!] KIND REGEXP
+:TRag[!] KIND [REGEXP]
     Run |:TRagsearch| and instantly display the result with |:TRagcw|.
     See |trag#Grep()| for help on the arguments.
+    If the kind rx doesn't contain %s (e.g. todo), you can skip the 
+    regexp.
+    
     Examples: >
-      " Find any matches
-      TRag . foo
+        " Find any matches
+        TRag . foo
     
-      " Find as word
-      TRag w foo
+        " Find variable definitions (word on the left-hand): foo = 1
+        TRag l foo
     
-      " Find variable definitions like: foo = 1
-      TRag v foo
+        " Find variable __or__ function/method definitions
+        TRag d,l foo
     
-      " Find function calls like: foo(a, b)
-      TRag f foo
+        " Find function calls like: foo(a, b)
+        TRag f foo
+    
+        " Find TODO markers
+        TRag todo
 <
+
+                                                    *:Trag*
+:Trag
 
                                                     *:TRagfile*
 :TRagfile
     Edit a file registered in your tag files.
 
+                                                    *:Tragfile*
+:Tragfile
+
                                                     *:TRagcw*
 :TRagcw
     Display a quick fix list using |tlib#input#ListD()|.
+
+                                                    *:Tragcw*
+:Tragcw
 
                                                     *:TRagsearch*
 :TRagsearch[!] KIND REGEXP
@@ -274,15 +311,20 @@ TRagDefFiletype FILETYPE EXTENSION ... FILENAME ...
     through your sources.
     See |trag#Grep()| for help on the arguments.
 
+                                                    *:Tragsearch*
+:Tragsearch
+
                                                     *:TRaggrep*
-:TRaggrep KIND REGEXP GLOBPATTERN
-    A 80%-replacement for grep.
+:TRaggrep REGEXP [GLOBPATTERN]
+    A 99%-replacement for grep. The glob pattern is optional.
     
     Example: >
-      :TRaggrep . foo *.vim
-<    
-    Note: In comparison with |:vimgrep| or |:grep|, this comand still 
-    takes an extra |trag-kinds| argument.
+      :TRaggrep foo *.vim
+      :TRaggrep bar
+<
+
+                                                    *:Traggrep*
+:Traggrep
 
 
 The following variables provide alternatives to collecting 
@@ -301,13 +343,13 @@ g:trag_glob                    (default: '')
     A glob pattern -- this should be an absolute path and may contain ** 
     (see |glob()| and |wildcards|). Can be buffer local.
 
-                                                    *g:trag_proj*
-g:trag_proj                    (default: '')
+                                                    *g:trag_project*
+g:trag_project                 (default: '')
     The name of a file containing the projects file list. This file could be 
     generated via make. Can be buffer local.
 
-                                                    *g:trag_proj_ruby*
-g:trag_proj_ruby               (default: 'Manifest.txt')
+                                                    *g:trag_project_ruby*
+g:trag_project_ruby            (default: 'Manifest.txt')
     Filetype-specific project files.
 
                                                     *:TRagsetfiles*
@@ -332,8 +374,6 @@ g:trag_proj_ruby               (default: 'Manifest.txt')
     Remove any files from the project list.
 
 
-========================================================================
-autoload/trag.vim~
 
                                                     *trag#ClearFiles()*
 trag#ClearFiles()
@@ -346,7 +386,7 @@ trag#SetFiles(?files=[])
 
                                                     *trag#Edit()*
 trag#Edit()
-    Edit a file from the project catalog. See |g:trag_proj| and 
+    Edit a file from the project catalog. See |g:trag_project| and 
     |:TRagfile|.
 
                                                     *trag#Grep()*
@@ -389,6 +429,9 @@ trag#AgentGotoQFE(world, selected)
                                                     *trag#AgentWithSelected()*
 trag#AgentWithSelected(world, selected)
 
+                                                    *trag#RunCmdOnSelected()*
+trag#RunCmdOnSelected(world, selected, cmd)
+
                                                     *trag#AgentSplitBuffer()*
 trag#AgentSplitBuffer(world, selected)
 
@@ -398,7 +441,17 @@ trag#AgentTabBuffer(world, selected)
                                                     *trag#AgentVSplitBuffer()*
 trag#AgentVSplitBuffer(world, selected)
 
+                                                    *trag#AgentRefactor()*
+trag#AgentRefactor(world, selected)
+    Invoke an refactor command.
+    Currently only one command is supported: rename
+
                                                     *trag#CWord()*
 trag#CWord()
 
+                                                    *trag#RefactorRename()*
+trag#RefactorRename(world, selected)
 
+
+
+vim:tw=78:fo=tcq2:isk=!-~,^*,^|,^":ts=8:ft=help:norl:

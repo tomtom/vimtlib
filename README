@@ -27,7 +27,7 @@
     #A ttoc             -- Display a "table of contents"
     #A Viki             -- Some kind of personal wiki for Vim
     #B Eval\Selection   -- evaluate selected vim/ruby/... code
-    #B localvariables   -- Set/let per-file-variables à la Emacs
+    #B localvariables   -- Set/let per-file-variables Ã  la Emacs
     #B tmboxbrowser     -- A mbox browser
     #B ttagcomplete     -- Context-sensitive tag completion
     #C tEchoPair        -- Display matching parenthesis in the echo area
@@ -50,5 +50,4 @@ Legend:
     #E ... Not in use
 
 
-% 2009-02-07; @Last Change: 2009-02-08.
 % vi: ft=viki:tw=0:ts=4

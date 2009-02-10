@@ -38,8 +38,8 @@ Suggested maps (to be set in ~/.vimrc): >
 ========================================================================
 Contents~
 
-    plugin/ttagecho.vim
         g:ttagecho_parentheses_patterns ... |g:ttagecho_parentheses_patterns|
+        g:ttagecho_char_rx ................ |g:ttagecho_char_rx|
         g:ttagecho_balloon_patterns ....... |g:ttagecho_balloon_patterns|
         g:ttagecho_restore_showmode ....... |g:ttagecho_restore_showmode|
         g:ttagecho_balloon_limit .......... |g:ttagecho_balloon_limit|
@@ -49,7 +49,6 @@ Contents~
         :TTagechoAll ...................... |:TTagechoAll|
         :TTagechoWord ..................... |:TTagechoWord|
         :TTagechoWords .................... |:TTagechoWords|
-    autoload/ttagecho.vim
         ttagecho#Expr ..................... |ttagecho#Expr()|
         ttagecho#Echo ..................... |ttagecho#Echo()|
         ttagecho#EchoWord ................. |ttagecho#EchoWord()|
@@ -58,13 +57,16 @@ Contents~
         ttagecho#Balloon .................. |ttagecho#Balloon()|
 
 
-========================================================================
-plugin/ttagecho.vim~
 
                                                     *g:ttagecho_parentheses_patterns*
 g:ttagecho_parentheses_patterns (default: [])
     If hookcursormoved (vimscript #) is installed, display tag 
     information when moving over parantheses for these filetypes.
+
+                                                    *g:ttagecho_char_rx*
+g:ttagecho_char_rx             (default: {})
+    Regexps to match keyword characters (in case you don't want to 
+    change iskeyword.
 
                                                     *g:ttagecho_balloon_patterns*
 g:ttagecho_balloon_patterns    (default: g:ttagecho_parentheses_patterns)
@@ -112,8 +114,6 @@ TTagechoWords[!]
     Show all matches for the word under cursor.
 
 
-========================================================================
-autoload/ttagecho.vim~
 
                                                     *ttagecho#Expr()*
 ttagecho#Expr(rx, ?many_lines=0, ?bang=0, ?compact=0)

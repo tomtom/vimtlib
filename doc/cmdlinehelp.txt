@@ -29,7 +29,6 @@ please make sure, you have the current version of vimball (vimscript
 ========================================================================
 Contents~
 
-    plugin/cmdlinehelp.vim
         g:cmdlinehelpMapView ..... |g:cmdlinehelpMapView|
         g:cmdlinehelpMapDown ..... |g:cmdlinehelpMapDown|
         g:cmdlinehelpMapUp ....... |g:cmdlinehelpMapUp|
@@ -42,10 +41,10 @@ Contents~
         CmdLineHelpBuffer ........ |CmdLineHelpBuffer()|
         CmdLineHelpDown .......... |CmdLineHelpDown()|
         CmdLineHelpUp ............ |CmdLineHelpUp()|
+        c_<esc> .................. |c_<esc>|
+        c_<c-c> .................. |c_<c-c>|
 
 
-========================================================================
-plugin/cmdlinehelp.vim~
 
 
 NOTE:
@@ -109,6 +108,12 @@ CmdLineHelpDown()
 
                                                     *CmdLineHelpUp()*
 CmdLineHelpUp()
+
+                                                    *c_<esc>*
+c_<esc> ... <c-c><c-w>z
+
+                                                    *c_<c-c>*
+c_<c-c> ... <c-c><c-w>z
 
 
 

@@ -42,7 +42,6 @@ Suggested maps (to be set in ~/.vimrc): >
 ========================================================================
 Contents~
 
-    plugin/tmru.vim
         g:tmruSize ................ |g:tmruSize|
         g:tmruMenu ................ |g:tmruMenu|
         g:tmruMenuSize ............ |g:tmruMenuSize|
@@ -53,8 +52,6 @@ Contents~
         :TRecentlyUsedFilesEdit ... |:TRecentlyUsedFilesEdit|
 
 
-========================================================================
-plugin/tmru.vim~
 
                                                     *g:tmruSize*
 g:tmruSize                     (default: 50)

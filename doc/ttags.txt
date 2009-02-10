@@ -38,10 +38,9 @@ Suggested maps (to be set in ~/.vimrc): >
 You can use :echo keys(ttags#Kinds())<cr> to find out which kinds are defined.
 
 
-------------------------------------------------------------------------
+========================================================================
 Contents~
 
-    plugin/ttags.vim
         g:ttags_kinds ............ |g:ttags_kinds|
         g:ttags_name_rx .......... |g:ttags_name_rx|
         g:ttags_filename_rx ...... |g:ttags_filename_rx|
@@ -53,7 +52,6 @@ Contents~
         g:ttags_world ............ |g:ttags_world|
         :TTags ................... |:TTags|
         :TTagselect .............. |:TTagselect|
-    autoload/ttags.vim
         ttags#Kinds .............. |ttags#Kinds()|
         ttags#Highlight .......... |ttags#Highlight()|
         ttags#List ............... |ttags#List()|
@@ -65,8 +63,6 @@ Contents~
         ttags#RewriteCygwinTag ... |ttags#RewriteCygwinTag()|
 
 
-------------------------------------------------------------------------
-plugin/ttags.vim~
 
                                                     *g:ttags_kinds*
 g:ttags_kinds                  (default: '')
@@ -124,39 +120,39 @@ TTagselect[!] kind:KIND FIELD:REGEXP ...
       TTagselect name:bar class:Foo
 
 
-------------------------------------------------------------------------
-autoload/ttags.vim~
 
                                                     *ttags#Kinds()*
-ttags#Kinds
+ttags#Kinds(...)
 
                                                     *ttags#Highlight()*
-ttags#Highlight
+ttags#Highlight(tags)
 
                                                     *ttags#List()*
-ttags#List
+ttags#List(use_extra, ?kind='', ?rx='', ?file_rx='')
     Calls |ttags#SelectTags()|.
 
                                                     *ttags#Select()*
-ttags#Select
+ttags#Select(use_extra, keyargs_as_string)
     Calls |ttags#SelectTags()|.
 
                                                     *ttags#SelectTags()*
-ttags#SelectTags
+ttags#SelectTags(use_extra, constraints)
     Arguments:
       use_extra: Use extra tags (see |g:tlib_tags_extra|).
       constraints: A dictionary of fields and corresponding regexps
 
                                                     *ttags#PreviewTag()*
-ttags#PreviewTag
+ttags#PreviewTag(world, selected)
 
                                                     *ttags#GotoTag()*
-ttags#GotoTag
+ttags#GotoTag(world, selected)
 
                                                     *ttags#InsertTemplate()*
-ttags#InsertTemplate
+ttags#InsertTemplate(world, selected)
 
                                                     *ttags#RewriteCygwinTag()*
-ttags#RewriteCygwinTag
+ttags#RewriteCygwinTag(filename)
 
 
+
+vim:tw=78:fo=tcq2:isk=!-~,^*,^|,^":ts=8:ft=help:norl:
