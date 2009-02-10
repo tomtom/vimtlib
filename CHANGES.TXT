@@ -1,4 +1,4 @@
-2009-02-08  Thomas Link (micathom at gmail com)
+2009-02-08  Tom Link (micathom at gmail com)
 	* 07tassert.vim (s:GetSNR): Make sure backslashes match against 
 	slashes.
 
