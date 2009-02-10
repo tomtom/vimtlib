@@ -7,6 +7,13 @@
 #
 # This script creates and installs vimballs without vim.
 #
+# Before actually using this script, you might want to run
+#
+#   vimball.rb --print-config
+#
+# and check the values. If they don't seem right, you can change them in 
+# the configuration file (in YAML format).
+#
 # Known incompatibilities:
 # - Vim's vimball silently converts windows line end markers to unix 
 #   markers. This script won't -- unless you run it with Windows's ruby 
@@ -23,7 +30,7 @@ require 'zlib'
 
 class Vimball
 
-    VERSION = '1.0.29'
+    VERSION = '1.0.59'
 
     class AppLog
         def initialize(output=$stdout)
@@ -54,7 +61,10 @@ HEADER
 
         AppLog.new
 
-        @vimfiles = catch(:ok) do
+        @opts = Hash.new
+
+        @opts['vimfiles'] = catch(:ok) do
+            throw :ok, ENV['VIMFILES'] if ENV['VIMFILES']
             ['.vim', 'vimfiles'].each do |dir|
                 ['HOME', 'USERPROFILE', 'VIM'].each do |env|
                     pdir = ENV[env]
@@ -67,13 +77,16 @@ HEADER
             nil
         end
 
-        @outdir = File.join(@vimfiles, 'vimball')
+        @opts['outdir'] = File.join(@opts['vimfiles'], 'vimballs')
 
-        @configfile = File.join(@vimfiles, 'vimballs', 'config.yml')
+        @opts['configfile'] = File.join(@opts['vimfiles'], 'vimballs', 'config.yml')
 
-        @compress = false
+        @opts['compress'] = false
 
         @dry = false
+
+        @configs = []
+        read_config
 
         opts = OptionParser.new do |opts|
             opts.banner =  'Usage: vimball.rb [OPTIONS] [make|install] FILES ...'
@@ -83,23 +96,29 @@ HEADER
             opts.separator ' '
         
             opts.on('-b', '--vimfiles DIR', String, 'Vimfiles directory') do |value|
-                @vimfiles = value
+                @opts['vimfiles'] = value
             end
 
             opts.on('-c', '--config YAML', String, 'Config file') do |value|
-                @configfile = value
+                @opts['configfile'] = value
+                read_config
             end
 
             opts.on('-d', '--dir DIR', String, 'Destination directory for vimballs') do |value|
-                @outdir = value
+                @opts['outdir'] = value
             end
 
             opts.on('-n', '--dry-run', 'Don\'t actually run any commands; just print them') do |bool|
                 @dry = bool
             end
 
+            opts.on('--print-config', 'Print the configuration and exit') do |bool|
+                puts YAML.dump(@opts)
+                exit
+            end
+
             opts.on('-z', '--gzip', 'Save as vba.gz') do |value|
-                @compress = value
+                @opts['compress'] = value
             end
 
 
@@ -129,8 +148,6 @@ HEADER
         end
         $logger.debug "command-line arguments: #{args}"
 
-        @opts = Hash.new
-        read_config
         @opts['files'] ||= []
         rest = opts.parse!(args)
         @opts['mode'] = rest.shift
@@ -160,7 +177,7 @@ HEADER
 
     def ready?
 
-        unless @vimfiles
+        unless @opts['vimfiles']
             $logger.fatal "Where are your vimfiles?"
             return false
         end
@@ -170,7 +187,7 @@ HEADER
             return false
         end
 
-        # unless @configfile
+        # unless @opts['configfile']
         #     puts "Where is my config file?"
         #     return false
         # end
@@ -188,8 +205,15 @@ HEADER
     private
 
     def read_config
-        if File.readable?(@configfile)
-            @opts.merge(YAML.load_file(@configfile))
+        file = @opts['configfile']
+        until @configs.include?(file)
+            @configs << file
+            if File.readable?(file)
+                $logger.info "Read configuration from #{file}"
+                @opts.merge!(YAML.load_file(file))
+                file = @opts['configfile']
+                break
+            end
         end
     end
 
@@ -202,13 +226,13 @@ HEADER
         files.each do |file|
             file = file.strip
             unless file.empty?
-                filename = File.join(@vimfiles, file)
+                filename = File.join(@opts['vimfiles'], file)
                 content = File.readlines(filename)
                 # content.each do |line|
                 #     line.sub!(/(\r\n|\r)$/, "\n")
                 # end
 
-                filename = Pathname.new(filename).relative_path_from(Pathname.new(@vimfiles)).to_s
+                filename = Pathname.new(filename).relative_path_from(Pathname.new(@opts['vimfiles'])).to_s
 
                 rewrite = @opts['rewrite']
                 if rewrite
@@ -223,10 +247,11 @@ HEADER
             end
         end
 
-        vbafile = File.join(@outdir, File.basename(recipe, '.recipe') + '.vba')
+        vbafile = File.join(@opts['outdir'], File.basename(recipe, '.recipe') + '.vba')
+        ensure_dir_exists(File.dirname(vbafile))
         vimball = vimball.join
 
-        if @compress
+        if @opts['compress']
             vbafile += '.gz'
             $logger.info "Save as: #{vbafile}"
             unless @dry
@@ -248,7 +273,15 @@ HEADER
 
     def install(file)
 
-        vimball = File.readlines(file)
+        vimball = nil
+        if file =~ /\.gz$/
+            File.open(file) do |f|
+                gzip = Zlib::GzipReader.new(f)
+                vimball = gzip.readlines
+            end
+        else
+            vimball = File.readlines(file)
+        end
 
         header = vimball.shift(3).join
         if header != HEADER
@@ -264,7 +297,7 @@ HEADER
             nlines = vimball.shift.to_i
             m = /^(.*?)\t\[\[\[1$/.match(fileheader)
             if m and nlines > 0
-                filename = File.join(@outdir, m[1])
+                filename = File.join(@opts['outdir'], m[1])
                 content = vimball.shift(nlines)
 
                 ensure_dir_exists(File.dirname(filename))
