@@ -23,7 +23,7 @@ require 'zlib'
 
 class Vimball
 
-    VERSION = '1.0.18'
+    VERSION = '1.0.29'
 
     class AppLog
         def initialize(output=$stdout)
@@ -73,6 +73,8 @@ HEADER
 
         @compress = false
 
+        @dry = false
+
         opts = OptionParser.new do |opts|
             opts.banner =  'Usage: vimball.rb [OPTIONS] [make|install] FILES ...'
             opts.separator ' '
@@ -90,6 +92,10 @@ HEADER
 
             opts.on('-d', '--dir DIR', String, 'Destination directory for vimballs') do |value|
                 @outdir = value
+            end
+
+            opts.on('-n', '--dry-run', 'Don\'t actually run any commands; just print them') do |bool|
+                @dry = bool
             end
 
             opts.on('-z', '--gzip', 'Save as vba.gz') do |value|
@@ -223,13 +229,17 @@ HEADER
         if @compress
             vbafile += '.gz'
             $logger.info "Save as: #{vbafile}"
-            Zlib::GzipWriter.open(vbafile) do |gz|
-                gz.write(vimball)
+            unless @dry
+                Zlib::GzipWriter.open(vbafile) do |gz|
+                    gz.write(vimball)
+                end
             end
         else
             $logger.info "Save as: #{vbafile}"
-            File.open(vbafile, 'w') do |io|
-                io.puts(vimball)
+            unless @dry
+                File.open(vbafile, 'w') do |io|
+                    io.puts(vimball)
+                end
             end
         end
 
@@ -254,11 +264,16 @@ HEADER
             nlines = vimball.shift.to_i
             m = /^(.*?)\t\[\[\[1$/.match(fileheader)
             if m and nlines > 0
-                filename = m[1]
+                filename = File.join(@outdir, m[1])
                 content = vimball.shift(nlines)
 
-                File.open(filename, 'w') do |io|
-                    io.puts(content.join)
+                ensure_dir_exists(File.dirname(filename))
+
+                $logger.info "Write #{filename}"
+                unless @dry
+                    File.open(filename, 'w') do |io|
+                        io.puts(content.join)
+                    end
                 end
 
             else
@@ -270,6 +285,17 @@ HEADER
 
     end
 
+
+    def ensure_dir_exists(dir)
+        unless @dry or File.exist?(dir) or dir.empty? or dir == '.'
+            parent = File.dirname(dir)
+            unless File.exist?(parent)
+                ensure_dir_exists(parent)
+            end
+            $logger.info "mkdir #{dir}"
+            Dir.mkdir(dir)
+        end
+    end
 
 end
 
