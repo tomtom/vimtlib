@@ -1,10 +1,10 @@
 #!/usr/bin/env ruby
 # tbibtools.rb -- bibtex-related utilities
-#   @Author:      Thomas Link (micathom AT gmail com?subject=vim)
+#   @Author:      Tom Link (micathom AT gmail com?subject=vim)
 #   @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 #   @Created:     2007-03-28.
-#   @Last Change: 2008-12-20.
-#   @Revision:    0.6.749
+#   @Last Change: 2009-02-11.
+#   @Revision:    0.6.750
 #
 # This file provides the class TBibTools that can be used to sort and 
 # process bibtex files, list bibtex keys etc.
