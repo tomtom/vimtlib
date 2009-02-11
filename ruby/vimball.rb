@@ -39,7 +39,13 @@ require 'zlib'
 class Vimball
 
     APPNAME = 'vimball'
-    VERSION = '1.0.129'
+    VERSION = '1.0.140'
+    HEADER = <<HEADER
+" Vimball Archiver by Charles E. Campbell, Jr., Ph.D.
+UseVimball
+finish
+HEADER
+
 
     class AppLog
         def initialize(output=$stdout)
@@ -62,130 +68,150 @@ class Vimball
     end
 
 
-    HEADER = <<HEADER
-" Vimball Archiver by Charles E. Campbell, Jr., Ph.D.
-UseVimball
-finish
-HEADER
+    class << self
 
+        def with_args(args)
 
-    def initialize(args)
+            AppLog.new
 
-        AppLog.new
+            config = Hash.new
 
-        @opts = Hash.new
-
-        @opts['vimfiles'] = catch(:ok) do
-            throw :ok, ENV['VIMFILES'] if ENV['VIMFILES']
-            ['.vim', 'vimfiles'].each do |dir|
-                ['HOME', 'USERPROFILE', 'VIM'].each do |env|
-                    pdir = ENV[env]
-                    if pdir
-                        vimfiles = File.join(pdir, dir)
-                        throw :ok, vimfiles if File.directory?(vimfiles)
+            config['vimfiles'] = catch(:ok) do
+                throw :ok, ENV['VIMFILES'] if ENV['VIMFILES']
+                ['.vim', 'vimfiles'].each do |dir|
+                    ['HOME', 'USERPROFILE', 'VIM'].each do |env|
+                        pdir = ENV[env]
+                        if pdir
+                            vimfiles = File.join(pdir, dir)
+                            throw :ok, vimfiles if File.directory?(vimfiles)
+                        end
                     end
                 end
+                '.'
             end
-            '.'
+
+            config['configfile'] = File.join(config['vimfiles'], 'vimballs', 'config.yml')
+            @configs = []
+            read_config(config)
+
+            config['compress'] ||= false
+            config['helptags'] ||= %{vim -T dumb --cmd "helptags %s|quit"}
+            config['outdir']   ||= File.join(config['vimfiles'], 'vimballs')
+            config['dry']      ||= false
+
+            opts = OptionParser.new do |opts|
+                opts.banner =  'Usage: vimball.rb [OPTIONS] COMMAND FILES ...'
+                opts.separator ' '
+                opts.separator 'vimball.rb is a free software with ABSOLUTELY NO WARRANTY under'
+                opts.separator 'the terms of the GNU General Public License version 2 or newer.'
+                opts.separator ' '
+                opts.separator 'Commands:'
+                opts.separator '   vba     ... Create a vimball'
+                opts.separator '   install ... Install a vimball'
+                opts.separator ' '
+
+                opts.on('-b', '--vimfiles DIR', String, 'Vimfiles directory') do |value|
+                    config['vimfiles'] = value
+                end
+
+                opts.on('-c', '--config YAML', String, 'Config file') do |value|
+                    config['configfile'] = value
+                    read_config(config)
+                end
+
+                opts.on('-d', '--dir DIR', String, 'Destination directory for vimballs') do |value|
+                    config['outdir'] = value
+                end
+
+                opts.on('-n', '--[no-]dry-run', 'Don\'t actually run any commands; just print them') do |bool|
+                    config['dry'] = bool
+                end
+
+                opts.on('--print-config', 'Print the configuration and exit') do |bool|
+                    puts YAML.dump(config)
+                    exit
+                end
+
+                opts.on('-z', '--gzip', 'Save as vba.gz') do |value|
+                    config['compress'] = value
+                end
+
+
+                opts.separator ' '
+                opts.separator 'Other Options:'
+
+                opts.on('--debug', 'Show debug messages') do |v|
+                    $DEBUG   = true
+                    $VERBOSE = true
+                    @logger.set_level
+                end
+
+                opts.on('-v', '--verbose', 'Run verbosely') do |v|
+                    $VERBOSE = true
+                    @logger.set_level
+                end
+
+                opts.on('--version', 'Version number') do |bool|
+                    puts VERSION
+                    exit 1
+                end
+
+                opts.on_tail('-h', '--help', 'Show this message') do
+                    puts opts
+                    exit 1
+                end
+            end
+            $logger.debug "command-line arguments: #{args}"
+
+            config['files'] ||= []
+            rest = opts.parse!(args)
+            config['cmd'] = rest.shift
+            config['files'].concat(rest)
+
+            return Vimball.new(config)
+
         end
 
-        @opts['configfile'] = File.join(@opts['vimfiles'], 'vimballs', 'config.yml')
-        @configs = []
-        read_config
-        
-        @opts['compress'] ||= false
-        @opts['helptags'] ||= %{vim -T dumb --cmd "helptags %s|quit"}
-        @opts['outdir']   ||= File.join(@opts['vimfiles'], 'vimballs')
 
-        @dry = false
-
-        opts = OptionParser.new do |opts|
-            opts.banner =  'Usage: vimball.rb [OPTIONS] COMMAND FILES ...'
-            opts.separator ' '
-            opts.separator 'vimball.rb is a free software with ABSOLUTELY NO WARRANTY under'
-            opts.separator 'the terms of the GNU General Public License version 2 or newer.'
-            opts.separator ' '
-            opts.separator 'Commands:'
-            opts.separator '   vba     ... Create a vimball'
-            opts.separator '   install ... Install a vimball'
-            opts.separator ' '
-        
-            opts.on('-b', '--vimfiles DIR', String, 'Vimfiles directory') do |value|
-                @opts['vimfiles'] = value
-            end
-
-            opts.on('-c', '--config YAML', String, 'Config file') do |value|
-                @opts['configfile'] = value
-                read_config
-            end
-
-            opts.on('-d', '--dir DIR', String, 'Destination directory for vimballs') do |value|
-                @opts['outdir'] = value
-            end
-
-            opts.on('-n', '--dry-run', 'Don\'t actually run any commands; just print them') do |bool|
-                @dry = bool
-            end
-
-            opts.on('--print-config', 'Print the configuration and exit') do |bool|
-                puts YAML.dump(@opts)
-                exit
-            end
-
-            opts.on('-z', '--gzip', 'Save as vba.gz') do |value|
-                @opts['compress'] = value
-            end
+        protected
 
 
-            opts.separator ' '
-            opts.separator 'Other Options:'
-        
-            opts.on('--debug', 'Show debug messages') do |v|
-                $DEBUG   = true
-                $VERBOSE = true
-                @logger.set_level
-            end
-        
-            opts.on('-v', '--verbose', 'Run verbosely') do |v|
-                $VERBOSE = true
-                @logger.set_level
-            end
-
-            opts.on('--version', 'Version number') do |bool|
-                puts VERSION
-                exit 1
-            end
-        
-            opts.on_tail('-h', '--help', 'Show this message') do
-                puts opts
-                exit 1
+        def read_config(config)
+            file = config['configfile']
+            until @configs.include?(file)
+                @configs << file
+                if File.readable?(file)
+                    $logger.info "Read configuration from #{file}"
+                    config.merge!(YAML.load_file(file))
+                    file = config['configfile']
+                    break
+                end
             end
         end
-        $logger.debug "command-line arguments: #{args}"
 
-        @opts['files'] ||= []
-        rest = opts.parse!(args)
-        @opts['cmd'] = rest.shift
-        @opts['files'].concat(rest)
+    end
 
+
+    def initialize(config)
+        @config = config
     end
 
 
     def run
         if ready?
 
-            meth = "do_#{@opts['cmd']}"
-            @opts['files'].each do |file|
-                $logger.info "#{@opts['cmd']}: #{file}"
+            meth = "do_#{@config['cmd']}"
+            @config['files'].each do |file|
+                $logger.info "#{@config['cmd']}: #{file}"
                 if respond_to?(meth)
                     send(meth, file)
                 else
-                    $logger.fatal "Unknown command: #{@opts['cmd']}"
+                    $logger.fatal "Unknown command: #{@config['cmd']}"
                     exit 5
                 end
             end
 
-            post = "post_#{@opts['cmd']}"
+            post = "post_#{@config['cmd']}"
             send(post) if respond_to?(post)
 
         end
@@ -197,23 +223,23 @@ HEADER
 
     def ready?
 
-        unless @opts['vimfiles'] and File.directory?(@opts['vimfiles'])
+        unless @config['vimfiles'] and File.directory?(@config['vimfiles'])
             $logger.fatal "Where are your vimfiles?"
             exit 5
         end
 
         cmds = ['vba', 'install']
-        unless cmds.include?(@opts['cmd'])
+        unless cmds.include?(@config['cmd'])
             $logger.fatal "Command must be one of: #{cmds.join(', ')}"
             exit 5
         end
 
-        # unless @opts['configfile']
+        # unless @config['configfile']
         #     puts "Where is my config file?"
         #     return false
         # end
 
-        if @opts['files'].empty?
+        if @config['files'].empty?
             $logger.fatal "No input files"
             exit 5
         end
@@ -223,29 +249,15 @@ HEADER
     end
 
 
-    def read_config
-        file = @opts['configfile']
-        until @configs.include?(file)
-            @configs << file
-            if File.readable?(file)
-                $logger.info "Read configuration from #{file}"
-                @opts.merge!(YAML.load_file(file))
-                file = @opts['configfile']
-                break
-            end
-        end
-    end
-
-
     def do_vba(recipe)
-        
+
         vimball = [HEADER]
 
         files = File.readlines(recipe)
         files.each do |file|
             file = file.strip
             unless file.empty?
-                filename = File.join(@opts['vimfiles'], file)
+                filename = File.join(@config['vimfiles'], file)
                 if File.readable?(filename)
                     content = File.readlines(filename)
                 else
@@ -256,10 +268,10 @@ HEADER
                 #     line.sub!(/(\r\n|\r)$/, "\n")
                 # end
 
-                filename = Pathname.new(filename).relative_path_from(Pathname.new(@opts['vimfiles'])).to_s
+                filename = Pathname.new(filename).relative_path_from(Pathname.new(@config['vimfiles'])).to_s
                 filename.gsub!(/\\/, '/')
 
-                rewrite = @opts['rewrite']
+                rewrite = @config['rewrite']
                 if rewrite
                     rewrite.each do |pattern, replacement|
                         rx = Regexp.new(pattern)
@@ -272,14 +284,14 @@ HEADER
             end
         end
 
-        vbafile = File.join(@opts['outdir'], File.basename(recipe, '.recipe') + '.vba')
+        vbafile = File.join(@config['outdir'], File.basename(recipe, '.recipe') + '.vba')
         ensure_dir_exists(File.dirname(vbafile))
         vimball = vimball.join
 
-        if @opts['compress']
+        if @config['compress']
             vbafile << '.gz'
             $logger.info "Save as: #{vbafile}"
-            unless @dry
+            unless @config['dry']
                 Zlib::GzipWriter.open(vbafile) do |gz|
                     gz.write(vimball)
                 end
@@ -323,27 +335,27 @@ HEADER
             fileheader = vimball.shift
             nlines = vimball.shift.to_i
             m = /^(.*?)\t\[\[\[1$/.match(fileheader)
-            if m and nlines > 0
-                basename = m[1]
-                recipe << basename
-                filename = File.join(@opts['outdir'], basename)
-                content = vimball.shift(nlines)
+                if m and nlines > 0
+                    basename = m[1]
+                    recipe << basename
+                    filename = File.join(@config['outdir'], basename)
+                    content = vimball.shift(nlines)
 
-                ensure_dir_exists(File.dirname(filename))
+                    ensure_dir_exists(File.dirname(filename))
 
-                $logger.info "Write #{filename}"
-                file_write(filename) do |io|
-                    io.puts(content.join)
+                    $logger.info "Write #{filename}"
+                    file_write(filename) do |io|
+                        io.puts(content.join)
+                    end
+
+                else
+                    $logger.fatal "Error when parsing vimball: #{file}"
+                    exit 5
                 end
-
-            else
-                $logger.fatal "Error when parsing vimball: #{file}"
-                exit 5
-            end
 
         end
 
-        recipefile = File.join(@opts['outdir'], 'vimballs', 'recipes', filebase + '.recipe')
+        recipefile = File.join(@config['outdir'], 'vimballs', 'recipes', filebase + '.recipe')
         $logger.debug "Save recipe file: #{recipefile}"
         ensure_dir_exists(File.dirname(recipefile))
         file_write(recipefile) do |io|
@@ -354,17 +366,17 @@ HEADER
 
 
     def post_install
-        helptags = @opts['helptags']
+        helptags = @config['helptags']
         if helptags
-            helptags = helptags % File.join(@opts['outdir'], 'doc')
+            helptags = helptags % File.join(@config['outdir'], 'doc')
             $logger.info "Create helptags: #{helptags}"
-            `#{helptags}` unless @dry
+            `#{helptags}` unless @config['dry']
         end
     end
 
 
     def ensure_dir_exists(dir)
-        unless @dry or File.exist?(dir) or dir.empty? or dir == '.'
+        unless @config['dry'] or File.exist?(dir) or dir.empty? or dir == '.'
             parent = File.dirname(dir)
             unless File.exist?(parent)
                 ensure_dir_exists(parent)
@@ -376,7 +388,7 @@ HEADER
 
     def file_write(filename, mode='w', &block)
         $logger.info "Write file: #{filename}"
-        unless @dry
+        unless @config['dry']
             if File.exist?(filename)
                 $logger.warn "Overwrite existing file"
             end
@@ -389,7 +401,7 @@ end
 
 if __FILE__ == $0
 
-    Vimball.new(ARGV).run
+    Vimball.with_args(ARGV).run
 
 end
 
