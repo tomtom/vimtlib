@@ -24,7 +24,8 @@
 # - link (symlink the files; or use graft?)
 # - zip (create a zip archive, not a vba; or simply use zip?)
 # - list files in a vimball
-# - uninstall (or add info of installed vbas to .VimballRecord)
+# - uninstall (or add info of installed vbas to .VimballRecord; users 
+# could also use rm `cat RECIPE`)
 #
 
 
@@ -38,7 +39,7 @@ require 'zlib'
 class Vimball
 
     APPNAME = 'vimball'
-    VERSION = '1.0.121'
+    VERSION = '1.0.129'
 
     class AppLog
         def initialize(output=$stdout)
@@ -285,10 +286,8 @@ HEADER
             end
         else
             $logger.info "Save as: #{vbafile}"
-            unless @dry
-                File.open(vbafile, 'w') do |io|
-                    io.puts(vimball)
-                end
+            file_write(vbafile, 'w') do |io|
+                io.puts(vimball)
             end
         end
 
@@ -333,10 +332,8 @@ HEADER
                 ensure_dir_exists(File.dirname(filename))
 
                 $logger.info "Write #{filename}"
-                unless @dry
-                    File.open(filename, 'w') do |io|
-                        io.puts(content.join)
-                    end
+                file_write(filename) do |io|
+                    io.puts(content.join)
                 end
 
             else
@@ -348,11 +345,9 @@ HEADER
 
         recipefile = File.join(@opts['outdir'], 'vimballs', 'recipes', filebase + '.recipe')
         $logger.debug "Save recipe file: #{recipefile}"
-        unless @dry
-            ensure_dir_exists(File.dirname(recipefile))
-            File.open(recipefile, 'w') do |io|
-                io.puts recipe.join("\n")
-            end
+        ensure_dir_exists(File.dirname(recipefile))
+        file_write(recipefile) do |io|
+            io.puts recipe.join("\n")
         end
 
     end
@@ -363,7 +358,7 @@ HEADER
         if helptags
             helptags = helptags % File.join(@opts['outdir'], 'doc')
             $logger.info "Create helptags: #{helptags}"
-            `#{helptags}`
+            `#{helptags}` unless @dry
         end
     end
 
@@ -376,6 +371,16 @@ HEADER
             end
             $logger.info "mkdir #{dir}"
             Dir.mkdir(dir)
+        end
+    end
+
+    def file_write(filename, mode='w', &block)
+        $logger.info "Write file: #{filename}"
+        unless @dry
+            if File.exist?(filename)
+                $logger.warn "Overwrite existing file"
+            end
+            File.open(filename, mode, &block)
         end
     end
 
