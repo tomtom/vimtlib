@@ -16,15 +16,15 @@
 #
 # Known incompatibilities:
 # - Vim's vimball silently converts windows line end markers to unix 
-#   markers. This script won't -- unless you run it with Windows's ruby 
-#   maybe.
+# markers. This script won't -- unless you run it with Windows's ruby 
+# maybe.
 #
 # TODO:
-# - list
-# - uninstall
 # - copy (copy the files)
 # - link (symlink the files)
-# - run :helptags
+# - zip (create a zip archive, not a vba)
+# - list files in a vimball
+# - uninstall (or add info of installed vbas to .VimballRecord)
 #
 
 
@@ -37,12 +37,15 @@ require 'zlib'
 
 class Vimball
 
-    VERSION = '1.0.99'
+    APPNAME = 'vimball'
+    VERSION = '1.0.112'
 
     class AppLog
         def initialize(output=$stdout)
             @output = output
             $logger = Logger.new(output)
+            $logger.progname = APPNAME
+            $logger.datetime_format = "%H:%M:%S"
             set_level
         end
     
@@ -63,6 +66,7 @@ class Vimball
 UseVimball
 finish
 HEADER
+
 
     def initialize(args)
 
@@ -183,26 +187,24 @@ HEADER
             post = "post_#{@opts['cmd']}"
             send(post) if respond_to?(post)
 
-        else
-
-            exit 5
-
         end
     end
 
 
     protected
 
+
     def ready?
 
         unless @opts['vimfiles'] and File.directory?(@opts['vimfiles'])
             $logger.fatal "Where are your vimfiles?"
-            return false
+            exit 5
         end
 
-        unless ['vba', 'install'].include?(@opts['cmd'])
-            $logger.fatal "Command must be 'vba' or 'install'"
-            return false
+        cmds = ['vba', 'install']
+        unless cmds.include?(@opts['cmd'])
+            $logger.fatal "Command must be one of: #{cmds.join(', ')}"
+            exit 5
         end
 
         # unless @opts['configfile']
@@ -212,7 +214,7 @@ HEADER
 
         if @opts['files'].empty?
             $logger.fatal "No input files"
-            return false
+            exit 5
         end
 
         return true
@@ -243,7 +245,12 @@ HEADER
             file = file.strip
             unless file.empty?
                 filename = File.join(@opts['vimfiles'], file)
-                content = File.readlines(filename)
+                if File.readable?(filename)
+                    content = File.readlines(filename)
+                else
+                    $logger.fatal "Cannot read file: #{filename}"
+                    exit 5
+                end
                 # content.each do |line|
                 #     line.sub!(/(\r\n|\r)$/, "\n")
                 # end
