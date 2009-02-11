@@ -1,10 +1,10 @@
 #!/usr/bin/env ruby
 # EvalSelection.rb -- Evaluate text using an external interpreter
-# @Author:      Thomas Link (micathom AT gmail com?subject=vim)
+# @Author:      Tom Link (micathom AT gmail com?subject=vim)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     11-Mär-2004.
-# @Last Change: 2007-08-27.
-# @Revision:    0.324
+# @Last Change: 2009-02-11.
+# @Revision:    0.325
 
 # require "open3"
 
