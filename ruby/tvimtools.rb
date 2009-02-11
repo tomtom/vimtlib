@@ -1,9 +1,9 @@
 # tVimTools.rb
-#   @Author:      Thomas Link (micathom AT gmail com?subject=vim)
+#   @Author:      Tom Link (micathom AT gmail com?subject=vim)
 #   @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 #   @Created:     2007-03-28.
-#   @Last Change: 2007-08-27.
-#   @Revision:    0.58
+#   @Last Change: 2009-02-11.
+#   @Revision:    0.59
 
 class TVimTools
     def initialize(buffer=nil)
