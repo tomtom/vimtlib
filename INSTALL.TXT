@@ -10,9 +10,9 @@ your vimrc file.
 
 ** vimballs
 
-In the vimballs, subdirectory you'll find recipes for building vimballs. 
-You could then install those vimballs wherever you want. But ... those 
-recipes assume you have already installed the plugins. =8-O
+In the vimballs, subdirectory you'll find recipes for building vimballs 
+-- you might want to add the vimtlib as an extra basedir argument to 
+'':MkVimball''.
 
 As an alternative, the ruby script ruby/vimball.rb can be used to create 
 and install vimballs without vim.
