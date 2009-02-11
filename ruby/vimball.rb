@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
 # vimball.rb
-# @Author:      Thomas Link (micathom AT gmail com)
+# @Author:      Tom Link (micathom AT gmail com)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2009-02-10.
-# @Last Change: 2009-02-10.
+# @Last Change: 2009-02-11.
 #
 # This script creates and installs vimballs without vim.
 #
@@ -19,6 +19,13 @@
 #   markers. This script won't -- unless you run it with Windows's ruby 
 #   maybe.
 #
+# TODO:
+# - list
+# - uninstall
+# - copy (copy the files)
+# - link (symlink the files)
+# - run :helptags
+#
 
 
 require 'yaml'
@@ -30,7 +37,7 @@ require 'zlib'
 
 class Vimball
 
-    VERSION = '1.0.60'
+    VERSION = '1.0.99'
 
     class AppLog
         def initialize(output=$stdout)
@@ -74,25 +81,28 @@ HEADER
                     end
                 end
             end
-            nil
+            '.'
         end
 
-        @opts['outdir'] = File.join(@opts['vimfiles'], 'vimballs')
-
         @opts['configfile'] = File.join(@opts['vimfiles'], 'vimballs', 'config.yml')
-
-        @opts['compress'] = false
+        @configs = []
+        read_config
+        
+        @opts['compress'] ||= false
+        @opts['helptags'] ||= %{vim -T dumb --cmd "helptags %s|quit"}
+        @opts['outdir']   ||= File.join(@opts['vimfiles'], 'vimballs')
 
         @dry = false
 
-        @configs = []
-        read_config
-
         opts = OptionParser.new do |opts|
-            opts.banner =  'Usage: vimball.rb [OPTIONS] [make|install] FILES ...'
+            opts.banner =  'Usage: vimball.rb [OPTIONS] COMMAND FILES ...'
             opts.separator ' '
             opts.separator 'vimball.rb is a free software with ABSOLUTELY NO WARRANTY under'
             opts.separator 'the terms of the GNU General Public License version 2 or newer.'
+            opts.separator ' '
+            opts.separator 'Commands:'
+            opts.separator '   vba     ... Create a vimball'
+            opts.separator '   install ... Install a vimball'
             opts.separator ' '
         
             opts.on('-b', '--vimfiles DIR', String, 'Vimfiles directory') do |value|
@@ -150,7 +160,7 @@ HEADER
 
         @opts['files'] ||= []
         rest = opts.parse!(args)
-        @opts['mode'] = rest.shift
+        @opts['cmd'] = rest.shift
         @opts['files'].concat(rest)
 
     end
@@ -159,31 +169,39 @@ HEADER
     def run
         if ready?
 
+            meth = "do_#{@opts['cmd']}"
             @opts['files'].each do |file|
-                $logger.info(file)
-                case @opts['mode']
-                when 'make'
-                    mkvimball(file)
-                when 'install'
-                    install(file)
+                $logger.info "#{@opts['cmd']}: #{file}"
+                if respond_to?(meth)
+                    send(meth, file)
+                else
+                    $logger.fatal "Unknown command: #{@opts['cmd']}"
+                    exit 5
                 end
             end
 
+            post = "post_#{@opts['cmd']}"
+            send(post) if respond_to?(post)
+
         else
-            exit 1
+
+            exit 5
+
         end
     end
 
 
+    protected
+
     def ready?
 
-        unless @opts['vimfiles']
+        unless @opts['vimfiles'] and File.directory?(@opts['vimfiles'])
             $logger.fatal "Where are your vimfiles?"
             return false
         end
 
-        unless ['make', 'install'].include?(@opts['mode'])
-            $logger.fatal "Mode must be 'make' or 'install'"
+        unless ['vba', 'install'].include?(@opts['cmd'])
+            $logger.fatal "Command must be 'vba' or 'install'"
             return false
         end
 
@@ -202,8 +220,6 @@ HEADER
     end
 
 
-    private
-
     def read_config
         file = @opts['configfile']
         until @configs.include?(file)
@@ -218,7 +234,7 @@ HEADER
     end
 
 
-    def mkvimball(recipe)
+    def do_vba(recipe)
         
         vimball = [HEADER]
 
@@ -272,7 +288,7 @@ HEADER
     end
 
 
-    def install(file)
+    def do_install(file)
 
         vimball = nil
         if file =~ /\.gz$/
@@ -317,6 +333,16 @@ HEADER
 
         end
 
+    end
+
+
+    def post_install
+        helptags = @opts['helptags']
+        if helptags
+            helptags = helptags % File.join(@opts['outdir'], 'doc')
+            $logger.info "Create helptags: #{helptags}"
+            `#{helptags}`
+        end
     end
 
 
