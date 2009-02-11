@@ -2,8 +2,8 @@
 " @Author:      Thomas Link (micathom AT gmail com)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2007-08-27.
-" @Revision: 2.0.115
+" @Last Change: 2009-02-11.
+" @Revision: 2.0.116
 " 
 " vimscript #853
 
@@ -162,10 +162,12 @@ fun! s:LocalVariablesSearch(repos)
 endf 
 
 fun! s:CheckLet()
-    let rx = '\V\^\W\*vimlet:\s\*\zs\(\.\{-}\)\s\*\$'
-    let rs = @/
-    exec 'keepjumps silent g /'. rx .'/call s:CheckLetLet(rx, getline("."))'
-    let @/ = rs
+    if g:localVariablesVimlet
+        let rx = '\V\^\W\*vimlet:\s\*\zs\(\.\{-}\)\s\*\$'
+        let rs = @/
+        exec 'keepjumps silent g /'. rx .'/call s:CheckLetLet(rx, getline("."))'
+        let @/ = rs
+    endif
 endf
 
 fun! s:CheckLetLet(rx, line)

@@ -1,6 +1,6 @@
 *localvariables.txt*	File local variables
 
-Author: Thomas Link (micathom AT gmail com?subject=vim)
+Author: Tom Link (micathom AT gmail com?subject=vim)
 
 
                                                     *localvariables*
@@ -29,7 +29,7 @@ Example: >
     ### foo:1 ###
     ### bar:"bla" ###
     ### End: ###
-<
+ 
                                                     *g:localVariablesDownCaseHyphenedNames*
                                                     *localvariables-hyphens*
 If a variable name contains a hyphen ("-"), the variable name will be 
@@ -112,10 +112,10 @@ If the scope is ":", the variable name is interpreted as a special name:
                                                       *LocalVariablesRegisterHook*
 - On{event}: The value is registered for execution when the denoted 
   autocommand event occurs. You have to register LocalVariables for use with 
-  this event by using the command >
+  this event by using the command  
 
   	:LocalVariablesRegisterHook EVENT
-<
+ 
   Use this feature, e.g., for recompiling some files after saving.
 
                                                       *s:localVariablesAllowExec*
@@ -156,7 +156,7 @@ and put something like this at the end of a file: >
 	### ::OnBufWritePre:call inputdialog("You shouldn't have written this text") ###
 	### End: ###
 
-<
+< 
                                                       *localvariables-install*
 Usage:
 
@@ -170,7 +170,8 @@ Or rather: >
 
 	autocmd BufEnter    * call LocalVariablesCheck()
 
-3. Optionally, read |localvariables-security-risks| and register some events as in: >
+3. Optionally, read |localvariables-security-risks| and register some 
+events as in: >
 
 	LocalVariablesRegisterHook! BufWritePre
 
