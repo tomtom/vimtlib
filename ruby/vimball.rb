@@ -20,9 +20,9 @@
 # maybe.
 #
 # TODO:
-# - copy (copy the files)
-# - link (symlink the files)
-# - zip (create a zip archive, not a vba)
+# - copy (copy the files; bash-script?)
+# - link (symlink the files; or use graft?)
+# - zip (create a zip archive, not a vba; or simply use zip?)
 # - list files in a vimball
 # - uninstall (or add info of installed vbas to .VimballRecord)
 #
@@ -38,7 +38,7 @@ require 'zlib'
 class Vimball
 
     APPNAME = 'vimball'
-    VERSION = '1.0.112'
+    VERSION = '1.0.121'
 
     class AppLog
         def initialize(output=$stdout)
@@ -260,7 +260,7 @@ HEADER
 
                 rewrite = @opts['rewrite']
                 if rewrite
-                    rewrite.each do |(pattern, replacement)|
+                    rewrite.each do |pattern, replacement|
                         rx = Regexp.new(pattern)
                         filename.gsub!(rx, replacement)
                     end
@@ -276,7 +276,7 @@ HEADER
         vimball = vimball.join
 
         if @opts['compress']
-            vbafile += '.gz'
+            vbafile << '.gz'
             $logger.info "Save as: #{vbafile}"
             unless @dry
                 Zlib::GzipWriter.open(vbafile) do |gz|
@@ -299,11 +299,13 @@ HEADER
 
         vimball = nil
         if file =~ /\.gz$/
+            filebase = File.basename(File.basename(file, '.gz'), '.*')
             File.open(file) do |f|
                 gzip = Zlib::GzipReader.new(f)
                 vimball = gzip.readlines
             end
         else
+            filebase = File.basename(file, '.*')
             vimball = File.readlines(file)
         end
 
@@ -315,13 +317,17 @@ HEADER
 
         $logger.info "Install #{file}"
 
+        recipe = []
+
         until vimball.empty?
 
             fileheader = vimball.shift
             nlines = vimball.shift.to_i
             m = /^(.*?)\t\[\[\[1$/.match(fileheader)
             if m and nlines > 0
-                filename = File.join(@opts['outdir'], m[1])
+                basename = m[1]
+                recipe << basename
+                filename = File.join(@opts['outdir'], basename)
                 content = vimball.shift(nlines)
 
                 ensure_dir_exists(File.dirname(filename))
@@ -338,6 +344,15 @@ HEADER
                 exit 5
             end
 
+        end
+
+        recipefile = File.join(@opts['outdir'], 'vimballs', 'recipes', filebase + '.recipe')
+        $logger.debug "Save recipe file: #{recipefile}"
+        unless @dry
+            ensure_dir_exists(File.dirname(recipefile))
+            File.open(recipefile, 'w') do |io|
+                io.puts recipe.join("\n")
+            end
         end
 
     end
