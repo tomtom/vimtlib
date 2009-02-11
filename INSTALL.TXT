@@ -3,19 +3,25 @@
 ** runtimepath
 
 The easiest way would be to check out the repository and append the path 
-to your local copy to ''runtimepath''. You could then still disable 
-certain plugins, by setting the variable ''loaded_{PLUGIN_NAME}'' in 
-your vimrc file.
+to your local copy to ''runtimepath''. You can always disable plugins 
+by setting the variable ''loaded_{PLUGIN_NAME}'' in your vimrc file.
 
 
 ** vimballs
 
-In the vimballs, subdirectory you'll find recipes for building vimballs 
--- you might want to add the vimtlib as an extra basedir argument to 
+The vimballs subdirectory contains recipes for building vimballs. You 
+might want to add the vimtlib as an extra basedir argument to 
 '':MkVimball''.
 
-As an alternative, the ruby script ruby/vimball.rb can be used to create 
+Alternatively, the ruby script ruby/vimball.rb can be used to create 
 and install vimballs without vim.
+
+Build all vimballs:
+''ruby/vimball.rb -z -d vimballs vba vimballs/*.recipe''
+
+Install a vimball (check the values of ''helptags'' and ''vimfiles'' in 
+advance, see ''vimball.rb --print-config''):
+''ruby/vimball.rb install vimballs/VIMBALL ...''
 
 
 % vi: ft=viki:tw=72:ts=4
