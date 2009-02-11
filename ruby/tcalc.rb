@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # tcalc.rb
-# @Last Change: 2008-06-15.
-# Author::      Thomas Link (micathom AT gmail com)
+# @Last Change: 2009-02-11.
+# Author::      Tom Link (micathom AT gmail com)
 # License::     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # Created::     2007-10-23.
 #
