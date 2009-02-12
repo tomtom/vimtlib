@@ -39,7 +39,7 @@ require 'zlib'
 class Vimball
 
     APPNAME = 'vimball'
-    VERSION = '1.0.140'
+    VERSION = '1.0.142'
     HEADER = <<HEADER
 " Vimball Archiver by Charles E. Campbell, Jr., Ph.D.
 UseVimball
@@ -87,6 +87,9 @@ HEADER
                         end
                     end
                 end
+                $logger.warn "Couldn't find your vimfiles directory."
+                $logger.warn "Please use the -b command-line option,"
+                $logger.warn "or set it in your config file."
                 '.'
             end
 
