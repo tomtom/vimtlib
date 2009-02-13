@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-10.
-" @Last Change: 2008-12-26.
-" @Revision:    524
+" @Last Change: 2009-02-12.
+" @Revision:    525
 " GetLatestVimScripts: 1863 1 tlib.vim
 "
 " Please see also ../test/tlib.vim for usage examples.
@@ -500,4 +500,5 @@ text to an empty buffer.
 0.29
 - tlib#string#Strip(): Strip also control characters (newlines etc.)
 - tlib#rx#Suffixes(): 'suffixes' as Regexp
+- World#RestoreOrigin(): Don't assume &splitbelow
 
