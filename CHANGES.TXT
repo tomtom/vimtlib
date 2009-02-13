@@ -1,7 +1,15 @@
+2009-02-13  Tom Link (micathom at gmail com)
+	* ttagecho.vim (ttagecho#Echo): :redraw before :echo.
+	* rx.vim (tlib#rx#Escape): magic can be prefixed with a backslash.
+	* tselectfiles.vim (:TSelectFilesInSubdirs): The optional argument 
+	is interpreted as initial filter.
+	* tselectfiles.vim (tselectfiles#BaseFilter): Changed split rx from 
+	\A to [[:blank:][:digit:][:punct:][:space:]_].
+	* World.vim (s:prototype.RestoreOrigin): Check also for &splitright.
+
 2009-02-08  Tom Link (micathom at gmail com)
 	* 07tassert.vim (s:GetSNR): Make sure backslashes match against 
 	slashes.
-
 
 
 vi: ft=changelog:tw=72:ts=4
