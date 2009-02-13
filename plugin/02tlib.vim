@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-10.
-" @Last Change: 2009-02-12.
-" @Revision:    525
+" @Last Change: 2009-02-13.
+" @Revision:    527
 " GetLatestVimScripts: 1863 1 tlib.vim
 "
 " Please see also ../test/tlib.vim for usage examples.
@@ -29,7 +29,7 @@ if v:version < 700 "{{{2
     echoerr "tlib requires Vim >= 7"
     finish
 endif
-let loaded_tlib = 29
+let loaded_tlib = 30
 let s:save_cpo = &cpo
 set cpo&vim
 
@@ -501,4 +501,7 @@ text to an empty buffer.
 - tlib#string#Strip(): Strip also control characters (newlines etc.)
 - tlib#rx#Suffixes(): 'suffixes' as Regexp
 - World#RestoreOrigin(): Don't assume &splitbelow
+
+0.30
+- World#RestoreOrigin(): Don't assume &splitright
 

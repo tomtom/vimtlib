@@ -3,8 +3,8 @@
 " @Website:     http://members.a1.net/t.link/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-05-01.
-" @Last Change: 2009-02-07.
-" @Revision:    0.1.680
+" @Last Change: 2009-02-13.
+" @Revision:    0.1.684
 
 " :filedoc:
 " A prototype used by |tlib#input#List|.
@@ -435,6 +435,7 @@ endf
 
 
 " :nodoc:
+" filter is either a string or a list of list of strings.
 function! s:prototype.SetInitialFilter(filter) dict "{{{3
     " let self.initial_filter = [[''], [a:filter]]
     if type(a:filter) == 3
@@ -840,14 +841,14 @@ function! s:prototype.RestoreOrigin(...) dict "{{{3
     endif
     " TLogVAR self.win_wnr, self.bufnr, self.cursor, &splitbelow
     " TLogDBG "RestoreOrigin0 ". string(tlib#win#List())
-    " If &splitbelow is false, we cannot rely on self.win_wnr to be our 
-    " source buffer since, e.g, opening a buffer in a split window 
-    " changes the whole layout.
+    " If &splitbelow or &splitright is false, we cannot rely on 
+    " self.win_wnr to be our source buffer since, e.g, opening a buffer 
+    " in a split window changes the whole layout.
     " Possible solutions:
     " - Restrict buffer switching to cases when the number of windows 
     "   hasn't changed.
     " - Guess the right window, which we try to do here.
-    if &splitbelow == 0
+    if &splitbelow == 0 || &splitright == 0
         let wn = bufwinnr(self.bufnr)
         " TLogVAR wn
         if wn == -1
