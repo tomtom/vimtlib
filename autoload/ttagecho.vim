@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-10-28.
-" @Last Change: 2008-10-05.
-" @Revision:    0.0.177
+" @Last Change: 2009-02-13.
+" @Revision:    0.0.178
 
 if &cp || exists("loaded_ttagecho_autoload")
     finish
@@ -102,8 +102,10 @@ function! ttagecho#Echo(rx, many_lines, bang) "{{{3
     " TLogVAR a:rx, a:many_lines, a:bang
     let expr = ttagecho#Expr(a:rx, a:many_lines, a:bang)
     if empty(expr)
-        echo
+        redraw
+        " echo
     else
+        redraw
         echohl Type
         if a:many_lines != 0
             echo expr
