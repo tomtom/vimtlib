@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-10-15.
-" @Last Change: 2009-02-07.
-" @Revision:    0.0.246
+" @Last Change: 2009-02-13.
+" @Revision:    0.0.261
 
 if &cp || exists("loaded_tselectfiles_autoload")
     finish
@@ -422,11 +422,13 @@ function! tselectfiles#FormatFilter(world, filename) "{{{3
 endf
 
 
-function! tselectfiles#SelectFiles(mode, dir)
-    " TLogVAR a:mode, a:dir
+" If mode is "n", the arg is the initial directory.
+" If mode is "r", the arg is the initial filter.
+function! tselectfiles#SelectFiles(mode, arg)
+    " TLogVAR a:mode, a:arg
     let s:select_files_buffer = bufnr('%')
     let s:select_files_mode   = a:mode
-    if empty(a:dir) || a:dir == '*'
+    if empty(a:arg) || a:arg == '*'
         let s:select_files_dir = tlib#var#Get('tselectfiles_dir', 'bg', escape(expand('%:p:h'), ','))
         let s:select_files_prefix = tlib#var#Get('tselectfiles_prefix', 'bg')
         let filter = [['']]
@@ -436,9 +438,9 @@ function! tselectfiles#SelectFiles(mode, dir)
         endif
         " TLogVAR filter
     else
-        let s:select_files_dir = escape(fnamemodify(a:dir, ':p:h'), ',')
+        let s:select_files_dir = escape(fnamemodify(a:arg, ':p:h'), ',')
         let s:select_files_prefix = ''
-        let filter = ''
+        let filter = [['']]
     endif
     " call TLogVAR('s:select_files_dir=', s:select_files_dir)
     let world = copy(g:tselectfiles_world)
@@ -466,7 +468,12 @@ function! tselectfiles#SelectFiles(mode, dir)
     endif
     call tselectfiles#GetFileList(world, a:mode)
     let world = tlib#World#New(world)
+    if a:mode =~ '^r' && !empty(a:arg)
+        call add(filter, [tlib#rx#Escape(a:arg, world.matcher.FilterRxPrefix())])
+        " TLogVAR filter, a:arg, a:mode
+    endif
     if !empty(filter)
+        " TLogVAR filter
         call world.SetInitialFilter(filter)
     endif
     let world.display_as_filenames = 1
@@ -488,7 +495,7 @@ function! tselectfiles#BaseFilter(...) "{{{3
         let rplc = a:0 >= 2 ? a:2 : ''
         let file = substitute(file, a:1, rplc, 'g')
     endif
-    let parts = split(file, '\A')
+    let parts = split(file, '[[:blank:][:digit:][:punct:][:space:]_]')
     let subst = tlib#var#Get('tselectfiles_part_subst_'. &filetype, 'wbg', tlib#var#Get('tselectfiles_part_subst', 'wbg', {}))
     for [pattern, substitution] in items(subst)
         call map(parts, 'substitute(v:val, pattern, substitution, "g")')

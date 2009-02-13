@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-16.
-" @Last Change: 2009-02-07.
-" @Revision:    587
+" @Last Change: 2009-02-13.
+" @Revision:    589
 " GetLatestVimScripts: 1865 1 tselectfiles.vim
 
 if &cp || exists("loaded_tselectfile")
@@ -14,7 +14,7 @@ if !exists('loaded_tlib') || loaded_tlib < 29
     echoerr "tlib >= 0.29 is required"
     finish
 endif
-let loaded_tselectfile = 8
+let loaded_tselectfile = 10
 
 " Whether to cache directory listings (in memory). (per buffer, global)
 " If 0, disable the use of cached file listings all together.
@@ -208,4 +208,8 @@ rx in the current buffer's filename.
 naquad/Daniil F.).
 - FIX: If 'splitbelow' is false, opening buffers in split view didn't 
 properly work (thanks to naquad/Daniil F.)
+
+0.10
+- :TSelectFilesInSubdirs interpretes the optional argument as initial 
+filter.
 
