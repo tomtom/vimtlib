@@ -12,8 +12,9 @@ mouse on the entry.
 
 :TRecentlyUsedFiles ... open one or more recently used file(s)
 
-This plugin relies on the 'viminfo' option to contain ! in order 
-to save the files list.
+If the 'viminfo' option contains !, then viminfo will be used to save 
+the filelist. Otherwise the list will be saved in 
+~/viminfo/cache/tmru/files.
 
 By default tmru matches the search pattern on the full filename. If 
 you want to match on the basename, add the following to 
@@ -46,6 +47,7 @@ Contents~
         g:tmruMenu ................ |g:tmruMenu|
         g:tmruMenuSize ............ |g:tmruMenuSize|
         g:tmruEvents .............. |g:tmruEvents|
+        g:tmru_file ............... |g:tmru_file|
         g:tmruExclude ............. |g:tmruExclude|
         g:tmru_ignorecase ......... |g:tmru_ignorecase|
         :TRecentlyUsedFiles ....... |:TRecentlyUsedFiles|
@@ -59,18 +61,26 @@ g:tmruSize                     (default: 50)
 
                                                     *g:tmruMenu*
 g:tmruMenu                     (default: 'File.M&RU.')
-    The prefix for the menu. Set to "" in order to disable the menu.
+    The menu's prefix. If the value is "", the menu will be disabled.
 
                                                     *g:tmruMenuSize*
 g:tmruMenuSize                 (default: 20)
-    The number of recently edited files that are displayed in the menu.
+    The number of recently edited files that are displayed in the 
+    menu.
 
                                                     *g:tmruEvents*
 g:tmruEvents                   (default: 'BufWritePost,BufReadPost')
     A comma-separated list of events that trigger buffer registration.
 
+                                                    *g:tmru_file*
+g:tmru_file                    (default: tlib#cache#Filename('tmru', 'files', 1))
+    Where to save the file list. The default value is only 
+    effective, if 'viminfo' doesn't contain '!' -- in which case 
+    the 'viminfo' will be used.
+
                                                     *g:tmruExclude*
 g:tmruExclude                  (default: '/te\?mp/\|vim.\{-}/\(doc\|cache\)/\|__.\{-}__$')
+    Ignore files matching this regexp.
 
                                                     *g:tmru_ignorecase*
 g:tmru_ignorecase              (default: !has('fname_case'))

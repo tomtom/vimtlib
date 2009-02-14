@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-13.
-" @Last Change: 2008-11-26.
-" @Revision:    0.6.228
+" @Last Change: 2009-02-14.
+" @Revision:    258
 " GetLatestVimScripts: 1864 1 tmru.vim
 
 if &cp || exists("loaded_tmru")
@@ -14,31 +14,48 @@ if !exists('loaded_tlib') || loaded_tlib < 28
     echoerr "tlib >= 0.28 is required"
     finish
 endif
-let loaded_tmru = 6
+let loaded_tmru = 7
 
 if !exists("g:tmruSize")
     " The number of recently edited files that are registered.
     let g:tmruSize = 50 "{{{2
 endif
 if !exists("g:tmruMenu")
-    " The prefix for the menu. Set to "" in order to disable the menu.
+    " The menu's prefix. If the value is "", the menu will be disabled.
     let g:tmruMenu = 'File.M&RU.' "{{{2
 endif
 if !exists("g:tmruMenuSize")
-    " The number of recently edited files that are displayed in the menu.
+    " The number of recently edited files that are displayed in the 
+    " menu.
     let g:tmruMenuSize = 20 "{{{2
 endif
 if !exists("g:tmruEvents")
     " A comma-separated list of events that trigger buffer registration.
     let g:tmruEvents = 'BufWritePost,BufReadPost' "{{{2
 endif
+if !exists("g:tmru_file")
+    if stridx(&viminfo, '!') == -1
+        " Where to save the file list. The default value is only 
+        " effective, if 'viminfo' doesn't contain '!' -- in which case 
+        " the 'viminfo' will be used.
+        let g:tmru_file = tlib#cache#Filename('tmru', 'files', 1) "{{{2
+    else
+        let g:tmru_file = ''
+    endif
+endif
+
+" Don't change the value of this variable.
 if !exists("g:TMRU")
-    let g:TMRU = ''
+    if empty(g:tmru_file)
+        let g:TMRU = ''
+    else
+        let g:TMRU = get(tlib#cache#Get(g:tmru_file), 'tmru', '')
+    endif
 endif
 
 if !exists("g:tmruExclude") "{{{2
-    " :read: let g:tmruExclude = '/te\?mp/\|vim.\{-}/\(doc\|cache\)/\|__.\{-}__$' "{{{2
     " Ignore files matching this regexp.
+    " :read: let g:tmruExclude = '/te\?mp/\|vim.\{-}/\(doc\|cache\)/\|__.\{-}__$' "{{{2
     let g:tmruExclude = '/te\?mp/\|vim.\{-}/\(doc\|cache\)/\|__.\{-}__$\|'.
                 \ substitute(escape(&suffixes, '~.*$^'), ',', '$\\|', 'g') .'$'
 endif
@@ -89,7 +106,10 @@ endf
 
 function! s:MruStore(mru)
     let g:TMRU = join(a:mru, "\n")
+    " TLogVAR g:TMRU
+    " call TLogDBG(g:tmru_file)
     call s:BuildMenu(0)
+    call tlib#cache#Save(g:tmru_file, {'tmru': g:TMRU})
 endf
 
 function! s:MruRegister(fname)
@@ -218,4 +238,7 @@ already registered.
 0.6
 - g:tmruEvents can be configured (eg. BufEnter)
 - Require tlib 0.28
+
+0.7
+- If viminfo doesn't include '!', then use tlib to save the file list.
 
