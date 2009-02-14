@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-10.
 " @Last Change: 2009-02-13.
-" @Revision:    527
+" @Revision:    528
 " GetLatestVimScripts: 1863 1 tlib.vim
 "
 " Please see also ../test/tlib.vim for usage examples.
@@ -78,7 +78,7 @@ command! -nargs=+ TKeyArg exec tlib#arg#Key([<args>])
 
 
 " :display: TBrowseOutput COMMAND
-" Every wondered how to effciently browse the output of a command 
+" Ever wondered how to effciently browse the output of a command 
 " without redirecting it to a file? This command takes a command as 
 " argument and presents the output via |tlib#input#List()| so that you 
 " can easily search for a keyword (e.g. the name of a variable or 
