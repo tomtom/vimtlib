@@ -3,7 +3,7 @@
 # @Author:      Tom Link (micathom AT gmail com)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2009-02-10.
-# @Last Change: 2009-02-11.
+# @Last Change: 2009-02-14.
 #
 # This script creates and installs vimballs without vim.
 #
@@ -39,7 +39,7 @@ require 'zlib'
 class Vimball
 
     APPNAME = 'vimball'
-    VERSION = '1.0.142'
+    VERSION = '1.0.170'
     HEADER = <<HEADER
 " Vimball Archiver by Charles E. Campbell, Jr., Ph.D.
 UseVimball
@@ -100,7 +100,9 @@ HEADER
             config['compress'] ||= false
             config['helptags'] ||= %{vim -T dumb --cmd "helptags %s|quit"}
             config['outdir']   ||= File.join(config['vimfiles'], 'vimballs')
+            config['vimoutdir'] ||= nil
             config['dry']      ||= false
+            config['record']   ||= true
 
             opts = OptionParser.new do |opts|
                 opts.banner =  'Usage: vimball.rb [OPTIONS] COMMAND FILES ...'
@@ -126,6 +128,14 @@ HEADER
                     config['outdir'] = value
                 end
 
+                opts.on('-D', '--dir4vim DIR', String, 'Destination directory name for vim (don\'t use this unless you\'re me)') do |value|
+                    config['vimoutdir'] = value
+                end
+
+                opts.on('--[no-]helptags', 'Build the helptags file') do |value|
+                    config['helptags'] = nil unless value
+                end
+
                 opts.on('-n', '--[no-]dry-run', 'Don\'t actually run any commands; just print them') do |bool|
                     config['dry'] = bool
                 end
@@ -133,6 +143,10 @@ HEADER
                 opts.on('--print-config', 'Print the configuration and exit') do |bool|
                     puts YAML.dump(config)
                     exit
+                end
+
+                opts.on('-r', '--[no-]record', 'Save record in .VimballRecord') do |bool|
+                    config['record'] = bool
                 end
 
                 opts.on('-z', '--gzip', 'Save as vba.gz') do |value|
@@ -170,6 +184,7 @@ HEADER
             rest = opts.parse!(args)
             config['cmd'] = rest.shift
             config['files'].concat(rest)
+            config['vimoutdir'] ||= config['outdir']
 
             return Vimball.new(config)
 
@@ -338,23 +353,23 @@ HEADER
             fileheader = vimball.shift
             nlines = vimball.shift.to_i
             m = /^(.*?)\t\[\[\[1$/.match(fileheader)
-                if m and nlines > 0
-                    basename = m[1]
-                    recipe << basename
-                    filename = File.join(@config['outdir'], basename)
-                    content = vimball.shift(nlines)
+            if m and nlines > 0
+                basename = m[1]
+                recipe << basename
+                filename = File.join(@config['outdir'], basename)
+                content = vimball.shift(nlines)
 
-                    ensure_dir_exists(File.dirname(filename))
+                ensure_dir_exists(File.dirname(filename))
 
-                    $logger.info "Write #{filename}"
-                    file_write(filename) do |io|
-                        io.puts(content.join)
-                    end
-
-                else
-                    $logger.fatal "Error when parsing vimball: #{file}"
-                    exit 5
+                $logger.info "Write #{filename}"
+                file_write(filename) do |io|
+                    io.puts(content.join)
                 end
+
+            else
+                $logger.fatal "Error when parsing vimball: #{file}"
+                exit 5
+            end
 
         end
 
@@ -365,12 +380,24 @@ HEADER
             io.puts recipe.join("\n")
         end
 
+        if @config['record']
+            record = File.join(@config['vimfiles'], '.VimballRecord')
+            $logger.debug "Save vimball-record information: #{record}"
+            file_write(record, 'a') do |io|
+                info = recipe.map {|r| 
+                    rr = File.expand_path(File.join(@config['vimoutdir'], r))
+                    "call delete(#{rr.inspect})"
+                }.join('|')
+                io.puts "#{filebase}.vba: #{info}"
+            end
+        end
+
     end
 
 
     def post_install
         helptags = @config['helptags']
-        if helptags
+        if helptags.is_a?(String) and !helptags.empty?
             helptags = helptags % File.join(@config['outdir'], 'doc')
             $logger.info "Create helptags: #{helptags}"
             `#{helptags}` unless @config['dry']
@@ -392,7 +419,7 @@ HEADER
     def file_write(filename, mode='w', &block)
         $logger.info "Write file: #{filename}"
         unless @config['dry']
-            if File.exist?(filename)
+            if File.exist?(filename) and mode !~ /^a/
                 $logger.warn "Overwrite existing file"
             end
             File.open(filename, mode, &block)
