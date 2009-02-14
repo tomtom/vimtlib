@@ -19,6 +19,7 @@ and install vimballs without vim.
 Build all vimballs:
 ''ruby/vimball.rb -z -d vimballs vba vimballs/*.recipe''
 
+Not recomended but if you insist:
 Install a vimball (check the values of ''helptags'' and ''vimfiles'' in 
 advance, see ''vimball.rb --print-config''):
 ''ruby/vimball.rb install vimballs/VIMBALL ...''

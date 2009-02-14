@@ -1,3 +1,9 @@
+2009-02-14  Tom Link (micathom at gmail com)
+	* tmru.vim: If viminfo doesn't include '!', then use tlib to save 
+	the file list.
+	* vimball.rb: New command-line options: --no-helptags, --no-record, 
+	--dir4vim.
+
 2009-02-13  Tom Link (micathom at gmail com)
 	* ttagecho.vim (ttagecho#Echo): :redraw before :echo.
 	* rx.vim (tlib#rx#Escape): magic can be prefixed with a backslash.
