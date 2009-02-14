@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-11-02.
-" @Last Change: 2007-11-11.
-" @Revision:    0.0.197
+" @Last Change: 2009-02-14.
+" @Revision:    0.0.201
 
 if &cp || exists("loaded_ttagcomplete_autoload")
     finish
@@ -158,6 +158,7 @@ function! ttagcomplete#Java(constraints, base, context) "{{{3
         " TLogDBG 'Method or field'
         " TLogVAR ml
         let class = ttagcomplete#FindJavaClass(ml)
+        " TLogVAR class
         if !empty(class)
             let a:constraints.class = class
             " TLogVAR a:constraints.class
