@@ -1,3 +1,13 @@
+2009-02-15  Tom Link (micathom at gmail com)
+	* tselectfiles.vim (:TSelectFiles, :TSelectFilesInSubdirs): Take an 
+	initial pattern as the second optional argument.
+	* scalefont.vim: BufExec & WinExec options.
+	* tselectfiles.vim (tselectfiles#SelectFiles): 
+	tselectfiles_filter_rx is always evaluated unless a pattern is 
+	provided. tselectfiles_prefix is always evaluated.
+	* tselectfiles.vim (tselectfiles#SelectFiles): if dir is &, search 
+	&path.
+
 2009-02-14  Tom Link (micathom at gmail com)
 	* tmru.vim: If viminfo doesn't include '!', then use tlib to save 
 	the file list.
