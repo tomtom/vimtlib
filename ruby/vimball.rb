@@ -3,7 +3,7 @@
 # @Author:      Tom Link (micathom AT gmail com)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2009-02-10.
-# @Last Change: 2009-02-14.
+# @Last Change: 2009-02-15.
 #
 # This script creates and installs vimballs without vim.
 #
@@ -23,7 +23,6 @@
 # - copy (copy the files; bash-script?)
 # - link (symlink the files; or use graft?)
 # - zip (create a zip archive, not a vba; or simply use zip?)
-# - list files in a vimball
 # - uninstall (or add info of installed vbas to .VimballRecord; users 
 # could also use rm `cat RECIPE`)
 #
@@ -39,7 +38,7 @@ require 'zlib'
 class Vimball
 
     APPNAME = 'vimball'
-    VERSION = '1.0.170'
+    VERSION = '1.0.190'
     HEADER = <<HEADER
 " Vimball Archiver by Charles E. Campbell, Jr., Ph.D.
 UseVimball
@@ -113,6 +112,7 @@ HEADER
                 opts.separator 'Commands:'
                 opts.separator '   vba     ... Create a vimball'
                 opts.separator '   install ... Install a vimball'
+                opts.separator '   list    ... List files in a vimball'
                 opts.separator ' '
 
                 opts.on('-b', '--vimfiles DIR', String, 'Vimfiles directory') do |value|
@@ -199,7 +199,7 @@ HEADER
             until @configs.include?(file)
                 @configs << file
                 if File.readable?(file)
-                    $logger.info "Read configuration from #{file}"
+                    $logger.debug "Read configuration from #{file}"
                     config.merge!(YAML.load_file(file))
                     file = config['configfile']
                     break
@@ -220,7 +220,7 @@ HEADER
 
             meth = "do_#{@config['cmd']}"
             @config['files'].each do |file|
-                $logger.info "#{@config['cmd']}: #{file}"
+                $logger.debug "#{@config['cmd']}: #{file}"
                 if respond_to?(meth)
                     send(meth, file)
                 else
@@ -246,16 +246,11 @@ HEADER
             exit 5
         end
 
-        cmds = ['vba', 'install']
+        cmds = ['vba', 'install', 'list']
         unless cmds.include?(@config['cmd'])
             $logger.fatal "Command must be one of: #{cmds.join(', ')}"
             exit 5
         end
-
-        # unless @config['configfile']
-        #     puts "Where is my config file?"
-        #     return false
-        # end
 
         if @config['files'].empty?
             $logger.fatal "No input files"
@@ -325,52 +320,17 @@ HEADER
 
 
     def do_install(file)
-
-        vimball = nil
-        if file =~ /\.gz$/
-            filebase = File.basename(File.basename(file, '.gz'), '.*')
-            File.open(file) do |f|
-                gzip = Zlib::GzipReader.new(f)
-                vimball = gzip.readlines
-            end
-        else
-            filebase = File.basename(file, '.*')
-            vimball = File.readlines(file)
-        end
-
-        header = vimball.shift(3).join
-        if header != HEADER
-            $logger.fatal "Not a vimball: #{file}"
-            exit 5
-        end
+        filebase, vimball = read_vimball(file)
 
         $logger.info "Install #{file}"
 
-        recipe = []
-
-        until vimball.empty?
-
-            fileheader = vimball.shift
-            nlines = vimball.shift.to_i
-            m = /^(.*?)\t\[\[\[1$/.match(fileheader)
-            if m and nlines > 0
-                basename = m[1]
-                recipe << basename
-                filename = File.join(@config['outdir'], basename)
-                content = vimball.shift(nlines)
-
-                ensure_dir_exists(File.dirname(filename))
-
-                $logger.info "Write #{filename}"
-                file_write(filename) do |io|
-                    io.puts(content.join)
-                end
-
-            else
-                $logger.fatal "Error when parsing vimball: #{file}"
-                exit 5
+        recipe = with_vimball(vimball) do |basename, content|
+            filename = File.join(@config['outdir'], basename)
+            ensure_dir_exists(File.dirname(filename))
+            $logger.info "Write #{filename}"
+            file_write(filename) do |io|
+                io.puts(content.join)
             end
-
         end
 
         recipefile = File.join(@config['outdir'], 'vimballs', 'recipes', filebase + '.recipe')
@@ -402,6 +362,58 @@ HEADER
             $logger.info "Create helptags: #{helptags}"
             `#{helptags}` unless @config['dry']
         end
+    end
+
+
+    def do_list(file)
+        filebase, vimball = read_vimball(file)
+        $logger.info "List #{file}"
+        recipe = with_vimball(vimball)
+        puts recipe.join("\n")
+    end
+
+
+    def read_vimball(file)
+        vimball = nil
+        if file =~ /\.gz$/
+            filebase = File.basename(File.basename(file, '.gz'), '.*')
+            File.open(file) do |f|
+                gzip = Zlib::GzipReader.new(f)
+                vimball = gzip.readlines
+            end
+        else
+            filebase = File.basename(file, '.*')
+            vimball = File.readlines(file)
+        end
+        header = vimball.shift(3).join
+        if header != HEADER
+            $logger.fatal "Not a vimball: #{file}"
+            exit 5
+        end
+        return filebase, vimball
+    end
+
+
+    # Takes optional block as argument.
+    def with_vimball(vimball)
+        recipe = []
+        until vimball.empty?
+
+            fileheader = vimball.shift
+            nlines = vimball.shift.to_i
+            m = /^(.*?)\t\[\[\[1$/.match(fileheader)
+            if m and nlines > 0
+                basename = m[1]
+                recipe << basename
+                content = vimball.shift(nlines)
+                yield(basename, content) if block_given?
+            else
+                $logger.fatal "Error when parsing vimball: #{file}"
+                exit 5
+            end
+
+        end
+        return recipe
     end
 
 
