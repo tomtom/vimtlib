@@ -1,5 +1,5 @@
 *tselectfiles.txt*  A simplicistic files selector/browser (sort of)
-                    Author: Thomas Link, micathom at gmail com
+                    Author: Tom Link, micathom at gmail com
 
 
 This plugin provides a simple file browser. It is not a full blown 

@@ -1,5 +1,5 @@
 *tlib.txt*  tlib -- A library of vim functions
-            Author: Thomas Link, micathom at gmail com
+            Author: Tom Link, micathom at gmail com
 
 
 This library provides some utility functions. There isn't much need to 
@@ -226,6 +226,8 @@ Contents~
         tlib#win#Width .......................... |tlib#win#Width()|
 
 
+========================================================================
+plugin/02tlib.vim~
 
                                                     *:TLet*
 :TLet VAR = VALUE
@@ -273,7 +275,7 @@ Contents~
 
                                                     *:TBrowseOutput*
 TBrowseOutput COMMAND
-    Every wondered how to effciently browse the output of a command 
+    Ever wondered how to effciently browse the output of a command 
     without redirecting it to a file? This command takes a command as 
     argument and presents the output via |tlib#input#List()| so that you 
     can easily search for a keyword (e.g. the name of a variable or 
@@ -389,6 +391,8 @@ g:tlib_keyagents_InputList_m
 g:tlib_handlers_EditList
 
 
+========================================================================
+autoload/tlib/Filter_cnf.vim~
 
                                                     *tlib#Filter_cnf#New()*
 tlib#Filter_cnf#New(...)
@@ -399,6 +403,8 @@ tlib#Filter_cnf#New(...)
     This is also the base class for other filters.
 
 
+========================================================================
+autoload/tlib/Filter_cnfd.vim~
 
                                                     *tlib#Filter_cnfd#New()*
 tlib#Filter_cnfd#New(...)
@@ -407,6 +413,8 @@ tlib#Filter_cnfd#New(...)
     The pattern is a '/\V' very no-'/magic' regexp pattern.
 
 
+========================================================================
+autoload/tlib/Filter_fuzzy.vim~
 
                                                     *tlib#Filter_fuzzy#New()*
 tlib#Filter_fuzzy#New(...)
@@ -414,6 +422,8 @@ tlib#Filter_fuzzy#New(...)
     Characters are interpreted as if connected with '.\{-}'.
 
 
+========================================================================
+autoload/tlib/Filter_seq.vim~
 
                                                     *tlib#Filter_seq#New()*
 tlib#Filter_seq#New(...)
@@ -423,6 +433,8 @@ tlib#Filter_seq#New(...)
     The pattern is a '/magic' regexp pattern.
 
 
+========================================================================
+autoload/tlib/Object.vim~
 Provides a prototype plus some OO-like methods.
 
                                                     *tlib#Object#New()*
@@ -493,6 +505,8 @@ prototype.Super
 prototype.Methods
 
 
+========================================================================
+autoload/tlib/World.vim~
 A prototype used by |tlib#input#List|.
 Inherits from |tlib#Object#New|.
 
@@ -500,6 +514,8 @@ Inherits from |tlib#Object#New|.
 tlib#World#New(...)
 
 
+========================================================================
+autoload/tlib/agent.vim~
 Various agents for use as key handlers in tlib#input#List()
 
                                                     *tlib#agent#Exit()*
@@ -638,6 +654,8 @@ tlib#agent#GotoLine(world, selected)
 tlib#agent#DoAtLine(world, selected)
 
 
+========================================================================
+autoload/tlib/arg.vim~
 
                                                     *tlib#arg#Get()*
 tlib#arg#Get(n, var, ?default="", ?test='')
@@ -667,11 +685,15 @@ tlib#arg#Ex(arg, ?chars='%#! ')
 <
 
 
+========================================================================
+autoload/tlib/autocmdgroup.vim~
 
                                                     *tlib#autocmdgroup#Init()*
 tlib#autocmdgroup#Init()
 
 
+========================================================================
+autoload/tlib/buffer.vim~
 
                                                     *tlib#buffer#EnableMRU()*
 tlib#buffer#EnableMRU()
@@ -745,6 +767,8 @@ tlib#buffer#KeepCursorPosition(cmd)
     Evaluate cmd while maintaining the cursor position and jump registers.
 
 
+========================================================================
+autoload/tlib/cache.vim~
 
                                                     *tlib#cache#Filename()*
 tlib#cache#Filename(type, ?file=%, ?mkdir=0)
@@ -756,6 +780,8 @@ tlib#cache#Save(cfile, dictionary)
 tlib#cache#Get(cfile)
 
 
+========================================================================
+autoload/tlib/char.vim~
 
                                                     *tlib#char#Get()*
 tlib#char#Get(?timeout=0)
@@ -773,6 +799,8 @@ tlib#char#IsAvailable()
 tlib#char#GetWithTimeout(timeout, ...)
 
 
+========================================================================
+autoload/tlib/cmd.vim~
 
                                                     *tlib#cmd#OutputAsList()*
 tlib#cmd#OutputAsList(command)
@@ -792,12 +820,16 @@ tlib#cmd#Time(cmd)
     Print the time in seconds a command takes.
 
 
+========================================================================
+autoload/tlib/comments.vim~
 
                                                     *tlib#comments#Comments()*
 tlib#comments#Comments(...)
     function! tlib#comments#Comments(?rx='')
 
 
+========================================================================
+autoload/tlib/dir.vim~
 
                                                     *tlib#dir#CanonicName()*
 tlib#dir#CanonicName(dirname)
@@ -831,11 +863,15 @@ tlib#dir#Push(dir, ?locally=0)
 tlib#dir#Pop()
 
 
+========================================================================
+autoload/tlib/eval.vim~
 
                                                     *tlib#eval#FormatValue()*
 tlib#eval#FormatValue(value, ...)
 
 
+========================================================================
+autoload/tlib/file.vim~
 
                                                     *tlib#file#Split()*
 tlib#file#Split(filename)
@@ -862,12 +898,16 @@ tlib#file#Relative(filename, basedir)
 tlib#file#With(fcmd, bcmd, files, ?world={})
 
 
+========================================================================
+autoload/tlib/hook.vim~
 
                                                     *tlib#hook#Run()*
 tlib#hook#Run(hook, ?dict={})
     Execute dict[hook], w:{hook}, b:{hook}, or g:{hook} if existent.
 
 
+========================================================================
+autoload/tlib/input.vim~
 Input-related, select from a list etc.
 
                                                     *tlib#input#List()*
@@ -956,6 +996,8 @@ tlib#input#Edit(name, value, callback, ?cb_args=[])
 <
 
 
+========================================================================
+autoload/tlib/list.vim~
 
                                                     *tlib#list#Inject()*
 tlib#list#Inject(list, initial_value, funcref)
@@ -1034,11 +1076,15 @@ tlib#list#Zip(lists, ?default='')
 tlib#list#Uniq(list, ...)
 
 
+========================================================================
+autoload/tlib/normal.vim~
 
                                                     *tlib#normal#WithRegister()*
 tlib#normal#WithRegister(cmd, ...)
 
 
+========================================================================
+autoload/tlib/notify.vim~
 
                                                     *tlib#notify#Echo()*
 tlib#notify#Echo(text, ...)
@@ -1056,6 +1102,8 @@ tlib#notify#TrimMessage(message)
     features.
 
 
+========================================================================
+autoload/tlib/progressbar.vim~
 
                                                     *tlib#progressbar#Init()*
 tlib#progressbar#Init(max, ...)
@@ -1078,6 +1126,8 @@ tlib#progressbar#Display(value, ...)
 tlib#progressbar#Restore()
 
 
+========================================================================
+autoload/tlib/rx.vim~
 
                                                     *tlib#rx#Escape()*
 tlib#rx#Escape(text, ?magic='m')
@@ -1092,6 +1142,8 @@ tlib#rx#EscapeReplace(text, ?magic='m')
 tlib#rx#Suffixes(...)
 
 
+========================================================================
+autoload/tlib/scratch.vim~
 
                                                     *tlib#scratch#UseScratch()*
 tlib#scratch#UseScratch(?keyargs={})
@@ -1104,6 +1156,8 @@ tlib#scratch#CloseScratch(keyargs, ...)
     Close a scratch buffer as defined in keyargs (usually a World).
 
 
+========================================================================
+autoload/tlib/string.vim~
 
                                                     *tlib#string#RemoveBackslashes()*
 tlib#string#RemoveBackslashes(text, ?chars=' ')
@@ -1136,6 +1190,8 @@ tlib#string#Strip(string)
 tlib#string#Count(string, rx)
 
 
+========================================================================
+autoload/tlib/syntax.vim~
 
                                                     *tlib#syntax#Collect()*
 tlib#syntax#Collect()
@@ -1144,6 +1200,8 @@ tlib#syntax#Collect()
 tlib#syntax#Names(?rx='')
 
 
+========================================================================
+autoload/tlib/tab.vim~
 
                                                     *tlib#tab#BufMap()*
 tlib#tab#BufMap()
@@ -1157,6 +1215,8 @@ tlib#tab#TabWinNr(buffer)
 tlib#tab#Set(tabnr)
 
 
+========================================================================
+autoload/tlib/tag.vim~
 
                                                     *tlib#tag#Retrieve()*
 tlib#tag#Retrieve(rx, ?extra_tags=0)
@@ -1195,6 +1255,8 @@ tlib#tag#Collect(constraints, ?use_extra=1, ?match_front=1)
 tlib#tag#Format(tag)
 
 
+========================================================================
+autoload/tlib/time.vim~
 
                                                     *tlib#time#MSecs()*
 tlib#time#MSecs()
@@ -1209,6 +1271,8 @@ tlib#time#Diff(a, b, ...)
 tlib#time#DiffMSecs(a, b, ...)
 
 
+========================================================================
+autoload/tlib/type.vim~
 
                                                     *tlib#type#IsNumber()*
 tlib#type#IsNumber(expr)
@@ -1226,6 +1290,8 @@ tlib#type#IsList(expr)
 tlib#type#IsDictionary(expr)
 
 
+========================================================================
+autoload/tlib/url.vim~
 
                                                     *tlib#url#Decode()*
 tlib#url#Decode(url)
@@ -1244,6 +1310,8 @@ tlib#url#Encode(url, ...)
     Encode an url.
 
 
+========================================================================
+autoload/tlib/var.vim~
 
                                                     *tlib#var#Let()*
 tlib#var#Let(name, val)
@@ -1288,6 +1356,8 @@ tlib#var#List(rx, ?prefix='')
       echo tlib#var#List('tlib_', 'g:')
 
 
+========================================================================
+autoload/tlib/win.vim~
 
                                                     *tlib#win#Set()*
 tlib#win#Set(winnr)
