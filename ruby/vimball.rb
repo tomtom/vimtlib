@@ -21,7 +21,7 @@
 #
 # TODO:
 # - copy (copy the files; bash-script?)
-# - link (symlink the files; or use graft?)
+# - link (symlink the files; or use something like graft?)
 # - zip (create a zip archive, not a vba; or simply use zip?)
 # - uninstall (or add info of installed vbas to .VimballRecord; users 
 # could also use rm `cat RECIPE`)
@@ -38,7 +38,7 @@ require 'zlib'
 class Vimball
 
     APPNAME = 'vimball'
-    VERSION = '1.0.190'
+    VERSION = '1.0.191'
     HEADER = <<HEADER
 " Vimball Archiver by Charles E. Campbell, Jr., Ph.D.
 UseVimball
