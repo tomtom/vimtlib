@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-16.
-" @Last Change: 2009-02-13.
-" @Revision:    589
+" @Last Change: 2009-02-15.
+" @Revision:    604
 " GetLatestVimScripts: 1865 1 tselectfiles.vim
 
 if &cp || exists("loaded_tselectfile")
@@ -44,6 +44,10 @@ TLet g:tselectfiles_filedescription_rx = {}
 
 " Apply filters to basename only.
 TLet g:tselectfiles_filter_basename = 0
+
+" Remove prefix from filenames in list.
+" buffer-local, global
+TLet g:tselectfiles_prefix = ''
 
 " Use these dirs (a comma separated list, see |globpath()|). (per window, per buffer, global)
 " TLet g:tselectfiles_dir = ''
@@ -127,14 +131,14 @@ endif
 " You can also type <c-r> to force rescanning a directory, which could 
 " be necessary if the file system were changed (e.g. by creating a new 
 " file or by some external command)
-command! -bang -nargs=? -complete=dir TSelectFiles call tselectfiles#SelectFiles("normal<bang>".v:count, <q-args>)
+command! -bang -nargs=* -complete=dir TSelectFiles call tselectfiles#SelectFiles("normal<bang>".v:count, <f-args>)
 
 " Recursively show all files in the current directory and subdirectories 
 " (don't show favourites and ".."); don't use this command when you're 
 " at /.
 " A [!] forces the commands to rescan the directory. Otherwise a cached 
 " value will be used if available.
-command! -bang -nargs=? -complete=dir TSelectFilesInSubdirs call tselectfiles#SelectFiles("recursive<bang>".v:count, <q-args>)
+command! -bang -nargs=* -complete=dir TSelectFilesInSubdirs call tselectfiles#SelectFiles("recursive<bang>".v:count, <f-args>)
 
 
 finish
@@ -210,6 +214,12 @@ naquad/Daniil F.).
 properly work (thanks to naquad/Daniil F.)
 
 0.10
-- :TSelectFilesInSubdirs interpretes the optional argument as initial 
-filter.
+- :TSelectFiles, :TSelectFilesInSubdirs, tselectfiles#SelectFiles: take 
+an initial pattern as the second optional argument (i.e. if you pass a 
+directory as first optional argument, you'll have to escape blanks with 
+a backslash).
+- tselectfiles#SelectFiles: if dir is &, search &path
+- tselectfiles_filter_rx is always evaluated unless a pattern is 
+provided as extra argument
+- tselectfiles_prefix is always evaluated
 
