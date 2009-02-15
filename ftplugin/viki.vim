@@ -1,9 +1,9 @@
 " viki.vim -- the viki ftplugin
-" @Author:      Thomas Link (micathom AT gmail com?subject=vim)
+" @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     12-Jän-2004.
-" @Last Change: 2008-02-14.
-" @Revision: 404
+" @Last Change: 2009-02-15.
+" @Revision: 405
 
 " if !g:vikiEnabled
 "     finish

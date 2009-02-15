@@ -1,9 +1,9 @@
 " EvalSelection.vim -- evaluate selected vim/ruby/... code
-" @Author:      Thomas Link (micathom AT gmail com)
+" @Author:      Tom Link (micathom AT gmail com)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     29-Jän-2004.
-" @Last Change: 2007-08-27.
-" @Revision:    0.16.865
+" @Last Change: 2009-02-15.
+" @Revision:    0.16.866
 " 
 " vimscript #889
 " 

@@ -1,9 +1,9 @@
 " tskeleton.vim
-" @Author:      Thomas Link (micathom AT gmail com?subject=vim)
+" @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     30-Dez-2003.
-" @Last Change: 2007-08-27.
-" @Revision: 0.490
+" @Last Change: 2009-02-15.
+" @Revision: 0.491
 
 if version < 600
     syntax clear

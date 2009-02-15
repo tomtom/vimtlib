@@ -1,10 +1,10 @@
 " ttags.vim -- Tag list browser (List, filter, preview, jump to tags)
-" @Author:      Thomas Link (micathom AT gmail com?subject=[vim])
+" @Author:      Tom Link (micathom AT gmail com?subject=[vim])
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-09.
-" @Last Change: 2008-09-19.
-" @Revision:    154
+" @Last Change: 2009-02-15.
+" @Revision:    155
 " GetLatestVimScripts: 2018 1 ttags.vim
 "
 " TODO:

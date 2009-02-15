@@ -1,10 +1,10 @@
 " tbak.vim
-" @Author:      Thomas Link (mailto:micathom AT gmail com?subject=vim-tbak)
+" @Author:      Tom Link (mailto:micathom AT gmail com?subject=vim-tbak)
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-07.
-" @Last Change: 2007-08-27.
-" @Revision:    215
+" @Last Change: 2009-02-15.
+" @Revision:    216
 
 if &cp || exists('loaded_tbak_autoload') "{{{2
     finish

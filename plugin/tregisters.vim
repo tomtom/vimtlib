@@ -1,10 +1,10 @@
 " tregisters.vim -- List, edit, and run/execute registers/clipboards
-" @Author:      Thomas Link (micathom AT gmail com?subject=[vim])
+" @Author:      Tom Link (micathom AT gmail com?subject=[vim])
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-08-22.
-" @Last Change: 2008-10-06.
-" @Revision:    0.2.116
+" @Last Change: 2009-02-15.
+" @Revision:    0.2.117
 " GetLatestVimScripts: 2017 1 tregisters.vim
 
 if &cp || exists("loaded_tregisters")

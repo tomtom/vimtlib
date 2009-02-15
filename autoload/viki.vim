@@ -1,10 +1,10 @@
 " viki.vim
-" @Author:      Thomas Link (micathom AT gmail com?subject=vim-viki)
+" @Author:      Tom Link (micathom AT gmail com?subject=vim-viki)
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2009-01-27.
-" @Revision:    0.520
+" @Last Change: 2009-02-15.
+" @Revision:    0.521
 
 if &cp || exists("loaded_viki_auto") "{{{2
     finish

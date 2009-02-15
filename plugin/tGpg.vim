@@ -1,10 +1,10 @@
 " tGpg.vim -- Yet another plugin for encrypting files with gpg
-" @Author:      Thomas Link (mailto:micathom AT gmail com?subject=vim-tGpg)
+" @Author:      Tom Link (mailto:micathom AT gmail com?subject=vim-tGpg)
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2006-12-31.
-" @Last Change: 2008-12-20.
-" @Revision:    0.5.899
+" @Last Change: 2009-02-15.
+" @Revision:    0.5.900
 " GetLatestVimScripts: 1751 1 tGpg.vim
 "
 " TODO:

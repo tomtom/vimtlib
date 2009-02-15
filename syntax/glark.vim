@@ -1,10 +1,10 @@
 " glark.vim
-" @Author:      Thomas Link (mailto:micathom AT gmail com?subject=vim-glark)
+" @Author:      Tom Link (mailto:micathom AT gmail com?subject=vim-glark)
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     25-Jän-2006.
-" @Last Change: 2007-08-27.
-" @Revision:    0.36
+" @Last Change: 2009-02-15.
+" @Revision:    0.37
 
 if version < 600
     syntax clear

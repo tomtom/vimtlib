@@ -1,10 +1,10 @@
 " hookcursormoved.vim
-" @Author:      Thomas Link (micathom AT gmail com?subject=[vim])
+" @Author:      Tom Link (micathom AT gmail com?subject=[vim])
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-10-04.
-" @Last Change: 2008-07-11.
-" @Revision:    0.8.118
+" @Last Change: 2009-02-15.
+" @Revision:    0.8.119
 " GetLatestVimScripts: 2037 1 hookcursormoved.vim
 
 if &cp || exists("loaded_hookcursormoved")

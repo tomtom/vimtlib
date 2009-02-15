@@ -1,10 +1,10 @@
 " tcalc.vim -- A RPN calculator for vim
-" @Author:      Thomas Link (micathom AT gmail com?subject=[vim])
+" @Author:      Tom Link (micathom AT gmail com?subject=[vim])
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-10-07.
-" @Last Change: 2007-12-06.
-" @Revision:    0.12.354
+" @Last Change: 2009-02-15.
+" @Revision:    0.12.355
 " GetLatestVimScripts: 2040 1 tcalc.vim
 "
 " TODO:

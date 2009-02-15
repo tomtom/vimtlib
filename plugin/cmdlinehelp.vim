@@ -1,10 +1,10 @@
 " cmdlinehelp.vim -- Display help on the command in the command line
-" @Author:      Thomas Link (micathom AT gmail com?subject=[vim])
+" @Author:      Tom Link (micathom AT gmail com?subject=[vim])
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-07-01.
-" @Last Change: 2008-07-09.
-" @Revision:    341
+" @Last Change: 2009-02-15.
+" @Revision:    342
 " GetLatestVimScripts: 2279 0 cmdlinehelp.vim
 
 " :doc:

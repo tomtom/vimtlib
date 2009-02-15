@@ -1,9 +1,9 @@
 " tComment.vim -- An easily extensible & universal comment plugin 
-" @Author:      Thomas Link (micathom AT gmail com)
+" @Author:      Tom Link (micathom AT gmail com)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     27-Dez-2004.
-" @Last Change: 2008-08-09.
-" @Revision:    1.9.669
+" @Last Change: 2009-02-15.
+" @Revision:    1.9.670
 " 
 " GetLatestVimScripts: 1173 1 tComment.vim
 

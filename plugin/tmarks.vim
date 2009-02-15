@@ -1,10 +1,10 @@
 " tmarks.vim -- A simple marks browser
-" @Author:      Thomas Link (mailto:micathom AT gmail com?subject=[vim])
+" @Author:      Tom Link (mailto:micathom AT gmail com?subject=[vim])
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-08-23.
-" @Last Change: 2008-03-06.
-" @Revision:    0.0.25
+" @Last Change: 2009-02-15.
+" @Revision:    0.0.26
 " GetLatestVimScripts: <+SCRIPTID+> 1 tmarks.vim
 
 if &cp || exists("loaded_tmarks")

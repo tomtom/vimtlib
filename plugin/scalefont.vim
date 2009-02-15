@@ -1,10 +1,10 @@
 " vim: ff=unix
 " scalefont.vim -- Change the font size while maintaining the window geometry
-" @Author:      Thomas Link (micathom AT gmail com)
+" @Author:      Tom Link (micathom AT gmail com)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     18-Mai-2004.
 " @Last Change: 2009-02-15.
-" @Revision:    268
+" @Revision:    269
 " 
 " GetLatestVimScripts: 1030 1 scalefont.vim
 

@@ -1,10 +1,10 @@
 " tLog.vim
-" @Author:      Thomas Link (micathom AT gmail com?subject=vim-tLog)
+" @Author:      Tom Link (micathom AT gmail com?subject=vim-tLog)
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2006-12-15.
-" @Last Change: 2008-12-20.
-" @Revision:    0.3.146
+" @Last Change: 2009-02-15.
+" @Revision:    0.3.147
 
 if &cp || exists('loaded_tlog')
     finish

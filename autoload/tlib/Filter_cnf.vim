@@ -1,10 +1,10 @@
 " Filter_cnf.vim
-" @Author:      Thomas Link (mailto:micathom AT gmail com?subject=[vim])
+" @Author:      Tom Link (mailto:micathom AT gmail com?subject=[vim])
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-11-25.
-" @Last Change: 2008-12-26.
-" @Revision:    0.0.56
+" @Last Change: 2009-02-15.
+" @Revision:    0.0.57
 
 let s:save_cpo = &cpo
 set cpo&vim

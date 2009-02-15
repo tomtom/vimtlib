@@ -1,10 +1,10 @@
 " shymenu.vim -- Show the menu bar only when pressing an accel key
-" @Author:      Thomas Link (micathom AT gmail com?subject=[vim])
+" @Author:      Tom Link (micathom AT gmail com?subject=[vim])
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-11-12.
-" @Last Change: 2008-11-25.
-" @Revision:    135
+" @Last Change: 2009-02-15.
+" @Revision:    136
 " GetLatestVimScripts: 2437 0 shymenu.vim
 
 if &cp || exists("loaded_shymenu")

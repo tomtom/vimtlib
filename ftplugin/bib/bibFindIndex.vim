@@ -1,9 +1,9 @@
 " bibFindIndex.vim -- Jump to an index
-" @Author:      Thomas Link (micathom AT gmail com?subject=vim)
+" @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     06-Feb-2004.
-" @Last Change: 2008-12-06.
-" @Revision:    0.1.66
+" @Last Change: 2009-02-15.
+" @Revision:    0.1.67
 
 if exists("b:did_ftplugin_bibFindIndex")
     finish

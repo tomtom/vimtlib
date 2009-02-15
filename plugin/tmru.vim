@@ -1,10 +1,10 @@
 " tmru.vim -- Most Recently Used Files
-" @Author:      Thomas Link (micathom AT gmail com?subject=vim-tlib-mru)
+" @Author:      Tom Link (micathom AT gmail com?subject=vim-tlib-mru)
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-13.
-" @Last Change: 2009-02-14.
-" @Revision:    258
+" @Last Change: 2009-02-15.
+" @Revision:    259
 " GetLatestVimScripts: 1864 1 tmru.vim
 
 if &cp || exists("loaded_tmru")

@@ -1,10 +1,10 @@
 " tAssert.vim
-" @Author:      Thomas Link (micathom AT gmail com?subject=vim-tAssert)
+" @Author:      Tom Link (micathom AT gmail com?subject=vim-tAssert)
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2006-12-12.
-" @Last Change: 2009-02-08.
-" @Revision:    0.4.625
+" @Last Change: 2009-02-15.
+" @Revision:    0.4.626
 "
 " GetLatestVimScripts: 1730 1 07tAssert.vim
 "

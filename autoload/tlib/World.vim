@@ -1,10 +1,10 @@
 " World.vim -- The World prototype for tlib#input#List()
-" @Author:      Thomas Link (micathom AT gmail com?subject=[vim])
+" @Author:      Tom Link (micathom AT gmail com?subject=[vim])
 " @Website:     http://members.a1.net/t.link/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-05-01.
-" @Last Change: 2009-02-13.
-" @Revision:    0.1.684
+" @Last Change: 2009-02-15.
+" @Revision:    0.1.685
 
 " :filedoc:
 " A prototype used by |tlib#input#List|.

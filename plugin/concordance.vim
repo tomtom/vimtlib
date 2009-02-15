@@ -1,10 +1,10 @@
 " concordance.vim -- Concordance table
-" @Author:      Thomas Link (micathom AT gmail com?subject=[vim])
+" @Author:      Tom Link (micathom AT gmail com?subject=[vim])
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-07-13.
-" @Last Change: 2008-07-13.
-" @Revision:    0.1.9
+" @Last Change: 2009-02-15.
+" @Revision:    0.1.10
 " GetLatestVimScripts: 0 0 concordance.vim
 
 if &cp || exists("loaded_concordance")

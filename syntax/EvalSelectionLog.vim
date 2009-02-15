@@ -1,9 +1,9 @@
 " EvalSelectionLog.vim
-" @Author:      Thomas Link (mailto:micathom AT gmail com?subject=vim-EvalSelectionLog)
+" @Author:      Tom Link (mailto:micathom AT gmail com?subject=vim-EvalSelectionLog)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     16-Feb-2005.
-" @Last Change: 2007-08-27.
-" @Revision:    0.13
+" @Last Change: 2009-02-15.
+" @Revision:    0.14
 
 if version < 600
   syntax clear

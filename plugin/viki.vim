@@ -1,9 +1,9 @@
 " Viki.vim -- Some kind of personal wiki for Vim
-" @Author:      Thomas Link (micathom AT gmail com?subject=vim)
+" @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2008-12-22.
-" @Revision:    2621
+" @Last Change: 2009-02-15.
+" @Revision:    2622
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "

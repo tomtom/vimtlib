@@ -1,9 +1,9 @@
 " checksyntax.vim -- Check syntax when saving a file (php, ruby, tex ...)
-" @Author:      Thomas Link (micathom AT gmail com)
+" @Author:      Tom Link (micathom AT gmail com)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     04-Mai-2005.
-" @Last Change: 2008-07-26.
-" @Revision:    0.4.253
+" @Last Change: 2009-02-15.
+" @Revision:    0.4.254
 
 if exists('g:checksyntax')
     finish

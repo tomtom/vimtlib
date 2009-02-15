@@ -1,9 +1,9 @@
 " localvariables.vim -- Set/let per-file-variables à la Emacs
-" @Author:      Thomas Link (micathom AT gmail com)
+" @Author:      Tom Link (micathom AT gmail com)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2009-02-11.
-" @Revision: 2.0.116
+" @Last Change: 2009-02-15.
+" @Revision: 2.0.117
 " 
 " vimscript #853
 

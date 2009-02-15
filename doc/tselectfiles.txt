@@ -67,22 +67,45 @@ Suggested maps (to be set in ~/.vimrc): >
 ========================================================================
 Contents~
 
-        g:tselectfiles_use_cache ............ |g:tselectfiles_use_cache|
-        g:tselectfiles_no_cache_rx .......... |g:tselectfiles_no_cache_rx|
-        g:tselectfiles_filter_rx ............ |g:tselectfiles_filter_rx|
-        g:tselectfiles_part_subst ........... |g:tselectfiles_part_subst|
-        g:tselectfiles_part_subst_ruby ...... |g:tselectfiles_part_subst_ruby|
-        g:tselectfiles_limit ................ |g:tselectfiles_limit|
-        g:tselectfiles_filedescription_rx ... |g:tselectfiles_filedescription_rx|
-        g:tselectfiles_filter_basename ...... |g:tselectfiles_filter_basename|
-        g:tselectfiles_world ................ |g:tselectfiles_world|
-        g:tselectfiles_suffixes ............. |g:tselectfiles_suffixes|
-        g:tselectfiles_hidden_rx ............ |g:tselectfiles_hidden_rx|
-        g:tselectfiles_show_quickfix_list ... |g:tselectfiles_show_quickfix_list|
-        :TSelectFiles ....................... |:TSelectFiles|
-        :TSelectFilesInSubdirs .............. |:TSelectFilesInSubdirs|
+        g:tselectfiles_use_cache ..................... |g:tselectfiles_use_cache|
+        g:tselectfiles_no_cache_rx ................... |g:tselectfiles_no_cache_rx|
+        g:tselectfiles_filter_rx ..................... |g:tselectfiles_filter_rx|
+        g:tselectfiles_part_subst .................... |g:tselectfiles_part_subst|
+        g:tselectfiles_part_subst_ruby ............... |g:tselectfiles_part_subst_ruby|
+        g:tselectfiles_limit ......................... |g:tselectfiles_limit|
+        g:tselectfiles_filedescription_rx ............ |g:tselectfiles_filedescription_rx|
+        g:tselectfiles_filter_basename ............... |g:tselectfiles_filter_basename|
+        g:tselectfiles_prefix ........................ |g:tselectfiles_prefix|
+        g:tselectfiles_world ......................... |g:tselectfiles_world|
+        g:tselectfiles_suffixes ...................... |g:tselectfiles_suffixes|
+        g:tselectfiles_hidden_rx ..................... |g:tselectfiles_hidden_rx|
+        g:tselectfiles_show_quickfix_list ............ |g:tselectfiles_show_quickfix_list|
+        :TSelectFiles ................................ |:TSelectFiles|
+        :TSelectFilesInSubdirs ....................... |:TSelectFilesInSubdirs|
+        tselectfiles#GetFileList ..................... |tselectfiles#GetFileList()|
+        tselectfiles#AgentPostprocess ................ |tselectfiles#AgentPostprocess()|
+        tselectfiles#AgentOpenDir .................... |tselectfiles#AgentOpenDir()|
+        tselectfiles#AgentReset ...................... |tselectfiles#AgentReset()|
+        tselectfiles#AgentDeleteFile ................. |tselectfiles#AgentDeleteFile()|
+        tselectfiles#Grep ............................ |tselectfiles#Grep()|
+        tselectfiles#ViewFile ........................ |tselectfiles#ViewFile()|
+        tselectfiles#AgentPreviewFile ................ |tselectfiles#AgentPreviewFile()|
+        tselectfiles#AgentCopyFile ................... |tselectfiles#AgentCopyFile()|
+        tselectfiles#AgentRenameFile ................. |tselectfiles#AgentRenameFile()|
+        tselectfiles#AgentBatchRenameFile ............ |tselectfiles#AgentBatchRenameFile()|
+        tselectfiles#AgentSelectBackups .............. |tselectfiles#AgentSelectBackups()|
+        tselectfiles#AgentHide ....................... |tselectfiles#AgentHide()|
+        tselectfiles#FormatFirstLine ................. |tselectfiles#FormatFirstLine()|
+        tselectfiles#FormatVikiMetaDataOrFirstLine ... |tselectfiles#FormatVikiMetaDataOrFirstLine()|
+        tselectfiles#Highlight ....................... |tselectfiles#Highlight()|
+        tselectfiles#FormatEntry ..................... |tselectfiles#FormatEntry()|
+        tselectfiles#FormatFilter .................... |tselectfiles#FormatFilter()|
+        tselectfiles#SelectFiles ..................... |tselectfiles#SelectFiles()|
+        tselectfiles#BaseFilter ...................... |tselectfiles#BaseFilter()|
 
 
+========================================================================
+plugin/tselectfiles.vim~
 
                                                     *g:tselectfiles_use_cache*
 g:tselectfiles_use_cache       (default: 1)
@@ -122,6 +145,11 @@ g:tselectfiles_filedescription_rx (default: {})
 g:tselectfiles_filter_basename (default: 0)
     Apply filters to basename only.
 
+                                                    *g:tselectfiles_prefix*
+g:tselectfiles_prefix          (default: '')
+    Remove prefix from filenames in list.
+    buffer-local, global
+
                                                     *g:tselectfiles_world*
 g:tselectfiles_world           (default: {)
 
@@ -154,6 +182,72 @@ g:tselectfiles_show_quickfix_list (default: 'TRagcw')
     at /.
     A [!] forces the commands to rescan the directory. Otherwise a cached 
     value will be used if available.
+
+
+========================================================================
+autoload/tselectfiles.vim~
+
+                                                    *tselectfiles#GetFileList()*
+tselectfiles#GetFileList(world, mode, ...)
+
+                                                    *tselectfiles#AgentPostprocess()*
+tselectfiles#AgentPostprocess(world, result)
+
+                                                    *tselectfiles#AgentOpenDir()*
+tselectfiles#AgentOpenDir(world, selected)
+
+                                                    *tselectfiles#AgentReset()*
+tselectfiles#AgentReset(world, selected)
+
+                                                    *tselectfiles#AgentDeleteFile()*
+tselectfiles#AgentDeleteFile(world, selected)
+
+                                                    *tselectfiles#Grep()*
+tselectfiles#Grep(world, selected)
+
+                                                    *tselectfiles#ViewFile()*
+tselectfiles#ViewFile(world, selected)
+
+                                                    *tselectfiles#AgentPreviewFile()*
+tselectfiles#AgentPreviewFile(world, selected)
+
+                                                    *tselectfiles#AgentCopyFile()*
+tselectfiles#AgentCopyFile(world, selected)
+
+                                                    *tselectfiles#AgentRenameFile()*
+tselectfiles#AgentRenameFile(world, selected)
+
+                                                    *tselectfiles#AgentBatchRenameFile()*
+tselectfiles#AgentBatchRenameFile(world, selected)
+
+                                                    *tselectfiles#AgentSelectBackups()*
+tselectfiles#AgentSelectBackups(world, selected)
+
+                                                    *tselectfiles#AgentHide()*
+tselectfiles#AgentHide(world, selected)
+
+                                                    *tselectfiles#FormatFirstLine()*
+tselectfiles#FormatFirstLine(filename)
+
+                                                    *tselectfiles#FormatVikiMetaDataOrFirstLine()*
+tselectfiles#FormatVikiMetaDataOrFirstLine(filename)
+
+                                                    *tselectfiles#Highlight()*
+tselectfiles#Highlight(world)
+
+                                                    *tselectfiles#FormatEntry()*
+tselectfiles#FormatEntry(world, filename)
+
+                                                    *tselectfiles#FormatFilter()*
+tselectfiles#FormatFilter(world, filename)
+
+                                                    *tselectfiles#SelectFiles()*
+tselectfiles#SelectFiles(mode, ?dir='', ?pattern='')
+    If dir is empty or "*", the current file's directory is used.
+    If dir is "&", &path is used.
+
+                                                    *tselectfiles#BaseFilter()*
+tselectfiles#BaseFilter(?rx='', ?replace='')
 
 
 

@@ -1,9 +1,9 @@
 " viki.vim -- the viki syntax file
-" @Author:      Thomas Link (micathom AT gmail com?subject=vim)
+" @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     30-Dez-2003.
-" @Last Change: 2008-11-28.
-" @Revision: 0.863
+" @Last Change: 2009-02-15.
+" @Revision: 0.864
 
 if !g:vikiEnabled
     finish

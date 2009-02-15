@@ -1,10 +1,10 @@
 " tbibtools.vim -- bibtex-related utilities (require ruby support)
-" @Author:      Thomas Link (mailto:micathom AT gmail com?subject=vim-tbibtools)
+" @Author:      Tom Link (mailto:micathom AT gmail com?subject=vim-tbibtools)
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-30.
-" @Last Change: 2007-09-28.
-" @Revision:    0.5.187
+" @Last Change: 2009-02-15.
+" @Revision:    0.5.188
 
 if &cp || exists("loaded_tbibtools")
     finish
