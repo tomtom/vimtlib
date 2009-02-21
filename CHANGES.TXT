@@ -1,3 +1,10 @@
+2009-02-21  Tom Link (micathom at gmail com)
+	* 07tassert.vim: Incompatible changes.
+
+2009-02-20  Tom Link (micathom at gmail com)
+	* trag.vim (trag#AgentEditQFE): Use base index.
+	* trag.vim (trag#RunCmdOnSelected): Use base index.
+
 2009-02-15  Tom Link (micathom at gmail com)
 	* tselectfiles.vim (:TSelectFiles, :TSelectFilesInSubdirs): Take an 
 	initial pattern as the second optional argument.
