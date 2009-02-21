@@ -1,5 +1,5 @@
 *ttagecho.txt*      Show current tag information (echo area or balloon)
-                    Author: Thomas Link, micathom at gmail com
+                    Author: Tom Link, micathom at gmail com
 
 This plugin is similar to echofunc (vimscript #1735) to which it owes 
 much inspiration and two lines of code. It displays some information 
@@ -57,6 +57,8 @@ Contents~
         ttagecho#Balloon .................. |ttagecho#Balloon()|
 
 
+========================================================================
+plugin/ttagecho.vim~
 
                                                     *g:ttagecho_parentheses_patterns*
 g:ttagecho_parentheses_patterns (default: [])
@@ -114,6 +116,8 @@ TTagechoWords[!]
     Show all matches for the word under cursor.
 
 
+========================================================================
+autoload/ttagecho.vim~
 
                                                     *ttagecho#Expr()*
 ttagecho#Expr(rx, ?many_lines=0, ?bang=0, ?compact=0)
