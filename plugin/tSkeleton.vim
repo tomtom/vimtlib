@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     21-Sep-2004.
-" @Last Change: 2009-02-15.
-" @Revision:    3799
+" @Last Change: 2009-02-21.
+" @Revision:    3802
 "
 " GetLatestVimScripts: 1160 1 tSkeleton.vim
 " http://www.vim.org/scripts/script.php?script_id=1160
@@ -29,7 +29,6 @@ if !exists('loaded_tlib') || loaded_tlib < 29
     endif
 endif
 let loaded_tskeleton = 406
-
 
 if !exists("g:tskelDir") "{{{2
     let g:tskelDir = get(split(globpath(&rtp, 'skeletons/'), '\n'), 0, '')
