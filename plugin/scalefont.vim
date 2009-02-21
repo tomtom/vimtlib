@@ -3,8 +3,8 @@
 " @Author:      Tom Link (micathom AT gmail com)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     18-Mai-2004.
-" @Last Change: 2009-02-15.
-" @Revision:    269
+" @Last Change: 2009-02-19.
+" @Revision:    277
 " 
 " GetLatestVimScripts: 1030 1 scalefont.vim
 
@@ -466,11 +466,17 @@ fun! s:ScaleFontSetSize(mode, ...) "{{{3
 endf
 
 function! s:BufExec(exec) "{{{3
-    if !empty(a:exec)
+    if a:exec =~ '[^|]'
         let bn = bufnr('%')
         " TLogVAR bn, a:exec
-        exec 'bufdo '. a:exec
+        bufdo call s:BufDo(a:exec)
         exec 'buffer! '. bn
+    endif
+endf
+
+function! s:BufDo(exec) "{{{3
+    if !empty(bufname('%'))
+        exec a:exec
     endif
 endf
 
