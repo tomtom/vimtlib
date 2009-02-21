@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-29.
-" @Last Change: 2009-02-15.
-" @Revision:    0.0.577
+" @Last Change: 2009-02-21.
+" @Revision:    0.0.604
 
 if &cp || exists("loaded_trag_autoload")
     finish
@@ -24,8 +24,10 @@ function! s:GetFiles() "{{{3
         " echoerr 'TRag: No project files'
         " echohl NONE
         let trag_get_files = tlib#var#Get('trag_get_files_'. &filetype, 'bg', '')
+        " TLogVAR trag_get_files
         if empty(trag_get_files)
             let trag_get_files = tlib#var#Get('trag_get_files', 'bg', '')
+            " TLogVAR trag_get_files
         endif
         echom 'TRag: No project files ... use: '. trag_get_files
         let b:trag_files_ = eval(trag_get_files)
@@ -64,7 +66,7 @@ function! trag#SetFiles(...) "{{{3
     if empty(files)
         unlet! files
         let files = tlib#var#Get('trag_files', 'bg', [])
-        " TLogVAR files
+        " TLogVAR files, empty(files)
         if empty(files)
             let glob = tlib#var#Get('trag_glob', 'bg', '')
             if !empty(glob)
@@ -72,6 +74,7 @@ function! trag#SetFiles(...) "{{{3
                 let files = split(glob(glob), '\n')
             else
                 let proj = tlib#var#Get('trag_project_'. &filetype, 'bg', tlib#var#Get('trag_project', 'bg', ''))
+                " TLogVAR proj
                 if !empty(proj)
                     " let proj = fnamemodify(proj, ':p')
                     let proj = findfile(proj, '.;')
@@ -180,9 +183,10 @@ function! trag#Grep(args, ...) "{{{3
         " throw 'Malformed arguments (should be: "KIND REGEXP"): '. string(a:args)
     endif
     let s:grep_rx = rx
-    " TLogVAR kindspos, kindsneg, rx
+    " TLogVAR kindspos, kindsneg, rx, files
     if empty(files)
         let files = s:GetFiles()
+        " TLogVAR files
     endif
     call tlib#progressbar#Init(len(files), 'TRag: Grep %s', 20)
     if replace
@@ -197,8 +201,8 @@ function! trag#Grep(args, ...) "{{{3
         endif
         let fidx  = 0
         let strip = 0
+        " TLogVAR files
         for f in files
-            " TLogVAR f
             call tlib#progressbar#Display(fidx, ' '. f)
             let rxpos = s:GetRx(f, kindspos, rx, '.')
             " let rxneg = s:GetRx(f, kindsneg, rx, '')
@@ -206,9 +210,10 @@ function! trag#Grep(args, ...) "{{{3
             " TLogVAR kindspos, kindsneg, rx, rxpos, rxneg
             let fidx += 1
             if !filereadable(f) || empty(rxpos)
-                " TLogDBG 'continue '.filereadable(f) .' '. empty(rxpos)
+                " TLogDBG f .': continue '. filereadable(f) .' '. empty(rxpos)
                 continue
             endif
+            " TLogVAR f
             let fext = fnamemodify(f, ':e')
             let prcacc = []
             " TODO: This currently doesn't work.
@@ -261,7 +266,8 @@ function! trag#Grep(args, ...) "{{{3
                     norm! ggdG
                     call setqflist(qfl, 'a')
                 else
-                    " TLogDBG 'vimgrepadd /'. escape(rxpos, '/') .'/gj '. f
+                    " TLogDBG 'vimgrepadd /'. escape(rxpos, '/') .'/gj '. tlib#arg#Ex(f)
+                    " TLogVAR len(getqflist())
                     " silent! exec 'vimgrepadd /'. escape(rxpos, '/') .'/gj '. tlib#arg#Ex(f)
                     silent! exec 'vimgrepadd /'. escape(rxpos, '/') .'/j '. tlib#arg#Ex(f)
                     let strip = 1
@@ -451,7 +457,7 @@ function! trag#AgentEditQFE(world, selected, ...) "{{{3
             let idx -= 1
             " TLogVAR idx
             if idx >= 0
-                let qfe = a:world.qfl[idx]
+                let qfe = a:world.qfl[a:world.GetBaseIdx(idx)]
                 " let back = a:world.SwitchWindow('win')
                 " TLogVAR cmd_edit, cmd_buffer, qfe
                 call tlib#file#With(cmd_edit, cmd_buffer, [s:GetFilename(qfe)], a:world)
@@ -467,6 +473,7 @@ endf
 
 
 function! trag#AgentPreviewQFE(world, selected) "{{{3
+    " TLogVAR a:selected
     let back = a:world.SwitchWindow('win')
     call trag#AgentEditQFE(a:world, a:selected[0:0])
     exec back
@@ -504,7 +511,7 @@ function! trag#RunCmdOnSelected(world, selected, cmd) "{{{3
         " TLogVAR entry, a:world.GetBaseItem(entry)
         call trag#AgentEditQFE(a:world, [entry])
         exec a:cmd
-        let item = a:world.qfl[entry - 1]
+        let item = a:world.qfl[a:world.GetBaseIdx(entry - 1)]
         " TLogVAR entry, item, getline('.')
         let item['text'] = tlib#string#Strip(getline('.'))
     endfor

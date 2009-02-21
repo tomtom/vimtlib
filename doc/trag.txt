@@ -1,5 +1,5 @@
 *trag.txt*          A slightly language-aware alternative to grep
-                    Author: Thomas Link, micathom at gmail com
+                    Author: Tom Link, micathom at gmail com
 
 You can think of this plugin either as some kind of ad-hoc 
 tags/cescope-like solution or as a project-oriented and slightly 
@@ -210,6 +210,8 @@ Contents~
         trag#RefactorRename ...... |trag#RefactorRename()|
 
 
+========================================================================
+plugin/trag.vim~
 
                                                     *g:trag_search_mode*
 g:trag_search_mode             (default: 2)
@@ -374,6 +376,8 @@ g:trag_project_ruby            (default: 'Manifest.txt')
     Remove any files from the project list.
 
 
+========================================================================
+autoload/trag.vim~
 
                                                     *trag#ClearFiles()*
 trag#ClearFiles()

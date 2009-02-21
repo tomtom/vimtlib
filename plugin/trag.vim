@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-29.
-" @Last Change: 2009-02-15.
-" @Revision:    546
+" @Last Change: 2009-02-20.
+" @Revision:    547
 " GetLatestVimScripts: 2033 1 trag.vim
 
 if &cp || exists("loaded_trag")
@@ -396,3 +396,7 @@ rtp-directory.
 - NEW: [bg]:trag_get_files_{&filetype}
 - Traggrep: If the second argument (glob pattern) is missing, the 
 default file list will be used.
+
+0.6
+- Make sure to use base index.
+
