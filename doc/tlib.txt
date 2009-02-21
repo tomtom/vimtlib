@@ -28,6 +28,7 @@ installed.
 ========================================================================
 Contents~
 
+        :TRequire ............................... |:TRequire|
         :TLet ................................... |:TLet|
         :TScratch ............................... |:TScratch|
         :TVarArg ................................ |:TVarArg|
@@ -229,9 +230,16 @@ Contents~
 ========================================================================
 plugin/02tlib.vim~
 
+                                                    *:TRequire*
+TRequire NAME [VERSION [FILE]]
+    Make a certain vim file is loaded.
+    
+    Conventions: If FILE isn't defined, plugin/NAME.vim is loaded. The 
+    file must provide a variable loaded_{NAME} that represents the version 
+    number.
+
                                                     *:TLet*
 :TLet VAR = VALUE
-    Commands
     Set a variable only if it doesn't already exist.
     EXAMPLES: >
       TLet foo = 1

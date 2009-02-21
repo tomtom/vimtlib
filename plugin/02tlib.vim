@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-10.
-" @Last Change: 2009-02-15.
-" @Revision:    529
+" @Last Change: 2009-02-21.
+" @Revision:    559
 " GetLatestVimScripts: 1863 1 tlib.vim
 "
 " Please see also ../test/tlib.vim for usage examples.
@@ -34,7 +34,24 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
-" Commands {{{1
+" Commands~ {{{1
+
+" :display: TRequire NAME [VERSION [FILE]]
+" Make a certain vim file is loaded.
+"
+" Conventions: If FILE isn't defined, plugin/NAME.vim is loaded. The 
+" file must provide a variable loaded_{NAME} that represents the version 
+" number.
+command! -nargs=+ TRequire let s:require = [<f-args>]
+            \ | if !exists('loaded_'. get(s:require, 0))
+                \ | exec 'runtime '. get(s:require, 2, 'plugin/'. get(s:require, 0) .'.vim')
+                \ | if !exists('loaded_'. get(s:require, 0)) || loaded_{get(s:require, 0)} < get(s:require, 1, loaded_{get(s:require, 0)})
+                    \ | echoerr 'Require '.  get(s:require, 0) .' >= '. get(s:require, 1, 'any version will do')
+                    \ | finish
+                    \ | endif
+                \ | endif | unlet s:require
+
+
 " :display: :TLet VAR = VALUE
 " Set a variable only if it doesn't already exist.
 " EXAMPLES: >
@@ -93,7 +110,7 @@ command! -nargs=1 -complete=command TBrowseOutput call tlib#cmd#BrowseOutput(<q-
 
 
 
-" Variables {{{1
+" Variables~ {{{1
 
 " When 1, automatically select a the last remaining item after applying 
 " any filters.
@@ -258,6 +275,13 @@ TLet g:tlib_handlers_EditList = [
             \ {'pick_last_item': 0},
             \ {'return_agent': 'tlib#agent#EditReturnValue'},
             \ ]
+
+
+
+" " TEST:
+" TRequire tselectbuffer 6
+" echo loaded_tselectbuffer
+
 
 
 let &cpo = s:save_cpo
@@ -504,4 +528,7 @@ text to an empty buffer.
 
 0.30
 - World#RestoreOrigin(): Don't assume &splitright
+
+0.31
+- :TRequire command
 
