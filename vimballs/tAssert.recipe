@@ -1,3 +1,7 @@
+autoload/should.vim
+autoload/should/be.vim
+autoload/tassert.vim
+autoload/tlog.vim
 doc/tassert.txt
 plugin/05tlog.vim
 plugin/07tassert.vim

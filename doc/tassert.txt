@@ -1,87 +1,37 @@
-*tAssert.txt*           Simple Assertions
+*tAssert.txt*           Simple Assertions & Logging
                         Thomas Link (micathom AT gmail com?subject=vim)
 
 
-                                                    *tAssert-intro*
-Introduction:
 This plugin defines a command |:TAssert| that takes an expression as 
 argument and throws an exception if this expression evaluates to 
 |empty()|. You can insert these comments throughout your code whenever 
-something potentially could go wrong in your vim scripts. The exception 
-is then thrown right where to problem occurs.
+something could potentially go wrong. The exception is then thrown right 
+where the problem occurs.
 
 To some extent you can also write some sort of primitive "unit" tests 
-(ie scripts testing other scripts).
+(ie scripts testing other scripts). Two commands are provided to 
+facilitate this process: |:TAssertBegin| can be used to set a log 
+message and the script context, |:TAssertEnd| to remove temporary 
+variables and functions.
 
                                                     *g:TASSERT*
 In order to minimize the speed penalty, these assertions are only 
 evaluated when g:TASSERT is non-null. Otherwise assertions are fully 
-ignored.
+ignored. You can also use |:TAssertComment| to comment all assertions in 
+the current file.
 
 When changing the value of g:TASSERT, you have to reload the plugin to 
 make this change effective. This is automatically done by using the 
 convenience commands listed below.
 
-
-Assert Commands:
-                                                    *:TAssert*
-    TAssert[!] {expr} ... Test that an expression doesn't evaluate to 
-    something |empty()|. If used after a |:TAssertBegin| command, any 
-    occurrences of "<SID>" in the expression is replaced with the 
-    current script's |<SNR>|. With [!] failures are logged according to 
-    the setting of |g:tAssertLog|.
-
-
-Convenience Commands:
-                            *:TAssertOn* *:TAssertOff* *:TAssertToggle*
-    TAssertOn, TAssertOff, TAssertToggle ... Switch assertions on or off 
-    and reload the plugin.
-
-                                                    *:TAssertSource*
-    TAssertSource [{file}] ... Source file (or current buffer if none 
-    provided, while temporarily setting |g:TASSERT| to 1.
-
-                                *:TAssertComment* *:TAssertUncomment*
-    TAssertComment, TAssertUncomment ... (Un-)Comment TAssert* commands 
-    and all lines between a TAssertBegin and a TAssertEnd command.
-
-                                                    *:TAssertBegin*
-    TAssertBegin[!] [{message}], [{script context}] ... Marks the 
-    beginning of a sequence some assertions and takes an optional 
-    message string as argument. The second command (a regexp) can be 
-    used to evaluate functions prefixed with |<SID>| in a different 
-    context.
-    This command is optional. It serves primarily as marker for use with 
-    the :TAssertComment command. With [!] the {message} is echoed, which 
-    can be useful in unit testing kind of scripts.
-
-                                                    *:TAssertEnd*
-    TAssertEnd [{variable1} {function1()}...] ... Mark the end of a 
-    sequence of assertions. Call |:unlet| for temporary variables or 
-    |:delfunction| for temporary functions named on the command line.
-
-
-Convenience Function:
-    IsNumber(arg)
-    IsString(arg)
-    IsFuncref(arg)
-    IsList(arg)
-    IsDictionary(arg)
-    IsEqual(arg1, arg2)
-    IsNotEqual(arg1, arg2)
-    IsMatch(arg1, arg2)
-    IsException(expr)
-    IsError(expr, rx)
-
-
                                                     *tAssert-logging*
 Logging:
-Logging is done by 00tLog.vim.
-                                                    *g:tlog*
-The variable g:tlog can have the following values:
+Logging is done by |:TLog|.
+                                                    *g:TLOG*
+The variable g:TLOG can have the following values:
 
     echom ... Print messages in the echo area.
-    file  ... Print messages in g:tAssertLogFile
+    file  ... Print messages to a file; syntax "file:FILENAME"
     Decho ... Print messages via Decho (vimscript#642)
 
 This affects the commands TAssertBegin! and TAssert! with the |<bang>|.
@@ -116,9 +66,13 @@ Examples: >
 
                                                     *tAssert-install*
 Install:
-Save this file as plugin/00tAssert.vim (the convenience commands 
-currently expect to find it there). If g:TASSERT is 0, the impact of 
-this script on startup time should be minimal.
+Edit the vba file and type: >
+
+    :so %
+
+See :help vimball for details. If you have difficulties or use vim 7.0, 
+please make sure, you have the current version of vimball (vimscript 
+#1502) installed.
 
 
                                                     *tAssert-redistribute*
@@ -135,4 +89,213 @@ your file: >
         command! -nargs=* -bang TAssertEnd :
     endif
 
+Alternatively, use the |:TAssertComment| command.
 
+
+========================================================================
+Contents~
+
+        :TAssert ................. |:TAssert|
+        :TAssertBegin ............ |:TAssertBegin|
+        :TAssertEnd .............. |:TAssertEnd|
+        :TAssertOn ............... |:TAssertOn|
+        :TAssertOff .............. |:TAssertOff|
+        :TAssertToggle ........... |:TAssertToggle|
+        :TAssertComment .......... |:TAssertComment|
+        :TAssertUncomment ........ |:TAssertUncomment|
+        TAssertInit .............. |TAssertInit()|
+        :TLog .................... |:TLog|
+        :TLogTODO ................ |:TLogTODO|
+        :TLogDBG ................. |:TLogDBG|
+        :TLogStyle ............... |:TLogStyle|
+        :TLogVAR ................. |:TLogVAR|
+        :TLogOn .................. |:TLogOn|
+        :TLogOff ................. |:TLogOff|
+        :TLogBufferOn ............ |:TLogBufferOn|
+        :TLogBufferOff ........... |:TLogBufferOff|
+        :TLogComment ............. |:TLogComment|
+        :TLogUncomment ........... |:TLogUncomment|
+        tassert#Val .............. |tassert#Val()|
+        should#be#Number ......... |should#be#Number()|
+        should#be#String ......... |should#be#String()|
+        should#be#Funcref ........ |should#be#Funcref()|
+        should#be#List ........... |should#be#List()|
+        should#be#Dictionary ..... |should#be#Dictionary()|
+        should#be#Exception ...... |should#be#Exception()|
+        should#be#Error .......... |should#be#Error()|
+        should#be#Equal .......... |should#be#Equal()|
+        should#be#Unequal ........ |should#be#Unequal()|
+        should#be#Empty .......... |should#be#Empty()|
+        should#be#NotEmpty ....... |should#be#NotEmpty()|
+        should#be#Match .......... |should#be#Match()|
+        should#be#NotMatch ....... |should#be#NotMatch()|
+        should#be#Existent ....... |should#be#Existent()|
+
+
+========================================================================
+plugin/07tassert.vim~
+
+                                                    *:TAssert*
+TAssert[!] {expr}
+    Test that an expression doesn't evaluate to something |empty()|. 
+    If used after a |:TAssertBegin| command, any occurrences of 
+    "<SID>" in the expression is replaced with the current script's 
+    |<SNR>|. With [!] failures are logged according to the setting of 
+    |g:tAssertLog|.
+
+                                                    *:TAssertBegin*
+TAssertBegin [TITLE], [SCRIPT CONTEXT AS FILENAME]
+    When using tassert as a poor man's unit testing framework, put 
+    your tests between :TAssertBegin ... :TAssertEnd command.
+    
+    Marks the beginning of a sequence some assertions and takes an 
+    optional message string as argument. The second command (a regexp) 
+    can be used to evaluate functions prefixed with |<SID>| in a 
+    different context.
+    
+    This command is optional. It serves primarily as marker for use with 
+    the :TAssertComment command. With [!] the {message} is echoed, which 
+    can be useful in unit testing kind of scripts.
+
+                                                    *:TAssertEnd*
+TAssertEnd [VAR1 VAR2 ... FUNCTION1 FUNCTION2 ...]
+    Mark the end of a sequence of assertions. Call |:unlet| for 
+    temporary variables or |:delfunction| for temporary functions 
+    named on the command line.
+
+                                                    *:TAssertOn*
+:TAssertOn
+    Switch assertions on and reload the plugin.
+
+                                                    *:TAssertOff*
+:TAssertOff
+    Switch assertions off and reload the plugin.
+
+                                                    *:TAssertToggle*
+:TAssertToggle
+    Switch assertions on or off and reload the plugin.
+
+                                                    *:TAssertComment*
+:TAssertComment
+    Comment TAssert* commands and all lines between a TAssertBegin 
+    and a TAssertEnd command.
+
+                                                    *:TAssertUncomment*
+:TAssertUncomment
+    Uncomment TAssert* commands and all lines between a TAssertBegin 
+    and a TAssertEnd command.
+
+                                                    *TAssertInit()*
+TAssertInit()
+    Put the line "exec TAssertInit()" into your script, to install the 
+    function s:TAssertVal. It can be used later on to evaluate 
+    expressions in the script context. This initializations is 
+    necessary only if you call the function |tassert#Val()|.
+
+
+
+
+
+========================================================================
+plugin/05tlog.vim~
+
+                                                    *:TLog*
+:TLog
+
+                                                    *:TLogTODO*
+:TLogTODO
+
+                                                    *:TLogDBG*
+:TLogDBG
+
+                                                    *:TLogStyle*
+:TLogStyle
+
+                                                    *:TLogVAR*
+:TLogVAR
+
+                                                    *:TLogOn*
+:TLogOn
+
+                                                    *:TLogOff*
+:TLogOff
+
+                                                    *:TLogBufferOn*
+:TLogBufferOn
+
+                                                    *:TLogBufferOff*
+:TLogBufferOff
+
+                                                    *:TLogComment*
+:TLogComment
+
+                                                    *:TLogUncomment*
+:TLogUncomment
+
+
+========================================================================
+autoload/tassert.vim~
+
+                                                    *tassert#Val()*
+tassert#Val(script, expr)
+    Evaluate an expression in the context of a script.
+    Requires a call to |TAssertInit()|.
+
+
+========================================================================
+autoload/should/be.vim~
+
+
+
+    Test if expr is of type (see |type()|).
+
+                                                    *should#be#Number()*
+should#be#Number(expr)
+
+                                                    *should#be#String()*
+should#be#String(expr)
+
+                                                    *should#be#Funcref()*
+should#be#Funcref(expr)
+
+                                                    *should#be#List()*
+should#be#List(expr)
+
+                                                    *should#be#Dictionary()*
+should#be#Dictionary(expr)
+
+                                                    *should#be#Exception()*
+should#be#Exception(expr)
+    Return the exception when evaluating expr or an empty string if 
+    nothing was thrown.
+
+                                                    *should#be#Error()*
+should#be#Error(expr, expected)
+    Check if the exception throws when evaluating expr matches the 
+    expected |regexp|.
+
+                                                    *should#be#Equal()*
+should#be#Equal(expr, expected)
+
+                                                    *should#be#Unequal()*
+should#be#Unequal(expr, expected)
+
+                                                    *should#be#Empty()*
+should#be#Empty(expr)
+
+                                                    *should#be#NotEmpty()*
+should#be#NotEmpty(expr)
+
+                                                    *should#be#Match()*
+should#be#Match(expr, expected)
+
+                                                    *should#be#NotMatch()*
+should#be#NotMatch(expr, expected)
+
+                                                    *should#be#Existent()*
+should#be#Existent(expr)
+
+
+
+
+vim:tw=78:fo=tcq2:isk=!-~,^*,^|,^":ts=8:ft=help:norl:
