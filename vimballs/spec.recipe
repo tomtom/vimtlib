@@ -1,0 +1,8 @@
+autoload/should.vim
+autoload/should/be.vim
+autoload/should/throw.vim
+autoload/should/yield.vim
+autoload/spec.vim
+macros/spec.vim
+plugin/spec.vim
+test/spec/spec.vim

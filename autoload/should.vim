@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-21.
-" @Last Change: 2009-02-21.
-" @Revision:    0.0.31
+" @Last Change: 2009-02-22.
+" @Revision:    0.0.34
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -13,34 +13,35 @@ set cpo&vim
 
 " :nodoc:
 fun! should#__Init() "{{{3
-    let s:assertReason = []
+    let s:should_reason = []
 endf
 
 
 " :nodoc:
 fun! should#__InsertReason(reason) "{{{3
-    call insert(s:assertReason, a:reason)
+    call insert(s:should_reason, a:reason)
     return a:reason
 endf
 
 
 " :nodoc:
 fun! should#__Reasons() "{{{3
-    return join(s:assertReason, ': ')
+    return join(s:should_reason, ': ')
 endf
 
 
+" :nodoc:
 fun! should#__ClearReasons() "{{{3
     let rv = should#__Reasons()
-    let s:assertReason = []
+    let s:should_reason = []
     return rv
 endf
 
 
 " :nodoc:
 fun! should#__Explain(rv, reason)
-    if empty(a:rv) || g:TASSERTLOG >= 2
-        call add(s:assertReason, a:reason)
+    if empty(a:rv)
+        call add(s:should_reason, a:reason)
     endif
 endf
 
