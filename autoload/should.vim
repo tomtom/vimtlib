@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-21.
 " @Last Change: 2009-02-21.
-" @Revision:    0.0.29
+" @Revision:    0.0.31
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -30,9 +30,16 @@ fun! should#__Reasons() "{{{3
 endf
 
 
+fun! should#__ClearReasons() "{{{3
+    let rv = should#__Reasons()
+    let s:assertReason = []
+    return rv
+endf
+
+
 " :nodoc:
 fun! should#__Explain(rv, reason)
-    if !a:rv || g:TASSERTLOG >= 2
+    if empty(a:rv) || g:TASSERTLOG >= 2
         call add(s:assertReason, a:reason)
     endif
 endf

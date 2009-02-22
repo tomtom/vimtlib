@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2006-12-12.
 " @Last Change: 2009-02-21.
-" @Revision:    0.4.715
+" @Revision:    760
 "
 " GetLatestVimScripts: 1730 1 07tAssert.vim
 
@@ -20,6 +20,11 @@ let loaded_tassert = 100
 if !exists('g:TASSERT')    | let g:TASSERT = 0    | endif
 if !exists('g:TASSERTLOG') | let g:TASSERTLOG = 1 | endif
 
+if !exists('g:tassert_cwindow')
+    " The command that should be used for viewing the quickfix list.
+    let g:tassert_cwindow = 'cwindow'   "{{{2
+endif
+
 if exists('s:assert')
     echo 'TAssertions are '. (g:TASSERT ? 'on' : 'off')
 endif
@@ -28,7 +33,9 @@ let s:assert = g:TASSERT
 
 if g:TASSERT
 
-    TLogOn
+    if exists(':TLogOn') && empty(g:TLOG)
+        TLogOn
+    endif
 
     " :display: TAssert[!] {expr}
     " Test that an expression doesn't evaluate to something |empty()|. 
@@ -38,55 +45,53 @@ if g:TASSERT
     " |g:tAssertLog|.
     command! -nargs=1 -bang TAssert 
                 \ let s:assertReason = '' |
+                \ call tassert#__Setup() |
                 \ try |
-                \   call should#__Init() |
                 \   let s:assertFailed = empty(eval(tassert#__ResolveSIDs(<q-args>))) |
                 \ catch |
                 \   let s:assertReason = v:exception |
                 \   let s:assertFailed = 1 |
                 \ endtry |
+                \ call tassert#__Teardown() |
                 \ if s:assertFailed |
                 \   call should#__InsertReason(<q-args>) |
                 \   if !empty(s:assertReason) | call should#__InsertReason(s:assertReason) | endif |
-                \   let s:assertReasonS = should#__Reasons() |
-                \   if "<bang>" != '' |
-                \     call tlog#Log(s:assertReasonS) |
+                \   let s:assertReasons = should#__ClearReasons() |
+                \   if exists('s:tassert_run') |
+                \     call tassert#AddQFL(<q-args>, s:assertReasons) |
+                \   elseif "<bang>" != '' |
+                \     call tlog#Log(s:assertReasons) |
                 \   else |
-                \     throw substitute(s:assertReasonS, '^Vim.\{-}:', '', '') |
+                \     throw substitute(s:assertReasons, '^Vim.\{-}:', '', '') |
                 \   endif |
                 \ endif
 
-    " :display: TAssertBegin [TITLE], [SCRIPT CONTEXT AS FILENAME]
-    " When using tassert as a poor man's unit testing framework, put 
-    " your tests between :TAssertBegin ... :TAssertEnd command.
+    " :display: TAssertRun [PATH]
+    " Run all vim files in PATH as unit tests. If no PATH is given, run 
+    " the current file only.
     "
-    " Marks the beginning of a sequence some assertions and takes an 
-    " optional message string as argument. The second command (a regexp) 
-    " can be used to evaluate functions prefixed with |<SID>| in a 
-    " different context.
+    " CAVEAT: Unit test scripts must not run other unit tests by 
+    " sourcing them. In order for tassert to map the |:TAssert| commands 
+    " onto the correct file & line number scripts containing assertions 
+    " have to be run via :TAssertRun.
     "
-    " This command is optional. It serves primarily as marker for use with 
-    " the :TAssertComment command. With [!] the {message} is echoed, which 
-    " can be useful in unit testing kind of scripts.
-    command! -nargs=* -bang TAssertBegin call tassert#Begin([<args>], expand("<sfile>:p"), "<bang>")
-
-    " :display: TAssertEnd [VAR1 VAR2 ... FUNCTION1 FUNCTION2 ...]
-    " Mark the end of a sequence of assertions. Call |:unlet| for 
-    " temporary variables or |:delfunction| for temporary functions 
-    " named on the command line.
-    command! -nargs=* -bang TAssertEnd  call tassert#End(split(<q-args>, '\s\+'))
-
-    " command! -nargs=1 -bang TAssertExec exec <q-args> | TAssertEnd
+    " NOTE: Integration with the quickfix list requires tlib 
+    " (vimscript#1863) to be installed.
+    "
+    " Even then it sometimes happens that tassert cannot distinguish 
+    " between to identical tests in different contexts, which is why you 
+    " should only use one |:TAssertBegin| command per file.
+    command! -nargs=? -bang TAssertRun  runtime macros/tassert.vim
+                \ | let s:tassert_run = 1 
+                \ | call tassert#__Run(<q-args>, expand('%:p'))
+                \ | unlet s:tassert_run
 
 else
 
     " :nodoc:
     command! -nargs=* -bang TAssert :
     " :nodoc:
-    command! -nargs=* -bang TAssertBegin :
-    " :nodoc:
-    command! -nargs=* -bang TAssertEnd :
-    " command! -nargs=1 -bang TAssertExec :
+    command! -nargs=* -bang TAssertRun  :
 
 endif
 
@@ -97,8 +102,6 @@ if !exists(':TAssertOn')
     command! -bar TAssertOn let g:TASSERT = 1 | runtime plugin/07tassert.vim
     " Switch assertions off and reload the plugin.
     command! -bar TAssertOff let g:TASSERT = 0 | runtime plugin/07tassert.vim
-    " Switch assertions on or off and reload the plugin.
-    command! -bar TAssertToggle let g:TASSERT = !g:TASSERT | runtime plugin/07tassert.vim
 
     " Comment TAssert* commands and all lines between a TAssertBegin 
     " and a TAssertEnd command.
@@ -107,21 +110,16 @@ if !exists(':TAssertOn')
     " and a TAssertEnd command.
     command! -range=% -bar -bang TAssertUncomment call tassert#Uncomment(<line1>, <line2>, "<bang>")
 
-    " Put the line "exec TAssertInit()" into your script, to install the 
-    " function s:TAssertVal. It can be used later on to evaluate 
+    " Put the line "exec TAssertInit()" into your script in order to 
+    " install the function s:TAssertVal(), which can be used to evaluate 
     " expressions in the script context. This initializations is 
-    " necessary only if you call the function |tassert#Val()|.
+    " necessary only if you call the function |tassert#Val()| in your 
+    " tests.
     fun! TAssertInit()
         return "function! s:TAssertVal(expr)\nreturn eval(a:expr)\nendf"
     endf
 
-
-    fun! s:TassertTest(a)
-        return a:a + a:a
-    endf
-
 end
-
 
 
 finish
@@ -160,7 +158,8 @@ the backtrace.
 
 1.0
 - Incompatible changes galore
-
+- Removed :TAssertToggle
+- Moved :TAssertBegin & :TAssertEnd to macros/tassert.vim
 
 
 TODO:

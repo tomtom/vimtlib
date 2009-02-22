@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-21.
 " @Last Change: 2009-02-21.
-" @Revision:    0.0.35
+" @Revision:    0.0.96
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -60,19 +60,21 @@ endf
 
 " :nodoc:
 fun! tassert#__ResolveSIDs(string, ...)
-    if a:0 >= 1
-        let snr = a:1
-    elseif s:assertFile != ''
-        let snr = tassert#__GetSNR(s:assertFile)
-    else
-        let snr = 0
-    endif
-    if !empty(snr)
-        let string = substitute(a:string, '<SID>', '<SNR>'.snr.'_', 'g')
-        " TLogDBG a:string .': '. snr
-        return string
-    " else
-    "     TLog 'tAssert: Unknown script context: '. a:string .' '. snr
+    if stridx(a:string, '<SID>') != -1
+        if a:0 >= 1
+            let snr = a:1
+        elseif s:assertFile != ''
+            let snr = tassert#__GetSNR(s:assertFile)
+        else
+            let snr = 0
+        endif
+        if !empty(snr)
+            let string = substitute(a:string, '<SID>', '<SNR>'.snr.'_', 'g')
+            " TLogDBG a:string .': '. snr
+            return string
+            " else
+            "     TLog 'tAssert: Unknown script context: '. a:string .' '. snr
+        endif
     endif
     return a:string
 endf
@@ -129,9 +131,8 @@ endf
 
 " :nodoc:
 function! tassert#Begin(args, sfile, bang) "{{{3
-    call tassert#__ParseArgs(a:args, a:sfile)
-    cexpr []
-    if !empty(a:bang)
+    let s:tassert_args = tassert#__ParseArgs(a:args, a:sfile)
+    if !empty(a:bang) && !exists('s:tassert_file')
         call tlog#Log('tAssert: '. s:assertMsg)
     endif
 endf
@@ -146,23 +147,111 @@ function! tassert#End(args) "{{{3
             exec 'unlet! '. v
         endif
     endfor
-    if exists('s:assertMsg') && !empty(s:assertMsg)
+    if exists('s:assertMsg') && !empty(s:assertMsg) && !exists('s:tassert_file')
         call tlog#Log('tAssert: '. s:assertMsg .' ... done')
     endif
     call tassert#__Reset()
 endf
 
 
+function! tassert#__Setup() "{{{3
+    call should#__Init()
+    if exists('s:tassert_file')
+        let s:tassert_counts += 1
+        exec get(s:tassert_args, 'setup', '')
+    endif
+endf
+
+
+function! tassert#__Teardown() "{{{3
+    if exists('s:tassert_file')
+        exec get(s:tassert_args, 'teardown', '')
+    endif
+endf
+
+
+function! tassert#AddQFL(expr, reason)
+    let ncmd = 0
+    let idx = 1
+    let lnum = idx
+    for line in s:tassert_files[s:tassert_file]
+        if line =~ '^\s*TAssert!\?\s\+'
+            if exists('g:loaded_tlib') && line =~ '^\s*TAssert!\?\s\+'. tlib#rx#Escape(a:expr) .'\s*$'
+                let lnum = idx
+                break
+            endif
+            let ncmd += 1
+            if ncmd == s:tassert_counts
+                let lnum = idx
+                break
+            endif
+        endif
+        let idx += 1
+    endfor
+    let qfl = [{
+                \ 'filename': s:tassert_file,
+                \ 'lnum': lnum,
+                \ 'text': a:reason,
+                \ }]
+    call setqflist(qfl, 'a')
+endf
+
+
+function! tassert#__Run(path, file) "{{{3
+    " TAssert should#be#String(a:path)
+    " TAssert should#be#String(a:file)
+    " TLogVAR a:path, a:file
+    if empty(a:path)
+        let files = [a:file]
+    else
+        let files = globpath('*.vim', a:path)
+    endif
+    " TLogVAR files
+   
+    cexpr []
+    let s:tassert_files = {}
+    for file in files
+        TLogVAR file
+        let s:tassert_counts = 0
+        let s:tassert_file = s:CanonicalFilename(file)
+        let s:tassert_files[s:tassert_file] = readfile(s:tassert_file)
+        try
+            exec 'source '. fnameescape(file)
+        catch
+            " echohl Error
+            " echom v:exception
+            " echohl NONE
+        endtry
+    endfor
+    unlet! s:tassert_files s:tassert_file s:tassert_counts
+    
+    if len(getqflist()) > 0
+        try
+            exec g:tassert_cwindow
+        catch
+            echohl Error
+            echom v:exception
+            echohl NONE
+        endtry
+    endif
+endf
+
+
+function! s:CanonicalFilename(filename) "{{{3
+    let filename = substitute(a:filename, '\\', '/', 'g')
+    let filename = substitute(filename, '^.\ze:/', '\u&', '')
+    return filename
+endf
+
+
 " :nodoc:
 function! tassert#__ParseArgs(args, sfile) "{{{3
-    let s:assertMsg = get(a:args, 0, '')
-    let arg1 = get(a:args, 1, a:sfile)
-    if type(arg1) == 4
-        let s:assertFile  = get(arg1, 'file', a:sfile)
-    else
-        let s:assertFile = arg1
+    let s:assertMsg = get(a:args, 'title', '')
+    let s:assertFile = get(a:args, 'file', a:sfile)
+    if !has_key(a:args, 'file')
+        let a:args['file'] = s:assertFile
     endif
-    return {'file': s:assertFile}
+    return a:args
 endf
 
 

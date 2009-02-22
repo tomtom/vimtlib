@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-21.
 " @Last Change: 2009-02-21.
-" @Revision:    0.0.4
+" @Revision:    0.0.5
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -16,6 +16,10 @@ exec TAssertInit()
 
 function! should#test#Init() "{{{3
     return "TAssert test"
+endf
+
+fun! s:TassertTest(a)
+    return a:a + a:a
 endf
 
 

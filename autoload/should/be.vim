@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-21.
 " @Last Change: 2009-02-21.
-" @Revision:    0.0.18
+" @Revision:    0.0.19
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -39,31 +39,6 @@ endf
 
 fun! should#be#Dictionary(expr)
     return s:CheckType(a:expr, 4, 'dictionary')
-endf
-
-
-" Return the exception when evaluating expr or an empty string if 
-" nothing was thrown.
-fun! should#be#Exception(expr)
-    try
-        call eval(a:expr)
-        return ''
-    catch
-        return v:exception
-    endtry
-endf
-
-
-" Check if the exception throws when evaluating expr matches the 
-" expected |regexp|.
-fun! should#be#Error(expr, expected)
-    let rv = should#be#Exception(a:expr)
-    if rv =~ a:expected
-        return 1
-    else
-        call should#__Explain(0, 'Exception '. string(a:expected) .' expected but got '. string(rv))
-        return 0
-    endif
 endf
 
 
