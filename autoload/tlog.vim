@@ -3,15 +3,15 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-21.
-" @Last Change: 2009-02-21.
-" @Revision:    0.0.11
+" @Last Change: 2009-02-22.
+" @Revision:    0.0.12
 
 let s:save_cpo = &cpo
 set cpo&vim
 
 
 function! tlog#Comment(line1, line2) "{{{3
-    TLogVAR a:line1, a:line2
+    " TLogVAR a:line1, a:line2
     let tlogCP = getpos('.')
     let tlogSR = @/
     exec 'silent '. a:line1 .','. a:line2 .'s/\C^\(\s*\)\(\(call *\|exe\%[cute] *[''"]\)\?\(TLog\|tlog#\)\)/\1" \2/ge'

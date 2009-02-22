@@ -1,11 +1,5 @@
-autoload/should.vim
-autoload/should/be.vim
-autoload/should/throw.vim
-autoload/should/yield.vim
 autoload/tassert.vim
 autoload/tlog.vim
 doc/tassert.txt
-macros/tassert.vim
 plugin/05tlog.vim
 plugin/07tassert.vim
-test/tassert/tassert.vim
