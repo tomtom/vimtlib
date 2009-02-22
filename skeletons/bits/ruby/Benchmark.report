@@ -1,0 +1,3 @@
+width.report("<+CURSOR+>") do
+    <+BODY+>
+end<++>

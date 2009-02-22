@@ -1,0 +1,10 @@
+require 'benchmark'
+
+<+CURSOR+>
+
+Benchmark::bm(<+WIDTH+>) do |width|
+
+    <+bit:report+>
+
+end 
+
