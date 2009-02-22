@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-21.
-" @Last Change: 2009-02-21.
-" @Revision:    0.0.19
+" @Last Change: 2009-02-22.
+" @Revision:    0.0.25
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -12,37 +12,37 @@ set cpo&vim
 
 
 " Test if expr is of type (see |type()|).
-fun! should#be#A(expr, type)
+function! should#be#A(expr, type)
     return s:CheckType(a:expr, a:type, string(a:type))
 endf
 
 
-fun! should#be#Number(expr)
+function! should#be#Number(expr)
     return s:CheckType(a:expr, 0, 'number')
 endf
 
 
-fun! should#be#String(expr)
+function! should#be#String(expr)
     return s:CheckType(a:expr, 1, 'string')
 endf
 
 
-fun! should#be#Funcref(expr)
+function! should#be#Funcref(expr)
     return s:CheckType(a:expr, 2, 'funcref')
 endf
 
 
-fun! should#be#List(expr)
+function! should#be#List(expr)
     return s:CheckType(a:expr, 3, 'list')
 endf
 
 
-fun! should#be#Dictionary(expr)
+function! should#be#Dictionary(expr)
     return s:CheckType(a:expr, 4, 'dictionary')
 endf
 
 
-fun! should#be#Equal(expr, expected)
+function! should#be#Equal(expr, expected)
     " let val = eval(a:expr)
     let val = a:expr
     let rv  = val == a:expected
@@ -53,8 +53,9 @@ fun! should#be#Equal(expr, expected)
 endf
 
 
-fun! should#be#Unequal(expr, expected)
-    let val = eval(a:expr)
+function! should#be#Unequal(expr, expected)
+    " let val = eval(a:expr)
+    let val = a:expr
     let rv  = val != a:expected
     if !rv
         call should#__Explain(rv, 'Expected '. string(a:expected) .' is unequal to '. string(val))
@@ -63,7 +64,40 @@ fun! should#be#Unequal(expr, expected)
 endf
 
 
-fun! should#be#Empty(expr)
+function! should#be#Greater(a, b) "{{{3
+    return s:Compare(a:a, a:b, '>')
+endf
+
+
+function! should#be#GreaterEqual(a, b) "{{{3
+    return s:Compare(a:a, a:b, '>=')
+endf
+
+
+function! should#be#Less(a, b) "{{{3
+    return s:Compare(a:a, a:b, '<')
+endf
+
+
+function! should#be#LessEqual(a, b) "{{{3
+    return s:Compare(a:a, a:b, '<=')
+endf
+
+
+function! s:Compare(a, b, comparator) "{{{3
+    try
+        exec 'let rv = a:a '. a:comparator .' a:b'
+    catch
+        let rv = 0
+    endtry
+    if !rv
+        call should#__Explain(rv, 'Expected '. string(a:a) .' '. a:comparator .' '. string(a:b))
+    endif
+    return rv
+endf
+
+
+function! should#be#Empty(expr)
     let rv = empty(a:expr)
     if !rv
         call should#__Explain(rv, string(a:expr) .' isn''t empty')
@@ -72,7 +106,7 @@ fun! should#be#Empty(expr)
 endf
 
 
-fun! should#be#NotEmpty(expr)
+function! should#be#NotEmpty(expr)
     let rv = !empty(a:expr)
     if !rv
         call should#__Explain(rv, string(a:expr) .' is empty')
@@ -81,7 +115,7 @@ fun! should#be#NotEmpty(expr)
 endf
 
 
-fun! should#be#Match(expr, expected)
+function! should#be#Match(expr, expected)
     let val = a:expr
     let rv  = val =~ a:expected
     if !rv
@@ -91,7 +125,7 @@ fun! should#be#Match(expr, expected)
 endf
 
 
-fun! should#be#NotMatch(expr, expected)
+function! should#be#NotMatch(expr, expected)
     let val = a:expr
     let rv  = val !~ a:expected
     if !rv
@@ -101,7 +135,7 @@ fun! should#be#NotMatch(expr, expected)
 endf
 
 
-fun! should#be#Existent(expr)
+function! should#be#Existent(expr)
     let val = a:expr
     let rv = exists(val)
     if !rv
@@ -115,7 +149,7 @@ let s:types = ['number', 'string', 'funcref', 'list', 'dictionary']
 
 
 " :nodoc:
-fun! s:CheckType(expr, type, expected)
+function! s:CheckType(expr, type, expected)
     " TLogVAR a:expr, a:type
     let type = type(a:expr)
     if type(a:type) == 3
@@ -150,7 +184,7 @@ endf
 
 
 " :nodoc:
-fun! s:CheckMethod(dict, prototype, method)
+function! s:CheckMethod(dict, prototype, method)
     if a:method == 'data'
         return 1
     endif

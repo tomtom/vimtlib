@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-22.
 " @Last Change: 2009-02-22.
-" @Revision:    18
+" @Revision:    20
 
 if &cp || exists("loaded_macros_spec")
     finish
@@ -44,6 +44,16 @@ command! -nargs=* SpecBegin call spec#__Begin({<args>}, expand("<sfile>:p"))
 " last invocation of |:SpecBegin| are considered temporary variables and 
 " will be removed.
 command! -nargs=* SpecEnd call spec#__End(split(<q-args>, '\s\+'))
+
+
+" :display: It MESSAGE
+" Insert a message.
+command! -nargs=1 It call spec#__Comment('It '. <q-args>)
+
+
+" " :display: The MESSAGE
+" " Insert a message.
+" command! -nargs=1 The call spec#__Comment('The '. <q-args>)
 
 
 " :display: Should {expr}

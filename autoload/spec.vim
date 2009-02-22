@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-22.
 " @Last Change: 2009-02-22.
-" @Revision:    0.0.82
+" @Revision:    0.0.104
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -13,7 +13,7 @@ set cpo&vim
 exec SpecInit()
 
 
-let s:rewrite_should = '\(be\|throw\|yield\)'
+let s:rewrite_should = '\(be\|throw\|yield\|finish\)'
 let s:rewrite_table = [
             \ ['^\s*not\s\+', '!'],
             \ ['^!\?\zs'. s:rewrite_should .'#', 'should#&'],
@@ -110,6 +110,7 @@ endf
 function! spec#__Begin(args, sfile) "{{{3
     let s:spec_args = s:ParseArgs(a:args, a:sfile)
     let s:spec_vars = keys(g:)
+    let s:spec_comment = ''
 endf
 
 
@@ -143,6 +144,7 @@ endf
 
 function! spec#__Teardown() "{{{3
     exec get(s:spec_args, 'teardown', '')
+    " let s:spec_comment = ''
 endf
 
 
@@ -171,16 +173,30 @@ function! spec#__AddQFL(expr, reason)
                 \ 'lnum': lnum,
                 \ 'text': a:reason,
                 \ }]
+    if !empty(s:spec_comment)
+        call insert(qfl, {
+                    \ 'filename': s:spec_file,
+                    \ 'lnum': lnum,
+                    \ 'text': s:spec_comment,
+                    \ })
+    endif
     call setqflist(qfl, 'a')
 endf
 
 
-function! spec#__Run(path, file) "{{{3
+function! spec#__Comment(string) "{{{3
+    let s:spec_comment = a:string
+endf
+
+
+function! spec#__Run(path, file, bang) "{{{3
     " TLogVAR a:path, a:file
     if empty(a:path)
         let files = [a:file]
+    elseif filereadable(a:path)
+        let files = [a:path]
     else
-        let files = globpath('*.vim', a:path)
+        let files = globpath('**.vim', a:path)
     endif
     " TLogVAR files
    
@@ -200,7 +216,9 @@ function! spec#__Run(path, file) "{{{3
         " TLogVAR len(getqflist())
     endfor
     unlet! s:spec_files s:spec_file s:should_counts
-    
+   
+    echo " "
+    redraw
     if len(getqflist()) > 0
         try
             exec g:spec_cwindow

@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-21.
-" @Last Change: 2009-02-21.
-" @Revision:    0.0.27
+" @Last Change: 2009-02-22.
+" @Revision:    0.0.28
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -24,7 +24,7 @@ endf
 
 " Compare the current buffer with the contents of filename after 
 " |:exe|cuting expr but ignore changes in whitespace.
-function! should#yield#BufferSansWhitespace(expr, filename) "{{{3
+function! should#yield#SqueezedBuffer(expr, filename) "{{{3
     exec a:expr
     let buf = getline(1, '$')
     call s:Squeeze(buf)

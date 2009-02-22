@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-22.
 " @Last Change: 2009-02-22.
-" @Revision:    22
+" @Revision:    31
 " GetLatestVimScripts: 0 0 :AutoInstall: spec.vim
 
 if &cp || exists("loaded_spec")
@@ -23,30 +23,30 @@ endif
 
 
 " :display: Spec [PATH]
-" Run all vim files in PATH as unit tests. If no PATH is given, run 
-" the current file only.
+" PATH can be either a file or a directory.
+" 
+" If PATH is a directory, run all vim files under PATH as specification 
+" scripts.
+"
+" If no PATH is given, run the current file only.
 "
 " CAVEAT: Unit test scripts must not run other unit tests by 
 " sourcing them. In order for spec to map the |:Spec| commands 
-" onto the correct file & line number scripts containing assertions 
-" have to be run via :SpecRun.
-"
-" NOTE: Integration with the quickfix list requires tlib 
-" (vimscript#1863) to be installed.
-" <+TODO+> Or maybe not.
+" onto the correct file & line number, any spec scripts have to be run 
+" via :Spec.
 "
 " Even then it sometimes happens that spec cannot distinguish 
 " between to identical tests in different contexts, which is why you 
 " should only use one |:SpecBegin| command per file.
-command! -nargs=? Spec
+command! -nargs=? -complete=file -bang Spec
             \ | runtime macros/spec.vim
-            \ | call spec#__Run(<q-args>, expand('%:p'))
+            \ | call spec#__Run(<q-args>, expand('%:p'), "<bang>")
 
 
 " Put the line "exec SpecInit()" into your script in order to 
 " install the function s:SpecVal(), which can be used to evaluate 
-" expressions in the script context. This initializations is 
-" necessary only if you call the function |spec#Val()| in your 
+" expressions in script context. This initializations is necessary only 
+" if you call the function |spec#Val()| in your 
 " tests.
 fun! SpecInit()
     return "function! s:SpecVal(expr)\nreturn eval(a:expr)\nendf"
