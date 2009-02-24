@@ -50,4 +50,11 @@ Legend:
     #E ... Not in use
 
 
+
+* Scripts
+
+    ruby/vimball.rb      ... Create vimballs from the command-line (EXPERIMENTAL)
+    ruby/vimtips2help.rb ... Convert an XML dump of the vimtips wiki to a tagged help file
+
+
 % vi: ft=viki:tw=0:ts=4
