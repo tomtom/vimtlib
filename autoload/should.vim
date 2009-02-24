@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-21.
 " @Last Change: 2009-02-22.
-" @Revision:    0.0.34
+" @Revision:    0.0.35
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -40,7 +40,7 @@ endf
 
 " :nodoc:
 fun! should#__Explain(rv, reason)
-    if empty(a:rv)
+    if empty(a:rv) && exists(':s:should_reason')
         call add(s:should_reason, a:reason)
     endif
 endf

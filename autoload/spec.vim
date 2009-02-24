@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-22.
-" @Last Change: 2009-02-22.
-" @Revision:    0.0.104
+" @Last Change: 2009-02-23.
+" @Revision:    0.0.121
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -16,9 +16,9 @@ exec SpecInit()
 let s:rewrite_should = '\(be\|throw\|yield\|finish\)'
 let s:rewrite_table = [
             \ ['^\s*not\s\+', '!'],
+            \ ['^!\?'. s:rewrite_should .'\zs\s\+\(.\)', '#\u\2'],
             \ ['^!\?\zs'. s:rewrite_should .'#', 'should#&'],
             \ ]
-            " \ ['^!\?'. s:rewrite_should .'\zs\s\+', '#'],
             " \ '^!\?\(be\|throw\|yield\)\zs\s\+\(.\)': '#\u\1',
 
 
@@ -138,6 +138,11 @@ endf
 function! spec#__Setup() "{{{3
     call should#__Init()
     let s:should_counts += 1
+    let scratch = get(s:spec_args, 'scratch', '')
+    if !empty(scratch)
+        TAssert should#be#Type(scratch, 'list')
+        call call('spec#OpenScratch', scratch)
+    endif
     exec get(s:spec_args, 'setup', '')
 endf
 
@@ -145,6 +150,10 @@ endf
 function! spec#__Teardown() "{{{3
     exec get(s:spec_args, 'teardown', '')
     " let s:spec_comment = ''
+    let scratch = get(s:spec_args, 'scratch', '')
+    if !empty(scratch)
+        call spec#CloseScratch()
+    endif
 endf
 
 
@@ -227,6 +236,10 @@ function! spec#__Run(path, file, bang) "{{{3
             echom v:exception
             echohl NONE
         endtry
+    elseif v:servername == 'PLUGINKILLER' && exists(':PKg')
+        PKg
+        " <+TODO+>: PLUGINKILLER: Untested. Wait a sec?
+        call spec#__Run(a:path, a:file, a:bang)
     endif
 endf
 
@@ -258,6 +271,43 @@ fun! spec#Val(expr)
         return ''
     else
         return call(function(fn), [a:expr])
+    endif
+endf
+
+
+" :display: spec#ScratchBuffer(?filename="", ?filetype="") "{{{3
+" Open the spec scratch buffer.
+function! spec#OpenScratch(...) "{{{3
+    if bufname('%') != '__SPEC_SCRATCH_BUFFER__'
+        split __SPEC_SCRATCH_BUFFER__
+    endif
+    setlocal buftype=nofile
+    setlocal bufhidden=hide
+    setlocal noswapfile
+    setlocal nobuflisted
+    setlocal modifiable
+    setlocal foldmethod=manual
+    setlocal foldcolumn=0
+    if a:0 >= 1
+        if !empty(a:1)
+            silent 1,$delete
+            exec 'silent 1read '. fnameescape(a:1)
+            silent 1delete
+        endif
+        if a:0 >= 2
+            if !empty(a:2)
+                exec 'set ft='. a:a2
+            endif
+        endif
+    endif
+endf
+
+
+" Close the scratch buffer. (Requires the cursor to be located in the spec 
+" scratch buffer.)
+function! spec#CloseScratch() "{{{3
+    if bufname('%') == '__SPEC_SCRATCH_BUFFER__' && winnr('$') > 1
+        wincmd c
     endif
 endf
 

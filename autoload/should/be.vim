@@ -3,17 +3,25 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-21.
-" @Last Change: 2009-02-22.
-" @Revision:    0.0.25
+" @Last Change: 2009-02-23.
+" @Revision:    0.0.30
 
 let s:save_cpo = &cpo
 set cpo&vim
 
 
+let s:types = ['number', 'string', 'funcref', 'list', 'dictionary']
+
 
 " Test if expr is of type (see |type()|).
 function! should#be#A(expr, type)
     return s:CheckType(a:expr, a:type, string(a:type))
+endf
+
+
+" A faster version of the above without descriptive messages.
+function! should#be#Type(expr, type)
+    return type(a:expr) == index(s:types, a:type)
 endf
 
 
@@ -43,22 +51,18 @@ endf
 
 
 function! should#be#Equal(expr, expected)
-    " let val = eval(a:expr)
-    let val = a:expr
-    let rv  = val == a:expected
+    let rv = type(a:expr) == type(a:expected) && a:expr == a:expected
     if !rv
-        call should#__Explain(rv, 'Expected '. string(a:expected) .' but got '. string(val))
+        call should#__Explain(rv, 'Expected '. string(a:expected) .' but got '. string(a:expr))
     endif
     return rv
 endf
 
 
 function! should#be#Unequal(expr, expected)
-    " let val = eval(a:expr)
-    let val = a:expr
-    let rv  = val != a:expected
+    let rv  = type(a:expr) != type(a:expected) || a:expr != a:expected
     if !rv
-        call should#__Explain(rv, 'Expected '. string(a:expected) .' is unequal to '. string(val))
+        call should#__Explain(rv, 'Expected '. string(a:expected) .' is unequal to '. string(a:expr))
     endif
     return rv
 endf
@@ -143,9 +147,6 @@ function! should#be#Existent(expr)
     endif
     return rv
 endf
-
-
-let s:types = ['number', 'string', 'funcref', 'list', 'dictionary']
 
 
 " :nodoc:

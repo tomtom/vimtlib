@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-22.
-" @Last Change: 2009-02-22.
-" @Revision:    45
+" @Last Change: 2009-02-23.
+" @Revision:    59
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -33,9 +33,12 @@ Should not be#Dictionary([1,2,3])
 Should be#Equal(1, 1)
 Should be#Equal({1:2}, {1:2})
 Should not be#Equal(1, 2)
+Should not be#Equal(1, "1")
 Should not be#Equal({1:2}, {1:3})
 
 Should be#Unequal(1, 2)
+Should be#Unequal(1, "2")
+Should be#Unequal(1, "1")
 Should not be#Unequal(1, 1)
 
 Should be#Greater(2, 1)
@@ -68,21 +71,21 @@ SpecEnd
 
 
 
+let g:test_file = expand('%:p:h') .'/'
+SpecBegin 'title': 'Should yield', 'sfile': 'autoload/should/yield.vim',
+            \ 'scratch': [g:test_file . "test_yield.txt"]
+
+Should yield#Buffer('silent 1,3delete', g:test_file.'test_yield1.txt')
+Should not yield#Buffer('silent 1,3delete', g:test_file.'should.vim')
+
+Should yield#SqueezedBuffer('silent 1,3delete', g:test_file.'test_yield2.txt')
+Should not yield#SqueezedBuffer('silent 1,3delete', g:test_file.'should.vim')
+
+SpecEnd
+
+
+
 if exists('g:loaded_tlib')
-
-    let g:test_file = expand('%:p:h') .'/'
-    SpecBegin 'title': 'Should yield', 'sfile': 'autoload/should/yield.vim',
-                \ 'setup': 'TScratch | silent 1,$delete | silent 1read '. g:test_file .'test_yield.txt | silent 1delete',
-                \ 'teardown': 'wincmd c'
-
-    Should yield#Buffer('silent 1,3delete', g:test_file.'test_yield1.txt')
-    Should not yield#Buffer('silent 1,3delete', g:test_file.'should.vim')
-
-    Should yield#SqueezedBuffer('silent 1,3delete', g:test_file.'test_yield2.txt')
-    Should not yield#SqueezedBuffer('silent 1,3delete', g:test_file.'should.vim')
-
-    SpecEnd
-
 
     SpecBegin 'title': 'Should finish', 'sfile': 'autoload/should/finish.vim'
 
@@ -91,6 +94,7 @@ if exists('g:loaded_tlib')
         endfor
     endf
 
+    echo "Spec 'finish': The following test could take up to 5 seconds."
     It should measure execution time in seconds.
     Should finish#InSecs('2sleep', 3)
     Should not finish#InSecs('2sleep', 1)

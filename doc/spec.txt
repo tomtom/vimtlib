@@ -1,0 +1,280 @@
+*spec.txt*          Behaviour-driven design (BDD) for vim scripts
+                    Author: Tom Link, micathom at gmail com
+
+This plugin provides a small set of commands to facilitate 
+behaviour-driven design of vim plugins. It basically consists of two 
+parts:
+
+    spec   ... BDD-related commands
+    should ... Convenience functions for testing
+
+According to BDD theory, you are supposed to write your specifications 
+first and then make the code comply with those specifications. Even if 
+you do it the other way around, the code quality will be better than 
+without formal testing.
+
+A example specification could look like this: >
+
+    SpecBegin 'title': 'Foo', 'sfile': 'autoload/foo.vim'
+
+    It should add numbers.
+    Should be#Equal(foo#Add(1, 2), 3)
+    
+    It should not add values of other types.
+    Should throw#Something('foo#Add("1", 2)')
+
+    " Spec knows how to rewrite certain rules in order to turn them into 
+    " proper function call. Compare the following rules:
+    Should should#throw#Something('foo#Add([1], 2)')
+    Should throw#Something('foo#Add([1], 2)')
+    Should throw something('foo#Add({1:2}, 2)')
+    Should be equal(foo#Add(1, 2), 3)
+    Should not be equal(foo#Add(1, 2), 4)
+
+    SpecEnd
+
+Specification scripts basically are normal vim scripts but must be run 
+by the |:Spec| command.
+
+For a full example specification see: ../spec/spec/spec.vim
+
+CAVEAT: Don't nest |:Should| statements. Take care not to include byte 
+identical Should statements within the same file.
+
+TODO: At some point in the future, this plugin will be able to use 
+PluginKiller to make sure the code does what it is supposed to do under 
+different conditions. Integration with Luc Hermitte's unit testing 
+plugin is planned too.
+
+
+-----------------------------------------------------------------------
+Install~
+
+Edit the vba file and type: >
+
+    :so %
+
+See :help vimball for details. If you have difficulties or use vim 7.0, 
+please make sure, you have the current version of vimball
+(vimscript #1502) installed or update your runtime.
+
+
+========================================================================
+Contents~
+
+        g:spec_cwindow ................ |g:spec_cwindow|
+        :Spec ......................... |:Spec|
+        SpecInit ...................... |SpecInit()|
+        :SpecBegin .................... |:SpecBegin|
+        :SpecEnd ...................... |:SpecEnd|
+        :It ........................... |:It|
+        :Should ....................... |:Should|
+        spec#Val ...................... |spec#Val()|
+        should#be#Number .............. |should#be#Number()|
+        should#be#String .............. |should#be#String()|
+        should#be#Funcref ............. |should#be#Funcref()|
+        should#be#List ................ |should#be#List()|
+        should#be#Dictionary .......... |should#be#Dictionary()|
+        should#be#Equal ............... |should#be#Equal()|
+        should#be#Unequal ............. |should#be#Unequal()|
+        should#be#Greater ............. |should#be#Greater()|
+        should#be#GreaterEqual ........ |should#be#GreaterEqual()|
+        should#be#Less ................ |should#be#Less()|
+        should#be#LessEqual ........... |should#be#LessEqual()|
+        should#be#Empty ............... |should#be#Empty()|
+        should#be#NotEmpty ............ |should#be#NotEmpty()|
+        should#be#Match ............... |should#be#Match()|
+        should#be#NotMatch ............ |should#be#NotMatch()|
+        should#be#Existent ............ |should#be#Existent()|
+        should#finish#InSecs .......... |should#finish#InSecs()|
+        should#finish#InMicroSecs ..... |should#finish#InMicroSecs()|
+        should#throw#Something ........ |should#throw#Something()|
+        should#throw#Exception ........ |should#throw#Exception()|
+        should#yield#Buffer ........... |should#yield#Buffer()|
+        should#yield#SqueezedBuffer ... |should#yield#SqueezedBuffer()|
+
+
+========================================================================
+plugin/spec.vim~
+
+                                                    *g:spec_cwindow*
+g:spec_cwindow                 (default: 'cwindow')
+    The command that should be used for viewing the quickfix list.
+
+                                                    *:Spec*
+Spec [PATH]
+    PATH can be either a file or a directory.
+    
+    If PATH is a directory, run all vim files under PATH as specification 
+    scripts.
+    
+    If no PATH is given, run the current file only.
+    
+    CAVEAT: Unit test scripts must not run other unit tests by 
+    sourcing them. In order for spec to map the |:Spec| commands 
+    onto the correct file & line number, any spec scripts have to be run 
+    via :Spec.
+    
+    Even then it sometimes happens that spec cannot distinguish 
+    between to identical tests in different contexts, which is why you 
+    should only use one |:SpecBegin| command per file.
+
+                                                    *SpecInit()*
+SpecInit()
+    Put the line "exec SpecInit()" into your script in order to 
+    install the function s:SpecVal(), which can be used to evaluate 
+    expressions in script context. This initializations is necessary only 
+    if you call the function |spec#Val()| in your 
+    tests.
+
+
+========================================================================
+macros/spec.vim~
+
+                                                    *:SpecBegin*
+SPecBegin [ARGUMENTS AS INNER DICTIONNARY]
+    Known keys for ARGUMENTS:
+    
+      title    ... The test's title.
+      file     ... The script context.
+      setup    ... Code to be run before each test (only effective when 
+                   run via |:SPecRun|.
+      teardown ... Code to be run after each test (only effective when run 
+                   via |:SPecRun|.
+    
+    When using spec as a poor man's unit testing framework, put 
+    your tests between :SPecBegin ... :SPecEnd command.
+    
+    This command marks the beginning of a sequence some assertions and 
+    takes an optional message string as argument. The second command (a 
+    regexp) can be used to evaluate functions prefixed with |<SID>| in a 
+    different context.
+
+                                                    *:SpecEnd*
+SPecEnd [VAR1 VAR2 ... FUNCTION1 FUNCTION2 ...]
+    Mark the end of a sequence of assertions. Call |:unlet| for 
+    temporary variables or |:delfunction| for temporary functions 
+    named on the command line.
+    
+    CAVEAT: Any global variables that were not defined at the time of the 
+    last invocation of |:SpecBegin| are considered temporary variables and 
+    will be removed.
+
+                                                    *:It*
+It MESSAGE
+    Insert a message.
+
+                                                    *:Should*
+Should {expr}
+    Test that an expression doesn't evaluate to something |empty()|. 
+    If used after a |:SpecBegin| command, any occurrences of 
+    "<SID>" in the expression is replaced with the current script's 
+    |<SNR>|.
+
+
+========================================================================
+autoload/spec.vim~
+
+                                                    *spec#Val()*
+spec#Val(expr)
+    Evaluate an expression in the context of a script.
+    Requires a call to |specInit()|.
+
+
+========================================================================
+autoload/should/be.vim~
+
+
+should#be#A(expr, type)
+    Test if expr is of type (see |type()|).
+
+                                                    *should#be#Number()*
+should#be#Number(expr)
+
+                                                    *should#be#String()*
+should#be#String(expr)
+
+                                                    *should#be#Funcref()*
+should#be#Funcref(expr)
+
+                                                    *should#be#List()*
+should#be#List(expr)
+
+                                                    *should#be#Dictionary()*
+should#be#Dictionary(expr)
+
+                                                    *should#be#Equal()*
+should#be#Equal(expr, expected)
+
+                                                    *should#be#Unequal()*
+should#be#Unequal(expr, expected)
+
+                                                    *should#be#Greater()*
+should#be#Greater(a, b)
+
+                                                    *should#be#GreaterEqual()*
+should#be#GreaterEqual(a, b)
+
+                                                    *should#be#Less()*
+should#be#Less(a, b)
+
+                                                    *should#be#LessEqual()*
+should#be#LessEqual(a, b)
+
+                                                    *should#be#Empty()*
+should#be#Empty(expr)
+
+                                                    *should#be#NotEmpty()*
+should#be#NotEmpty(expr)
+
+                                                    *should#be#Match()*
+should#be#Match(expr, expected)
+
+                                                    *should#be#NotMatch()*
+should#be#NotMatch(expr, expected)
+
+                                                    *should#be#Existent()*
+should#be#Existent(expr)
+
+
+========================================================================
+autoload/should/finish.vim~
+
+                                                    *should#finish#InSecs()*
+should#finish#InSecs(expr, secs)
+
+                                                    *should#finish#InMicroSecs()*
+should#finish#InMicroSecs(expr, msecs)
+
+
+========================================================================
+autoload/should/throw.vim~
+
+                                                    *should#throw#Something()*
+should#throw#Something(expr)
+    Return the exception when evaluating expr or an empty string if 
+    nothing was thrown.
+
+                                                    *should#throw#Exception()*
+should#throw#Exception(expr, expected)
+    Check if the exception throws when evaluating expr matches the 
+    expected |regexp|.
+
+
+========================================================================
+autoload/should/yield.vim~
+
+                                                    *should#yield#Buffer()*
+should#yield#Buffer(expr, filename)
+    Compare the current buffer with the contents of filename after 
+    |:exe|cuting expr.
+    Useful for testing normal commands, mappings etc.
+
+                                                    *should#yield#SqueezedBuffer()*
+should#yield#SqueezedBuffer(expr, filename)
+    Compare the current buffer with the contents of filename after 
+    |:exe|cuting expr but ignore changes in whitespace.
+
+
+
+vim:tw=78:fo=tcq2:isk=!-~,^*,^|,^":ts=8:ft=help:norl:

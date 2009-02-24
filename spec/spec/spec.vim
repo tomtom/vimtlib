@@ -49,6 +49,7 @@ It should rewrite expressions.
 Should be#Equal(spec#__Rewrite('not be#Equal'), '!should#be#Equal')
 " Should be#Equal(spec#__Rewrite('not be equal'), '!should#be#Equal')
 Should not be#Equal(spec#__Rewrite('not be#Equal'), 'foo')
+Should not be equal(spec#__Rewrite('not be#Equal'), 'foo')
 
 
 It should remove temporary global variables & functions when done.
