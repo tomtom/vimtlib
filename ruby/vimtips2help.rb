@@ -16,7 +16,7 @@ require 'logger'
 class Vimtips2Help
 
     APPNAME = 'vimtips'
-    VERSION = '1.0.47'
+    VERSION = '1.0.76'
     WIDTH = 72
     SHIFT = 4
     INDENT = ' ' * SHIFT
@@ -53,6 +53,7 @@ class Vimtips2Help
             config[:xml] = 'pages_current.xml'
             config[:out] = 'vimtips.txt'
             config[:convert_unintentional_tags] = true
+            config[:cut_mark] = "^"
     
             opts = OptionParser.new do |opts|
                 opts.banner =  "Usage: #{File.basename($0)} [OPTIONS]"
@@ -63,12 +64,16 @@ class Vimtips2Help
             
                 opts.separator 'General Options:'
 
+                opts.on('-m STRING', String, "Replace the right-hand mark of unintentional tags with STRING (default: #{config[:cut_mark].inspect})") do |value|
+                    config[:cut_mark] = value
+                end
+
                 opts.on('-o', '--out FILENAME', String, "Output filename (default: #{config[:out]})") do |value|
                     config[:out] = value
                 end
 
-                opts.on('-t', 'Convert unintentional tags') do |bool|
-                    config[:convert_unintentional_tags] = bool
+                opts.on('-t', "Do not prevent unintentional tags by appending a marker") do |bool|
+                    config[:convert_unintentional_tags] = false
                 end
 
                 opts.on('--xml FILENAME', String, "XML dump (default: #{config[:xml]})") do |value|
@@ -118,7 +123,7 @@ class Vimtips2Help
             /^NewCategoryIntro/,
             /^(News|Other Pages|Main Page|Sandbox|Tip Guidelines)$/,
             /^From Vim Help\/\d+$/,
-            /^Did you know\/\d+$/,
+            /^Did you know/,
         ]
     end
 
@@ -150,16 +155,19 @@ class Vimtips2Help
     def output_pages
         File.open(@out_file, 'w') do |io|
             io.puts <<HEADER
-*vimtips.txt*   All the vimtips you need
+*vimtips.txt*   Almost all the vimtips you need
                 #{File.ctime(@xml_file)}
+                For updates, check: http://vim.wikia.com
 
-
+#{@config[:convert_unintentional_tags] ? <<__CAVEAT__ : ''
 CAVEAT: During conversion text matching " *TEXT* " was replaced with
-" *TEXT*´" in order to avoid "Duplicate tag" messages when running 
-helptags. This is relevant for a few code snippets that cannot be 
-re-used unmodified (it should be save to do %s/\*´/* /). Run 
-vimtips2help with the -t command-line option to prevent this conversion.
-
+" *TEXT#{@config[:cut_mark]} " in order to avoid "Duplicate tag" messages
+when running helptags. This is relevant for a few code snippets 
+that cannot be re-used directly (it should be save to do 
+:%s/\\V\\(\\s*\\S\\{-}\\)#{@config[:cut_mark]} /\\1* /). Run vimtips2help with the -t 
+command-line option to prevent this conversion.
+__CAVEAT__
+}
 
 TABLE OF CONTENTS~
 
@@ -170,7 +178,7 @@ HEADER
                     if page[:title].size + tag.size + 10 < WIDTH
                         io.puts "    #{page[:title]} #{'.' * [3, WIDTH - 6 - page[:title].size - tag.size].max} #{tag}"
                     else
-                        io.puts "    #{page[:title]}"
+                        io.puts indent(page[:title], '    ')
                         io.puts "        #{'.' * [3, WIDTH - 9 - tag.size].max} #{tag}"
                     end
                 end
@@ -209,7 +217,7 @@ HEADER
         text.gsub!(/:\n +/m, ":\n\n ")
         text.gsub!(/^ +/, INDENT)
         text.gsub!(/^\*(\S)/, "#{INDENT}- \\1")
-        text.gsub!(/(\s)\*(\S+?)\*(\s)/, '\\1*\\2*´') if @config[:convert_unintentional_tags]
+        text.gsub!(/(\s)\*(\S+?)\*(\s)/, "\\1*\\2#{@config[:cut_mark]}\\3") if @config[:convert_unintentional_tags]
         text.gsub!(/\{\{script\|id=(\d+)(\|.*?)?\}\}/, 'vimscript#\\1')
         text.gsub!(/\{\{help\|(.*?)\}\}/) do
             t = $1
@@ -236,7 +244,7 @@ HEADER
         text.gsub!(/(--+)?<div id="wikia-credits">.*?<\/div>/, '')
         text.gsub!(/\{\{.*?\}\}\n?/m, '')
         text.gsub!(/<pre>\n(.*?)\n<\/pre>/m) do
-            ">\n#{$1.each_line.map {|l| "#{INDENT}#{l}"}}\n<"
+            ">\n#{indent($1, INDENT)}\n<"
         end
         text.gsub!(/<tt>(.*?)<\/tt>/, '"\\1"')
         text.gsub!(/<i>(.*?)<\/i>/, '_\\1_')
@@ -274,6 +282,10 @@ HEADER
             end
         end
         acc.join()
+    end
+
+    def indent(text, indent)
+        text.each_line.map {|l| "#{indent}#{l}"}.join
     end
 
 end
