@@ -3,7 +3,7 @@
 # @Author:      Tom Link (micathom AT gmail com)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2009-02-10.
-# @Last Change: 2009-02-15.
+# @Last Change: 2009-02-24.
 #
 # This script creates and installs vimballs without vim.
 #
@@ -38,7 +38,7 @@ require 'zlib'
 class Vimball
 
     APPNAME = 'vimball'
-    VERSION = '1.0.191'
+    VERSION = '1.0.195'
     HEADER = <<HEADER
 " Vimball Archiver by Charles E. Campbell, Jr., Ph.D.
 UseVimball
@@ -52,10 +52,10 @@ HEADER
             $logger = Logger.new(output)
             $logger.progname = APPNAME
             $logger.datetime_format = "%H:%M:%S"
-            set_level
+            Appname.set_level
         end
     
-        def set_level
+        def self.set_level
             if $DEBUG
                 $logger.level = Logger::DEBUG
             elsif $VERBOSE
@@ -97,7 +97,7 @@ HEADER
             read_config(config)
 
             config['compress'] ||= false
-            config['helptags'] ||= %{vim -T dumb --cmd "helptags %s|quit"}
+            config['helptags'] ||= %{vim -T dumb -c "helptags %s" -cq"}
             config['outdir']   ||= File.join(config['vimfiles'], 'vimballs')
             config['vimoutdir'] ||= nil
             config['dry']      ||= false
@@ -160,12 +160,12 @@ HEADER
                 opts.on('--debug', 'Show debug messages') do |v|
                     $DEBUG   = true
                     $VERBOSE = true
-                    @logger.set_level
+                    AppLog.set_level
                 end
 
                 opts.on('-v', '--verbose', 'Run verbosely') do |v|
                     $VERBOSE = true
-                    @logger.set_level
+                    AppLog.set_level
                 end
 
                 opts.on('--version', 'Version number') do |bool|
