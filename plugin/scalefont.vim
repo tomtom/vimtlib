@@ -3,8 +3,8 @@
 " @Author:      Tom Link (micathom AT gmail com)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     18-Mai-2004.
-" @Last Change: 2009-02-19.
-" @Revision:    277
+" @Last Change: 2009-02-23.
+" @Revision:    278
 " 
 " GetLatestVimScripts: 1030 1 scalefont.vim
 
@@ -152,8 +152,8 @@ call ScaleFontSet('NormalMax', {
 call ScaleFontSet('NormalFull', deepcopy(ScaleFontGet('NormalMax')))
 call ScaleFontSet('NormalFull', {
             \ 'Exec': 'let &guioptions=substitute(&guioptions, "\\C[mrlRLbT]", "", "g")|set laststatus=0 ruler |'. ScaleFontGet('Normal', 'Exec'),
-            \ 'WinExec': 'set fdc=0|'. ScaleFontGet('Normal', 'WinExec'),
             \ })
+            " \ 'WinExec': 'set fdc=0|'. ScaleFontGet('Normal', 'WinExec'),
 
 call ScaleFontSet('NormalSingle', deepcopy(ScaleFontGet('NormalMax')))
 call ScaleFontSet('NormalSingle', {
@@ -609,3 +609,5 @@ g:scaleFontAlwaysResetGuioptions is 0.
 1.4
 - BufExec & WinExec options.
 
+1.5
+- NormalFull: don't set fdc=0
