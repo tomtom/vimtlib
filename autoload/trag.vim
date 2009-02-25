@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-29.
 " @Last Change: 2009-02-25.
-" @Revision:    0.0.628
+" @Revision:    0.0.635
 
 if &cp || exists("loaded_trag_autoload")
     finish
@@ -511,9 +511,11 @@ endf
 
 function! trag#RunCmdOnSelected(world, selected, cmd) "{{{3
     call a:world.CloseScratch()
+    " TLogVAR a:cmd
     for entry in a:selected
         " TLogVAR entry, a:world.GetBaseItem(entry)
         call trag#AgentEditQFE(a:world, [entry])
+        " TLogDBG bufname('%')
         exec a:cmd
         " let item = a:world.qfl[a:world.GetBaseIdx(entry - 1)]
         " <+TODO+>
@@ -582,6 +584,7 @@ endf
 
 
 function! trag#RefactorRename(world, selected) "{{{3
+    " TLogVAR a:selected
     let from = input('Rename ', s:grep_rx)
     if !empty(from)
         let to = input('Rename '. from .' to: ', from)
