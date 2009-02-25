@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2006-12-12.
-" @Last Change: 2009-02-22.
-" @Revision:    770
+" @Last Change: 2009-02-25.
+" @Revision:    776
 "
 " GetLatestVimScripts: 1730 1 07tAssert.vim
 
@@ -21,7 +21,7 @@ if !exists('g:TASSERT')    | let g:TASSERT = 0    | endif
 if !exists('g:TASSERTLOG') | let g:TASSERTLOG = 1 | endif
 
 if exists('s:assert')
-    echo 'TAssertions are '. (g:TASSERT ? 'on' : 'off')
+    echom 'TAssertions are '. (g:TASSERT ? 'on' : 'off')
 endif
 let s:assert = g:TASSERT
 
@@ -47,6 +47,7 @@ if g:TASSERT
                 \   let s:assertFailed = 1 |
                 \ endtry |
                 \ if s:assertFailed |
+                \   let s:assertReason .= ' '. <q-args> |
                 \   if "<bang>" != '' |
                 \     call tlog#Log(s:assertReason) |
                 \   else |
@@ -66,11 +67,11 @@ if !exists(':TAssertOn')
 
     " Switch assertions on and reload the plugin.
     " :read: command! -bar TAssertOn
-    exec 'command! -bar TAssertOn let g:TASSERT = 1 | runtime '. fnameescape(expand('<sfile>:p'))
+    exec 'command! -bar TAssertOn let g:TASSERT = 1 | source '. fnameescape(expand('<sfile>:p'))
 
     " Switch assertions off and reload the plugin.
     " :read: command! -bar TAssertOff
-    exec 'command! -bar TAssertOff let g:TASSERT = 0 | runtime '. fnameescape(expand('<sfile>:p'))
+    exec 'command! -bar TAssertOff let g:TASSERT = 0 | source '. fnameescape(expand('<sfile>:p'))
 
     " Comment TAssert* commands and all lines between a TAssertBegin 
     " and a TAssertEnd command.
