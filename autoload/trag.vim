@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-29.
-" @Last Change: 2009-02-21.
-" @Revision:    0.0.604
+" @Last Change: 2009-02-25.
+" @Revision:    0.0.628
 
 if &cp || exists("loaded_trag_autoload")
     finish
@@ -457,7 +457,11 @@ function! trag#AgentEditQFE(world, selected, ...) "{{{3
             let idx -= 1
             " TLogVAR idx
             if idx >= 0
-                let qfe = a:world.qfl[a:world.GetBaseIdx(idx)]
+                " TLogVAR a:world.qfl
+                " call tlog#Debug(string(map(copy(a:world.qfl), 's:GetFilename(v:val)')))
+                " call tlog#Debug(string(map(copy(a:world.qfl), 'v:val.bufnr')))
+                " TLogVAR idx, a:world.qfl[idx]
+                let qfe = a:world.qfl[idx]
                 " let back = a:world.SwitchWindow('win')
                 " TLogVAR cmd_edit, cmd_buffer, qfe
                 call tlib#file#With(cmd_edit, cmd_buffer, [s:GetFilename(qfe)], a:world)
@@ -511,7 +515,9 @@ function! trag#RunCmdOnSelected(world, selected, cmd) "{{{3
         " TLogVAR entry, a:world.GetBaseItem(entry)
         call trag#AgentEditQFE(a:world, [entry])
         exec a:cmd
-        let item = a:world.qfl[a:world.GetBaseIdx(entry - 1)]
+        " let item = a:world.qfl[a:world.GetBaseIdx(entry - 1)]
+        " <+TODO+>
+        let item = a:world.qfl[entry - 1]
         " TLogVAR entry, item, getline('.')
         let item['text'] = tlib#string#Strip(getline('.'))
     endfor

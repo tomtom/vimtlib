@@ -3,8 +3,8 @@
 " @Website:     http://members.a1.net/t.link/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-05-01.
-" @Last Change: 2009-02-15.
-" @Revision:    0.1.685
+" @Last Change: 2009-02-25.
+" @Revision:    0.1.696
 
 " :filedoc:
 " A prototype used by |tlib#input#List|.
@@ -158,6 +158,7 @@ function! s:prototype.GetSelectedItems(current) dict "{{{3
         endif
         call insert(rv, a:current)
     endif
+    " TAssert empty(rv) || rv[0] == a:current
     if stridx(self.type, 'i') != -1
         if !empty(self.index_table)
             " TLogVAR rv, self.index_table
@@ -252,13 +253,20 @@ endf
 
 
 " :nodoc:
+" The first index is 1.
 function! s:prototype.GetBaseIdx(idx) dict "{{{3
     " TLogVAR a:idx, self.table, self.index_table
     if !empty(self.table) && a:idx > 0 && a:idx <= len(self.table)
         return self.table[a:idx - 1]
     else
-        return ''
+        return 0
     endif
+endf
+
+
+" :nodoc:
+function! s:prototype.GetBaseIdx0(idx) dict "{{{3
+    return self.GetBaseIdx(a:idx) - 1
 endf
 
 
@@ -300,23 +308,23 @@ function! s:prototype.SetPrefIdx() dict "{{{3
 endf
 
 
-" :nodoc:
-function! s:prototype.GetCurrentItem() dict "{{{3
-    let idx = self.prefidx
-    " TLogVAR idx
-    if stridx(self.type, 'i') != -1
-        return idx
-    elseif !empty(self.list)
-        if len(self.list) >= idx
-            let idx1 = idx - 1
-            let rv = self.list[idx - 1]
-            " TLogVAR idx, idx1, rv, self.list
-            return rv
-        endif
-    else
-        return ''
-    endif
-endf
+" " :nodoc:
+" function! s:prototype.GetCurrentItem() dict "{{{3
+"     let idx = self.prefidx
+"     " TLogVAR idx
+"     if stridx(self.type, 'i') != -1
+"         return idx
+"     elseif !empty(self.list)
+"         if len(self.list) >= idx
+"             let idx1 = idx - 1
+"             let rv = self.list[idx - 1]
+"             " TLogVAR idx, idx1, rv, self.list
+"             return rv
+"         endif
+"     else
+"         return ''
+"     endif
+" endf
 
 
 " :nodoc:
@@ -329,7 +337,14 @@ function! s:prototype.CurrentItem() dict "{{{3
             return self.list[0]
         elseif self.prefidx > 0
             " TLogVAR self.prefidx
-            return self.GetCurrentItem()
+            " return self.GetCurrentItem()
+            if len(self.list) >= self.prefidx
+                let rv = self.list[self.prefidx - 1]
+                " TLogVAR idx, rv, self.list
+                return rv
+            endif
+        else
+            return ''
         endif
     endif
 endf

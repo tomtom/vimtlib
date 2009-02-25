@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-06-30.
-" @Last Change: 2009-02-15.
-" @Revision:    0.0.630
+" @Last Change: 2009-02-25.
+" @Revision:    0.0.637
 
 if &cp || exists("loaded_tlib_input_autoload")
     finish
@@ -152,7 +152,7 @@ function! tlib#input#ListW(world, ...) "{{{3
                             exec ea
                         else
                             let agent = get(handler, 'agent', '')
-                            let world = call(agent, [world, world.GetSelectedItems(world.GetCurrentItem())])
+                            let world = call(agent, [world, world.GetSelectedItems(world.CurrentItem())])
                             call s:CheckAgentReturnValue(agent, world)
                         endif
                     endif
@@ -316,7 +316,8 @@ function! tlib#input#ListW(world, ...) "{{{3
                 elseif has_key(key_agents, c)
                     let sr = @/
                     silent! let @/ = lastsearch
-                    let world = call(key_agents[c], [world, world.GetSelectedItems(world.GetCurrentItem())])
+                    " TLog "Agent: ". string(key_agents[c])
+                    let world = call(key_agents[c], [world, world.GetSelectedItems(world.CurrentItem())])
                     call s:CheckAgentReturnValue(c, world)
                     silent! let @/ = sr
                     " continue
@@ -392,6 +393,7 @@ function! tlib#input#ListW(world, ...) "{{{3
                         " TLogVAR world.state
                         let world.rv = world.CurrentItem()
                     endif
+                    " TLog "postprocess"
                     for handler in world.post_handlers
                         let state = get(handler, 'postprocess', '')
                         " TLogVAR handler
@@ -428,9 +430,11 @@ function! tlib#input#ListW(world, ...) "{{{3
             " exec world.prefidx
             return
         elseif world.state =~ '\<empty\>'
+            " TLog "empty"
             " TLogDBG 'return empty'
             return stridx(world.type, 'm') != -1 ? [] : stridx(world.type, 'i') != -1 ? 0 : ''
         elseif !empty(world.return_agent)
+            " TLog "return_agent"
             " TLogDBG 'return agent'
             " TLogVAR world.return_agent
             call world.CloseScratch()
@@ -438,12 +442,15 @@ function! tlib#input#ListW(world, ...) "{{{3
             " TAssert IsNotEmpty(world.scratch)
             return call(world.return_agent, [world, world.GetSelectedItems(world.rv)])
         elseif stridx(world.type, 'w') != -1
+            " TLog "return_world"
             " TLogDBG 'return world'
             return world
         elseif stridx(world.type, 'm') != -1
+            " TLog "return_multi"
             " TLogDBG 'return multi'
             return world.GetSelectedItems(world.rv)
         elseif stridx(world.type, 'i') != -1
+            " TLog "return_index"
             " TLogDBG 'return index'
             if empty(world.index_table)
                 return world.rv
@@ -451,6 +458,7 @@ function! tlib#input#ListW(world, ...) "{{{3
                 return world.index_table[world.rv - 1]
             endif
         else
+            " TLog "return_else"
             " TLogDBG 'return normal'
             return world.rv
         endif
