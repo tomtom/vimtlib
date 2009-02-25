@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-22.
 " @Last Change: 2009-02-25.
-" @Revision:    17
+" @Revision:    20
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -38,15 +38,15 @@ TAssertOn
 It should evaluate assertions when turned on.
 Should throw something 'Fun1(1)'
 Should not throw something 'Fun1("foo")'
-Should not finish InSecs 'Fun2()', 1
+Should not finish in 1 second 'Fun2()'
 
 
 
 TAssertOff
 
-It should evaluate assertions when turned off.
+It should not evaluate assertions when turned off.
 Should not throw something 'Fun1(1)'
-Should finish InSecs 'Fun2()', 1
+Should finish in 1 second 'Fun2()'
 
 
 
