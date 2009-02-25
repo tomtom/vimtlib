@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-22.
-" @Last Change: 2009-02-23.
-" @Revision:    0.0.121
+" @Last Change: 2009-02-25.
+" @Revision:    0.0.127
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -18,6 +18,7 @@ let s:rewrite_table = [
             \ ['^\s*not\s\+', '!'],
             \ ['^!\?'. s:rewrite_should .'\zs\s\+\(.\)', '#\u\2'],
             \ ['^!\?\zs'. s:rewrite_should .'#', 'should#&'],
+            \ ['^!\?\(\l\w\+#\)*\u\w*\zs\s\+\(.\{-}\)\s*$', '(\2)'],
             \ ]
             " \ '^!\?\(be\|throw\|yield\)\zs\s\+\(.\)': '#\u\1',
 
@@ -110,7 +111,7 @@ endf
 function! spec#__Begin(args, sfile) "{{{3
     let s:spec_args = s:ParseArgs(a:args, a:sfile)
     let s:spec_vars = keys(g:)
-    let s:spec_comment = ''
+    call spec#__Comment('')
 endf
 
 
@@ -143,12 +144,12 @@ function! spec#__Setup() "{{{3
         TAssert should#be#Type(scratch, 'list')
         call call('spec#OpenScratch', scratch)
     endif
-    exec get(s:spec_args, 'setup', '')
+    exec get(s:spec_args, 'before', '')
 endf
 
 
 function! spec#__Teardown() "{{{3
-    exec get(s:spec_args, 'teardown', '')
+    exec get(s:spec_args, 'after', '')
     " let s:spec_comment = ''
     let scratch = get(s:spec_args, 'scratch', '')
     if !empty(scratch)
@@ -211,6 +212,7 @@ function! spec#__Run(path, file, bang) "{{{3
    
     cexpr []
     let s:spec_files = {}
+    call spec#__Comment('')
     for file in files
         " TLogVAR file
         let s:should_counts = 0
