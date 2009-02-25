@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-22.
 " @Last Change: 2009-02-25.
-" @Revision:    0.0.127
+" @Revision:    0.0.132
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -141,7 +141,7 @@ function! spec#__Setup() "{{{3
     let s:should_counts += 1
     let scratch = get(s:spec_args, 'scratch', '')
     if !empty(scratch)
-        TAssert should#be#Type(scratch, 'list')
+        " TAssert should#be#Type(scratch, 'list')
         call call('spec#OpenScratch', scratch)
     endif
     exec get(s:spec_args, 'before', '')
@@ -206,7 +206,7 @@ function! spec#__Run(path, file, bang) "{{{3
     elseif filereadable(a:path)
         let files = [a:path]
     else
-        let files = globpath('**.vim', a:path)
+        let files = split(globpath(a:path, '**/*.vim'), '\n')
     endif
     " TLogVAR files
    
