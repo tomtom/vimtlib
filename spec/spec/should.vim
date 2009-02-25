@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-22.
-" @Last Change: 2009-02-23.
-" @Revision:    59
+" @Last Change: 2009-02-25.
+" @Revision:    62
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -71,7 +71,7 @@ SpecEnd
 
 
 
-let g:test_file = expand('%:p:h') .'/'
+let g:test_file = expand('<sfile>:p:h') .'/'
 SpecBegin 'title': 'Should yield', 'sfile': 'autoload/should/yield.vim',
             \ 'scratch': [g:test_file . "test_yield.txt"]
 
@@ -96,12 +96,12 @@ if exists('g:loaded_tlib')
 
     echo "Spec 'finish': The following test could take up to 5 seconds."
     It should measure execution time in seconds.
-    Should finish#InSecs('2sleep', 3)
-    Should not finish#InSecs('2sleep', 1)
+    Should finish#InSecs(':2sleep', 3)
+    Should not finish#InSecs(':2sleep', 1)
 
     It should measure in microseconds but this depends on your OS so it probably doesn't.
-    Should finish#InMicroSecs('call TakeTime(10)', 20)
-    Should not finish#InMicroSecs('call TakeTime(100000)', 20)
+    Should finish#InMicroSecs('TakeTime(10)', 20)
+    Should not finish#InMicroSecs('TakeTime(100000)', 20)
 
     SpecEnd TakeTime()
 
