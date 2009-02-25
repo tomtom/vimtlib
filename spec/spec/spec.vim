@@ -2,7 +2,7 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-22.
-" @Last Change: 2009-02-22.
+" @Last Change: 2009-02-25.
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -15,8 +15,8 @@ let g:spec_bar = 1
 
 SpecBegin 'title': 'Self-test',
             \ 'sfile': 'autoload/spec.vim',
-            \ 'setup': 'let g:spec_bar = 2',
-            \ 'teardown': 'let g:spec_bar = 1'
+            \ 'before': 'let g:spec_bar = 2',
+            \ 'after': 'let g:spec_bar = 1'
 
 
 It should initialize the environment.
@@ -32,7 +32,7 @@ Should be#List(spec#Val('s:scripts'))
 Should be#NotEmpty(spec#Val('s:scripts'))
 
 
-It should execute setup & teardown ex commands.
+It should execute before & after ex commands.
 Should be#Equal(g:spec_bar, 2)
 if g:spec_bar != 1
     throw 'Teardown failed'
@@ -50,6 +50,10 @@ Should be#Equal(spec#__Rewrite('not be#Equal'), '!should#be#Equal')
 " Should be#Equal(spec#__Rewrite('not be equal'), '!should#be#Equal')
 Should not be#Equal(spec#__Rewrite('not be#Equal'), 'foo')
 Should not be equal(spec#__Rewrite('not be#Equal'), 'foo')
+Should not be Equal spec#__Rewrite('not be#Equal'), 'foo'
+Should not be equal spec#__Rewrite('not be#Equal'), 'foo'
+Should throw something '1 + [1]'
+Should not throw something '1 + 2'
 
 
 It should remove temporary global variables & functions when done.
