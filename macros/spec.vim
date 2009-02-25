@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-22.
 " @Last Change: 2009-02-25.
-" @Revision:    21
+" @Revision:    24
 
 if &cp || exists("loaded_macros_spec")
     finish

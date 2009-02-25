@@ -47,13 +47,15 @@ Should be#NotEmpty(spec#Val('s:spec_comment'))
 
 It should rewrite expressions.
 Should be#Equal(spec#__Rewrite('not be#Equal'), '!should#be#Equal')
+Should be#Equal(spec#__Rewrite('finish in 1 second "Fun2()"'), 'should#finish#InSecs("Fun2()", 1)')
+Should be#Equal(spec#__Rewrite('not finish in 2 seconds "Fun2()"'), '!should#finish#InSecs("Fun2()", 2)')
+Should be#Equal(spec#__Rewrite("throw something '1 + [1]'"), "should#throw#Something('1 + [1]')")
+
 " Should be#Equal(spec#__Rewrite('not be equal'), '!should#be#Equal')
 Should not be#Equal(spec#__Rewrite('not be#Equal'), 'foo')
 Should not be equal(spec#__Rewrite('not be#Equal'), 'foo')
 Should not be Equal spec#__Rewrite('not be#Equal'), 'foo'
 Should not be equal spec#__Rewrite('not be#Equal'), 'foo'
-Should throw something '1 + [1]'
-Should not throw something '1 + 2'
 
 
 It should remove temporary global variables & functions when done.
@@ -70,7 +72,7 @@ Should be#Equal(<SID>CanonicalFilename('a:\foo/bar'), 'A:/foo/bar')
 
 It should integrate with the quickfix list.
 let g:spec_qfl_len = len(getqflist())
-It should fail.
+It should fail (please ignore the entry below).
 Should be#Equal("fail", "should")
 " incease with 2 because of the "it should" comment.
 Should be#Equal(len(getqflist()), g:spec_qfl_len + 2)

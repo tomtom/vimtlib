@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-22.
 " @Last Change: 2009-02-25.
-" @Revision:    0.0.132
+" @Revision:    0.0.158
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -16,6 +16,7 @@ exec SpecInit()
 let s:rewrite_should = '\(be\|throw\|yield\|finish\)'
 let s:rewrite_table = [
             \ ['^\s*not\s\+', '!'],
+            \ ['^!\?\(should#\)\?finish\s\+\zsin\s\+\(\d\+\)\s\+seconds\?\s\+\(.*\)$', 'InSecs(\3, \2)'],
             \ ['^!\?'. s:rewrite_should .'\zs\s\+\(.\)', '#\u\2'],
             \ ['^!\?\zs'. s:rewrite_should .'#', 'should#&'],
             \ ['^!\?\(\l\w\+#\)*\u\w*\zs\s\+\(.\{-}\)\s*$', '(\2)'],
@@ -209,40 +210,45 @@ function! spec#__Run(path, file, bang) "{{{3
         let files = split(globpath(a:path, '**/*.vim'), '\n')
     endif
     " TLogVAR files
-   
-    cexpr []
-    let s:spec_files = {}
-    call spec#__Comment('')
-    for file in files
-        " TLogVAR file
-        let s:should_counts = 0
-        let s:spec_file = s:CanonicalFilename(file)
-        let s:spec_files[s:spec_file] = readfile(s:spec_file)
-        let source = 'source '. fnameescape(file)
-        try
-            exec source
-        catch
-            call spec#__AddQFL(source, v:exception)
-        endtry
-        " TLogVAR len(getqflist())
-    endfor
-    unlet! s:spec_files s:spec_file s:should_counts
-   
-    echo " "
-    redraw
-    if len(getqflist()) > 0
-        try
-            exec g:spec_cwindow
-        catch
-            echohl Error
-            echom v:exception
-            echohl NONE
-        endtry
-    elseif v:servername == 'PLUGINKILLER' && exists(':PKg')
-        PKg
-        " <+TODO+>: PLUGINKILLER: Untested. Wait a sec?
-        call spec#__Run(a:path, a:file, a:bang)
-    endif
+
+    while 1
+        cexpr []
+        let s:spec_files = {}
+        call spec#__Comment('')
+        for file in files
+            " TLogVAR file
+            let s:should_counts = 0
+            let s:spec_file = s:CanonicalFilename(file)
+            let s:spec_files[s:spec_file] = readfile(s:spec_file)
+            let source = 'source '. fnameescape(file)
+            try
+                exec source
+            catch
+                call spec#__AddQFL(source, v:exception)
+            endtry
+            " TLogVAR len(getqflist())
+        endfor
+        unlet! s:spec_files s:spec_file s:should_counts
+
+        echo " "
+        redraw
+        if len(getqflist()) > 0
+            try
+                exec g:spec_cwindow
+            catch
+                echohl Error
+                echom v:exception
+                echohl NONE
+            endtry
+        elseif v:servername == 'PLUGINKILLER'
+            " echo "PluginKiller: Next run ..."
+            PKg
+            continue
+            " <+TODO+>: PLUGINKILLER: Untested. Wait a sec?
+            " call spec#__Run(a:path, a:file, a:bang)
+        endif
+        break
+    endwh
 endf
 
 
