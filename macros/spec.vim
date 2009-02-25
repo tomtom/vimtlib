@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-22.
-" @Last Change: 2009-02-22.
-" @Revision:    20
+" @Last Change: 2009-02-25.
+" @Revision:    21
 
 if &cp || exists("loaded_macros_spec")
     finish
@@ -18,12 +18,12 @@ set cpo&vim
 " :display: SPecBegin [ARGUMENTS AS INNER DICTIONNARY]
 " Known keys for ARGUMENTS:
 "
-"   title    ... The test's title.
-"   file     ... The script context.
-"   setup    ... Code to be run before each test (only effective when 
-"                run via |:SPecRun|.
-"   teardown ... Code to be run after each test (only effective when run 
-"                via |:SPecRun|.
+"   title  ... The test's title.
+"   file   ... The script context.
+"   before ... Code to be run before each test (only effective when 
+"              run via |:SPecRun|.
+"   after  ... Code to be run after each test (only effective when run 
+"              via |:SPecRun|.
 "
 " When using spec as a poor man's unit testing framework, put 
 " your tests between :SPecBegin ... :SPecEnd command.
