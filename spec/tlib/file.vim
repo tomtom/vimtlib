@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-25.
 " @Last Change: 2009-02-25.
-" @Revision:    10
+" @Revision:    11
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -25,7 +25,7 @@ Should be#Equal tlib#file#Join(['ftp:/', 'foo', 'bar', 'filename.txt']), 'ftp://
 Should be#Equal tlib#file#Join(['ftp://', 'foo', 'bar', 'filename.txt'], 1), 'ftp://foo/bar/filename.txt'
 
 
-It should construct relatvie path names.
+It should construct relative path names.
 Should be#Equal tlib#file#Relative('foo/bar/filename.txt', 'foo'), 'bar/filename.txt'
 Should be#Equal tlib#file#Relative('foo/bar/filename.txt', 'foo/base'), '../bar/filename.txt'
 Should be#Equal tlib#file#Relative('filename.txt', 'foo/base'), '../../filename.txt'

@@ -613,6 +613,7 @@ tlib#agent#EditItem(world, selected)
 
                                                     *tlib#agent#NewItem()*
 tlib#agent#NewItem(world, selected)
+    Insert a new item below the current one.
 
                                                     *tlib#agent#DeleteItems()*
 tlib#agent#DeleteItems(world, selected)
@@ -889,7 +890,7 @@ tlib#file#Split(filename)
 <
 
                                                     *tlib#file#Join()*
-tlib#file#Join(filename_parts)
+tlib#file#Join(filename_parts, ?strip_slashes=0)
     EXAMPLES: >
       tlib#file#Join(['foo', 'bar', 'filename.txt'])
       => 'foo/bar/filename.txt'
