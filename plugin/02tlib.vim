@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-10.
-" @Last Change: 2009-02-21.
-" @Revision:    559
+" @Last Change: 2009-02-25.
+" @Revision:    561
 " GetLatestVimScripts: 1863 1 tlib.vim
 "
 " Please see also ../test/tlib.vim for usage examples.
@@ -531,4 +531,6 @@ text to an empty buffer.
 
 0.31
 - :TRequire command
+-tlib#input#List: For i-type list views, make sure agents are called 
+with the base indices.
 
