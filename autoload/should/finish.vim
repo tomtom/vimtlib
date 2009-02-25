@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-22.
-" @Last Change: 2009-02-22.
-" @Revision:    0.0.12
+" @Last Change: 2009-02-25.
+" @Revision:    0.0.13
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -13,7 +13,7 @@ set cpo&vim
 function! should#finish#InSecs(expr, secs) "{{{3
     let start = localtime()
     try
-        exec a:expr
+        call should#__Eval(a:expr)
     catch
     endtry
     let d  = localtime() - start
@@ -29,7 +29,7 @@ function! should#finish#InMicroSecs(expr, msecs) "{{{3
     if exists('g:loaded_tlib')
         let start = tlib#time#Now()
         try
-            exec a:expr
+            call should#__Eval(a:expr)
         catch
         endtry
         let d  = tlib#time#Diff(tlib#time#Now(), start)
