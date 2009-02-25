@@ -3,7 +3,7 @@
 # @Author:      Tom Link (micathom AT gmail com)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2009-02-10.
-# @Last Change: 2009-02-24.
+# @Last Change: 2009-02-25.
 #
 # This script creates and installs vimballs without vim.
 #
@@ -38,7 +38,7 @@ require 'zlib'
 class Vimball
 
     APPNAME = 'vimball'
-    VERSION = '1.0.195'
+    VERSION = '1.0.196'
     HEADER = <<HEADER
 " Vimball Archiver by Charles E. Campbell, Jr., Ph.D.
 UseVimball
@@ -52,7 +52,7 @@ HEADER
             $logger = Logger.new(output)
             $logger.progname = APPNAME
             $logger.datetime_format = "%H:%M:%S"
-            Appname.set_level
+            AppLog.set_level
         end
     
         def self.set_level
