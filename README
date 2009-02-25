@@ -24,30 +24,32 @@
     #A tSkeleton        -- File Templates and Code Skeletons
     #A ttagecho         -- Show current tag information
     #A ttags            -- Tag list browser (List, filter, preview, jump to tags)
-    #A ttoc             -- Display a "table of contents"
-    #A Viki             -- Some kind of personal wiki for Vim
+    #A ttoc             -- Display a "table of contents" for the current buffer
+    #A Viki             -- A personal wiki for Vim
     #B Eval\Selection   -- evaluate selected vim/ruby/... code
     #B localvariables   -- Set/let per-file-variables à la Emacs
-    #B tmboxbrowser     -- A mbox browser
     #B ttagcomplete     -- Context-sensitive tag completion
-    #C tEchoPair        -- Display matching parenthesis in the echo area
+    #C spec             -- Behaviour-driven design: easy on the eye specifications of VIM scripts
+    #C tbak             -- Yet another simple backup plugin using diff
     #D concordance      -- Concordance table (sort of)
-    #D pim              -- The vim pim (not really useful yet)
-    #D tbak             -- Yet another simple backup plugin using diff
+    #D glark            -- a wrapper for the glark command (superseded by trag)
+    #D linglang         -- Perform actions on basis of the current line's language
+    #D setsyntax        -- Set options specific for the syntax group under cursor
+    #D tmboxbrowser     -- A mbox browser
+    #D TortoiseSVN      -- Some support for TortoiseSVN (a subversion client for Windows)
     #D tsession         -- An alternativ approach to sessions
-    #E glark            -- a wrapper for the glark command (superseded by trag)
-    #E linglang         -- Perform actions on basis of the current line's language
-    #E setsyntax        -- Set options specific for the syntax group under cursor
-    #E TortoiseSVN      -- Support for TortoiseSVN (a subversion client for Windows)
+    #E pim              -- The vim pim (not really useful yet)
+    #E tEchoPair        -- Display matching parenthesis in the echo area
 
 
 Legend:
 
     #A ... Works for me (there may be some minor quirks)
     #B ... Minor problems
-    #C ... Major known problems, not in use
-    #D ... Unfinished work
-    #E ... Not in use
+    #C ... Work in progress
+    #D ... Not in use (I wouldn't know if there were problems)
+    #E ... Major known problems or unfinished work
+
 
 
 
