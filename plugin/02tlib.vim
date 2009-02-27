@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-10.
-" @Last Change: 2009-02-25.
-" @Revision:    561
+" @Last Change: 2009-02-26.
+" @Revision:    563
 " GetLatestVimScripts: 1863 1 tlib.vim
 "
 " Please see also ../test/tlib.vim for usage examples.
@@ -29,7 +29,7 @@ if v:version < 700 "{{{2
     echoerr "tlib requires Vim >= 7"
     finish
 endif
-let loaded_tlib = 30
+let loaded_tlib = 32
 let s:save_cpo = &cpo
 set cpo&vim
 
@@ -534,3 +534,5 @@ text to an empty buffer.
 -tlib#input#List: For i-type list views, make sure agents are called 
 with the base indices.
 
+0.32
+- 
