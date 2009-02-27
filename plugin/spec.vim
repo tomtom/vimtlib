@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-22.
-" @Last Change: 2009-02-22.
-" @Revision:    31
+" @Last Change: 2009-02-26.
+" @Revision:    37
 " GetLatestVimScripts: 0 0 :AutoInstall: spec.vim
 
 if &cp || exists("loaded_spec")
@@ -20,6 +20,11 @@ if !exists('g:spec_cwindow')
     " The command that should be used for viewing the quickfix list.
     let g:spec_cwindow = 'cwindow'   "{{{2
 endif
+
+" if !exists('g:spec_vim')
+"     " The (g)vim executable -- used for remote tests.
+"     let g:spec_vim = 'gvim'  "{{{2
+" endif
 
 
 " :display: Spec [PATH]
@@ -56,6 +61,11 @@ endf
 let &cpo = s:save_cpo
 unlet s:save_cpo
 finish
+
+TODO:
+- remote testing (maybe we don't need this if the use of feedkeys() is 
+sufficient for most interactive tests)
+
 
 CHANGES:
 0.1
