@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-29.
-" @Last Change: 2009-02-25.
-" @Revision:    0.0.635
+" @Last Change: 2009-02-27.
+" @Revision:    0.0.638
 
 if &cp || exists("loaded_trag_autoload")
     finish
@@ -481,6 +481,7 @@ function! trag#AgentPreviewQFE(world, selected) "{{{3
     let back = a:world.SwitchWindow('win')
     call trag#AgentEditQFE(a:world, a:selected[0:0])
     exec back
+    redraw
     let a:world.state = 'redisplay'
     return a:world
 endf
@@ -603,4 +604,16 @@ function! trag#RefactorRename(world, selected) "{{{3
     let a:world.state = 'reset'
     return a:world
 endf
+
+
+function! trag#SetFollowCursor(world, selected) "{{{3
+    if empty(a:world.follow_cursor)
+        let a:world.follow_cursor = 'trag#AgentPreviewQFE'
+    else
+        let a:world.follow_cursor = ''
+    endif
+    let a:world.state = 'redisplay'
+    return a:world
+endf
+
 

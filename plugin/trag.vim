@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-29.
 " @Last Change: 2009-02-27.
-" @Revision:    549
+" @Revision:    553
 " GetLatestVimScripts: 2033 1 trag.vim
 
 if &cp || exists("loaded_trag")
@@ -216,6 +216,7 @@ TLet g:trag_qfl_world = {
                 \ {'key': 19, 'agent': 'trag#AgentSplitBuffer',  'key_name': '<c-s>', 'help': 'Show in split buffer'},
                 \ {'key': 20, 'agent': 'trag#AgentTabBuffer',    'key_name': '<c-t>', 'help': 'Show in tab'},
                 \ {'key': 22, 'agent': 'trag#AgentVSplitBuffer', 'key_name': '<c-v>', 'help': 'Show in vsplit buffer'},
+                \ {'key': "\<c-insert>", 'agent': 'trag#SetFollowCursor', 'key_name': '<c-ins>', 'help': 'Toggle trace cursor'},
             \ ],
             \ 'return_agent': 'trag#AgentEditQFE',
             \ }
@@ -400,4 +401,5 @@ default file list will be used.
 0.6
 - trag#viki#Rename()
 - Generalized trag#rename#Rename()
+- Enabled "trace cursor" functionality (mapped to the <c-insert> key).
 
