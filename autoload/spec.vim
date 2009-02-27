@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-22.
-" @Last Change: 2009-02-25.
-" @Revision:    0.0.158
+" @Last Change: 2009-02-26.
+" @Revision:    0.0.164
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -232,7 +232,17 @@ function! spec#__Run(path, file, bang) "{{{3
 
         echo " "
         redraw
-        if len(getqflist()) > 0
+        " <+TODO+> Pluginkiller doesn't work. Check for update.
+        if v:servername == 'PLUGINKILLER'
+            " echo "PluginKiller: Next run ..."
+            if len(getqflist()) > 0
+                PKb
+            else
+                PKg
+            endif
+            " <+TODO+>: PLUGINKILLER: Untested. Wait a sec?
+            continue
+        elseif len(getqflist()) > 0
             try
                 exec g:spec_cwindow
             catch
@@ -240,12 +250,6 @@ function! spec#__Run(path, file, bang) "{{{3
                 echom v:exception
                 echohl NONE
             endtry
-        elseif v:servername == 'PLUGINKILLER'
-            " echo "PluginKiller: Next run ..."
-            PKg
-            continue
-            " <+TODO+>: PLUGINKILLER: Untested. Wait a sec?
-            " call spec#__Run(a:path, a:file, a:bang)
         endif
         break
     endwh
@@ -317,6 +321,18 @@ function! spec#CloseScratch() "{{{3
     if bufname('%') == '__SPEC_SCRATCH_BUFFER__' && winnr('$') > 1
         wincmd c
     endif
+endf
+
+
+" Replay a recorded macro
+function! spec#Replay(macro) "{{{3
+    let s = @s
+    try
+        let @s = a:macro
+        norm! @s
+    finally
+        let @s = s
+    endtry
 endf
 
 
