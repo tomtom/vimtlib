@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-07-09.
-" @Last Change: 2009-02-15.
-" @Revision:    0.3.447
+" @Last Change: 2009-02-27.
+" @Revision:    0.3.450
 " GetLatestVimScripts: 2014 0 ttoc.vim
 
 if &cp || exists("loaded_ttoc")
@@ -14,7 +14,7 @@ if !exists('loaded_tlib') || loaded_tlib < 27
     echoerr 'tlib >= 0.27 is required'
     finish
 endif
-let loaded_ttoc = 3
+let loaded_ttoc = 4
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -81,7 +81,7 @@ TLet g:ttoc_world = {
                     \ {'key':  7, 'agent': 'ttoc#GotoLine',     'key_name': '<c-g>', 'help': 'Jump (don''t close the TOC window)'},
                     \ {'key': 60, 'agent': 'ttoc#GotoLine',     'key_name': '<',     'help': 'Jump (don''t close the TOC window)'},
                     \ {'key':  5, 'agent': 'tlib#agent#DoAtLine',     'key_name': '<c-e>', 'help': 'Run a command on selected lines'},
-                    \ {'key': 20, 'agent': 'ttoc#SetFollowCursor',    'key_name': '<c-t>', 'help': 'Toggle trace cursor'},
+                    \ {'key': "\<c-insert>", 'agent': 'ttoc#SetFollowCursor', 'key_name': '<c-ins>', 'help': 'Toggle trace cursor'},
                     \ {'key': 28, 'agent': 'tlib#agent#ToggleStickyList',       'key_name': '<c-\>', 'help': 'Toggle sticky'},
                 \ ],
             \ }
@@ -196,4 +196,5 @@ preview the line under cursor.
 0.4
 - Handle multi-line regexps (thanks to M Weber for pointing this out)
 - Require tlib 0.27
+- Changed key for "trace cursor" from <c-t> to <c-insert>.
 
