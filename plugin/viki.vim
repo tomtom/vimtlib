@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2009-02-15.
-" @Revision:    2622
+" @Last Change: 2009-02-27.
+" @Revision:    2623
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -189,7 +189,7 @@ endif
 " If non-nil, use the parent document's suffix.
 if !exists("g:vikiUseParentSuffix") | let g:vikiUseParentSuffix = 0      | endif "{{{2
 
-" Default file suffix.
+" Default file suffix (including the optional period, e.g. '.txt').
 if !exists("g:vikiNameSuffix")      | let g:vikiNameSuffix = ""          | endif "{{{2
 
 " Prefix for anchors
