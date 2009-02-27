@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-21.
-" @Last Change: 2009-02-25.
-" @Revision:    0.0.36
+" @Last Change: 2009-02-26.
+" @Revision:    0.0.38
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -52,6 +52,13 @@ function! should#__Eval(expr) "{{{3
         exec a:expr
     else
         return eval(a:expr)
+    endif
+endf
+
+
+function! should#__Require(what) "{{{3
+    if !exists('g:loaded_'. a:what)
+        throw 'should#maintain#WindowLayout requires '. a:what
     endif
 endf
 
