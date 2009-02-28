@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-22.
-" @Last Change: 2009-02-25.
-" @Revision:    0.0.13
+" @Last Change: 2009-02-28.
+" @Revision:    0.0.14
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -19,7 +19,7 @@ function! should#finish#InSecs(expr, secs) "{{{3
     let d  = localtime() - start
     let rv = d <= a:secs
     if !rv
-        call should#__Explain(rv, 'Expected '. a:expr .' to finish in less than '. a:secs .'s, but it took '. d .'s')
+        call should#__Explain('Expected '. a:expr .' to finish in less than '. a:secs .'s, but it took '. d .'s')
     endif
     return rv
 endf
@@ -36,11 +36,11 @@ function! should#finish#InMicroSecs(expr, msecs) "{{{3
         " TLogVAR d
         let rv = d <= a:msecs
         if !rv
-            call should#__Explain(rv, 'Expected '. a:expr .' to finish in less than '. a:msecs .'ms, but it took '. d .'ms')
+            call should#__Explain('Expected '. a:expr .' to finish in less than '. a:msecs .'ms, but it took '. d .'ms')
         endif
         return rv
     else
-        call should#__Explain(rv, 'should#finish#InMicroSecs requires tlib')
+        call should#__Explain('should#finish#InMicroSecs requires tlib')
         return 0
     endif
 endf

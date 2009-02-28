@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-22.
-" @Last Change: 2009-02-25.
-" @Revision:    24
+" @Last Change: 2009-02-28.
+" @Revision:    34
 
 if &cp || exists("loaded_macros_spec")
     finish
@@ -76,6 +76,17 @@ command! -nargs=1 Should
             \   if !empty(s:spec_reason) | call should#__InsertReason(s:spec_reason) | endif |
             \   call spec#__AddQFL(<q-args>, should#__ClearReasons()) |
             \ endif
+
+
+" :display: Replay[!] MACRO
+" Replay a recorded key sequence.
+" With [!], the argument is passed unprocessed on to |spec#Replay()|. 
+" Otherwise, the macro is evaluated as in |expr-quote|.
+command! -nargs=1 -bang Replay if empty("<bang>")
+            \ | call spec#Replay(eval('"'. escape(<q-args>, '"') .'"'))
+            \ | else
+                \ | call spec#Replay(<q-args>)
+                \ | endif
 
 
 let &cpo = s:save_cpo

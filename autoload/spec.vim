@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-22.
-" @Last Change: 2009-02-26.
-" @Revision:    0.0.164
+" @Last Change: 2009-02-28.
+" @Revision:    0.0.189
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -138,13 +138,10 @@ endf
 
 
 function! spec#__Setup() "{{{3
+    " TLog 'spec#__Setup'
     call should#__Init()
     let s:should_counts += 1
-    let scratch = get(s:spec_args, 'scratch', '')
-    if !empty(scratch)
-        " TAssert should#be#Type(scratch, 'list')
-        call call('spec#OpenScratch', scratch)
-    endif
+    call s:MaybeOpenScratch()
     exec get(s:spec_args, 'before', '')
 endf
 
@@ -152,6 +149,23 @@ endf
 function! spec#__Teardown() "{{{3
     exec get(s:spec_args, 'after', '')
     " let s:spec_comment = ''
+    call s:MaybeCloseScratch()
+endf
+
+
+function! s:MaybeOpenScratch() "{{{3
+    let scratch = get(s:spec_args, 'scratch', '')
+    if !empty(scratch)
+        " TAssert should#be#Type(scratch, 'list')
+        call call('spec#OpenScratch', scratch)
+        return 1
+    else
+        return 0
+    endif
+endf
+
+
+function! s:MaybeCloseScratch() "{{{3
     let scratch = get(s:spec_args, 'scratch', '')
     if !empty(scratch)
         call spec#CloseScratch()
@@ -197,8 +211,20 @@ endf
 
 function! spec#__Comment(string) "{{{3
     let s:spec_comment = a:string
+    call s:Log(1, a:string)
 endf
 
+
+function! s:Log(level, string) "{{{3
+    if s:spec_verbose && !empty(a:string)
+        let string = repeat(' ', (&sw * a:level)) . a:string
+        if exists(':TLog')
+            TLog string
+        else
+            echom string
+        endif
+    endif
+endf
 
 function! spec#__Run(path, file, bang) "{{{3
     " TLogVAR a:path, a:file
@@ -213,10 +239,12 @@ function! spec#__Run(path, file, bang) "{{{3
 
     while 1
         cexpr []
+        let s:spec_verbose = a:bang
         let s:spec_files = {}
         call spec#__Comment('')
         for file in files
             " TLogVAR file
+            call s:Log(0, 'Spec: '. file)
             let s:should_counts = 0
             let s:spec_file = s:CanonicalFilename(file)
             let s:spec_files[s:spec_file] = readfile(s:spec_file)
@@ -291,7 +319,7 @@ endf
 " Open the spec scratch buffer.
 function! spec#OpenScratch(...) "{{{3
     if bufname('%') != '__SPEC_SCRATCH_BUFFER__'
-        split __SPEC_SCRATCH_BUFFER__
+        silent split __SPEC_SCRATCH_BUFFER__
     endif
     setlocal buftype=nofile
     setlocal bufhidden=hide
@@ -324,8 +352,23 @@ function! spec#CloseScratch() "{{{3
 endf
 
 
-" Replay a recorded macro
+function! spec#Feedkeys(sequence) "{{{3
+    " TLogVAR a:sequence
+    " try
+        call feedkeys(a:sequence)
+    " catch
+    " endtry
+endf
+
+
+" Replay a recorded macro.
 function! spec#Replay(macro) "{{{3
+    " TLogVAR a:macro
+    if s:CanonicalFilename(expand('%:p')) != s:spec_file
+        if !s:MaybeOpenScratch()
+            throw 'Spec: Replay: spec file must be current buffer'
+        endif
+    endif
     let s = @s
     try
         let @s = a:macro

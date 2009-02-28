@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-22.
-" @Last Change: 2009-02-26.
-" @Revision:    37
+" @Last Change: 2009-02-28.
+" @Revision:    42
 " GetLatestVimScripts: 0 0 :AutoInstall: spec.vim
 
 if &cp || exists("loaded_spec")
@@ -27,13 +27,17 @@ endif
 " endif
 
 
-" :display: Spec [PATH]
+" :display: Spec[!] [PATH]
 " PATH can be either a file or a directory.
 " 
 " If PATH is a directory, run all vim files under PATH as specification 
 " scripts.
 "
 " If no PATH is given, run the current file only.
+" 
+" With [!], also print a short list specifications by means of |:TLog|, 
+" if available, or |:echom|. You might need to call |:messages| in order 
+" to review this list.
 "
 " CAVEAT: Unit test scripts must not run other unit tests by 
 " sourcing them. In order for spec to map the |:Spec| commands 
@@ -45,7 +49,7 @@ endif
 " should only use one |:SpecBegin| command per file.
 command! -nargs=? -complete=file -bang Spec
             \ | runtime macros/spec.vim
-            \ | call spec#__Run(<q-args>, expand('%:p'), "<bang>")
+            \ | call spec#__Run(<q-args>, expand('%:p'), !empty("<bang>"))
 
 
 " Put the line "exec SpecInit()" into your script in order to 

@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-21.
-" @Last Change: 2009-02-26.
-" @Revision:    0.0.38
+" @Last Change: 2009-02-28.
+" @Revision:    0.0.46
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -13,6 +13,7 @@ set cpo&vim
 
 " :nodoc:
 fun! should#__Init() "{{{3
+    " TLog 'should#__Init'
     let s:should_reason = []
 endf
 
@@ -39,10 +40,10 @@ endf
 
 
 " :nodoc:
-fun! should#__Explain(rv, reason)
-    if empty(a:rv) && exists(':s:should_reason')
+fun! should#__Explain(reason)
+    " if exists(':s:should_reason')
         call add(s:should_reason, a:reason)
-    endif
+    " endif
 endf
 
 

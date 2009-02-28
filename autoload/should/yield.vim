@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-21.
-" @Last Change: 2009-02-22.
-" @Revision:    0.0.28
+" @Last Change: 2009-02-28.
+" @Revision:    0.0.30
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -15,7 +15,7 @@ set cpo&vim
 " Useful for testing normal commands, mappings etc.
 function! should#yield#Buffer(expr, filename) "{{{3
     " TLogVAR a:expr, a:filename
-    exec a:expr
+    call should#__Eval(a:expr)
     let buf = getline(1, '$')
     let file = readfile(a:filename)
     return s:CompareLines(buf, file)
@@ -25,7 +25,7 @@ endf
 " Compare the current buffer with the contents of filename after 
 " |:exe|cuting expr but ignore changes in whitespace.
 function! should#yield#SqueezedBuffer(expr, filename) "{{{3
-    exec a:expr
+    call should#__Eval(a:expr)
     let buf = getline(1, '$')
     call s:Squeeze(buf)
     let file = readfile(a:filename)
@@ -40,7 +40,7 @@ function! s:CompareLines(lines1, lines2) "{{{3
         let line1 = a:lines1[i]
         let line2 = a:lines2[i]
         if line1 != line2
-            call should#__Explain(0, 'In line '. (i + 1) .': Expected '. line2 .' but got '. line1)
+            call should#__Explain('In line '. (i + 1) .': Expected '. line2 .' but got '. line1)
             return 0
         endif
     endfor
