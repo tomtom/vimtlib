@@ -1,5 +1,7 @@
 * Status
 
+The vimball recipes for the following plugins are located in the vimballs subdirectory.
+
     #A bbcode           -- syntax & templates
     #A checksyntax      -- Check syntax when saving a file (php etc.)
     #A cmdlinehelp      -- Display help on the command in the command line
