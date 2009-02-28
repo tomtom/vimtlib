@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-06-30.
-" @Last Change: 2009-02-25.
-" @Revision:    0.0.637
+" @Last Change: 2009-02-28.
+" @Revision:    0.0.641
 
 if &cp || exists("loaded_tlib_input_autoload")
     finish
@@ -432,7 +432,14 @@ function! tlib#input#ListW(world, ...) "{{{3
         elseif world.state =~ '\<empty\>'
             " TLog "empty"
             " TLogDBG 'return empty'
-            return stridx(world.type, 'm') != -1 ? [] : stridx(world.type, 'i') != -1 ? 0 : ''
+            " TLogVAR world.type
+            if stridx(world.type, 'm') != -1
+                return []
+            elseif stridx(world.type, 'i') != -1
+                return 0
+            else
+                return ''
+            endif
         elseif !empty(world.return_agent)
             " TLog "return_agent"
             " TLogDBG 'return agent'

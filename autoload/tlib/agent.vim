@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-06-24.
-" @Last Change: 2009-02-25.
-" @Revision:    0.1.168
+" @Last Change: 2009-02-28.
+" @Revision:    0.1.169
 
 if &cp || exists("loaded_tlib_agent_autoload") "{{{2
     finish
@@ -18,7 +18,7 @@ let loaded_tlib_agent_autoload = 1
 
 function! tlib#agent#Exit(world, selected) "{{{3
     call a:world.CloseScratch()
-    let a:world.state = 'exit escape'
+    let a:world.state = 'exit empty escape'
     let a:world.list = []
     " let a:world.base = []
     call a:world.ResetSelected()
