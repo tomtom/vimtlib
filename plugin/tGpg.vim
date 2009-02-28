@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2006-12-31.
 " @Last Change: 2009-02-27.
-" @Revision:    0.5.909
+" @Revision:    0.5.911
 " GetLatestVimScripts: 1751 1 tGpg.vim
 "
 " TODO:
