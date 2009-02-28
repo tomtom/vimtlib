@@ -2,7 +2,7 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-22.
-" @Last Change: 2009-02-25.
+" @Last Change: 2009-02-28.
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -72,10 +72,24 @@ Should be#Equal(<SID>CanonicalFilename('a:\foo/bar'), 'A:/foo/bar')
 
 It should integrate with the quickfix list.
 let g:spec_qfl_len = len(getqflist())
-It should fail (please ignore the entry below).
+It should fail (please ignore the entry below unless there is no descriptive explanation).
 Should be#Equal("fail", "should")
 " incease with 2 because of the "it should" comment.
 Should be#Equal(len(getqflist()), g:spec_qfl_len + 2)
+
+
+It should replay key sequences.
+Replay :let g:spec_char1 = getchar()\n\<f11>
+Should be#Equal g:spec_char1, "€F1"
+
+
+It should replay macros.
+call spec#Replay(':let g:spec_char2 = getchar()€F1')
+Should be#Equal g:spec_char2, "€F1"
+unlet g:spec_char2
+Replay! :let g:spec_char2 = getchar()€F1
+Should be#Equal g:spec_char2, "€F1"
+
 
 
 SpecEnd SpecFoo()
