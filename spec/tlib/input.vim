@@ -3,14 +3,14 @@
 " @GIT:         http://github.com/tomtom/vimtlib/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-28.
-" @Last Change: 2009-02-28.
-" @Revision:    63
+" @Last Change: 2009-03-01.
+" @Revision:    65
 
 let s:save_cpo = &cpo
 set cpo&vim
 
 
-SpecBegin 'title': 'tlib: Input', 'scratch': [expand('<sfile>:p')]
+SpecBegin 'title': 'tlib: Input', 'scratch': '%'
 
 
 let g:spec_tlib_list = [10, 20, 30, 40, 'a50', 'aa60', 'b70', 'ba80', 90]
