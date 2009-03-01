@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-21.
-" @Last Change: 2009-02-28.
-" @Revision:    0.0.46
+" @Last Change: 2009-03-01.
+" @Revision:    0.0.47
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -41,9 +41,9 @@ endf
 
 " :nodoc:
 fun! should#__Explain(reason)
-    " if exists(':s:should_reason')
+    if exists('s:should_reason')
         call add(s:should_reason, a:reason)
-    " endif
+    endif
 endf
 
 
