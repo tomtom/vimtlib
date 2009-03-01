@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-22.
-" @Last Change: 2009-02-28.
-" @Revision:    0.0.189
+" @Last Change: 2009-03-01.
+" @Revision:    0.0.192
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -141,8 +141,9 @@ function! spec#__Setup() "{{{3
     " TLog 'spec#__Setup'
     call should#__Init()
     let s:should_counts += 1
-    call s:MaybeOpenScratch()
+    let rv = s:MaybeOpenScratch()
     exec get(s:spec_args, 'before', '')
+    return rv
 endf
 
 
@@ -156,8 +157,16 @@ endf
 function! s:MaybeOpenScratch() "{{{3
     let scratch = get(s:spec_args, 'scratch', '')
     if !empty(scratch)
+        if type(scratch) == 1
+            let scratch_args = [scratch]
+        else
+            let scratch_args = scratch
+        endif
+        if scratch_args[0] == '%'
+            let scratch_args[0] = s:spec_file
+        endif
         " TAssert should#be#Type(scratch, 'list')
-        call call('spec#OpenScratch', scratch)
+        call call('spec#OpenScratch', scratch_args)
         return 1
     else
         return 0
@@ -180,7 +189,7 @@ function! spec#__AddQFL(expr, reason)
     let lnum = idx
     " call tlog#Debug(string(keys(s:spec_files)))
     for line in s:spec_files[s:spec_file]
-        if line =~# '^\s*Should\s\+'
+        if line =~# '^\s*\(Should\|Replay\)\s\+'
             " if exists('g:loaded_tlib') && line =~ '^\s*spec!\?\s\+'. tlib#rx#Escape(a:expr) .'\s*$'
             "     let lnum = idx
             "     break
@@ -365,7 +374,7 @@ endf
 function! spec#Replay(macro) "{{{3
     " TLogVAR a:macro
     if s:CanonicalFilename(expand('%:p')) != s:spec_file
-        if !s:MaybeOpenScratch()
+        if !spec#__Setup()
             throw 'Spec: Replay: spec file must be current buffer'
         endif
     endif

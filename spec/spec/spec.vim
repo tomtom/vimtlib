@@ -2,7 +2,7 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-22.
-" @Last Change: 2009-02-28.
+" @Last Change: 2009-03-01.
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -14,6 +14,7 @@ let g:spec_bar = 1
 
 
 SpecBegin 'title': 'Self-test',
+            \ 'scratch': '%',
             \ 'sfile': 'autoload/spec.vim',
             \ 'before': 'let g:spec_bar = 2',
             \ 'after': 'let g:spec_bar = 1'
