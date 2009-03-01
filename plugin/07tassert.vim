@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2006-12-12.
-" @Last Change: 2009-02-25.
-" @Revision:    776
+" @Last Change: 2009-03-01.
+" @Revision:    795
 "
 " GetLatestVimScripts: 1730 1 07tAssert.vim
 
@@ -38,7 +38,7 @@ if g:TASSERT
     " "<SID>" in the expression is replaced with the current script's 
     " |<SNR>|. With [!] failures are logged according to the setting of 
     " |g:tAssertLog|.
-    command! -nargs=1 -bang TAssert 
+    command! -nargs=1 -bang -bar TAssert 
                 \ let s:assertReason = '' |
                 \ try |
                 \   let s:assertFailed = empty(eval(<q-args>)) |
@@ -55,10 +55,18 @@ if g:TASSERT
                 \   endif |
                 \ endif
 
+    " :display: TAssertType EXPRESSION, TYPE
+    " Check if EXPRESSION is of a certain TYPE (see |should#be#A()|).
+    "
+    " This command requires the spec.vim plugin!
+    command! -nargs=+ -bang -bar TAssertType if exists('g:loaded_spec') | TAssert<bang> should#be#A(<args>) | endif
+
 else
 
     " :nodoc:
-    command! -nargs=* -bang TAssert :
+    command! -nargs=1 -bang -bar TAssert :
+    " :nodoc:
+    command! -nargs=+ -bang -bar TAssertType :
 
 endif
 
@@ -121,6 +129,7 @@ the backtrace.
 - Incompatible changes galore
 - Removed :TAssertToggle, :TAssertBegin & :TAssertEnd and other stuff 
 that doesn't really belong here.
+- :TAssertType command (requires spec.vim)
 
 
 TODO:
