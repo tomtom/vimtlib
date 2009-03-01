@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-02.
-" @Last Change: 2009-02-15.
-" @Revision:    0.0.354
+" @Last Change: 2009-03-01.
+" @Revision:    0.0.370
 
 if &cp || exists("loaded_tsession_autoload")
     finish
@@ -185,26 +185,15 @@ endf
 
 function! s:GlobSessions() "{{{3
     let rv = []
-    let pat = '*'.sfx
-    if exists('b:tsessions_dir')
-        call tlib#dir#Ensure(b:tsessions_dir)
-        let ls = glob(tlib#file#Join([b:tsessions_dir, pat]))
-        if !empty(ls)
-            let rv += split(ls, '\n')
+    for dir in [s:SessionName('_*', 'b', 0), s:SessionName('*', 'g', 0), s:SessionName('*', '')]
+        if !empty(dir)
+            let ls = glob(dir)
+            if !empty(ls)
+                let rv += split(ls, '\n')
+            endif
         endif
-    endif
-    if exists('g:tsessions_dir')
-        call tlib#dir#Ensure(g:tsessions_dir)
-        let ls = glob(tlib#file#Join([g:tsessions_dir, pat]))
-        if !empty(ls)
-            let rv += split(ls, '\n')
-        endif
-    else
-        let ls = glob(tlib#cache#Filename('sessions', pat, 1))
-        if !empty(ls)
-            let rv += split(ls, '\n')
-        endif
-    endif
+    endfor
+    " TLogVAR rv
     return rv
 endf
 
@@ -212,20 +201,22 @@ endf
 function! tsession#Sessions() "{{{3
     let rv = s:GlobSessions()
     " TLogVAR rv
-    return map(rv, 'fnamemodify(v:val, ":t")')
+    return map(rv, 'fnamemodify(v:val, ":t:r")')
 endf
 
 
-function! s:SessionName(name) "{{{3
-    let dir = tlib#var#Get('tsessions_dir', 'bg')
-    let sfx = tlib#var#Get('tsessions_suffix', 'bg')
+function! s:SessionName(name, ...) "{{{3
+    TVarArg ['namespace', 'bg'], ['usecache', 1]
+    let dir = empty(namespace) ? '' : tlib#var#Get('tsession_dir', namespace)
+    let sfx = tlib#var#Get('tsession_suffix', 'bg')
     if !empty(dir)
+        call tlib#dir#Ensure(dir)
         if a:name =~ '^_'
             return tlib#file#Join([dir, a:name]) .sfx
-        elseif !empty(g:tsessions_dir)
-            return tlib#file#Join([g:tsessions_dir, a:name]) .sfx
+        elseif !empty(g:tsession_dir)
+            return tlib#file#Join([g:tsession_dir, a:name]) .sfx
         endif
-    else
+    elseif usecache
         return tlib#cache#Filename('sessions', a:name, 1) .sfx
     endif
 endf
@@ -264,6 +255,7 @@ endf
 " If args.swap == 1, delete (swap-out) any unregistered buffers.
 function! tsession#Load(...) "{{{3
     TVarArg ['name', g:tsession_current], ['args', {}]
+    " TLogVAR name, args
     if name == s:none
         call s:SessionEnd(g:tsession_current)
     else
