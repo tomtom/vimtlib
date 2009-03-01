@@ -71,11 +71,10 @@ It should be able to access script-local functions.
 Should be#Equal(<SID>CanonicalFilename('a:\foo/bar'), 'A:/foo/bar')
 
 
-It should integrate with the quickfix list.
 let g:spec_qfl_len = len(getqflist())
-It should fail (please ignore the entry below unless there is no descriptive explanation).
+It should fail. Please ignore the entry below unless there is no descriptive explanation.
 Should be#Equal("fail", "should")
-" incease with 2 because of the "it should" comment.
+It should integrate with the quickfix list.
 Should be#Equal(len(getqflist()), g:spec_qfl_len + 2)
 
 
