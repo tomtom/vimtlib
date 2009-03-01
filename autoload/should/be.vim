@@ -3,8 +3,9 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-21.
-" @Last Change: 2009-02-28.
-" @Revision:    0.0.31
+" @Last Change: 2009-03-01.
+" @Revision:    0.0.45
+
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -13,13 +14,22 @@ set cpo&vim
 let s:types = ['number', 'string', 'funcref', 'list', 'dictionary']
 
 
-" Test if expr is of type (see |type()|).
+" Test if expr is of type, where type can be:
+"
+"     - One of: 'number', 'string', 'funcref', 'list', 'dictionary'
+"     - A list of above type names (one of which must match)
+"     - A dictionary in which case the type is evaluated as object 
+"       template. Keys in the template that do not have a value of 0, 
+"       must exist in the object/expression.
+"
+" See also |type()|.
 function! should#be#A(expr, type)
     return s:CheckType(a:expr, a:type, string(a:type))
 endf
 
 
-" A faster version of the above without descriptive messages.
+" Faster checks than version above but without descriptive messages and 
+" type must be a string.
 function! should#be#Type(expr, type)
     return type(a:expr) == index(s:types, a:type)
 endf
@@ -154,6 +164,7 @@ function! s:CheckType(expr, type, expected)
     " TLogVAR a:expr, a:type
     let type = type(a:expr)
     if type(a:type) == 3
+        " type is a list of types
         for t in a:type
             let rv = s:CheckType(a:expr, t, a:expected)
             if rv
@@ -161,6 +172,7 @@ function! s:CheckType(expr, type, expected)
             endif
         endfor
     elseif type(a:type) == 1
+        " type is a type name
         let t = index(s:types, tolower(a:type))
         if t == -1
             throw 'Unknown type: '. string(a:type)
@@ -168,10 +180,13 @@ function! s:CheckType(expr, type, expected)
             return s:CheckType(a:expr, t, a:expected)
         endif
     elseif type(a:type) == 4
-        let Val  = a:expr
+        " type is a dictionary
+        " let Val  = a:expr
         " let type = type(Val)
         if type == 4
-            let rv = !len(filter(keys(a:type), '!s:CheckMethod(Val, a:type, v:val)'))
+            let rv = !len(filter(keys(a:type), '!s:CheckMethod(a:expr, a:type, v:val)'))
+        else
+            let rv = 0
         endif
     else
         " let type = type(Val)
@@ -186,9 +201,9 @@ endf
 
 " :nodoc:
 function! s:CheckMethod(dict, prototype, method)
-    if a:method == 'data'
-        return 1
-    endif
+    " if a:method == 'data'
+    "     return 1
+    " endif
     let m = a:prototype[a:method]
     if type(m) == 0 && !m
         return 1
