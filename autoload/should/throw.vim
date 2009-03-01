@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-21.
-" @Last Change: 2009-02-28.
-" @Revision:    0.0.11
+" @Last Change: 2009-03-01.
+" @Revision:    0.0.16
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -16,9 +16,10 @@ fun! should#throw#Something(expr)
     try
         call should#__Eval(a:expr)
         call should#__Explain('Expected exception but none was thrown')
-        return ''
+        return 0
     catch
-        return v:exception
+        " TLog v:exception
+        return 1
     endtry
 endf
 
