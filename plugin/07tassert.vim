@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2006-12-12.
-" @Last Change: 2009-03-01.
-" @Revision:    795
+" @Last Change: 2009-03-06.
+" @Revision:    798
 "
 " GetLatestVimScripts: 1730 1 07tAssert.vim
 
@@ -73,17 +73,26 @@ endif
 
 if !exists(':TAssertOn')
 
+    if exists('*fnameescape')
+        let s:self_file = fnameescape(expand('<sfile>:p'))
+    else
+        let s:self_file = escape(expand('<sfile>:p'), " \t\n*?[{`$\\%#'\"|!<")
+    endif
+
     " Switch assertions on and reload the plugin.
     " :read: command! -bar TAssertOn
-    exec 'command! -bar TAssertOn let g:TASSERT = 1 | source '. fnameescape(expand('<sfile>:p'))
+    exec 'command! -bar TAssertOn let g:TASSERT = 1 | source '. s:self_file
 
     " Switch assertions off and reload the plugin.
     " :read: command! -bar TAssertOff
-    exec 'command! -bar TAssertOff let g:TASSERT = 0 | source '. fnameescape(expand('<sfile>:p'))
+    exec 'command! -bar TAssertOff let g:TASSERT = 0 | source '. s:self_file
+
+    unlet s:self_file
 
     " Comment TAssert* commands and all lines between a TAssertBegin 
     " and a TAssertEnd command.
     command! -range=% -bar -bang TAssertComment call tassert#Comment(<line1>, <line2>, "<bang>")
+
     " Uncomment TAssert* commands and all lines between a TAssertBegin 
     " and a TAssertEnd command.
     command! -range=% -bar -bang TAssertUncomment call tassert#Uncomment(<line1>, <line2>, "<bang>")

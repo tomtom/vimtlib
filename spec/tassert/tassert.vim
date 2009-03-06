@@ -3,15 +3,16 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-22.
-" @Last Change: 2009-03-01.
-" @Revision:    33
+" @Last Change: 2009-03-06.
+" @Revision:    34
 
 let s:save_cpo = &cpo
 set cpo&vim
 
 
 
-SpecBegin 'title': 'TAssert'
+SpecBegin 'title': 'TAssert',
+            \ 'cleanup': ['Fun1()', 'Fun1type()', 'Fun2()']
 
 
 
@@ -63,7 +64,6 @@ if g:spec_tassert_status
     TAssertOn
 endif
 
-SpecEnd Fun1() Fun1type() Fun2()
 
 
 let &cpo = s:save_cpo
