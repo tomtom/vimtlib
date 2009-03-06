@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-03.
-" @Last Change: 2009-02-21.
-" @Revision:    0.0.1186
+" @Last Change: 2009-03-05.
+" @Revision:    0.0.1195
 
 if &cp || exists("loaded_tskeleton_autoload")
     finish
@@ -229,6 +229,7 @@ endf
 function! s:HandleTag(match, filetype) "{{{3
     " TLogVAR a:match
     let s:tskel_highlight = 1
+    " TLogDBG a:match =~# '^[bgsw]:'
     if a:match =~# '^[bgsw]:'
         return [1, s:Var(a:match)]
     elseif a:match =~# '^nl$'
@@ -571,9 +572,12 @@ function! s:DelTo(pattern, inclusive)
 endf
 
 
+
 function! s:Var(arg) "{{{3
+    " TLogVAR a:arg
     if exists(a:arg)
         " exec 'return '.a:arg
+        " TLogVAR {a:arg}
         return {a:arg}
     else
         return tskeleton#EvalInDestBuffer(printf('exists("%s") ? %s : "%s"', a:arg, a:arg, a:arg))
@@ -801,6 +805,8 @@ function! tskeleton#ExecInDestBuffer(code) "{{{3
         if ws != -1
             try
                 exec ws.'wincmd w'
+                let code = substitute("\n". a:code ."\n", '\n\s*".\{-}\ze\n', "", "g")
+                " TLogVAR a:code
                 exec a:code
             finally
                 exec wb.'wincmd w'
