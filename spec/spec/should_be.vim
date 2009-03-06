@@ -1,10 +1,8 @@
-" should.vim
-" @Author:      Thomas Link (micathom AT gmail com?subject=[vim])
+" @Author:      Tom Link (mailto:micathom AT gmail com?subject=[vim])
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
-" @Created:     2009-02-22.
-" @Last Change: 2009-03-01.
-" @Revision:    72
+" @Created:     2009-03-06.
+" @Last Change: 2009-03-06.
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -75,62 +73,16 @@ Should be#LessEqual(1, 1)
 Should be#LessEqual(1, 2)
 Should not be#LessEqual(3, 2)
 
-SpecEnd
-
-
-
-SpecBegin 'title': 'Should throw', 'sfile': 'autoload/should/throw.vim'
-
-It should test for exceptions.
-Should throw#Something('1 + [2]')
-Should not throw#Something('1 + 2')
-
-It should test for specific exceptions.
-Should throw#Exception('1 + [2]', ':E745:')
-Should not throw#Exception('1 + [2]', ':E746:')
-
-SpecEnd
-
-
-
-let g:test_file = expand('<sfile>:p:h') .'/'
-SpecBegin 'title': 'Should yield', 'sfile': 'autoload/should/yield.vim',
-            \ 'scratch': [g:test_file . "test_yield.txt"]
-
-It should test buffer content.
-Should yield#Buffer(':silent 1,3delete', g:test_file.'test_yield1.txt')
-Should not yield#Buffer(':silent 1,3delete', g:test_file.'should.vim')
-
-It should test squeezed buffer content.
-Should yield#SqueezedBuffer(':silent 1,3delete', g:test_file.'test_yield2.txt')
-Should not yield#SqueezedBuffer(':silent 1,3delete', g:test_file.'should.vim')
-
-SpecEnd
-
-
-
-if exists('g:loaded_tlib')
-
-    SpecBegin 'title': 'Should finish', 'sfile': 'autoload/should/finish.vim'
-
-    function! TakeTime(n) "{{{3
-        for i in range(a:n)
-        endfor
-    endf
-
-    echo "Spec 'finish': The following test could take up to 5 seconds."
-    It should measure execution time in seconds.
-    Should finish#InSecs(':2sleep', 3)
-    Should not finish#InSecs(':2sleep', 1)
-
-    It should measure in microseconds but this depends on your OS so it probably doesn't.
-    Should finish#InMicroSecs('TakeTime(10)', 20)
-    Should not finish#InMicroSecs('TakeTime(100000)', 20)
-
-    SpecEnd TakeTime()
-
-endif
-
+It should match strings.
+Should be like "foo", '^f'
+Should not be like "foo", '^x'
+Should be unlike "foo", '^x'
+Should be like "foo", '^f', '#'
+Should be unlike "foo", '^F', '#'
+Should be unlike "Foo", '^f', '#'
+Should be like "Foo", '^F', '#'
+Should be like "foo", '^F', '?'
+Should be like "Foo", '^f', '?'
 
 
 let &cpo = s:save_cpo

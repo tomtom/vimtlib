@@ -2,14 +2,13 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-22.
-" @Last Change: 2009-03-01.
+" @Last Change: 2009-03-06.
 
 let s:save_cpo = &cpo
 set cpo&vim
 
 let s:vars = len(g:)
 
-unlet! g:spec_foo
 let g:spec_bar = 1
 
 
@@ -24,7 +23,7 @@ It should initialize the environment.
 Should be#Equal(spec#Val('s:spec_vars'), keys(g:))
 Should be#Equal(spec#Val('s:spec_msg'), 'Self-test')
 
-Should be#Equal(spec#Val('s:should_counts'), 3)
+Should be#Equal(spec#Val('s:should_counts['. string(<SID>CurrentFile()) .']'), 3)
 
 Should be#Dictionary(spec#Val('s:spec_args'))
 Should be#NotEmpty(spec#Val('s:spec_args'))
@@ -51,20 +50,13 @@ Should be#Equal(spec#__Rewrite('not be#Equal'), '!should#be#Equal')
 Should be#Equal(spec#__Rewrite('finish in 1 second "Fun2()"'), 'should#finish#InSecs("Fun2()", 1)')
 Should be#Equal(spec#__Rewrite('not finish in 2 seconds "Fun2()"'), '!should#finish#InSecs("Fun2()", 2)')
 Should be#Equal(spec#__Rewrite("throw something '1 + [1]'"), "should#throw#Something('1 + [1]')")
+Should be#Equal(spec#__Rewrite("not exists('*SpecFoo')"), "!exists('*SpecFoo')")
 
 " Should be#Equal(spec#__Rewrite('not be equal'), '!should#be#Equal')
 Should not be#Equal(spec#__Rewrite('not be#Equal'), 'foo')
 Should not be equal(spec#__Rewrite('not be#Equal'), 'foo')
 Should not be Equal spec#__Rewrite('not be#Equal'), 'foo'
 Should not be equal spec#__Rewrite('not be#Equal'), 'foo'
-
-
-It should remove temporary global variables & functions when done.
-let g:spec_foo = 1
-
-function! SpecFoo(a) "{{{3
-    return a:a * 2
-endf
 
 
 It should be able to access script-local functions.
@@ -78,6 +70,10 @@ It should integrate with the quickfix list.
 Should be#Equal(len(getqflist()), g:spec_qfl_len + 2)
 
 
+It! should always add this message to the quickfix list.
+Should be#Equal(len(getqflist()), g:spec_qfl_len + 3)
+
+
 It should replay key sequences.
 Replay :let g:spec_char1 = getchar()\n\<f11>
 Should be#Equal g:spec_char1, "€F1"
@@ -89,19 +85,6 @@ Should be#Equal g:spec_char2, "€F1"
 unlet g:spec_char2
 Replay! :let g:spec_char2 = getchar()€F1
 Should be#Equal g:spec_char2, "€F1"
-
-
-
-SpecEnd SpecFoo()
-
-
-if exists('*SpecFoo')
-    throw "SpecFoo() wasn't removed"
-endif
-
-if exists('g:spec_foo')
-    throw "Global variable wasn't removed"
-endif
 
 
 let &cpo = s:save_cpo

@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-22.
-" @Last Change: 2009-03-01.
-" @Revision:    0.0.192
+" @Last Change: 2009-03-06.
+" @Revision:    0.0.292
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -126,13 +126,15 @@ function! spec#__End(args) "{{{3
         endif
     endfor
 
-    let vars = keys(g:)
-    call filter(vars, 'index(s:spec_vars, v:val) == -1')
-    " TLogVAR vars
-    call map(vars, '"g:". v:val')
-    " TLogVAR vars
-    if !empty(vars)
-        exec 'unlet! '. join(vars, ' ')
+    if exists('s:spec_vars')
+        let vars = keys(g:)
+        call filter(vars, 'index(s:spec_vars, v:val) == -1')
+        " TLogVAR vars
+        call map(vars, '"g:". v:val')
+        " TLogVAR vars
+        if !empty(vars)
+            exec 'unlet! '. join(vars, ' ')
+        endif
     endif
 endf
 
@@ -140,7 +142,7 @@ endf
 function! spec#__Setup() "{{{3
     " TLog 'spec#__Setup'
     call should#__Init()
-    let s:should_counts += 1
+    let s:should_counts[s:CurrentFile()] += 1
     let rv = s:MaybeOpenScratch()
     exec get(s:spec_args, 'before', '')
     return rv
@@ -163,7 +165,7 @@ function! s:MaybeOpenScratch() "{{{3
             let scratch_args = scratch
         endif
         if scratch_args[0] == '%'
-            let scratch_args[0] = s:spec_file
+            let scratch_args[0] = s:CurrentFile()
         endif
         " TAssert should#be#Type(scratch, 'list')
         call call('spec#OpenScratch', scratch_args)
@@ -188,14 +190,14 @@ function! spec#__AddQFL(expr, reason)
     let idx = 1
     let lnum = idx
     " call tlog#Debug(string(keys(s:spec_files)))
-    for line in s:spec_files[s:spec_file]
+    for line in s:spec_files[s:CurrentFile()]
         if line =~# '^\s*\(Should\|Replay\)\s\+'
             " if exists('g:loaded_tlib') && line =~ '^\s*spec!\?\s\+'. tlib#rx#Escape(a:expr) .'\s*$'
             "     let lnum = idx
             "     break
             " endif
             let ncmd += 1
-            if ncmd == s:should_counts
+            if ncmd == s:should_counts[s:CurrentFile()]
                 let lnum = idx
                 break
             endif
@@ -203,13 +205,13 @@ function! spec#__AddQFL(expr, reason)
         let idx += 1
     endfor
     let qfl = [{
-                \ 'filename': s:spec_file,
+                \ 'filename': s:CurrentFile(),
                 \ 'lnum': lnum,
                 \ 'text': a:reason,
                 \ }]
     if !empty(s:spec_comment)
         call insert(qfl, {
-                    \ 'filename': s:spec_file,
+                    \ 'filename': s:CurrentFile(),
                     \ 'lnum': lnum,
                     \ 'text': s:spec_comment,
                     \ })
@@ -218,9 +220,15 @@ function! spec#__AddQFL(expr, reason)
 endf
 
 
-function! spec#__Comment(string) "{{{3
-    let s:spec_comment = a:string
-    call s:Log(1, a:string)
+function! spec#__Comment(string, ...) "{{{3
+    if a:0 >= 1 && a:1
+        let s:spec_comment = ''
+        call spec#__AddQFL('', a:string)
+        call s:Log(1, toupper(a:string))
+    else
+        let s:spec_comment = a:string
+        call s:Log(1, a:string)
+    endif
 endf
 
 
@@ -228,68 +236,106 @@ function! s:Log(level, string) "{{{3
     if s:spec_verbose && !empty(a:string)
         let string = repeat(' ', (&sw * a:level)) . a:string
         if exists(':TLog')
-            TLog string
+            " TLog string
         else
             echom string
         endif
     endif
 endf
 
+
 function! spec#__Run(path, file, bang) "{{{3
-    " TLogVAR a:path, a:file
+    " TLogVAR a:path, a:file, a:bang
     if empty(a:path)
         let files = [a:file]
     elseif filereadable(a:path)
         let files = [a:path]
     else
         let files = split(globpath(a:path, '**/*.vim'), '\n')
+        call filter(files, 'fnamemodify(v:val, ":t") !~ "^_"')
     endif
     " TLogVAR files
 
-    while 1
-        cexpr []
-        let s:spec_verbose = a:bang
-        let s:spec_files = {}
-        call spec#__Comment('')
-        for file in files
-            " TLogVAR file
-            call s:Log(0, 'Spec: '. file)
-            let s:should_counts = 0
-            let s:spec_file = s:CanonicalFilename(file)
-            let s:spec_files[s:spec_file] = readfile(s:spec_file)
-            let source = 'source '. fnameescape(file)
-            try
-                exec source
-            catch
-                call spec#__AddQFL(source, v:exception)
-            endtry
-            " TLogVAR len(getqflist())
-        endfor
-        unlet! s:spec_files s:spec_file s:should_counts
+    cexpr []
+    let s:spec_verbose = a:bang
+    let s:spec_files = {}
+    let s:should_counts = {}
+    let s:spec_file = []
+    let s:spec_args = {}
+    let g:spec_run = 1
+    call spec#__Comment('')
+    for file in files
+        " TLogVAR file
+        call spec#Include(file, 1)
+        " TLogVAR len(getqflist())
+    endfor
+    unlet! s:spec_verbose s:spec_files s:spec_file s:should_counts g:spec_run
 
-        echo " "
-        redraw
-        " <+TODO+> Pluginkiller doesn't work. Check for update.
-        if v:servername == 'PLUGINKILLER'
-            " echo "PluginKiller: Next run ..."
-            if len(getqflist()) > 0
-                PKb
-            else
-                PKg
+    echo " "
+    redraw
+    if len(getqflist()) > 0
+        try
+            exec g:spec_cwindow
+        catch
+            echohl Error
+            echom v:exception
+            echohl NONE
+        endtry
+    endif
+endf
+
+
+function! spec#Include(filename, top_spec) "{{{3
+    " TLogVAR a:filename, a:top_spec
+    let filename0 = s:CanonicalFilename(a:filename)
+    call s:PushFile(filename0)
+    let s:spec_files[filename0] = readfile(a:filename)
+    let source = 'source '. fnameescape(a:filename)
+    let s:spec_perm = -1
+    let qfl_size = len(getqflist())
+    let options = g:spec_option_sets
+    " TLogVAR options
+    while qfl_size == len(getqflist()) && (s:spec_perm < 0 || (a:top_spec && spec#speckiller#OptionSets(options, s:spec_perm)))
+        call s:Log(0, 'Spec ['. s:spec_perm .']: '. a:filename)
+        let s:should_counts[filename0] = 0
+        try
+            exec source
+            let options1 = get(s:spec_args, 'options', [])
+            " TLogVAR options1
+            if !empty(options1) && s:spec_perm < 0
+                let options = extend(deepcopy(options), options1)
+                " TLogVAR options
             endif
-            " <+TODO+>: PLUGINKILLER: Untested. Wait a sec?
-            continue
-        elseif len(getqflist()) > 0
-            try
-                exec g:spec_cwindow
-            catch
-                echohl Error
-                echom v:exception
-                echohl NONE
-            endtry
-        endif
-        break
+        catch
+            call spec#__AddQFL(source, v:exception)
+            break
+        finally
+            if a:top_spec
+                if s:spec_perm >= 0
+                    call spec#speckiller#Reset()
+                endif
+                call spec#__End(get(s:spec_args, 'cleanup', []))
+            endif
+        endtry
+        let s:spec_perm += 1
     endwh
+    call s:PopFile()
+    return qfl_size == len(getqflist())
+endf
+
+
+function! s:PushFile(filename) "{{{3
+    call insert(s:spec_file, a:filename)
+endf
+
+
+function! s:PopFile() "{{{3
+    call remove(s:spec_file, 0)
+endf
+
+
+function! s:CurrentFile() "{{{3
+    return s:spec_file[0]
 endf
 
 
@@ -373,7 +419,7 @@ endf
 " Replay a recorded macro.
 function! spec#Replay(macro) "{{{3
     " TLogVAR a:macro
-    if s:CanonicalFilename(expand('%:p')) != s:spec_file
+    if s:CanonicalFilename(expand('%:p')) != s:CurrentFile()
         if !spec#__Setup()
             throw 'Spec: Replay: spec file must be current buffer'
         endif

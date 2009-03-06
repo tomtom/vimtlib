@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-22.
-" @Last Change: 2009-02-28.
-" @Revision:    42
+" @Last Change: 2009-03-06.
+" @Revision:    59
 " GetLatestVimScripts: 0 0 :AutoInstall: spec.vim
 
 if &cp || exists("loaded_spec")
@@ -21,6 +21,14 @@ if !exists('g:spec_cwindow')
     let g:spec_cwindow = 'cwindow'   "{{{2
 endif
 
+if !exists('g:spec_option_sets')
+    " If |g:spec_killer| is non-null, test your specs against these 
+    " options -- a list of dictionaries.
+    "
+    " See also |:SpecBegin|.
+    let g:spec_option_sets = []   "{{{2
+endif
+
 " if !exists('g:spec_vim')
 "     " The (g)vim executable -- used for remote tests.
 "     let g:spec_vim = 'gvim'  "{{{2
@@ -30,8 +38,8 @@ endif
 " :display: Spec[!] [PATH]
 " PATH can be either a file or a directory.
 " 
-" If PATH is a directory, run all vim files under PATH as specification 
-" scripts.
+" If PATH is a directory, run all vim files (whose name doesn't begin 
+" with an underscore "_") under PATH as specification scripts.
 "
 " If no PATH is given, run the current file only.
 " 
@@ -39,10 +47,10 @@ endif
 " if available, or |:echom|. You might need to call |:messages| in order 
 " to review this list.
 "
-" CAVEAT: Unit test scripts must not run other unit tests by 
-" sourcing them. In order for spec to map the |:Spec| commands 
-" onto the correct file & line number, any spec scripts have to be run 
-" via :Spec.
+" NOTES:
+" Unit test scripts must not run other unit tests by using 
+" |:source|. Use |:SpecInclude| if you have to include a vimscript file 
+" that contains |:Should| commands.
 "
 " Even then it sometimes happens that spec cannot distinguish 
 " between to identical tests in different contexts, which is why you 
@@ -52,11 +60,10 @@ command! -nargs=? -complete=file -bang Spec
             \ | call spec#__Run(<q-args>, expand('%:p'), !empty("<bang>"))
 
 
-" Put the line "exec SpecInit()" into your script in order to 
-" install the function s:SpecVal(), which can be used to evaluate 
-" expressions in script context. This initializations is necessary only 
-" if you call the function |spec#Val()| in your 
-" tests.
+" Include the line "exec SpecInit()" in your script in order to install 
+" the function s:SpecVal(), which can be used to evaluate expressions in 
+" script context. This initializations is necessary only if you call the 
+" function |spec#Val()| in your tests.
 fun! SpecInit()
     return "function! s:SpecVal(expr)\nreturn eval(a:expr)\nendf"
 endf
@@ -67,6 +74,13 @@ unlet s:save_cpo
 finish
 
 TODO:
+- SpecInclude spec.file
+- Delete spec commands when done.
+
+
+POSSIBLE ENHANCEMENTS:
+- log to file???
+- Pass, Fail (current spec)
 - remote testing (maybe we don't need this if the use of feedkeys() is 
 sufficient for most interactive tests)
 
