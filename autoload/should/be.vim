@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-21.
-" @Last Change: 2009-03-01.
-" @Revision:    0.0.45
+" @Last Change: 2009-03-02.
+" @Revision:    0.0.49
 
 
 let s:save_cpo = &cpo
@@ -154,6 +154,28 @@ function! should#be#Existent(expr)
     let rv = exists(val)
     if !rv
         call should#__Explain(add(s:assertReason, string(val) .' doesn''t exist')
+    endif
+    return rv
+endf
+
+
+" :display: should#be#Like(string, rx, ?case='')
+" Case can be "#" or "?".
+function! should#be#Like(string, rx, ...) "{{{3
+    exec 'let rv = a:string =~'. (a:0 >= 1 ? a:1 : '') .'a:rx'
+    if !rv
+        call should#__Explain('Expected '. string(a:string) .' to match '. string(a:rx))
+    endif
+    return rv
+endf
+
+
+" :display: should#be#Unlike(string, rx, ?case='')
+" Case can be "#" or "?".
+function! should#be#Unlike(string, rx, ...) "{{{3
+    exec 'let rv = a:string !~'. (a:0 >= 1 ? a:1 : '') .'a:rx'
+    if !rv
+        call should#__Explain('Expected '. string(a:string) .' not to match '. string(a:rx))
     endif
     return rv
 endf
