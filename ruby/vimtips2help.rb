@@ -3,7 +3,7 @@
 # @Author:      Thomas Link (micathom AT gmail com)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2009-02-23.
-# @Last Change: 2009-02-24.
+# @Last Change: 2009-03-01.
 
 require 'hpricot'
 require 'cgi'
@@ -16,8 +16,9 @@ require 'logger'
 class Vimtips2Help
 
     APPNAME = 'vimtips'
-    VERSION = '1.0.76'
-    WIDTH = 72
+    VERSION = '1.0.99'
+    WIDTH = 78
+    INNER_MARGIN = WIDTH - 12
     SHIFT = 4
     INDENT = ' ' * SHIFT
 
@@ -214,9 +215,17 @@ HEADER
         text = CGI.unescapeHTML(text)
         text.gsub!(/<!-- \*+ -->/, '-' * WIDTH)
         text.gsub!(/<!--.*?-->/, '')
+        text.gsub!(/&nbsp;/, ' ')
         text.gsub!(/:\n +/m, ":\n\n ")
+
+        text.gsub!(/<pre>\n(.*?)\n<\/pre>/m) do
+            ">\n#{indent($1, INDENT)}\n<"
+        end
+        # Indentation should be done in wrap()
         text.gsub!(/^ +/, INDENT)
         text.gsub!(/^\*(\S)/, "#{INDENT}- \\1")
+        text.gsub!(/^#\s/, "#{INDENT}# ")
+
         text.gsub!(/(\s)\*(\S+?)\*(\s)/, "\\1*\\2#{@config[:cut_mark]}\\3") if @config[:convert_unintentional_tags]
         text.gsub!(/\{\{script\|id=(\d+)(\|.*?)?\}\}/, 'vimscript#\\1')
         text.gsub!(/\{\{help\|(.*?)\}\}/) do
@@ -234,8 +243,9 @@ HEADER
         # end
         text.gsub!(/__NOTOC__/, '')
         text.gsub!(/\[\[User:.*?\]\] \d+:\d+, \d+ \w+ \d+ (UTC)/, '')
-        text.gsub!(/\[\[VimTip\d+\|(\d+ )?(.*?)\]\]/) do
-            tag_name($2, '|')
+        text.gsub!(/\[\[(VimTip\d+)\|(\d+ )?(.*?)\]\]/) do
+            # tag_name($2, '|')
+            tag_name($1, '|')
         end
         text.gsub!(/\[\[.*?\|(.*?)\]\]/, '\\1')
         text.gsub!(/\[\[(.*?)\]\]/) do
@@ -243,9 +253,6 @@ HEADER
         end
         text.gsub!(/(--+)?<div id="wikia-credits">.*?<\/div>/, '')
         text.gsub!(/\{\{.*?\}\}\n?/m, '')
-        text.gsub!(/<pre>\n(.*?)\n<\/pre>/m) do
-            ">\n#{indent($1, INDENT)}\n<"
-        end
         text.gsub!(/<tt>(.*?)<\/tt>/, '"\\1"')
         text.gsub!(/<i>(.*?)<\/i>/, '_\\1_')
         text.gsub!(/<code>(.*?)<\/code>/, '|\\1|')
@@ -260,27 +267,42 @@ HEADER
 
 
     def wrap(text)
-        wrap = /^.{0,#{WIDTH - 10}}\S*\s*/
+        wrap = /^.{0,#{INNER_MARGIN}}\S*\s*/
         acc = []
+        state = :normal
+
         text.each_line do |line|
-            indent = /^ +/.match(line)
-            indent = indent ? indent[0] : ''
-            until line.empty?
-                m = wrap.match(line)
-                t = m[0]
-                if t.size < 60
-                    acc << t
-                    break
-                else
-                    acc << "#{t} \n"
+            case state
+            when :pre
+                acc << line
+                if line =~ /^<$/
+                    state = :normal
                 end
-                if m.post_match.empty?
-                    line = ''
+            else
+                if line =~ /^>$/
+                    acc << line
+                    state = :pre
                 else
-                    line = "#{indent}#{m.post_match}"
+                    indent = /^ +/.match(line)
+                    indent = indent ? indent[0] : ''
+                    if line =~ /^  +[#-] /
+                        indent << '  '
+                    end
+                    until line.empty?
+                        m = wrap.match(line)
+                        t = m[0]
+                        if t.size > INNER_MARGIN and m.post_match =~ /\S/
+                            acc << "#{t} \n"
+                            line = "#{indent}#{m.post_match}"
+                        else
+                            acc << t
+                            break
+                        end
+                    end
                 end
             end
         end
+
         acc.join()
     end
 
