@@ -3,8 +3,8 @@
 " @GIT:         http://github.com/tomtom/vimtlib/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-25.
-" @Last Change: 2009-02-25.
-" @Revision:    11
+" @Last Change: 2009-03-06.
+" @Revision:    12
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -33,9 +33,6 @@ Should be#Equal tlib#file#Relative('/foo/bar/filename.txt', '/boo/base'), '../..
 Should be#Equal tlib#file#Relative('/bar/filename.txt', '/boo/base'), '../../bar/filename.txt'
 Should be#Equal tlib#file#Relative('/foo/bar/filename.txt', '/base'), '../foo/bar/filename.txt'
 Should be#Equal tlib#file#Relative('c:/bar/filename.txt', 'x:/boo/base'), 'c:/bar/filename.txt'
-
-
-SpecEnd
 
 
 let &cpo = s:save_cpo
