@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2006-12-31.
-" @Last Change: 2009-02-27.
-" @Revision:    0.5.911
+" @Last Change: 2009-03-05.
+" @Revision:    0.5.928
 " GetLatestVimScripts: 1751 1 tGpg.vim
 "
 " TODO:
@@ -40,7 +40,7 @@ endif
 
 if !exists('g:tgpg_gpg_md5_check')
     " The command to calculate the md5 checksum.
-    let g:tgpg_gpg_md5_check = 'md5sum '. s:tgpg_gpg_cmd "{{{2
+    let g:tgpg_gpg_md5_check = 'md5sum '. g:tgpg_gpg_cmd "{{{2
 endif
 
 if !exists('g:tgpg_gpg_md5_sum')
@@ -54,7 +54,7 @@ endif
 
 if !exists('g:tgpg_options')
     " Set these options during read/write operations.
-    let g:tgpg_options = {'verbosefile': '', 'verbose': 0,} "{{{2
+    let g:tgpg_options = {'verbosefile': '', 'verbose': 0} "{{{2
 endif
 
 if !exists('g:tgpg_registers')
@@ -299,12 +299,12 @@ function! s:CacheKey(id, file) "{{{3
 endf
 
 
-function! s:EncodeValue(value) "{{{3
+function! s:GoHome(value) "{{{3
     return tr(string(a:value), s:rotta, s:rottb)
 endf
 
 
-function! s:DecodeValue(text) "{{{3
+function! s:ComeHere(text) "{{{3
     " TAssert IsString(a:text)
     return eval(tr(a:text, s:rottb, s:rotta))
 endf
@@ -323,9 +323,9 @@ endf
 
 function! s:GetCacheVar(id, file, default) "{{{3
     call s:CheckTimeout()
-    let id = s:EncodeValue(s:CacheKey(a:id, a:file))
+    let id = s:GoHome(s:CacheKey(a:id, a:file))
     if has_key(s:heights, id)
-        let rv = s:DecodeValue(s:heights[id])
+        let rv = s:ComeHere(s:heights[id])
         " call TLog('GetCacheVar '. id .'='. rv)
         return rv
     else
@@ -338,7 +338,7 @@ endf
 function! s:PutCacheVar(id, file, secret) "{{{3
     call s:CheckTimeout()
     let id = s:CacheKey(a:id, a:file)
-    let s:heights[s:EncodeValue(id)] = s:EncodeValue(a:secret)
+    let s:heights[s:GoHome(id)] = s:GoHome(a:secret)
     return a:secret
 endf
 
@@ -459,18 +459,19 @@ endf
 
 function! s:StandardOptions()
     for [key, value] in items(s:tgpg_options)
-        let okey = 'option_'. key
-        exec 'let s:heights[okey] = &'. key
-        exec 'let &'. key ' = value'
+        " TLogVAR key, value
+        let okey = s:GoHome('option_'. key)
+        exec 'let s:heights[okey] = &l:'. key
+        exec 'let &l:'. key ' = value'
     endfor
 endf
 
 
 function! s:ResetOptions() "{{{3
     for key in keys(s:tgpg_options)
-        let okey = 'option_'. key
+        let okey = s:GoHome('option_'. key)
         if has_key(s:heights, okey)
-            exec 'let &'. key ' = s:heights[okey]'
+            exec 'let &l:'. key ' = s:heights[okey]'
             unlet s:heights[okey]
         endif
     endfor
@@ -576,6 +577,8 @@ function! s:TGpgRead(parms, range) "{{{3
     finally
         call s:ResetOptions()
     endtry
+    let b:tmruExclude = 1
+    " TLogVAR &buflisted, bufname('%')
     if a:parms['autocommand'] =~ '^Buf'
         " exec 'doautocmd BufRead '. s:EscapeFilename(expand("%"))
         exec 'doautocmd BufRead '. s:EscapeFilename(expand("%:r"))
