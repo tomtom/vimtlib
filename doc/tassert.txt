@@ -6,74 +6,49 @@ This plugin defines a command |:TAssert| that takes an expression as
 argument and throws an exception if this expression evaluates to 
 |empty()|. You can insert these comments throughout your code whenever 
 something could potentially go wrong. The exception is then thrown right 
-where the problem occurs.
+where the problem occurs. You could think of it as a poor man's 
+design-by-contract substitute.
 
-To some extent you can also write some sort of primitive "unit" tests 
-(ie scripts testing other scripts). Three commands are provided to 
-facilitate this process: |:TAssertBegin| can be used to set a log 
-message and the script context, |:TAssertEnd| to remove temporary 
-variables and functions.
+One goal of this plugin is to allow users to quickly switch on or off 
+assertions depending on the context. This can be done either by:
 
-Unit tests should be run with the |:TAssertRun| command, which enables 
-integration with the vim's quickfix list. Unit test scripts must not 
-run other unit tests by sourcing them.
+    1. Turning assertions off so that they are not evaluated. This can 
+       be achieved by setting g:TASSERT to 0 or by calling the command 
+       |:TAssertOff|.
 
-NOTE: Integration with the quickfix list requires tlib (vimscript#1863) 
-to be installed.
+    2. Commenting out assertions in the current buffer by calling the 
+       commmand |:TAssertComment|.
 
 
-                                                    *g:TASSERT*
-In order to minimize the speed penalty, these assertions are only 
-evaluated when g:TASSERT is non-null. Otherwise assertions are fully 
-ignored. You can also use |:TAssertComment| to comment all assertions in 
-the current file.
+Example: >
 
-When changing the value of g:TASSERT, you have to reload the plugin to 
-make this change effective. This is automatically done by using the 
-convenience commands listed below.
+    fun! Test(a, b)
+        TAssertType a:a, 'string'
+        TAssertType a:b, 'number'
+        TAssert !empty(a:a)
+        return repeat(a:a, a:b)
+    endf
+
+NOTE: The |:TAssertType| command requires the spec.vim plugin.
+
 
                                                     *tAssert-logging*
-Logging:
-Logging is done by |:TLog|.
+Logging:~
+
+TAssert also includes a few convenience commands for logging -- see 
+|:TLog|.
+
                                                     *g:TLOG*
-The variable g:TLOG can have the following values:
+The variable g:TLOG controls where messages are written to:
 
     echom ... Print messages in the echo area.
     file  ... Print messages to a file; syntax "file:FILENAME"
     Decho ... Print messages via Decho (vimscript#642)
 
-This affects the commands TAssertBegin! and TAssert! with the |<bang>|.
-
-
-                                                    *tAssert-examples*
-Examples: >
-    TAssertBegin "General"
-    fun! <SID>TestFunction(a, b)
-        return a:a + a:b
-    endf
-    TAssert 0 == 0
-    TAssert "bla" == "bla"
-    TAssert IsNumber(1)
-    TAssert IsString("foo")
-    TAssert IsFuncref(function('IsFuncref'))
-    TAssert IsList([1,2,3])
-    TAssert IsDictionary({1:2})
-    TAssert !IsNumber("Foo")
-    TAssert !IsString(1)
-    TAssert !IsFuncref({1:2})
-    TAssert !IsList(function('IsFuncref'))
-    TAssert !IsDictionary([1,2,3])
-    TAssert DoRaise('0 + [1]') =~ ':E745:'
-    TAssert <SID>TestFunction(1, 2) == 3
-    TAssertEnd var varl vard
-
-    TAssertBegin "Switching context", '.\{-}/plugin/00tAssert.vim'
-    TAssert <SID>Test(1) == 2
-    TAssertEnd
-
 
                                                     *tAssert-install*
-Install:
+Install:~
+
 Edit the vba file and type: >
 
     :so %
@@ -84,7 +59,8 @@ please make sure, you have the current version of vimball (vimscript
 
 
                                                     *tAssert-redistribute*
-Compatibility:
+Compatibility:~
+
 If you want to redistribute files containing assertions but don't want 
 to have people install this plugin, insert this close to the top of 
 your file: >
@@ -104,6 +80,7 @@ Alternatively, use the |:TAssertComment| command.
 Contents~
 
         :TAssert ............... |:TAssert|
+        :TAssertType ........... |:TAssertType|
         :TAssertOn ............. |:TAssertOn|
         :TAssertOff ............ |:TAssertOff|
         :TAssertComment ........ |:TAssertComment|
@@ -131,6 +108,12 @@ TAssert[!] {expr}
     "<SID>" in the expression is replaced with the current script's 
     |<SNR>|. With [!] failures are logged according to the setting of 
     |g:tAssertLog|.
+
+                                                    *:TAssertType*
+TAssertType EXPRESSION, TYPE
+    Check if EXPRESSION is of a certain TYPE (see |should#be#A()|).
+    
+    This command requires the spec.vim plugin!
 
                                                     *:TAssertOn*
 :TAssertOn

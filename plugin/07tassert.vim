@@ -3,11 +3,13 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2006-12-12.
-" @Last Change: 2009-03-06.
-" @Revision:    798
+" @Last Change: 2009-03-07.
+" @Revision:    806
 "
 " GetLatestVimScripts: 1730 1 07tAssert.vim
 
+let s:save_cpo = &cpo
+set cpo&vim
 
 if &cp || exists("loaded_tassert")
     if !(!exists("s:assert") || g:TASSERT != s:assert)
@@ -34,9 +36,7 @@ if g:TASSERT
 
     " :display: TAssert[!] {expr}
     " Test that an expression doesn't evaluate to something |empty()|. 
-    " If used after a |:TAssertBegin| command, any occurrences of 
-    " "<SID>" in the expression is replaced with the current script's 
-    " |<SNR>|. With [!] failures are logged according to the setting of 
+    " With [!] failures are logged according to the setting of 
     " |g:tAssertLog|.
     command! -nargs=1 -bang -bar TAssert 
                 \ let s:assertReason = '' |
@@ -56,10 +56,10 @@ if g:TASSERT
                 \ endif
 
     " :display: TAssertType EXPRESSION, TYPE
-    " Check if EXPRESSION is of a certain TYPE (see |should#be#A()|).
+    " Check if EXPRESSION is of a certain TYPE (see |IsA()|).
     "
-    " This command requires the spec.vim plugin!
-    command! -nargs=+ -bang -bar TAssertType if exists('g:loaded_spec') | TAssert<bang> should#be#A(<args>) | endif
+    " This command requires macros/tassert.vim to be loaded.
+    command! -nargs=+ -bang -bar TAssertType TAssert<bang> IsA(<args>)
 
 else
 
@@ -100,7 +100,10 @@ if !exists(':TAssertOn')
 end
 
 
+let &cpo = s:save_cpo
+unlet s:save_cpo
 finish
+
 CHANGE LOG {{{1
 
 0.1: Initial release
@@ -139,11 +142,5 @@ the backtrace.
 - Removed :TAssertToggle, :TAssertBegin & :TAssertEnd and other stuff 
 that doesn't really belong here.
 - :TAssertType command (requires spec.vim)
-
-
-TODO:
-- Line number? Integration with the quickfix list.
-- Interactive assertions (buffer input, expected vs observed): 
-compare#BufferWithFile() or should#result_in#BufferWithFile()
-- Support for Autoloading, AsNeeded ...
+- Moved Is*() functions to macros/tassert.vim.
 
