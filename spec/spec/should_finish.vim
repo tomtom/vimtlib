@@ -2,13 +2,15 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-03-06.
-" @Last Change: 2009-03-06.
+" @Last Change: 2009-03-07.
 
 let s:save_cpo = &cpo
 set cpo&vim
 
 
-SpecBegin 'title': 'Should finish', 'sfile': 'autoload/should/finish.vim'
+SpecBegin 'title': 'Should finish',
+            \ 'sfile': 'autoload/should/finish.vim',
+            \ 'cleanup': ['TakeTime()']
 
 function! TakeTime(n) "{{{3
     for i in range(a:n)
@@ -24,7 +26,7 @@ Should not finish#InSecs(':2sleep', 1)
 if exists('g:loaded_tlib')
 
     It should measure in microseconds but this depends on your OS so it probably doesn't.
-    Should finish#InMicroSecs('TakeTime(10)', 20)
+    Should finish#InMicroSecs('TakeTime(10)', 40)
     Should not finish#InMicroSecs('TakeTime(100000)', 20)
 
 endif
