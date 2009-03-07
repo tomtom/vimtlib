@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-22.
 " @Last Change: 2009-03-06.
-" @Revision:    59
+" @Revision:    60
 " GetLatestVimScripts: 0 0 :AutoInstall: spec.vim
 
 if &cp || exists("loaded_spec")
@@ -36,6 +36,8 @@ endif
 
 
 " :display: Spec[!] [PATH]
+" Run one or more specification files.
+"
 " PATH can be either a file or a directory.
 " 
 " If PATH is a directory, run all vim files (whose name doesn't begin 

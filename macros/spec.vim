@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-22.
 " @Last Change: 2009-03-06.
-" @Revision:    48
+" @Revision:    57
 
 if &cp || exists("loaded_macros_spec")
     finish
@@ -16,6 +16,8 @@ set cpo&vim
 
 
 " :display: SpecBegin [ARGUMENTS AS INNER DICTIONNARY]
+" Establish the environment for the current specification.
+"
 " Known keys for ARGUMENTS:
 "
 "   title   ... The test's title.
@@ -31,14 +33,6 @@ set cpo&vim
 "   cleanup ... A list of function names that will be removed
 "   options ... Run the spec against these options (a list of 
 "               dictionnaries).
-"
-" When using spec as a poor man's unit testing framework, put 
-" your tests between :SPecBegin ... :SPecEnd command.
-"
-" This command marks the beginning of a sequence some assertions and 
-" takes an optional message string as argument. The second command (a 
-" regexp) can be used to evaluate functions prefixed with |<SID>| in a 
-" different context.
 " 
 " NOTES:
 " Any global variables that were not defined at the time of the last 
@@ -50,8 +44,9 @@ set cpo&vim
 command! -nargs=* SpecBegin call spec#__Begin({<args>}, expand("<sfile>:p"))
 
 
-" :display: SpecInclude FILENAME
-" Include a spec file.
+" :display: SpecInclude _FILENAME
+" Include a spec file. The filename of the included type should begin 
+" with an underscore and it should not contain a |:SpecBegin| command.
 command! -nargs=1 SpecInclude call spec#Include(<args>, 0)
 
 
@@ -69,10 +64,9 @@ command! -nargs=1 -bang It call spec#__Comment('It '. <q-args>, !empty('<bang>')
 
 
 " :display: Should {expr}
-" Test that an expression doesn't evaluate to something |empty()|. 
-" If used after a |:SpecBegin| command, any occurrences of 
-" "<SID>" in the expression is replaced with the current script's 
-" |<SNR>|.
+" Make sure that the value of an expression is not |empty()|. If used 
+" after a |:SpecBegin| command, any occurrences of "<SID>" in the 
+" expression is replaced with the current script's |<SNR>|.
 command! -nargs=1 Should
             \ let s:spec_reason = '' |
             \ call spec#__Setup() |

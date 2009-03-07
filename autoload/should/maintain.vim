@@ -3,13 +3,14 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-26.
-" @Last Change: 2009-02-26.
-" @Revision:    0.0.7
+" @Last Change: 2009-03-07.
+" @Revision:    0.0.8
 
 let s:save_cpo = &cpo
 set cpo&vim
 
 
+" Require tlib.
 function! should#maintain#WindowLayout(layout) "{{{3
     if !exists('loaded_tlib')
         throw 'should#maintain#WindowLayout requires tlib'
