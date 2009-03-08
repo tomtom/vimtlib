@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-03-07.
 " @Last Change: 2009-03-07.
-" @Revision:    5
+" @Revision:    7
 
 if &cp || exists("loaded_macros_tassert")
     finish
@@ -13,6 +13,15 @@ let loaded_macros_tassert = 1
 
 let s:save_cpo = &cpo
 set cpo&vim
+
+" :doc:
+"                                                     *tassert-macros*
+" As of version 1.0, the Is*() functions moved from the main file to 
+" macros/tassert.vim. In order to have them available in your code, add 
+" this statement to your |vimrc| file: >
+" 
+"     runtime macros/tassert.vim
+
 
 let s:types = ['number', 'string', 'funcref', 'list', 'dictionary']
 

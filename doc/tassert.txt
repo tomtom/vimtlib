@@ -57,6 +57,8 @@ See :help vimball for details. If you have difficulties or use vim 7.0,
 please make sure, you have the current version of vimball (vimscript 
 #1502) installed.
 
+See also |tassert-macros|.
+
 
                                                     *tAssert-redistribute*
 Compatibility:~
@@ -85,6 +87,21 @@ Contents~
         :TAssertOff ............ |:TAssertOff|
         :TAssertComment ........ |:TAssertComment|
         :TAssertUncomment ...... |:TAssertUncomment|
+        IsA .................... |IsA()|
+        IsNumber ............... |IsNumber()|
+        IsString ............... |IsString()|
+        IsFuncref .............. |IsFuncref()|
+        IsList ................. |IsList()|
+        IsDictionary ........... |IsDictionary()|
+        IsException ............ |IsException()|
+        IsError ................ |IsError()|
+        IsEqual ................ |IsEqual()|
+        IsNotEqual ............. |IsNotEqual()|
+        IsEmpty ................ |IsEmpty()|
+        IsNotEmpty ............. |IsNotEmpty()|
+        IsMatch ................ |IsMatch()|
+        IsNotMatch ............. |IsNotMatch()|
+        IsExistent ............. |IsExistent()|
         :TLog .................. |:TLog|
         :TLogTODO .............. |:TLogTODO|
         :TLogDBG ............... |:TLogDBG|
@@ -96,6 +113,16 @@ Contents~
         :TLogBufferOff ......... |:TLogBufferOff|
         :TLogComment ........... |:TLogComment|
         :TLogUncomment ......... |:TLogUncomment|
+        tlog#Comment ........... |tlog#Comment()|
+        tlog#Uncomment ......... |tlog#Uncomment()|
+        tlog#Log ............... |tlog#Log()|
+        tlog#Debug ............. |tlog#Debug()|
+        tlog#Style ............. |tlog#Style()|
+        tlog#Var ............... |tlog#Var()|
+        tlog#Display_echo ...... |tlog#Display_echo()|
+        tlog#Display_echom ..... |tlog#Display_echom()|
+        tlog#Display_file ...... |tlog#Display_file()|
+        tlog#Display_Decho ..... |tlog#Display_Decho()|
 
 
 ========================================================================
@@ -104,16 +131,14 @@ plugin/07tassert.vim~
                                                     *:TAssert*
 TAssert[!] {expr}
     Test that an expression doesn't evaluate to something |empty()|. 
-    If used after a |:TAssertBegin| command, any occurrences of 
-    "<SID>" in the expression is replaced with the current script's 
-    |<SNR>|. With [!] failures are logged according to the setting of 
+    With [!] failures are logged according to the setting of 
     |g:tAssertLog|.
 
                                                     *:TAssertType*
 TAssertType EXPRESSION, TYPE
-    Check if EXPRESSION is of a certain TYPE (see |should#be#A()|).
+    Check if EXPRESSION is of a certain TYPE (see |IsA()|).
     
-    This command requires the spec.vim plugin!
+    This command requires macros/tassert.vim to be loaded.
 
                                                     *:TAssertOn*
 :TAssertOn
@@ -135,40 +160,143 @@ TAssertType EXPRESSION, TYPE
 
 
 ========================================================================
+macros/tassert.vim~
+
+
+                                                    *tassert-macros*
+As of version 1.0, the Is*() functions moved from the main file to 
+macros/tassert.vim. In order to have them available in your code, add 
+this statement to your |vimrc| file: >
+
+    runtime macros/tassert.vim
+<
+
+                                                    *IsA()*
+IsA(expr, type)
+
+                                                    *IsNumber()*
+IsNumber(expr)
+
+                                                    *IsString()*
+IsString(expr)
+
+                                                    *IsFuncref()*
+IsFuncref(expr)
+
+                                                    *IsList()*
+IsList(expr)
+
+                                                    *IsDictionary()*
+IsDictionary(expr)
+
+                                                    *IsException()*
+IsException(expr)
+
+                                                    *IsError()*
+IsError(expr, expected)
+
+                                                    *IsEqual()*
+IsEqual(expr, expected)
+
+                                                    *IsNotEqual()*
+IsNotEqual(expr, expected)
+
+                                                    *IsEmpty()*
+IsEmpty(expr)
+
+                                                    *IsNotEmpty()*
+IsNotEmpty(expr)
+
+                                                    *IsMatch()*
+IsMatch(expr, expected)
+
+                                                    *IsNotMatch()*
+IsNotMatch(expr, expected)
+
+                                                    *IsExistent()*
+IsExistent(expr)
+
+
+========================================================================
 plugin/05tlog.vim~
 
                                                     *:TLog*
-:TLog
+TLog MESSAGE
 
                                                     *:TLogTODO*
-:TLogTODO
+TLogTODO MESSAGE
+    Mark as "Not yet implemented".
 
                                                     *:TLogDBG*
-:TLogDBG
+TLogDBG EXPRESSION
+    Expression must evaluate to a string.
 
                                                     *:TLogStyle*
-:TLogStyle
+TLogStyle STYLE EXPRESSION
+    Expression must evaluate to a string.
 
                                                     *:TLogVAR*
-:TLogVAR
+TLogVAR VAR1, VAR2 ...
+    This command doesn't work with script-local variables.
 
                                                     *:TLogOn*
 :TLogOn
+    Enable logging.
 
                                                     *:TLogOff*
 :TLogOff
+    Disable logging.
 
                                                     *:TLogBufferOn*
 :TLogBufferOn
+    Enable logging for the current buffer.
 
                                                     *:TLogBufferOff*
 :TLogBufferOff
+    Disable logging for the current buffer.
 
                                                     *:TLogComment*
 :TLogComment
+    Comment out all tlog-related lines in the current buffer which should 
+    contain a vim script.
 
                                                     *:TLogUncomment*
 :TLogUncomment
+    Re-enable all tlog-related statements.
+
+
+========================================================================
+autoload/tlog.vim~
+
+                                                    *tlog#Comment()*
+tlog#Comment(line1, line2)
+
+                                                    *tlog#Uncomment()*
+tlog#Uncomment(line1, line2)
+
+                                                    *tlog#Log()*
+tlog#Log(text)
+
+                                                    *tlog#Debug()*
+tlog#Debug(text)
+
+                                                    *tlog#Style()*
+tlog#Style(style, text)
+
+                                                    *tlog#Var()*
+tlog#Var(caller, var, ...)
+
+                                                    *tlog#Display_echo()*
+tlog#Display_echo(text)
+
+                                                    *tlog#Display_echom()*
+tlog#Display_echom(text)
+
+                                                    *tlog#Display_file()*
+tlog#Display_file(text)
+
+                                                    *tlog#Display_Decho()*
+tlog#Display_Decho(text)
 
 
 
