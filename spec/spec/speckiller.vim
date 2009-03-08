@@ -2,7 +2,7 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-03-06.
-" @Last Change: 2009-03-06.
+" @Last Change: 2009-03-07.
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -19,6 +19,8 @@ SpecBegin 'title': 'Option sets',
             \ {'&l:hidden': 0, '&acd': 1, 'g:spec_foo': 'bar'},
             \ ]
 
+" echom "Round ". spec#Val('s:spec_perm')
+
 if spec#Val('s:spec_perm') >= 0
     It should test the spec against option sets (:SpecBegin).
     Should &hidden || &acd
@@ -26,6 +28,8 @@ if spec#Val('s:spec_perm') >= 0
     Should be equal &hidden + &acd, 1
 
     Should be equal g:spec_foo, 'bar'
+else
+    Should be equal g:spec_foo, 'foo'
 endif
 
 

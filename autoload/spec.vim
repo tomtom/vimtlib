@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-22.
-" @Last Change: 2009-03-06.
-" @Revision:    0.0.292
+" @Last Change: 2009-03-07.
+" @Revision:    0.0.314
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -33,7 +33,41 @@ function! spec#__Rewrite(string) "{{{3
         " TLogVAR string
     endfor
     let string = s:ResolveSIDs(string)
+    " if s:spec_verbose && &verbose >= 6
+    "     call s:Log(3, a:string .' => '. string)
+    " endif
     return string
+endf
+
+
+" Define your own rewrite rules.
+"
+" Care must be taken so that the rule expands to a single atomic 
+" statement. The pattern should always match from the beginning of the 
+" string.
+"
+" Example: The following rule is wrong: >
+"
+"   \(\d\+\) be equal to \(\d\+\).* => \1 == \2
+"
+" because it doesn't match from the beginning of the string and because 
+" the substiution breaks other rules like "not => !". The following is 
+" preferable: >
+"
+"   ^!\?\zs\(\d\+\) be equal to \(\d\+\).* => (\1 == \2)
+"
+" This pattern expands the pattern only when found in the right position 
+" and the substiution can be prefixed with !.
+"
+" You could then write: >
+"
+"   Should 1 be equal to 1
+"   Should not 1 be equal to 2
+function! spec#RewriteRule(rx, subst) "{{{3
+    let rule = [a:rx, a:subst]
+    if index(s:rewrite_table, rule) == -1
+        call add(s:rewrite_table, rule)
+    endif
 endf
 
 
@@ -233,10 +267,11 @@ endf
 
 
 function! s:Log(level, string) "{{{3
+    " TLogVAR a:level, a:string
     if s:spec_verbose && !empty(a:string)
         let string = repeat(' ', (&sw * a:level)) . a:string
         if exists(':TLog')
-            " TLog string
+            :TLog string
         else
             echom string
         endif
@@ -296,7 +331,7 @@ function! spec#Include(filename, top_spec) "{{{3
     let options = g:spec_option_sets
     " TLogVAR options
     while qfl_size == len(getqflist()) && (s:spec_perm < 0 || (a:top_spec && spec#speckiller#OptionSets(options, s:spec_perm)))
-        call s:Log(0, 'Spec ['. s:spec_perm .']: '. a:filename)
+        call s:Log(0, 'Spec ['. (s:spec_perm  + 1) .']: '. a:filename)
         let s:should_counts[filename0] = 0
         try
             exec source
