@@ -2,13 +2,13 @@
 " @Author:      Tom Link (micathom AT gmail com)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     04-Mai-2005.
-" @Last Change: 2009-02-15.
-" @Revision:    0.4.254
+" @Last Change: 2009-03-12.
+" @Revision:    301
 
 if exists('g:checksyntax')
     finish
 endif
-let g:checksyntax = 4
+let g:checksyntax = 5
 
 """ General variables
 if !exists('g:checksyntax_auto')
@@ -60,6 +60,18 @@ endif
 if !exists('g:checksyntax_alt_php')
     let g:checksyntax_alt_php = 'phpp'
 endif
+
+""" JavaScript specific
+if !exists('g:checksyntax_cmd_javascript')
+    let g:checksyntax_cmd_javascript = 'jsl -nofilelisting -nocontext -nosummary -nologo -process'
+endif
+if !exists('g:checksyntax_okrx_javascript')
+    let g:checksyntax_okrx_javascript = '0 error(s), 0 warning(s)'
+endif
+" if !exists('g:checksyntax_auto_javascript')
+"     let g:checksyntax_auto_javascript = 0
+" endif
+
 
 """ Ruby specific
 if !exists('g:checksyntax_cmd_ruby')
@@ -115,7 +127,19 @@ endif
 
 """ java
 if !exists('g:checksyntax_compiler_java')
-    let g:checksyntax_compiler_java = 'checkstyle'
+    let g:checksyntax_cmd_java = '*CheckStyleJlint'
+endif
+function! CheckStyleJlint() "{{{3
+    let filename = expand('%:r') .'.class'
+    " TLogVAR filename
+    return 'jlint -done '. shellescape(filename)
+endf
+
+if !exists('g:checksyntax_alt_java')
+    let g:checksyntax_alt_java = 'javaCheckstyle'
+endif
+if !exists('g:checksyntax_compiler_javaCheckstyle')
+    let g:checksyntax_compiler_javaCheckstyle = 'checkstyle'
 endif
 
 """ tidy (HTML)
@@ -131,20 +155,37 @@ if !exists('g:checksyntax_compiler_docbk')
     let g:checksyntax_compiler_docbk = g:checksyntax_compiler_xml
 endif
 
+if has('signs') && exists('loaded_tlib') && loaded_tlib >= 32
+    sign define CheckSyntax text=! texthl=Error
+    let s:checksyntax_signs = 1
+    " Clear all checksyntax-related signs.
+    command! CheckSyntaxClearSigns call tlib#signs#ClearAll('CheckSyntax')
+else
+    let s:checksyntax_signs = 0
+endif
+
 fun! s:Make()
-    let t  = @t
-    let @t = ''
     try
-        silent make %
+        " TLogVAR &makeprg
+        if &makeprg[0:0] == '*'
+            " TLogVAR &makeprg[1 : -1]
+            let &makeprg = call(&makeprg[1 : -1], [])
+            " TLogVAR &makeprg
+            silent make
+        else
+            silent make %
+        endif
         let se=v:shell_error
-        redir @t
-        silent clist
+        " TLogVAR se
+        redir => errors
+        silent! clist
         redir END
-        " echom "DBG ". se
-        return @t
+        " TLogVAR errors
+        return errors
     catch
-    finally
-        let @t = t
+        echohl Error
+        echom v:errmsg
+        echohl NONE
     endtry
     return ''
 endf
@@ -183,21 +224,29 @@ function! CheckSyntax(manually, ...)
             exec 'compiler '. g:checksyntax_compiler_{ft}
         elseif mode == 2
             let &makeprg = g:checksyntax_cmd_{ft}
+            " TLogVAR &makeprg
             if exists('g:checksyntax_shellpipe')
                 let &shellpipe = g:checksyntax_shellpipe
+                " TLogVAR &shellpipe
             endif
             if exists('g:checksyntax_efm_'. ft)
                 let &errorformat = g:checksyntax_efm_{ft}
             else
                 set errorformat&
             endif
+            " TLogVAR &errorformat
         endif
         if exists('*CheckSyntax_prepare_'. ft)
             call CheckSyntax_prepare_{ft}()
         endif
         let output = s:Make()
+        " TLogVAR output
         let failrx = exists('g:checksyntax_failrx_'. ft) ? g:checksyntax_failrx_{ft} : g:checksyntax_failrx
         let okrx   = exists('g:checksyntax_okrx_'. ft) ? g:checksyntax_okrx_{ft} : ''
+        if s:checksyntax_signs
+            call tlib#signs#ClearAll('CheckSyntax')
+            call tlib#signs#Buffer(getqflist(), 'CheckSyntax')
+        endif
         if output == '' || (okrx != '' && output =~ okrx) || (failrx != '' && output !~ failrx)
             " TLogVAR output, okrx, failrx
             " TLogDBG okrx != '' && output =~ okrx
@@ -262,4 +311,9 @@ generalized plugin; modes; support for ruby, phpp, tex (chktex)
 0.4
 use vim compilers if available (e.g., tidy, xmllint ...); makeprg was 
 restored in the wrong window
+
+0.5
+- support for jsl (javascript lint)
+- support for jlint
+- use sign (requires tlib vimscript#1863 to be installed)
 
