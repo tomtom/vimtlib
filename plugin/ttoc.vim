@@ -3,18 +3,18 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-07-09.
-" @Last Change: 2009-02-27.
-" @Revision:    0.3.450
+" @Last Change: 2009-03-12.
+" @Revision:    455
 " GetLatestVimScripts: 2014 0 ttoc.vim
 
 if &cp || exists("loaded_ttoc")
     finish
 endif
-if !exists('loaded_tlib') || loaded_tlib < 27
-    echoerr 'tlib >= 0.27 is required'
+if !exists('loaded_tlib') || loaded_tlib < 32
+    echoerr 'tlib >= 0.32 is required'
     finish
 endif
-let loaded_ttoc = 4
+let loaded_ttoc = 5
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -28,6 +28,15 @@ set cpo&vim
 "   2      ... use &foldmarker only if &foldmethod == marker
 "   string ... use as rx
 TLet g:ttoc_markers = 1
+
+if has('signs')
+    " If non-empty, mark locations with signs.
+    TLet g:ttoc_sign = '~'
+    exec 'sign define TToC text='. g:ttoc_sign .' texthl=Special'
+else
+    " :nodoc:
+    TLet g:ttoc_sign = ''
+endif
 
 
 " By default, assume that everything at the first column is important.
@@ -197,4 +206,8 @@ preview the line under cursor.
 - Handle multi-line regexps (thanks to M Weber for pointing this out)
 - Require tlib 0.27
 - Changed key for "trace cursor" from <c-t> to <c-insert>.
+
+0.5
+- Require tlib 0.32
+- Use signs
 

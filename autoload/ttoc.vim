@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-11-11.
-" @Last Change: 2009-02-15.
-" @Revision:    0.0.57
+" @Last Change: 2009-03-12.
+" @Revision:    0.0.63
 
 if &cp || exists("loaded_ttoc_autoload")
     finish
@@ -140,6 +140,15 @@ function! ttoc#View(rx, ...) "{{{3
         let w.ttoc_rx = rx
         let [ac, ii] = ttoc#Collect(w, 1, additional_lines)
         " TLogVAR ac
+        if !empty(g:ttoc_sign)
+            let acc = []
+            let bn  = bufnr('%')
+            for item in ac
+                call add(acc, {'bufnr': bn, 'lnum': matchstr(item, '^\d\+')})
+            endfor
+            call tlib#signs#ClearBuffer('TToC', bn)
+            call tlib#signs#Mark('TToC', acc)
+        endif
         let w.initial_index = ii
         let w.base = ac
         let win_size = tlib#var#Get('ttoc_win_size', 'wbg')
