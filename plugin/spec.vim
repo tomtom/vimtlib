@@ -1,10 +1,10 @@
-" spec.vim -- Behaviour-driven design for VIM
+" spec.vim -- Behaviour-driven design for VIM script
 " @Author:      Thomas Link (micathom AT gmail com?subject=[vim])
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-22.
-" @Last Change: 2009-03-06.
-" @Revision:    60
+" @Last Change: 2009-03-11.
+" @Revision:    61
 " GetLatestVimScripts: 0 0 :AutoInstall: spec.vim
 
 if &cp || exists("loaded_spec")

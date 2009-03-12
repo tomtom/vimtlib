@@ -69,6 +69,7 @@ Contents~
         :It ............................ |:It|
         :Should ........................ |:Should|
         :Replay ........................ |:Replay|
+        spec#RewriteRule ............... |spec#RewriteRule()|
         spec#Include ................... |spec#Include()|
         spec#Val ....................... |spec#Val()|
         spec#OpenScratch ............... |spec#OpenScratch()|
@@ -210,6 +211,33 @@ Replay[!] MACRO
 
 ========================================================================
 autoload/spec.vim~
+
+                                                    *spec#RewriteRule()*
+spec#RewriteRule(rx, subst)
+    Define your own rewrite rules.
+    
+    Care must be taken so that the rule expands to a single atomic 
+    statement. The pattern should always match from the beginning of the 
+    string.
+    
+    Example: The following rule is wrong: >
+    
+      \(\d\+\) be equal to \(\d\+\).* => \1 == \2
+    
+    because it doesn't match from the beginning of the string and because 
+    the substiution breaks other rules like "not => !". The following is 
+    preferable: >
+    
+      ^!\?\zs\(\d\+\) be equal to \(\d\+\).* => (\1 == \2)
+    
+    This pattern expands the pattern only when found in the right position 
+    and the substiution can be prefixed with !.
+    
+    You could then write: >
+    
+      Should 1 be equal to 1
+      Should not 1 be equal to 2
+<
 
                                                     *spec#Include()*
 spec#Include(filename, top_spec)

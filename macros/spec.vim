@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-22.
-" @Last Change: 2009-03-06.
-" @Revision:    57
+" @Last Change: 2009-03-11.
+" @Revision:    58
 
 if &cp || exists("loaded_macros_spec")
     finish
@@ -23,9 +23,9 @@ set cpo&vim
 "   title   ... The test's title.
 "   file    ... The script context.
 "   before  ... Code to be run before each test (only effective when run 
-"               via |:SPecRun|.
+"               via |:SpecRun|.
 "   after   ... Code to be run after each test (only effective when run 
-"               via |:SPecRun|.
+"               via |:SpecRun|.
 "   scratch ... Run spec in scratch buffer. If the value is "", use an 
 "               empty buffer. If it is "%", read the spec file itself 
 "               into the scratch buffer. Otherwise read the file of the 
