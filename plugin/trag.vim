@@ -3,17 +3,17 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-29.
-" @Last Change: 2009-02-27.
-" @Revision:    553
+" @Last Change: 2009-03-12.
+" @Revision:    564
 " GetLatestVimScripts: 2033 1 trag.vim
 
 if &cp || exists("loaded_trag")
     finish
 endif
-if !exists('g:loaded_tlib') || g:loaded_tlib < 15
+if !exists('g:loaded_tlib') || g:loaded_tlib < 32
     runtime plugin/02tlib.vim
-    if !exists('g:loaded_tlib') || g:loaded_tlib < 15
-        echoerr 'tlib >= 0.15 is required'
+    if !exists('g:loaded_tlib') || g:loaded_tlib < 32
+        echoerr 'tlib >= 0.32 is required'
         finish
     endif
 endif
@@ -45,6 +45,15 @@ TLet g:trag_get_files = 'split(glob("*"), "\n")'
 TLet g:trag_get_files_java = 'split(glob("**/*.java"), "\n")'
 TLet g:trag_get_files_c = 'split(glob("**/*.[ch]"), "\n")'
 TLet g:trag_get_files_cpp = 'split(glob("**/*.[ch]"), "\n")'
+
+" If non-empty, display signs at matching lines.
+TLet g:trag_sign = has('signs') ? '>' : ''
+if !empty(g:trag_sign)
+    exec 'sign define TRag text='. g:trag_sign .' texthl=Special'
+
+    " Clear all trag-related signs.
+    command! TRagClearSigns call tlib#signs#ClearAll('TRag')
+endif
 
 
 " :nodoc:
@@ -256,8 +265,8 @@ command! Tragfile call trag#Edit()
 
 " :display: :TRagcw
 " Display a quick fix list using |tlib#input#ListD()|.
-command! TRagcw call trag#QuickList()
-command! Tragcw call trag#QuickList()
+command! -nargs=? TRagcw call trag#QuickList()
+command! -nargs=? Tragcw call trag#QuickList()
 
 
 " :display: :TRagsearch[!] KIND REGEXP

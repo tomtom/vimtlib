@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-29.
-" @Last Change: 2009-02-27.
-" @Revision:    0.0.638
+" @Last Change: 2009-03-12.
+" @Revision:    0.0.643
 
 if &cp || exists("loaded_trag_autoload")
     finish
@@ -431,7 +431,12 @@ function! s:FormatQFLE(qfe) "{{{3
 endf
 
 
-function! trag#QuickList() "{{{3
+function! trag#QuickList(...) "{{{3
+    TVarArg ['sign', 'TRag']
+    if !empty(sign) && !empty(g:trag_sign)
+        call tlib#signs#ClearAll(sign)
+        call tlib#signs#Buffer(getqflist(), sign)
+    endif
     let w = tlib#World#New(copy(g:trag_qfl_world))
     let w.qfl  = copy(getqflist())
     " TLogVAR w.qfl
