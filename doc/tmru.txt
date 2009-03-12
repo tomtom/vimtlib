@@ -1,5 +1,5 @@
 *tmru.txt*  Most Recently Used Files
-            Author: Thomas Link, micathom at gmail com
+            Author: Tom Link, micathom at gmail com
 
 
 This plugin provides a simple most recently files facility.
@@ -54,6 +54,8 @@ Contents~
         :TRecentlyUsedFilesEdit ... |:TRecentlyUsedFilesEdit|
 
 
+========================================================================
+plugin/tmru.vim~
 
                                                     *g:tmruSize*
 g:tmruSize                     (default: 50)
