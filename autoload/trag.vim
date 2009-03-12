@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-29.
 " @Last Change: 2009-03-12.
-" @Revision:    0.0.643
+" @Revision:    0.0.645
 
 if &cp || exists("loaded_trag_autoload")
     finish
@@ -435,7 +435,7 @@ function! trag#QuickList(...) "{{{3
     TVarArg ['sign', 'TRag']
     if !empty(sign) && !empty(g:trag_sign)
         call tlib#signs#ClearAll(sign)
-        call tlib#signs#Buffer(getqflist(), sign)
+        call tlib#signs#Mark(sign, getqflist())
     endif
     let w = tlib#World#New(copy(g:trag_qfl_world))
     let w.qfl  = copy(getqflist())

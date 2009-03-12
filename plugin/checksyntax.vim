@@ -3,7 +3,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     04-Mai-2005.
 " @Last Change: 2009-03-12.
-" @Revision:    301
+" @Revision:    303
 
 if exists('g:checksyntax')
     finish
@@ -245,7 +245,7 @@ function! CheckSyntax(manually, ...)
         let okrx   = exists('g:checksyntax_okrx_'. ft) ? g:checksyntax_okrx_{ft} : ''
         if s:checksyntax_signs
             call tlib#signs#ClearAll('CheckSyntax')
-            call tlib#signs#Buffer(getqflist(), 'CheckSyntax')
+            call tlib#signs#Mark('CheckSyntax', getqflist())
         endif
         if output == '' || (okrx != '' && output =~ okrx) || (failrx != '' && output !~ failrx)
             " TLogVAR output, okrx, failrx
