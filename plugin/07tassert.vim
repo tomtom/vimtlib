@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2006-12-12.
-" @Last Change: 2009-03-07.
-" @Revision:    806
+" @Last Change: 2009-03-11.
+" @Revision:    807
 "
 " GetLatestVimScripts: 1730 1 07tAssert.vim
 
@@ -141,6 +141,6 @@ the backtrace.
 - Incompatible changes galore
 - Removed :TAssertToggle, :TAssertBegin & :TAssertEnd and other stuff 
 that doesn't really belong here.
-- :TAssertType command (requires spec.vim)
+- :TAssertType command (requires macros/tassert.vim)
 - Moved Is*() functions to macros/tassert.vim.
 

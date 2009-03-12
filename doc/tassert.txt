@@ -221,22 +221,23 @@ IsExistent(expr)
 plugin/05tlog.vim~
 
                                                     *:TLog*
-TLog MESSAGE
+:TLog MESSAGE
 
                                                     *:TLogTODO*
-TLogTODO MESSAGE
+:TLogTODO MESSAGE
     Mark as "Not yet implemented".
 
                                                     *:TLogDBG*
-TLogDBG EXPRESSION
+:TLogDBG EXPRESSION
     Expression must evaluate to a string.
 
                                                     *:TLogStyle*
-TLogStyle STYLE EXPRESSION
+:TLogStyle STYLE EXPRESSION
     Expression must evaluate to a string.
 
                                                     *:TLogVAR*
-TLogVAR VAR1, VAR2 ...
+:TLogVAR VAR1, VAR2 ...
+    Display variable names and their values.
     This command doesn't work with script-local variables.
 
                                                     *:TLogOn*
