@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-11-11.
-" @Last Change: 2009-03-12.
-" @Revision:    0.0.63
+" @Last Change: 2009-03-15.
+" @Revision:    0.0.73
 
 if &cp || exists("loaded_ttoc_autoload")
     finish
@@ -121,7 +121,7 @@ function! ttoc#View(rx, ...) "{{{3
     " TLogVAR a:rx
     TVarArg ['partial_rx', 0], ['v_count', 0], ['p_count', 0], ['background', 0]
     let additional_lines = v_count ? v_count : p_count ? p_count : 0
-    " TLogVAR additional_lines, v_count, p_count
+    " TLogVAR partial_rx, additional_lines, v_count, p_count
 
     if empty(a:rx)
         let rx = s:DefaultRx()
@@ -140,15 +140,18 @@ function! ttoc#View(rx, ...) "{{{3
         let w.ttoc_rx = rx
         let [ac, ii] = ttoc#Collect(w, 1, additional_lines)
         " TLogVAR ac
-        if !empty(g:ttoc_sign)
+        " if !empty(g:ttoc_sign)
             let acc = []
             let bn  = bufnr('%')
+            let i = 1
             for item in ac
-                call add(acc, {'bufnr': bn, 'lnum': matchstr(item, '^\d\+')})
+                call add(acc, {'bufnr': bn, 'lnum': matchstr(item, '^0*\zs\d\+'), 'text': i .': '. rx})
+                let i += 1
             endfor
-            call tlib#signs#ClearBuffer('TToC', bn)
-            call tlib#signs#Mark('TToC', acc)
-        endif
+            call setloclist(winnr(), acc)
+            " call tlib#signs#ClearBuffer('TToC', bn)
+            " call tlib#signs#Mark('TToC', acc)
+        " endif
         let w.initial_index = ii
         let w.base = ac
         let win_size = tlib#var#Get('ttoc_win_size', 'wbg')

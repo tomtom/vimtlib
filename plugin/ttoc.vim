@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-07-09.
-" @Last Change: 2009-03-12.
-" @Revision:    455
+" @Last Change: 2009-03-14.
+" @Revision:    459
 " GetLatestVimScripts: 2014 0 ttoc.vim
 
 if &cp || exists("loaded_ttoc")
@@ -29,14 +29,14 @@ set cpo&vim
 "   string ... use as rx
 TLet g:ttoc_markers = 1
 
-if has('signs')
-    " If non-empty, mark locations with signs.
-    TLet g:ttoc_sign = '~'
-    exec 'sign define TToC text='. g:ttoc_sign .' texthl=Special'
-else
-    " :nodoc:
-    TLet g:ttoc_sign = ''
-endif
+" if has('signs')
+"     " If non-empty, mark locations with signs.
+"     TLet g:ttoc_sign = '~'
+"     exec 'sign define TToC text='. g:ttoc_sign .' texthl=Special'
+" else
+"     " :nodoc:
+"     TLet g:ttoc_sign = ''
+" endif
 
 
 " By default, assume that everything at the first column is important.
@@ -209,5 +209,5 @@ preview the line under cursor.
 
 0.5
 - Require tlib 0.32
-- Use signs
+- Fill location list
 
