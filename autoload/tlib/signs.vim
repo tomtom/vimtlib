@@ -2,8 +2,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-03-12.
-" @Last Change: 2009-03-12.
-" @Revision:    0.0.42
+" @Last Change: 2009-03-13.
+" @Revision:    0.0.44
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -13,6 +13,7 @@ let s:base = 2327
 let s:register = {}
 
 
+" Clear all signs with name SIGN.
 function! tlib#signs#ClearAll(sign) "{{{3
     " TLog a:sign
     for bn in keys(s:register)
@@ -27,6 +28,7 @@ function! tlib#signs#ClearAll(sign) "{{{3
 endf
 
 
+" Clear all signs with name SIGN in buffer BUFNR.
 function! tlib#signs#ClearBuffer(sign, bufnr) "{{{3
     for bn in keys(s:register)
         let idxs = keys(s:register)
@@ -58,6 +60,10 @@ endf
 " endf
 
 
+" Add signs for all locations in LIST. LIST must confirm with the 
+" quickfix list format (see |getqflist()|; only the fields lnum and 
+" bufnr are required).
+"
 " list:: a quickfix or location list
 " sign:: a sign defined with |:sign-define|
 function! tlib#signs#Mark(sign, list) "{{{3
