@@ -1,0 +1,97 @@
+*quickfixsigns.txt*   Mark quickfix & location list items with signs
+                      Author: Thomas Link, micathom at gmail com
+
+
+Mark items in the quickfix and location lists with signs. Other lists 
+can be configured via the |g:quickfixsigns_lists| variable. By default, 
+quickfixsigns also displays signs for the marks a-zA-Z.
+
+The attached text ist displayed in a balloon -- it is possible though 
+that other plugins that set 'balloonexpr' disable this feature.
+
+
+-----------------------------------------------------------------------
+Install~
+
+Edit the vba file and type: >
+
+    :so %
+
+See :help vimball for details. If you have difficulties or use vim 7.0, 
+please make sure, you have the current version of vimball
+(vimscript #1502) installed or update your runtime.
+
+
+========================================================================
+Contents~
+
+        g:quickfixsigns_lists ........ |g:quickfixsigns_lists|
+        g:quickfixsigns_show_marks ... |g:quickfixsigns_show_marks|
+        g:quickfixsigns_balloon ...... |g:quickfixsigns_balloon|
+        quickfixsigns#Set ............ |quickfixsigns#Set()|
+        quickfixsigns#Balloon ........ |quickfixsigns#Balloon()|
+        quickfixsigns#Marks .......... |quickfixsigns#Marks()|
+        quickfixsigns#MarkSign ....... |quickfixsigns#MarkSign()|
+        quickfixsigns#MarkId ......... |quickfixsigns#MarkId()|
+        quickfixsigns#ClearBuffer .... |quickfixsigns#ClearBuffer()|
+        quickfixsigns#Mark ........... |quickfixsigns#Mark()|
+
+
+========================================================================
+plugin/quickfixsigns.vim~
+
+                                                    *g:quickfixsigns_lists*
+g:quickfixsigns_lists          (default: [...])
+    A list of list definitions whose items should be marked with signs.
+    
+    A list definition is a |Dictionary| with the following fields:
+    
+      sign: The name of the sign, which has to be defined
+      get:  A vim script expression that returns a list compatible with 
+            |getqflist()|.
+
+                                                    *g:quickfixsigns_show_marks*
+g:quickfixsigns_show_marks     (default: 1)
+    If non-null, also display signs for the marks a-zA-Z.
+
+                                                    *g:quickfixsigns_balloon*
+g:quickfixsigns_balloon        (default: 1)
+    If non-null, display a balloon when hovering with the mouse over 
+    the sign.
+    buffer-local or global
+
+
+========================================================================
+autoload/quickfixsigns.vim~
+
+                                                    *quickfixsigns#Set()*
+quickfixsigns#Set(event)
+
+                                                    *quickfixsigns#Balloon()*
+quickfixsigns#Balloon()
+
+                                                    *quickfixsigns#Marks()*
+quickfixsigns#Marks()
+
+                                                    *quickfixsigns#MarkSign()*
+quickfixsigns#MarkSign(item)
+
+                                                    *quickfixsigns#MarkId()*
+quickfixsigns#MarkId(item)
+
+                                                    *quickfixsigns#ClearBuffer()*
+quickfixsigns#ClearBuffer(sign, bufnr)
+    Clear all signs with name SIGN in buffer BUFNR.
+
+                                                    *quickfixsigns#Mark()*
+quickfixsigns#Mark(sign, list, ...)
+    Add signs for all locations in LIST. LIST must confirm with the 
+    quickfix list format (see |getqflist()|; only the fields lnum and 
+    bufnr are required).
+    
+    list:: a quickfix or location list
+    sign:: a sign defined with |:sign-define|
+
+
+
+vim:tw=78:fo=tcq2:isk=!-~,^*,^|,^":ts=8:ft=help:norl:
