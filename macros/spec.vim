@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-22.
-" @Last Change: 2009-03-11.
-" @Revision:    58
+" @Last Change: 2009-03-14.
+" @Revision:    61
 
 if &cp || exists("loaded_macros_spec")
     finish
@@ -32,7 +32,10 @@ set cpo&vim
 "               given name.
 "   cleanup ... A list of function names that will be removed
 "   options ... Run the spec against these options (a list of 
-"               dictionnaries).
+"               dictionnaries or 'vim' for the default option set).
+"               NOTE: If you test your specs against vim default 
+"               settings, it's possible that you have to restart vim in 
+"               order to get the usual environment.
 " 
 " NOTES:
 " Any global variables that were not defined at the time of the last 
