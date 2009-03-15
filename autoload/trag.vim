@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-29.
-" @Last Change: 2009-03-12.
-" @Revision:    0.0.645
+" @Last Change: 2009-03-14.
+" @Revision:    0.0.652
 
 if &cp || exists("loaded_trag_autoload")
     finish
@@ -245,7 +245,7 @@ function! trag#Grep(args, ...) "{{{3
                     endif
                     norm! ggdG
                     exec 'silent 0read '. tlib#arg#Ex(f)
-                    " exec '0read '. tlib#arg#Ex(f)
+                    exec '0read '. tlib#arg#Ex(f)
                     norm! gg
                     let si = search(rxpos, 'cW')
                     while si
@@ -432,11 +432,11 @@ endf
 
 
 function! trag#QuickList(...) "{{{3
-    TVarArg ['sign', 'TRag']
-    if !empty(sign) && !empty(g:trag_sign)
-        call tlib#signs#ClearAll(sign)
-        call tlib#signs#Mark(sign, getqflist())
-    endif
+    " TVarArg ['sign', 'TRag']
+    " if !empty(sign) && !empty(g:trag_sign)
+    "     " call tlib#signs#ClearAll(sign)
+    "     " call tlib#signs#Mark(sign, getqflist())
+    " endif
     let w = tlib#World#New(copy(g:trag_qfl_world))
     let w.qfl  = copy(getqflist())
     " TLogVAR w.qfl
