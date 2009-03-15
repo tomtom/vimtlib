@@ -31,6 +31,7 @@ The vimball recipes for the following plugins are located in the vimballs subdir
     #B Eval\Selection   -- evaluate selected vim/ruby/... code
     #B localvariables   -- Set/let per-file-variables à la Emacs
     #B ttagcomplete     -- Context-sensitive tag completion
+    #C quickfixsigns    -- Mark quickfix & location list items with signs
     #C spec             -- Behaviour-driven design: easy on the eye specifications of VIM scripts
     #C tbak             -- Yet another simple backup plugin using diff
     #D concordance      -- Concordance table (sort of)
