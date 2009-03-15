@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-10-28.
-" @Last Change: 2009-02-15.
-" @Revision:    0.0.179
+" @Last Change: 2009-03-14.
+" @Revision:    0.0.183
 
 if &cp || exists("loaded_ttagecho_autoload")
     finish
@@ -151,11 +151,19 @@ endf
 
 " Return tag information for the tag under the mouse pointer (see 'balloonexpr')
 function! ttagecho#Balloon() "{{{3
+    " TLogVAR v:beval_lnum, v:beval_col
     let line = getline(v:beval_lnum)
     let chrx = s:GetCharRx()
     let text = matchstr(line, chrx .'*\%'. v:beval_col .'c'. chrx .'*')
     " TLogVAR text
-    return ttagecho#Expr(s:WordRx(text), -eval(g:ttagecho_balloon_limit), 0, 1)
+    let balloon = ttagecho#Expr(s:WordRx(text), -eval(g:ttagecho_balloon_limit), 0, 1)
+    if !empty(balloon)
+        return balloon
+    elseif !empty(b:ttagecho_bexpr)
+        return eval(b:ttagecho_bexpr)
+    else
+        return ''
+    endif
 endf
 
 

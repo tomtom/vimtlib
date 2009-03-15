@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-10-28.
-" @Last Change: 2009-02-15.
-" @Revision:    0.5.131
+" @Last Change: 2009-03-14.
+" @Revision:    0.5.133
 " GetLatestVimScripts: 2055 0 ttagecho.vim
 
 if &cp || exists("loaded_ttagecho")
@@ -97,7 +97,8 @@ augroup TTagecho
         endfor
         if has('balloon_eval')
             for s:pattern in g:ttagecho_balloon_patterns
-                exec 'autocmd BufNewFile,BufReadPost,FileType '. s:pattern .' set ballooneval bexpr=ttagecho#Balloon()'
+                exec 'autocmd BufNewFile,BufReadPost,FileType '. s:pattern .' if &bexpr != "ttagecho#Balloon()" | let b:ttagecho_bexpr = &bexpr | endif'
+                exec 'autocmd BufNewFile,BufReadPost,FileType '. s:pattern .' setlocal ballooneval bexpr=ttagecho#Balloon()'
             endfor
         endif
         unlet s:pattern
