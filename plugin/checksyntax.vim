@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     04-Mai-2005.
-" @Last Change: 2009-03-12.
-" @Revision:    303
+" @Last Change: 2009-03-14.
+" @Revision:    316
 
 if exists('g:checksyntax')
     finish
@@ -155,14 +155,14 @@ if !exists('g:checksyntax_compiler_docbk')
     let g:checksyntax_compiler_docbk = g:checksyntax_compiler_xml
 endif
 
-if has('signs') && exists('loaded_tlib') && loaded_tlib >= 32
-    sign define CheckSyntax text=! texthl=Error
-    let s:checksyntax_signs = 1
-    " Clear all checksyntax-related signs.
-    command! CheckSyntaxClearSigns call tlib#signs#ClearAll('CheckSyntax')
-else
-    let s:checksyntax_signs = 0
-endif
+" if has('signs') && exists('loaded_tlib') && loaded_tlib >= 32
+"     sign define CheckSyntax text=! texthl=Error
+"     let s:checksyntax_signs = 1
+"     " Clear all checksyntax-related signs.
+"     command! CheckSyntaxClearSigns call tlib#signs#ClearAll('CheckSyntax')
+" else
+"     let s:checksyntax_signs = 0
+" endif
 
 fun! s:Make()
     try
@@ -192,10 +192,6 @@ endf
 
 " CheckSyntax(manually, ?bang='', ?type=&ft)
 function! CheckSyntax(manually, ...)
-    if &modified
-        echom "Buffer was modified. Please save it before calling :CheckSyntax."
-        return
-    end
     let bang = a:0 >= 1 && a:1 != '' ? 1 : 0
     let ft   = a:0 >= 2 && a:2 != '' ? a:2 : &filetype
     if bang && exists('g:checksyntax_alt_'. ft)
@@ -204,26 +200,28 @@ function! CheckSyntax(manually, ...)
     if !(a:manually || (exists('g:checksyntax_auto_'. ft) && g:checksyntax_auto_{ft}))
         return
     endif
-    if exists('g:checksyntax_compiler_'. ft)
-        let mode = 1
-    elseif exists('g:checksyntax_cmd_'. ft)
-        let mode = 2
-    else
+    if &modified
+        echom "Buffer was modified. Please save it before calling :CheckSyntax."
         return
     end
+    let compiler = s:GetVar('g:checksyntax_compiler_', ft, a:manually)
+    let makecmd  = s:GetVar('g:checksyntax_cmd_', ft, a:manually)
+    if empty(compiler) && empty(makecmd)
+        return
+    endif
     let mp = &makeprg
     let ef = &errorformat
     let sp = &shellpipe
     try
-        if mode == 1
+        if !empty(compiler)
             if exists('b:current_compiler')
                 let cc = b:current_compiler
             else
                 let cc = ''
             endif
-            exec 'compiler '. g:checksyntax_compiler_{ft}
-        elseif mode == 2
-            let &makeprg = g:checksyntax_cmd_{ft}
+            exec 'compiler '. compiler
+        elseif !empty(makecmd)
+            let &makeprg = makecmd
             " TLogVAR &makeprg
             if exists('g:checksyntax_shellpipe')
                 let &shellpipe = g:checksyntax_shellpipe
@@ -243,10 +241,10 @@ function! CheckSyntax(manually, ...)
         " TLogVAR output
         let failrx = exists('g:checksyntax_failrx_'. ft) ? g:checksyntax_failrx_{ft} : g:checksyntax_failrx
         let okrx   = exists('g:checksyntax_okrx_'. ft) ? g:checksyntax_okrx_{ft} : ''
-        if s:checksyntax_signs
-            call tlib#signs#ClearAll('CheckSyntax')
-            call tlib#signs#Mark('CheckSyntax', getqflist())
-        endif
+        " if s:checksyntax_signs
+        "     call tlib#signs#ClearAll('CheckSyntax')
+        "     call tlib#signs#Mark('CheckSyntax', getqflist())
+        " endif
         if output == '' || (okrx != '' && output =~ okrx) || (failrx != '' && output !~ failrx)
             " TLogVAR output, okrx, failrx
             " TLogDBG okrx != '' && output =~ okrx
@@ -259,7 +257,7 @@ function! CheckSyntax(manually, ...)
         let &makeprg     = mp
         let &errorformat = ef
         let &shellpipe   = sp
-        if mode == 1
+        if !empty(compiler)
             if cc == ''
                 if exists('b:current_compiler')
                     unlet b:current_compiler
@@ -269,6 +267,16 @@ function! CheckSyntax(manually, ...)
             endif
         endif
     endtry
+endf
+
+function! s:GetVar(var, ft, manually) "{{{3
+    if !a:manually && exists(a:var .'auto_'. a:ft)
+        return {a:var}auto_{a:ft}
+    elseif exists(a:var . a:ft)
+        return {a:var}{a:ft}
+    else
+        return ''
+    endif
 endf
 
 if !exists('*CheckSyntaxSucceed')
@@ -315,5 +323,4 @@ restored in the wrong window
 0.5
 - support for jsl (javascript lint)
 - support for jlint
-- use sign (requires tlib vimscript#1863 to be installed)
 
