@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-29.
-" @Last Change: 2009-03-12.
-" @Revision:    564
+" @Last Change: 2009-03-14.
+" @Revision:    565
 " GetLatestVimScripts: 2033 1 trag.vim
 
 if &cp || exists("loaded_trag")
@@ -46,14 +46,14 @@ TLet g:trag_get_files_java = 'split(glob("**/*.java"), "\n")'
 TLet g:trag_get_files_c = 'split(glob("**/*.[ch]"), "\n")'
 TLet g:trag_get_files_cpp = 'split(glob("**/*.[ch]"), "\n")'
 
-" If non-empty, display signs at matching lines.
-TLet g:trag_sign = has('signs') ? '>' : ''
-if !empty(g:trag_sign)
-    exec 'sign define TRag text='. g:trag_sign .' texthl=Special'
-
-    " Clear all trag-related signs.
-    command! TRagClearSigns call tlib#signs#ClearAll('TRag')
-endif
+" " If non-empty, display signs at matching lines.
+" TLet g:trag_sign = has('signs') ? '>' : ''
+" if !empty(g:trag_sign)
+"     exec 'sign define TRag text='. g:trag_sign .' texthl=Special'
+" 
+"     " Clear all trag-related signs.
+"     command! TRagClearSigns call tlib#signs#ClearAll('TRag')
+" endif
 
 
 " :nodoc:
