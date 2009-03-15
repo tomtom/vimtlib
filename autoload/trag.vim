@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-29.
-" @Last Change: 2009-03-14.
-" @Revision:    0.0.652
+" @Last Change: 2009-03-15.
+" @Revision:    0.0.653
 
 if &cp || exists("loaded_trag_autoload")
     finish
@@ -203,7 +203,7 @@ function! trag#Grep(args, ...) "{{{3
         let strip = 0
         " TLogVAR files
         for f in files
-            call tlib#progressbar#Display(fidx, ' '. f)
+            call tlib#progressbar#Display(fidx, ' '. pathshorten(f))
             let rxpos = s:GetRx(f, kindspos, rx, '.')
             " let rxneg = s:GetRx(f, kindsneg, rx, '')
             let rxneg = s:GetRx(f, kindsneg, '', '')

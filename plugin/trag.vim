@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-29.
-" @Last Change: 2009-03-14.
-" @Revision:    565
+" @Last Change: 2009-03-15.
+" @Revision:    568
 " GetLatestVimScripts: 2033 1 trag.vim
 
 if &cp || exists("loaded_trag")
@@ -108,26 +108,26 @@ TRagDefKind identity * /\C%s/
 " Left hand side value in an assignment.
 " Examples:
 " l foo =~ foo = 1
-" L foo =~ fufoo0 = 1
 TRagDefKind l * /\C%s\s*[^=]*=[^=~<>]/
 " TRagDefKind l * /\C\<%s\>\s*=[^=~<>]/
+" L foo =~ fufoo0 = 1
 " TRagDefKind L * /\C%s[^=]*=[^=~<>]/
 
 " Right hand side value in an assignment.
 " Examples:
-" l foo =~ bar = foo
+" r foo =~ bar = foo
+TRagDefKind r * /\C[^!=~<>]=.\{-}%s/
 " L foo =~ bar = fufoo0
 " TRagDefKind r * /\C[^!=~<>]=.\{-}\<%s\>/
 " TRagDefKind R * /\C[^!=~<>]=.\{-}%s/
-TRagDefKind r * /\C[^!=~<>]=.\{-}%s/
 
 " Markers: TODO, TBD, FIXME, OPTIMIZE
 TRagDefKind todo * /\C\(TBD\|TODO\|FIXME\|OPTIMIZE\)/
 
 " A mostly general rx format string for function calls.
+TRagDefKind f * /\C%s\S*\s*(/
 " TRagDefKind f * /\C\<%s\>\s*(/
 " TRagDefKind F * /\C%s\S*\s*(/
-TRagDefKind f * /\C%s\S*\s*(/
 
 " A mostly general rx format string for words.
 TRagDefKind w * /\C\<%s\>/
