@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-07-09.
-" @Last Change: 2009-03-14.
-" @Revision:    459
+" @Last Change: 2009-03-17.
+" @Revision:    460
 " GetLatestVimScripts: 2014 0 ttoc.vim
 
 if &cp || exists("loaded_ttoc")
@@ -56,7 +56,7 @@ TLet g:ttoc_rx_c      = '^[[:alnum:]#].*'
 TLet g:ttoc_rx_cpp    = g:ttoc_rx_c
 TLet g:ttoc_rx_html   = '\(<h\d.\{-}</h\d>\|<\(html\|head\|body\|div\|script\|a\s\+name=\).\{-}>\|<.\{-}\<id=.\{-}>\)'
 TLet g:ttoc_rx_java   = '^\s*\(\(package\|import\|private\|public\|protected\|void\|int\|boolean\)\s\+\|\u\).*'
-TLet g:ttoc_rx_javascript = '^\s*\(var\s\+.\{-}\|\w\+\s*:\s*.\{-}\)\s*$'
+TLet g:ttoc_rx_javascript = '^\s*\(var\s\+.\{-}\|\w\+\s*:\s*\S.\{-}\)\s*$'
 TLet g:ttoc_rx_perl   = '^\([$%@]\|\s*\(use\|sub\)\>\).*'
 TLet g:ttoc_rx_php    = '^\(\w\|\s*\(class\|function\|var\|require\w*\|include\w*\)\>\).*'
 TLet g:ttoc_rx_python = '^\s*\(import\|class\|def\)\>.*'
