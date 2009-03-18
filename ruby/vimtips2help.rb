@@ -3,7 +3,7 @@
 # @Author:      Thomas Link (micathom AT gmail com)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2009-02-23.
-# @Last Change: 2009-03-01.
+# @Last Change: 2009-03-17.
 
 require 'hpricot'
 require 'cgi'
@@ -16,7 +16,7 @@ require 'logger'
 class Vimtips2Help
 
     APPNAME = 'vimtips'
-    VERSION = '1.0.99'
+    VERSION = '1.0.100'
     WIDTH = 78
     INNER_MARGIN = WIDTH - 12
     SHIFT = 4
@@ -34,6 +34,7 @@ class Vimtips2Help
     
         def self.set_level
             if $DEBUG
+                
                 $logger.level = Logger::DEBUG
             elsif $VERBOSE
                 $logger.level = Logger::WARN
