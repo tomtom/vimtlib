@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-10-28.
-" @Last Change: 2009-03-14.
-" @Revision:    0.0.183
+" @Last Change: 2009-03-17.
+" @Revision:    0.0.184
 
 if &cp || exists("loaded_ttagecho_autoload")
     finish
@@ -159,7 +159,7 @@ function! ttagecho#Balloon() "{{{3
     let balloon = ttagecho#Expr(s:WordRx(text), -eval(g:ttagecho_balloon_limit), 0, 1)
     if !empty(balloon)
         return balloon
-    elseif !empty(b:ttagecho_bexpr)
+    elseif exists('b:ttagecho_bexpr') && !empty(b:ttagecho_bexpr)
         return eval(b:ttagecho_bexpr)
     else
         return ''
