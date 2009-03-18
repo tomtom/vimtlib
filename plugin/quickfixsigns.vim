@@ -4,14 +4,14 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-03-14.
 " @Last Change: 2009-03-17.
-" @Revision:    65
-" GetLatestVimScripts: 0 0 :AutoInstall: quickfixsigns.vim
+" @Revision:    70
+" GetLatestVimScripts: 2584 1 :AutoInstall: quickfixsigns.vim
 " Mark quickfix & location list items with signs
 
 if &cp || exists("loaded_quickfixsigns") || !has('signs')
     finish
 endif
-let loaded_quickfixsigns = 1
+let loaded_quickfixsigns = 2
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -150,7 +150,7 @@ function! QuickfixsignsBalloon() "{{{3
         " TLogVAR acc
         return join(map(acc, 'v:val.text'), "\n")
     endif
-    if !empty(b:quickfixsigns_balloonexpr)
+    if exists('b:quickfixsigns_balloonexpr') && !empty(b:quickfixsigns_balloonexpr)
         return eval(b:quickfixsigns_balloonexpr)
     else
         return ''
@@ -272,4 +272,7 @@ finish
 CHANGES:
 0.1
 - Initial release
+
+0.2
+- exists('b:quickfixsigns_balloonexpr')
 
