@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2009-02-27.
-" @Revision:    2623
+" @Last Change: 2009-03-20.
+" @Revision:    2627
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -362,7 +362,7 @@ if !exists("g:vikiOpenFileWith_ANY") "{{{2
     if exists('g:netrw_browsex_viewer')
         let g:vikiOpenFileWith_ANY = "exec 'silent !'. g:netrw_browsex_viewer .' '. shellescape('%{FILE}')"
     elseif has("win32") || has("win16") || has("win64")
-        let g:vikiOpenFileWith_ANY = "exec 'silent !cmd /c start '. shellescape('%{FILE}')"
+        let g:vikiOpenFileWith_ANY = "exec 'silent ! start \"\" '. shellescape('%{FILE}')"
     elseif has("mac")
         let g:vikiOpenFileWith_ANY = "exec 'silent !open '. shellescape('%{FILE}')"
     elseif $GNOME_DESKTOP_SESSION_ID != ""
@@ -1035,5 +1035,6 @@ rtp-directory (thanks to M Brandmeyer)
 exists.
 - Default values for g:vikiOpenUrlWith_ANY and g:vikiOpenFileWith_ANY on 
 Macs (thanks mboniou)
+- Correct default value for g:vikiOpenFileWith_ANY @ Windows
 
 " vim: ff=unix
