@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-10.
-" @Last Change: 2009-03-12.
-" @Revision:    570
+" @Last Change: 2009-03-22.
+" @Revision:    573
 " GetLatestVimScripts: 1863 1 tlib.vim
 "
 " Please see also ../test/tlib.vim for usage examples.
@@ -538,4 +538,8 @@ with the base indices.
 - tlib#agent#Exit: explicitly return empty value (as a consequence, 
 pressing <esc> when browsing an index-list, returns 0 and not "")
 - tlib#signs
+- tlib#input#List: set local statusline
+
+0.33
+- Don't reset statusline
 

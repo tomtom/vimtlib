@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-06-30.
-" @Last Change: 2009-02-28.
-" @Revision:    0.0.641
+" @Last Change: 2009-03-22.
+" @Revision:    0.0.644
 
 if &cp || exists("loaded_tlib_input_autoload")
     finish
@@ -132,7 +132,7 @@ function! tlib#input#ListW(world, ...) "{{{3
             let key_agents[k] = handler.agent
         endif
     endfor
-    let statusline  = &statusline
+    " let statusline  = &l:statusline
     let laststatus  = &laststatus
     let lastsearch  = @/
     let @/ = ''
@@ -471,7 +471,8 @@ function! tlib#input#ListW(world, ...) "{{{3
         endif
 
     finally
-        let &statusline = statusline
+        " TLogVAR statusline
+        " let &l:statusline = statusline
         let &laststatus = laststatus
         silent! let @/  = lastsearch
         " TLogDBG 'finally 2'
