@@ -4,8 +4,8 @@
 " @GIT:         http://github.com/tomtom/vimtlib/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-03-14.
-" @Last Change: 2009-03-22.
-" @Revision:    188
+" @Last Change: 2009-03-29.
+" @Revision:    199
 " GetLatestVimScripts: 2584 1 :AutoInstall: quickfixsigns.vim
 
 if &cp || exists("loaded_quickfixsigns") || !has('signs')
@@ -55,12 +55,16 @@ if !empty(g:quickfixsigns_marks)
                 \ })
 endif
 
-
 if !exists('g:quickfixsigns_balloon')
     " If non-null, display a balloon when hovering with the mouse over 
     " the sign.
     " buffer-local or global
     let g:quickfixsigns_balloon = 1   "{{{2
+endif
+
+if !exists('g:quickfixsigns_max')
+    " Don't display signs if the list is longer than n items.
+    let g:quickfixsigns_max = 100   "{{{2
 endif
 
 augroup QuickFixSigns
@@ -110,6 +114,10 @@ unlet s:i s:signs s:signss
 let s:last_run = {}
 
 
+" (Re-)Set the signs that should be updated at a certain event. If event 
+" is empty, update all signs.
+"
+" Normally, the end-user doesn't need to call this function.
 function! QuickfixsignsSet(event) "{{{3
     let lz = &lazyredraw
     set lz
@@ -128,7 +136,7 @@ function! QuickfixsignsSet(event) "{{{3
                     " TLogVAR list
                     call filter(list, 'v:val.bufnr == bn')
                     " TLogVAR list
-                    if !empty(list)
+                    if !empty(list) && len(list) < g:quickfixsigns_max
                         let get_id = get(def, 'id', 's:SignId')
                         call s:ClearBuffer(def.sign, bn, s:PlaceSign(def.sign, list, get_id))
                         if has('balloon_eval') && g:quickfixsigns_balloon && !exists('b:quickfixsigns_balloon') && &balloonexpr != 'QuickfixsignsBalloon()'
@@ -314,6 +322,7 @@ CHANGES:
 0.3
 - Old signs weren't always removed
 - Avoid "flicker" etc.
+- g:quickfixsigns_max: Don't display signs if the list is longer than n items.
 Incompatible changes:
 - Removed g:quickfixsigns_show_marks variable
 - g:quickfixsigns_marks: Marks that should be used for signs
