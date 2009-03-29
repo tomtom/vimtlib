@@ -1,1 +1,3 @@
+doc/tmarks.txt
+autoload/tmarks.vim
 plugin/tmarks.vim

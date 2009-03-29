@@ -1,10 +1,10 @@
-" tmarks.vim -- A simple marks browser
+" tmarks.vim -- Browse & manipulate marks
 " @Author:      Tom Link (mailto:micathom AT gmail com?subject=[vim])
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-08-23.
-" @Last Change: 2009-02-15.
-" @Revision:    0.0.26
+" @Last Change: 2009-03-29.
+" @Revision:    0.0.46
 " GetLatestVimScripts: <+SCRIPTID+> 1 tmarks.vim
 
 if &cp || exists("loaded_tmarks")
@@ -21,49 +21,28 @@ let loaded_tmarks = 1
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! s:SNR() "{{{3
-    return matchstr(expand('<sfile>'), '<SNR>\d\+_\zeSNR$')
-endf
-
 
 if !exists('g:tmarks_handlers') "{{{2
     let g:tmarks_handlers = [
-            \ {'key':  4, 'agent': s:SNR() .'AgentDeleteMark', 'key_name': '<c-d>', 'help': 'Delete mark'},
+            \ {'key':  4, 'agent': 'tmarks#AgentDeleteMark', 'key_name': '<c-d>', 'help': 'Delete mark'},
             \ ]
             " \ {'pick_last_item': 0},
 endif
 
 
-function! s:AgentDeleteMark(world, selected) "{{{3
-    for l in a:selected
-        let m = s:GetMark(l)
-        exec 'delmarks '. escape(m, '"\')
-    endfor
-    let a:world.base  = s:GetList()
-    let a:world.state = 'display'
-    return a:world
-endf
+" Browse all marks.
+command! -bar TMarks call tmarks#List()
 
+" Place the next available a-z mark at the specified line.
+" :display: :{range}TMarksPlace
+command! -range -nargs=? -bar TMarksPlace call tmarks#PlaceNextMarkAtLine(<line1>)
 
-function! s:GetList() "{{{3
-    return tlib#cmd#OutputAsList('marks')[1:-1]
-endf
+" Delete all a-z marks in range.
+" :display: :{range}TMarksDelete
+command! -range -nargs=? -bar TMarksDelete call tmarks#DeleteInRange(<line1>, <line2>)
 
-
-function! s:GetMark(line) "{{{3
-    return matchstr(a:line, '^ \+\zs\S')
-endf
-
-
-function! TMarks() "{{{3
-    keepjumps let m = tlib#input#List('s', 'Marks', s:GetList(), g:tmarks_handlers)
-    if !empty(m)
-        exec 'norm! `'. s:GetMark(m)
-    endif
-endf
-
-command! TMarks call TMarks()
-
+" Delete all a-z marks in the current buffer.
+command! -bar TMarksDeleteAll call tmarks#DeleteAllMarks()
 
 
 let &cpo = s:save_cpo
@@ -71,14 +50,7 @@ unlet s:save_cpo
 
 
 finish
------------------------------------------------------------------------
 
-Command~
-
-:Tmarks
-    List marks
-
-Keys~
-    <c-d> ... Delete mark
-    <cr>  ... Jump to mark
+0.1
+Initial release
 

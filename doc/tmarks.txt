@@ -1,0 +1,91 @@
+*tmarks.txt*        Browse & manipulate marks
+                    Author: Tom Link, micathom at gmail com
+
+This plugin provides commands to browse and to manipulate (place & 
+delete) marks.
+
+Features:
+    - Browse marks
+    - Delete all (lower-case) marks in the current buffer
+    - Delete all (lower-case) marks in a range
+    - Set the next available (lower-case) mark at a specified line
+
+
+Key maps in the list view:
+    <c-d> ... Delete mark
+    <cr>  ... Jump to mark
+
+
+-----------------------------------------------------------------------
+Install~
+
+Edit the vba file and type: >
+
+    :so %
+
+See :help vimball for details. If you have difficulties or use vim 7.0, 
+please make sure, you have the current version of vimball
+(vimscript #1502) installed or update your runtime.
+
+This script requires tlib (vimscript #1863) to be installed.
+
+Also available via git: http://github.com/tomtom/vimtlib/
+
+
+========================================================================
+Contents~
+
+        :TMarks ...................... |:TMarks|
+        :TMarksPlace ................. |:TMarksPlace|
+        :TMarksDelete ................ |:TMarksDelete|
+        :TMarksDeleteAll ............. |:TMarksDeleteAll|
+        tmarks#AgentDeleteMark ....... |tmarks#AgentDeleteMark()|
+        tmarks#DeleteInRange ......... |tmarks#DeleteInRange()|
+        tmarks#DeleteAllMarks ........ |tmarks#DeleteAllMarks()|
+        tmarks#PlaceNextMarkAtLine ... |tmarks#PlaceNextMarkAtLine()|
+        tmarks#List .................. |tmarks#List()|
+
+
+========================================================================
+plugin/tmarks.vim~
+
+                                                    *:TMarks*
+:TMarks
+    Browse all marks.
+
+                                                    *:TMarksPlace*
+:{range}TMarksPlace
+    Place the next available a-z mark at the specified line.
+
+                                                    *:TMarksDelete*
+:{range}TMarksDelete
+    Delete all a-z marks in range.
+
+                                                    *:TMarksDeleteAll*
+:TMarksDeleteAll
+    Delete all a-z marks in the current buffer.
+
+
+========================================================================
+autoload/tmarks.vim~
+
+                                                    *tmarks#AgentDeleteMark()*
+tmarks#AgentDeleteMark(world, selected)
+
+                                                    *tmarks#DeleteInRange()*
+tmarks#DeleteInRange(?line1=line('.'), ?line2=line('.'))
+    Delete all (lower-case) marks at the specified line.
+
+                                                    *tmarks#DeleteAllMarks()*
+tmarks#DeleteAllMarks()
+    Delete all (lower-case) marks for the current buffer.
+
+                                                    *tmarks#PlaceNextMarkAtLine()*
+tmarks#PlaceNextMarkAtLine(...)
+
+                                                    *tmarks#List()*
+tmarks#List()
+
+
+
+vim:tw=78:fo=tcq2:isk=!-~,^*,^|,^":ts=8:ft=help:norl:
