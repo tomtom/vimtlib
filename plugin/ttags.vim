@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-09.
-" @Last Change: 2009-02-15.
-" @Revision:    155
+" @Last Change: 2009-04-11.
+" @Revision:    161
 " GetLatestVimScripts: 2018 1 ttags.vim
 "
 " TODO:
@@ -77,7 +77,15 @@ TLet g:ttags_world = {
 
 
 " :display: TTags[!] [KIND] [TAGS_RX] [FILE_RX]
-" See also |ttags#List()|.
+" See also |ttags#List()| and |ttags#SelectTags()|.
+"
+" Examples:
+" Match tags in the current file: >
+"   TTags * * .
+" Show classes [c]: >
+"   TTags c
+" Show classes beginning with Foo: >
+"   TTags c ^Foo
 command! -nargs=* -bang TTags call ttags#List(!empty('<bang>'), <f-args>)
 
 
@@ -158,4 +166,5 @@ filtering by name is done by |taglist()| right away, which seems faster.
 - Make sure tlib is loaded even if it is installed in a different 
 rtp-directory.
 - temporarily set nomagic when running the tag command
+- Show tags in the current file: TTags * * .
 

@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-09.
-" @Last Change: 2009-02-25.
-" @Revision:    305
+" @Last Change: 2009-04-11.
+" @Revision:    316
 
 if &cp || exists("loaded_ttags_autoload")
     finish
@@ -91,7 +91,16 @@ endf
 " Arguments:
 "   use_extra: Use extra tags (see |g:tlib_tags_extra|).
 "   constraints: A dictionary of fields and corresponding regexps
+"     kind     :: The tag letter ID ("*" = match all tags)
+"     name     :: A rx matching the tag ("*" = match all tags)
+"     filename :: A rx matching the filename ('.' = match the current 
+"                 file only)
 function! ttags#SelectTags(use_extra, constraints) "{{{3
+    if get(a:constraints, 'filename', '') == '.'
+        let a:constraints.filename = substitute(substitute(expand('%:p'), '[\\/]', '[\\\\/]', 'g'), '^[^:]\+:', '', '')
+        " TLogVAR a:constraints.filename
+    endif
+    " TLogVAR a:use_extra, a:constraints
     let world      = copy(g:ttags_world)
     let world.tags = tlib#tag#Collect(a:constraints, a:use_extra,
                 \ tlib#var#Get('ttags_match_end', 'bg'),
