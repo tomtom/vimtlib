@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2009-03-20.
-" @Revision:    2627
+" @Last Change: 2009-04-04.
+" @Revision:    2629
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -34,14 +34,14 @@
 if &cp || exists("loaded_viki") "{{{2
     finish
 endif
-if !exists('g:loaded_tlib') || g:loaded_tlib < 15
+if !exists('g:loaded_tlib') || g:loaded_tlib < 32
     runtime plugin/02tlib.vim
-    if !exists('g:loaded_tlib') || g:loaded_tlib < 15
-        echoerr 'tlib >= 0.15 is required'
+    if !exists('g:loaded_tlib') || g:loaded_tlib < 32
+        echoerr 'tlib >= 0.32 is required'
         finish
     endif
 endif
-let loaded_viki = 311
+let loaded_viki = 312
 
 " This is what we consider nil, in the absence of nil in vimscript
 let g:vikiDefNil  = ''
@@ -1036,5 +1036,10 @@ exists.
 - Default values for g:vikiOpenUrlWith_ANY and g:vikiOpenFileWith_ANY on 
 Macs (thanks mboniou)
 - Correct default value for g:vikiOpenFileWith_ANY @ Windows
+
+3.12
+- Extended viki links: decode %HH in local filenames (this may cause 
+problems with file names containing an unencoded %)
+- Require tlib 0.32
 
 " vim: ff=unix
