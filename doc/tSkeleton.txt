@@ -80,13 +80,21 @@ file: >
     autocmd BufNewFile /here/*.suffix TSkeletonSetup othertemplate.suffix
 
 
-Alternatively, you can store templates as:
+Alternatively, you can store templates as: >
+
     ~/vimfiles/skeletons/templates/GROUP/FILETYPE PATTERN
 
-The pattern is an encoded pattern (# == *, %XX=Char XXh) for 
-auto-generated autocmds.
+where GROUP is an arbitrary name for a collection of auto templates, 
+FILETYPE is a know vim filetype, and the pattern is an encoded pattern (# == 
+*, %XX=Char XXh) for auto-generated autocmds.
 
+Example: Templates file names for some vim-related files: >
 
+    ~/vimfiles/skeletons/templates/vim/help #%2fvimfiles%2fdoc%2f#.txt
+    ~/vimfiles/skeletons/templates/vim/vim #%2fvimfiles#%2fftplugin%2f#.vim
+    ~/vimfiles/skeletons/templates/vim/vim #%2fvimfiles#%2fsyntax%2f#.vim
+
+< 
                                                     *tSkeleton-place-holder*
 
 Tags (which look like <+...+>) serve two purposes:
@@ -552,7 +560,7 @@ Utilities~
 The function tskeleton#IncreaseRevisionNumber() provides a way to 
 automatically update a revision number in the form >
 
-    @Revision: 1.0.309
+    @Revision: 1.0.311
 
 In order to use this function, add something like this to your |vimrc| 
 file: >

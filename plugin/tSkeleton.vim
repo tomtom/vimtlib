@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     21-Sep-2004.
-" @Last Change: 2009-02-21.
-" @Revision:    3802
+" @Last Change: 2009-05-03.
+" @Revision:    3810
 "
 " GetLatestVimScripts: 1160 1 tSkeleton.vim
 " http://www.vim.org/scripts/script.php?script_id=1160
@@ -28,7 +28,7 @@ if !exists('loaded_tlib') || loaded_tlib < 29
         finish
     endif
 endif
-let loaded_tskeleton = 406
+let loaded_tskeleton = 407
 
 if !exists("g:tskelDir") "{{{2
     let g:tskelDir = get(split(globpath(&rtp, 'skeletons/'), '\n'), 0, '')
@@ -312,14 +312,7 @@ endif
 augroup tSkeleton
     autocmd!
     if !exists("g:tskelDontSetup") "{{{2
-        let s:cwd = getcwd()
-        exec 'cd '. tlib#arg#Ex(g:tskelDir)
-        try
-            call map(split(glob('templates/**'), '\n'), 'tskeleton#DefineAutoCmd(v:val)')
-        finally
-            exec 'cd '. tlib#arg#Ex(s:cwd)
-            unlet s:cwd
-        endtry
+        call map(split(glob(tlib#file#Join([g:tskelDir, 'templates', '**'], 1)), '\n'), 'isdirectory(v:val) || tskeleton#DefineAutoCmd(v:val)')
         autocmd BufNewFile *.bat       TSkeletonSetup batch.bat
         autocmd BufNewFile *.tex       TSkeletonSetup latex.tex
         autocmd BufNewFile tc-*.rb     TSkeletonSetup tc-ruby.rb
@@ -661,4 +654,8 @@ rtp-directory
 - Minibits: Allow single words as bit definition: "word" expands to 
 "word<+CURSOR+>"
 - Require tlib 0.29
+
+4.7
+- TSkeletonSetup allows a full filename as argument
+- Auto templates: don't cd into the templates directory
 

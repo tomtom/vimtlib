@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-03.
-" @Last Change: 2009-03-05.
-" @Revision:    0.0.1195
+" @Last Change: 2009-05-03.
+" @Revision:    0.0.1199
 
 if &cp || exists("loaded_tskeleton_autoload")
     finish
@@ -846,6 +846,8 @@ function! tskeleton#Setup(template, ...) "{{{3
     if anyway || !exists('b:tskelDidFillIn') || !b:tskelDidFillIn
         if filereadable(g:tskelDir . a:template)
             let tf = g:tskelDir . a:template
+        elseif filereadable(a:template)
+            let tf = a:template
         else
             echoerr 'Unknown skeleton: '. a:template
             return
@@ -2563,7 +2565,7 @@ function! tskeleton#DefineAutoCmd(template) "{{{3
     let tpl = fnamemodify(a:template, ':t')
     " TLogVAR tpl
     let filetype = tlib#url#Decode(matchstr(tpl, '^\S\+'))
-    let pattern  = matchstr(tpl, ' \+\zs.*$')
+    let pattern  = matchstr(tpl, '^\S\+ \+\zs.*$')
     if !empty(filetype) && !empty(pattern)
         " TLogVAR pattern
         let pattern  = substitute(pattern, '#', '*', 'g')
