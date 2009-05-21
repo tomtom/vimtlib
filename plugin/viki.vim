@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2009-04-04.
-" @Revision:    2629
+" @Last Change: 2009-04-18.
+" @Revision:    2630
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -1041,5 +1041,6 @@ Macs (thanks mboniou)
 - Extended viki links: decode %HH in local filenames (this may cause 
 problems with file names containing an unencoded %)
 - Require tlib 0.32
+- viki#ExecExternal(): Escape !
 
 " vim: ff=unix

@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2009-03-22.
-" @Revision:    0.522
+" @Last Change: 2009-04-18.
+" @Revision:    0.524
 
 if &cp || exists("loaded_viki_auto") "{{{2
     finish
@@ -2124,7 +2124,7 @@ endf
 
 function! viki#ExecExternal(cmd) "{{{3
     " TLogVAR a:cmd
-    exec a:cmd
+    exec escape(a:cmd, '!')
     if !has("gui_running")
         " Scrambled window with vim
         redraw!
