@@ -4,8 +4,8 @@
 " @GIT:         http://github.com/tomtom/vimtlib/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-03-14.
-" @Last Change: 2009-04-11.
-" @Revision:    254
+" @Last Change: 2009-05-22.
+" @Revision:    256
 " GetLatestVimScripts: 2584 1 :AutoInstall: quickfixsigns.vim
 
 if &cp || exists("loaded_quickfixsigns") || !has('signs')
@@ -121,7 +121,8 @@ function! QuickfixsignsSet(event) "{{{3
                     if !empty(list) && len(list) < g:quickfixsigns_max
                         let get_id = get(def, 'id', 's:SignId')
                         call s:ClearBuffer(def.sign, bn, s:PlaceSign(def.sign, list, get_id))
-                        if has('balloon_eval') && g:quickfixsigns_balloon && !exists('b:quickfixsigns_balloon') && &balloonexpr != 'QuickfixsignsBalloon()'
+                        " if has('balloon_eval') && g:quickfixsigns_balloon && !exists('b:quickfixsigns_balloon') && &balloonexpr != 'QuickfixsignsBalloon()'
+                        if has('balloon_eval') && g:quickfixsigns_balloon && !exists('b:quickfixsigns_balloon') && empty(&balloonexpr)
                             let b:quickfixsigns_ballooneval = &ballooneval
                             let b:quickfixsigns_balloonexpr = &balloonexpr
                             setlocal ballooneval balloonexpr=QuickfixsignsBalloon()
@@ -364,4 +365,7 @@ Incompatible changes:
 - FIX: Error when g:quickfixsigns_marks = [] (thanks Ingo Karkat)
 - s:ClearBuffer: removed old code
 - QuickfixsignsMarks(state): Switch the display of marks on/off.
+
+0.5
+- Set balloonexpr only if empty (don't try to be smart)
 
