@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-10.
-" @Last Change: 2009-03-22.
-" @Revision:    573
+" @Last Change: 2009-05-24.
+" @Revision:    574
 " GetLatestVimScripts: 1863 1 tlib.vim
 "
 " Please see also ../test/tlib.vim for usage examples.
@@ -542,4 +542,4 @@ pressing <esc> when browsing an index-list, returns 0 and not "")
 
 0.33
 - Don't reset statusline
-
+- Don't use fnamemodify() to split filenames (for performance reasons)
