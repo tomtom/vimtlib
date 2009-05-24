@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-13.
-" @Last Change: 2009-03-05.
-" @Revision:    260
+" @Last Change: 2009-05-24.
+" @Revision:    267
 " GetLatestVimScripts: 1864 1 tmru.vim
 
 if &cp || exists("loaded_tmru")
@@ -14,7 +14,7 @@ if !exists('loaded_tlib') || loaded_tlib < 28
     echoerr "tlib >= 0.28 is required"
     finish
 endif
-let loaded_tmru = 7
+let loaded_tmru = 8
 
 if !exists("g:tmruSize")
     " The number of recently edited files that are registered.
@@ -162,11 +162,17 @@ function! s:Edit(filename) "{{{3
 endf
 
 function! s:SelectMRU()
+    " TLogDBG "SelectMRU#1"
     let tmru  = s:MruRetrieve()
+    " TLogDBG "SelectMRU#2"
+    " TLogVAR tmru
     let world = copy(g:tmru_world)
+    " TLogDBG "SelectMRU#3"
     let world.base = copy(tmru)
+    " TLogDBG "SelectMRU#4"
     " let bs    = tlib#input#List('m', 'Select file', copy(tmru), g:tmru_handlers)
     let bs    = tlib#input#ListW(world)
+    " TLogDBG "SelectMRU#5"
     " TLogVAR bs
     if !empty(bs)
         for bf in bs
@@ -244,4 +250,7 @@ already registered.
 
 0.7
 - If viminfo doesn't include '!', then use tlib to save the file list.
+
+0.8
+- Don't use fnamemodify() to split filenames (for performance reasons)
 
