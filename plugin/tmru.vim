@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-13.
 " @Last Change: 2009-05-24.
-" @Revision:    267
+" @Revision:    268
 " GetLatestVimScripts: 1864 1 tmru.vim
 
 if &cp || exists("loaded_tmru")
@@ -252,5 +252,5 @@ already registered.
 - If viminfo doesn't include '!', then use tlib to save the file list.
 
 0.8
-- Don't use fnamemodify() to split filenames (for performance reasons)
+- 
 
