@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2006-12-31.
-" @Last Change: 2009-03-05.
-" @Revision:    0.5.928
+" @Last Change: 2009-07-10.
+" @Revision:    0.5.935
 " GetLatestVimScripts: 1751 1 tGpg.vim
 "
 " TODO:
@@ -335,6 +335,17 @@ function! s:GetCacheVar(id, file, default) "{{{3
 endf
 
 
+function! s:UnsetCacheVar(ids, params) "{{{3
+    " TLogVAR a:ids, a:params
+    let file = a:params['file']
+    let mode = a:parms['mode']
+    for id in a:ids
+        let tid = s:CacheKey(id . mode, file)
+        unlet! s:heights[s:GoHome(tid)]
+    endfor
+endf
+
+
 function! s:PutCacheVar(id, file, secret) "{{{3
     call s:CheckTimeout()
     let id = s:CacheKey(a:id, a:file)
@@ -552,6 +563,7 @@ endf
 
 
 function! s:TGpgRead(parms, range) "{{{3
+    " TLogVAR a:params, a:range
     if !filereadable(a:parms['tfile'])
         return
     endif
@@ -574,6 +586,8 @@ function! s:TGpgRead(parms, range) "{{{3
         if !read
             exec a:range .'read '. s:EscapeShellCmdChars(s:EscapeFilename(a:parms['tfile']))
         endif
+    " catch
+    "     call s:UnsetCacheVar(['PW_'], params)
     finally
         call s:ResetOptions()
     endtry
