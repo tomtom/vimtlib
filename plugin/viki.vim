@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2009-04-18.
-" @Revision:    2630
+" @Last Change: 2009-06-11.
+" @Revision:    2631
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -154,6 +154,7 @@ if !exists("g:vikiSpecialFiles") "{{{2
                 \ 'wmv',
                 \ 'xhtml',
                 \ 'xls',
+                \ 'xmind',
                 \ ]
 endif
 
@@ -1042,5 +1043,6 @@ Macs (thanks mboniou)
 problems with file names containing an unencoded %)
 - Require tlib 0.32
 - viki#ExecExternal(): Escape !
+- special file: xmind
 
 " vim: ff=unix
