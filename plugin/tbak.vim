@@ -3,16 +3,16 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-07.
-" @Last Change: 2009-02-15.
-" @Revision:    0.1.59
+" @Last Change: 2009-06-14.
+" @Revision:    0.1.60
 
 if &cp || exists("loaded_tbak")
     finish
 endif
-if !exists('g:loaded_tlib') || g:loaded_tlib < 9
+if !exists('g:loaded_tlib') || g:loaded_tlib < 32
     runtime plugin/02tlib.vim
-    if !exists('g:loaded_tlib') || g:loaded_tlib < 9
-        echoerr 'tlib >= 0.9 is required'
+    if !exists('g:loaded_tlib') || g:loaded_tlib < 32
+        echoerr 'tlib >= 0.32 is required'
         finish
     endif
 endif

@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-07.
-" @Last Change: 2009-02-15.
-" @Revision:    216
+" @Last Change: 2009-06-14.
+" @Revision:    223
 
 if &cp || exists('loaded_tbak_autoload') "{{{2
     finish
@@ -37,7 +37,7 @@ fun! s:MkDiff(filename, dir) "{{{3
     let orig  = a:filename .'.orig'
     let diff  = a:filename .'-'. strftime('%y%m%d%S') .'.diff'
     let text  = getline('0', '$')
-    let dorig = a:dir .'/'. orig
+    let dorig = tlib#file#Join([a:dir, orig])
     call writefile(text, dorig)
     let efname = escape(fname, '%#"\') .'-
     let eorig  = escape(orig, '%#"\')
@@ -91,11 +91,11 @@ fun! s:BackupDir(global, ...) "{{{3
         let dir = fnamemodify(tlib#var#Get('tbakGlobalDir', 'bg'), ':p')
         " TLogVAR dir
         let ddir  = substitute(expand("%:p:h"), '[:%]', '\=printf("%%%x", char2nr(submatch(0)))', 'g')
-        let ddir  = simplify(s:CanonicDirName(dir) . g:tbakAttic .'/'. date .'/'. ddir)
+        let ddir  = simplify(tlib#file#Join([s:CanonicDirName(dir), g:tbakAttic, date, ddir]))
     else
         let dir = fnamemodify(tlib#var#Get('tbakDir', 'bg', expand("%:p:h")), ':p')
         " TLogVAR dir
-        let ddir = simplify(s:CanonicDirName(dir) . g:tbakAttic .'/'. date)
+        let ddir = simplify(tlib#file#Join([s:CanonicDirName(dir), g:tbakAttic, date]))
     endif
     " TLogVAR ddir
     return ddir
@@ -106,7 +106,7 @@ fun! s:CollectDiffs(global, pattern) "{{{3
     " TLogVAR dir
     let pattern = empty(a:pattern) ? expand('%:t').'*' : a:pattern
     " TLogVAR pattern
-    let diffs   = split(glob(dir .'/**/'. pattern), '\n')
+    let diffs   = split(glob(tlib#file#Join([dir, '**', pattern])), '\n')
     " TLogVAR diffs
     call filter(diffs, '!isdirectory(v:val)')
     call reverse(diffs)
@@ -221,7 +221,7 @@ fun! tbak#TBak(...) "{{{3
     endif
     let fname = expand("%:p:t")
     let ddir  = s:BackupDir(a:0 >= 1 ? a:1 : '')
-    let dest  = ddir .'/'. fname
+    let dest  = tlib#file#Join([ddir, fname])
     if filereadable(dest)
         call s:MkDiff(fname, ddir)
     else
@@ -265,6 +265,7 @@ fun! tbak#TBakView(vers, ...) "{{{3
     let [vers, diffs] = s:GetVersionDiffs(a:vers, global)
     if vers >= 0
         let fname = expand('%:p')
+        " TLogVAR fname
         let text  = getline('0', '$')
         call s:TBakBuffer('split')
         norm! ggdG
@@ -272,7 +273,7 @@ fun! tbak#TBakView(vers, ...) "{{{3
         norm! Gdd
         call s:Revert(global, vers, diffs)
         norm! gg0
-        exec 'vert diffsplit '. s:ExecEscape(fname)
+        exec 'vert diffsplit '. fnameescape(fname)
     endif
 endf
 
