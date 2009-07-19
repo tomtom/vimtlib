@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-06-30.
-" @Last Change: 2009-02-15.
-" @Revision:    0.0.29
+" @Last Change: 2009-06-14.
+" @Revision:    0.0.31
 
 if &cp || exists("loaded_tlib_dir_autoload")
     finish
@@ -59,7 +59,7 @@ function! tlib#dir#CD(dir, ...) "{{{3
     let cmd = locally ? 'lcd ' : 'cd '
     " let cwd = getcwd()
     let cmd .= tlib#arg#Ex(a:dir)
-    " TLogVAR cmd
+    " TLogVAR a:dir, locally, cmd
     exec cmd
     " return cwd
     return getcwd()
