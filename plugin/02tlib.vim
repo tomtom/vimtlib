@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-10.
-" @Last Change: 2009-07-08.
-" @Revision:    576
+" @Last Change: 2009-08-02.
+" @Revision:    578
 " GetLatestVimScripts: 1863 1 tlib.vim
 "
 " Please see also ../test/tlib.vim for usage examples.
@@ -174,7 +174,10 @@ TLet g:tlib_tag_substitute = {
 TLet g:tlib_filename_sep = '/'
 " TLet g:tlib_filename_sep = exists('+shellslash') && !&shellslash ? '\' : '/'   " {{{2
 
-" The cache directory. If empty, use |tlib#dir#MyRuntime|.'/cache'
+" The cache directory. If empty, use |tlib#dir#MyRuntime|.'/cache'.
+" You might want to delete old files from this directory from time to 
+" time with a command like: >
+"   find ~/vimfiles/cache/ -atime +31 -type f -print -delete
 TLet g:tlib_cache = ''
 
 " Where to display the line when using |tlib#buffer#ViewLine|.
