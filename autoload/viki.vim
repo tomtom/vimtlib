@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2009-06-14.
-" @Revision:    0.526
+" @Last Change: 2009-07-25.
+" @Revision:    0.528
 
 if &cp || exists("loaded_viki_auto") "{{{2
     finish
