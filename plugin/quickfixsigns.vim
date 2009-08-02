@@ -4,8 +4,8 @@
 " @GIT:         http://github.com/tomtom/vimtlib/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-03-14.
-" @Last Change: 2009-05-22.
-" @Revision:    256
+" @Last Change: 2009-07-29.
+" @Revision:    271
 " GetLatestVimScripts: 2584 1 :AutoInstall: quickfixsigns.vim
 
 if &cp || exists("loaded_quickfixsigns") || !has('signs')
@@ -55,10 +55,11 @@ if !exists('g:quickfixsigns_marks_def')
                 \ 'type': 'marks',
                 \ 'sign': '*s:MarkSign',
                 \ 'get': 's:Marks()',
-                \ 'event': ['BufEnter', 'CursorHold', 'CursorHoldI', 'CursorMoved', 'CursorMovedI'],
                 \ 'id': 's:MarkId',
+                \ 'event': ['BufEnter', 'CursorHold', 'CursorHoldI'],
                 \ 'timeout': 2
                 \ }
+                " \ 'event': ['BufEnter', 'CursorHold', 'CursorHoldI', 'CursorMoved', 'CursorMovedI'],
 endif
 
 if !exists('g:quickfixsigns_balloon')
@@ -121,17 +122,12 @@ function! QuickfixsignsSet(event) "{{{3
                     if !empty(list) && len(list) < g:quickfixsigns_max
                         let get_id = get(def, 'id', 's:SignId')
                         call s:ClearBuffer(def.sign, bn, s:PlaceSign(def.sign, list, get_id))
-                        " if has('balloon_eval') && g:quickfixsigns_balloon && !exists('b:quickfixsigns_balloon') && &balloonexpr != 'QuickfixsignsBalloon()'
                         if has('balloon_eval') && g:quickfixsigns_balloon && !exists('b:quickfixsigns_balloon') && empty(&balloonexpr)
                             let b:quickfixsigns_ballooneval = &ballooneval
                             let b:quickfixsigns_balloonexpr = &balloonexpr
                             setlocal ballooneval balloonexpr=QuickfixsignsBalloon()
                             let b:quickfixsigns_balloon = 1
                         endif
-                        " elseif exists('b:quickfixsigns_balloonexpr')
-                        "     let &l:balloonexpr = b:quickfixsigns_balloonexpr
-                        "     let &l:ballooneval = b:quickfixsigns_ballooneval
-                        "     unlet! b:quickfixsigns_balloonexpr b:quickfixsigns_ballooneval
                     else
                         call s:ClearBuffer(def.sign, bn, [])
                     endif
