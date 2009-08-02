@@ -2,13 +2,19 @@
 " @Author:      Tom Link (micathom AT gmail com)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     04-Mai-2005.
-" @Last Change: 2009-03-14.
-" @Revision:    316
+" @Last Change: 2009-08-02.
+" @Revision:    344
 
 if exists('g:checksyntax')
     finish
 endif
 let g:checksyntax = 5
+
+
+augroup CheckSyntax
+    autocmd!
+augroup END
+
 
 """ General variables
 if !exists('g:checksyntax_auto')
@@ -60,6 +66,9 @@ endif
 if !exists('g:checksyntax_alt_php')
     let g:checksyntax_alt_php = 'phpp'
 endif
+
+autocmd CheckSyntax BufReadPost *.php if exists(':EclimValidate') && !empty(eclim#project#util#GetCurrentProjectName()) | let b:checksyntax_auto_php = 0 | let b:checksyntax_auto_phpp = 0 | endif
+
 
 """ JavaScript specific
 if !exists('g:checksyntax_cmd_javascript')
@@ -197,7 +206,15 @@ function! CheckSyntax(manually, ...)
     if bang && exists('g:checksyntax_alt_'. ft)
         let ft = g:checksyntax_alt_{ft}
     endif
-    if !(a:manually || (exists('g:checksyntax_auto_'. ft) && g:checksyntax_auto_{ft}))
+    if exists('b:checksyntax_auto_'. ft)
+        let auto = b:checksyntax_auto_{ft}
+    elseif exists('g:checksyntax_auto_'. ft)
+        let auto = g:checksyntax_auto_{ft}
+    else
+        let auto = 0
+    endif
+    " TLogVAR auto
+    if !(a:manually || auto)
         return
     endif
     if &modified
@@ -209,20 +226,20 @@ function! CheckSyntax(manually, ...)
     if empty(compiler) && empty(makecmd)
         return
     endif
+    " TLogVAR compiler, makecmd
     let mp = &makeprg
     let ef = &errorformat
     let sp = &shellpipe
     try
         if !empty(compiler)
-            if exists('b:current_compiler')
-                let cc = b:current_compiler
+            if exists('g:current_compiler')
+                let cc = g:current_compiler
             else
                 let cc = ''
             endif
             exec 'compiler '. compiler
         elseif !empty(makecmd)
-            let &makeprg = makecmd
-            " TLogVAR &makeprg
+            let &l:makeprg = makecmd
             if exists('g:checksyntax_shellpipe')
                 let &shellpipe = g:checksyntax_shellpipe
                 " TLogVAR &shellpipe
@@ -234,6 +251,7 @@ function! CheckSyntax(manually, ...)
             endif
             " TLogVAR &errorformat
         endif
+        " TLogVAR &makeprg, &l:makeprg, &g:makeprg
         if exists('*CheckSyntax_prepare_'. ft)
             call CheckSyntax_prepare_{ft}()
         endif
@@ -254,15 +272,15 @@ function! CheckSyntax(manually, ...)
             call CheckSyntaxFail(a:manually)
         endif
     finally
-        let &makeprg     = mp
+        let &l:makeprg     = mp
         let &errorformat = ef
         let &shellpipe   = sp
+        " TLogVAR compiler, cc
         if !empty(compiler)
-            if cc == ''
-                if exists('b:current_compiler')
-                    unlet b:current_compiler
-                endif
-            else
+            if exists('g:current_compiler')
+                unlet! g:current_compiler
+            endif
+            if cc != ''
                 exec 'compiler '. cc
             endif
         endif
@@ -303,7 +321,7 @@ if !hasmapto(':CheckSyntax')
 endif
 
 if g:checksyntax_auto
-    autocmd BufWritePost * call CheckSyntax(0)
+    autocmd CheckSyntax BufWritePost * call CheckSyntax(0)
 endif
 
 
@@ -321,6 +339,9 @@ use vim compilers if available (e.g., tidy, xmllint ...); makeprg was
 restored in the wrong window
 
 0.5
-- support for jsl (javascript lint)
-- support for jlint
+- Support for jsl (javascript lint).
+- Support for jlint.
+- Don't automatically check php files if eclim is installed.
+- Allow auto_* parameters to be buffer local.
+- FIX: Unlet current_compiler, use g:current_compiler
 
