@@ -3,14 +3,15 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-10-04.
-" @Last Change: 2009-02-15.
-" @Revision:    0.3.212
+" @Last Change: 2009-08-01.
+" @Revision:    0.3.224
 
 if &cp || exists("loaded_hookcursormoved_autoload")
     finish
 endif
 let loaded_hookcursormoved_autoload = 3
 
+let s:unknown_hooks = []
 
 augroup HookCursorMoved
     autocmd!
@@ -73,10 +74,15 @@ endf
 
 " :def: function! hookcursormoved#Register(condition, fn, ?mode='ni', ?remove=0)
 function! hookcursormoved#Register(condition, fn, ...) "{{{3
+    if !exists('g:hookcursormoved_linechange')
+        " Not loaded
+        return
+    endif
     let modes  = a:0 >= 1 && a:1 != '' ? a:1 : 'ni'
     let remove = a:0 >= 2 ? a:2 : 0
     " TLogVAR a:condition, a:fn, mode
     " TLogDBG exists('*hookcursormoved#Test_'. a:condition)
+    " TLogVAR 'g:hookcursormoved_'. a:condition, exists('g:hookcursormoved_'. a:condition)
     if exists('g:hookcursormoved_'. a:condition)
         call hookcursormoved#Enable(a:condition)
         for mode in split(modes, '\ze')
@@ -105,8 +111,11 @@ function! hookcursormoved#Register(condition, fn, ...) "{{{3
                 " TLogVAR {var}
             endif
         endfor
-    else
-        throw 'hookcursormoved: Unknown condition: '. string(a:condition)
+    elseif index(s:unknown_hooks, a:condition) == -1
+        call add(s:unknown_hooks, a:condition)
+        echohl Error
+        echom 'hookcursormoved: Unknown condition: '. string(a:condition)
+        echohl None
     endif
 endf
 
