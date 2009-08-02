@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-29.
-" @Last Change: 2009-03-15.
-" @Revision:    0.0.653
+" @Last Change: 2009-07-25.
+" @Revision:    0.0.655
 
 if &cp || exists("loaded_trag_autoload")
     finish
@@ -431,6 +431,7 @@ function! s:FormatQFLE(qfe) "{{{3
 endf
 
 
+" Display the |quickfix| list with |tlib#input#ListW()|.
 function! trag#QuickList(...) "{{{3
     " TVarArg ['sign', 'TRag']
     " if !empty(sign) && !empty(g:trag_sign)
@@ -439,6 +440,22 @@ function! trag#QuickList(...) "{{{3
     " endif
     let w = tlib#World#New(copy(g:trag_qfl_world))
     let w.qfl  = copy(getqflist())
+    " TLogVAR w.qfl
+    call s:FormatBase(w)
+    " TLogVAR w.base
+    call tlib#input#ListW(w)
+endf
+
+
+" Display the |location-list| with |tlib#input#ListW()|.
+function! trag#LocList(...) "{{{3
+    " TVarArg ['sign', 'TRag']
+    " if !empty(sign) && !empty(g:trag_sign)
+    "     " call tlib#signs#ClearAll(sign)
+    "     " call tlib#signs#Mark(sign, getqflist())
+    " endif
+    let w = tlib#World#New(copy(g:trag_qfl_world))
+    let w.qfl  = copy(getloclist())
     " TLogVAR w.qfl
     call s:FormatBase(w)
     " TLogVAR w.base
