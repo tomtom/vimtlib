@@ -3,8 +3,8 @@
 " @Author:      Tom Link (micathom AT gmail com)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     18-Mai-2004.
-" @Last Change: 2009-02-23.
-" @Revision:    278
+" @Last Change: 2009-07-25.
+" @Revision:    279
 " 
 " GetLatestVimScripts: 1030 1 scalefont.vim
 
@@ -161,6 +161,12 @@ call ScaleFontSet('NormalSingle', {
             \ 'WinExec': 'set fdc=12|'. ScaleFontGet('Normal', 'WinExec'),
             \ })
 
+call ScaleFontSet('NormalScreen', deepcopy(ScaleFontGet('NormalFull')))
+call ScaleFontSet('NormalScreen', {
+            \ 'Lines': 1000,
+            \ 'Cols': 1000,
+            \ })
+            " \ 'WinExec': 'set fdc=0|'. ScaleFontGet('Normal', 'WinExec'),
 
 
 call ScaleFontSet('big', deepcopy(ScaleFontGet('Normal')))
