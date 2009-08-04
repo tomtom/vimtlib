@@ -2,17 +2,17 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2009-06-11.
-" @Revision:    2631
+" @Last Change: 2009-08-02.
+" @Revision:    2633
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
 " Short Description:
-" This plugin adds wiki-like hypertext capabilities to any document.  Just 
-" type :VikiMinorMode and all wiki names will be highlighted. If you press 
-" <c-cr> (or <LocalLeader>vf) when the cursor is over a wiki name, you 
-" jump to (or create) the referred page. When invoked via :set ft=viki, 
-" additional highlighting is provided.
+" This plugin adds wiki-like hypertext capabilities to any document.  
+" Just type :VikiMinorMode and all wiki names will be highlighted. If 
+" you press <c-cr> (or <LocalLeader>vf) when the cursor is over a wiki 
+" name, you jump to (or create) the referred page. When invoked via :set 
+" ft=viki, additional highlighting is provided.
 "
 " Requirements:
 " - tlib.vim (vimscript #1863)
@@ -22,14 +22,16 @@
 " - kpsewhich (not a vim plugin :-) for vikiLaTeX
 "
 " TODO:
+" - s:MarkInexistent() breaks cursor movement when called from a 
+"   CursorMoved(I) autocommand.
 " - File names containing # (the # is interpreted as URL component)
 " - Per Interviki simple name patterns
 " - Allow Wiki links like ::Word or even ::word (not in minor mode due 
 "   possible conflict with various programming languages?)
-" - :VikiRename command: rename links/files (requires a cross-plattform grep 
-"   or similar; or one could a global register)
-" - don't know how to deal with viki names that span several lines (e.g.  in 
-"   LaTeX mode)
+" - :VikiRename command: rename links/files (requires a cross-plattform 
+"   grep or similar; or one could a global register)
+" - don't know how to deal with viki names that span several lines (e.g.  
+"   in LaTeX mode)
 
 if &cp || exists("loaded_viki") "{{{2
     finish
