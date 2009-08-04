@@ -4,7 +4,7 @@ be_an_instance_of(<+CURSOR+>)<++>
 <+elseif(g:tskel_rspec_behaviour == "be_close")+>
 be_close(<+CURSOR+>, <+DELTA+>)<++>
 <+elseif(g:tskel_rspec_behaviour == "be_nil")+>
-be_nil<++>
+be_nil<+CURSOR+>
 <+elseif(g:tskel_rspec_behaviour == "eql")+>
 eql(<+CURSOR+>)<++>
 <+elseif(g:tskel_rspec_behaviour == "equal")+>
