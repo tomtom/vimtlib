@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2006-12-31.
-" @Last Change: 2009-07-10.
-" @Revision:    0.5.935
+" @Last Change: 2009-08-03.
+" @Revision:    0.5.936
 " GetLatestVimScripts: 1751 1 tGpg.vim
 "
 " TODO:
@@ -392,7 +392,8 @@ function! s:CallInDestDir(autocommand, file, mode, FunRef, args) "{{{3
         let buf = -1
     endif
     let bin = &bin
-    let pos = getpos('.')
+    " let pos = getpos('.')
+    let view = winsaveview()
     let t   = @t
     let parms = {'autocommand': a:autocommand, 'file': a:file, 'mode': s:GetMode(a:mode), 'pwd': getcwd()}
     try
@@ -416,7 +417,8 @@ function! s:CallInDestDir(autocommand, file, mode, FunRef, args) "{{{3
     finally
         let &bin = bin
         let @t   = t
-        call setpos('.', pos)
+        " call setpos('.', pos)
+        call winrestview(view)
         silent exec 'cd '. s:EscapeShellCmdChars(s:EscapeFilename(parms['pwd']))
         if buf != -1
             exec 'silent! buffer! '. buf

@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-11-12.
-" @Last Change: 2009-02-15.
-" @Revision:    136
+" @Last Change: 2009-08-03.
+" @Revision:    137
 " GetLatestVimScripts: 2437 0 shymenu.vim
 
 if &cp || exists("loaded_shymenu")
@@ -128,9 +128,11 @@ endf
 
 function! s:SetTopLine(lineno) "{{{3
     if line('w0') != a:lineno
-        let pos = getpos('.')
+        " let pos = getpos('.')
+        let view = winsaveview()
         exec 'keepjumps norm! '. a:lineno .'zt'
-        call setpos('.', pos)
+        " call setpos('.', pos)
+        call winrestview(view)
     endif
 endf
 

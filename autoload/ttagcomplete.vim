@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-11-02.
-" @Last Change: 2009-02-15.
-" @Revision:    0.0.202
+" @Last Change: 2009-08-03.
+" @Revision:    0.0.204
 
 if &cp || exists("loaded_ttagcomplete_autoload")
     finish
@@ -49,7 +49,8 @@ endf
 
 function! ttagcomplete#CompleteSkeletons(...) "{{{3
     TVarArg ['expand_kinds', '[:alnum:]']
-    let pos = getpos('.')
+    " let pos = getpos('.')
+    let view = winsaveview()
     let start  = s:Complete(1, '')
     let lineno = line('.')
     let line   = getline(lineno)
@@ -85,7 +86,8 @@ function! ttagcomplete#CompleteSkeletons(...) "{{{3
             endif
             let line = line[0 : start - 1] . text
             call tlib#buffer#ReplaceRange(lineno, lineno, [line])
-            call setpos('.', pos)
+            " call setpos('.', pos)
+            call winrestview(view)
             call tskeleton#SetCursor(lineno, lineno)
         endif
     endif
@@ -189,7 +191,8 @@ endf
 
 
 function! ttagcomplete#FindJavaClass(name) "{{{3
-    let pos = getpos('.')
+    " let pos = getpos('.')
+    let view = winsaveview()
     try
         let rx   = '\(^\C\s*\(\(@\w\+\((.\{-})\)\?\|final\|public\|private\|protected\)\s\+\)*\|(\([^,]\+,\s*\)*\)\(\u\w*\|void\|int\|boolean\|double\|float\|byte\|char\)\(<.\{-}>\)*\(\[\]\)*\s\+'.tlib#rx#Escape(a:name)
         let line = search(rx, 'bnw')
@@ -200,7 +203,8 @@ function! ttagcomplete#FindJavaClass(name) "{{{3
             return ml[6]
         endif
     finally
-        call setpos('.', pos)
+        " call setpos('.', pos)
+        call winrestview(view)
     endtry
     return ''
 endf

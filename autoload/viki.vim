@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2009-07-25.
-" @Revision:    0.528
+" @Last Change: 2009-08-03.
+" @Revision:    0.533
 
 if &cp || exists("loaded_viki_auto") "{{{2
     finish
@@ -169,7 +169,8 @@ endf
 
 " Find the next heading
 function! viki#FindNextHeading()
-    let pos = getpos('.')
+    " let pos = getpos('.')
+    let view = winsaveview()
     " TLogVAR pos
     let cl  = getline('.')
     " TLogDBG 'line0='. cl
@@ -181,7 +182,8 @@ function! viki#FindNextHeading()
     endif
     " TLogDBG 'head='. head
     " TLogVAR pos
-    call setpos('.', pos)
+    " call setpos('.', pos)
+    call winrestview(view)
     let vikisr = @/
     call search('\V\^'. head .'\s', 'W')
     let @/=vikisr
@@ -1053,7 +1055,8 @@ endf
 
 " Set automatic anchor marks: #ma => 'a
 function! viki#SetAnchorMarks() "{{{3
-    let pos = getpos(".")
+    " let pos = getpos(".")
+    let view = winsaveview()
     " TLogVAR pos
     let sr  = @/
     let anchorRx = viki#GetAnchorRx('m\zs\[a-zA-Z]\ze\s\*\$')
@@ -1062,7 +1065,8 @@ function! viki#SetAnchorMarks() "{{{3
     exec 'silent keepjumps g /'. anchorRx .'/exec "norm! m". matchstr(getline("."), anchorRx)'
     let @/ = sr
     " TLogVAR pos
-    call setpos('.', pos)
+    " call setpos('.', pos)
+    call winrestview(view)
     if exists('*QuickfixsignsSet')
         call QuickfixsignsSet('')
     endif
@@ -2134,7 +2138,8 @@ endf
 
 """ #Files related stuff {{{1
 fun! viki#FilesUpdateAll() "{{{3
-    let p = getpos('.')
+    " let p = getpos('.')
+    let view = winsaveview()
     try
         norm! gg
         while viki#FindNextRegion('Files')
@@ -2142,7 +2147,8 @@ fun! viki#FilesUpdateAll() "{{{3
             norm! j
         endwh
     finally
-        call setpos('.', p)
+        " call setpos('.', p)
+        call winrestview(view)
     endtry
 endf
 
@@ -2237,7 +2243,8 @@ fun! viki#DirListing(lhs, lhb, indent) "{{{3
     if empty(patt)
         echoerr 'Viki: No glob pattern defnied: '. string(args)
     else
-        let p = getpos('.')
+        " let p = getpos('.')
+        let view = winsaveview()
         let t = @t
         try
             " let style = get(args, 'style', 'ls')
@@ -2271,7 +2278,8 @@ fun! viki#DirListing(lhs, lhb, indent) "{{{3
             exec 'norm! '. a:lhb .'G"tP'
         finally
             let @t = t
-            call setpos('.', p)
+            " call setpos('.', p)
+            call winrestview(view)
         endtry
     endif
 endf
@@ -2396,7 +2404,8 @@ fun! s:GetRegionStartRx(...) "{{{3
 endf
 
 fun! s:GetRegionGeometry(...) "{{{3
-    let p = getpos('.')
+    " let p = getpos('.')
+    let view = winsaveview()
     try
         norm! $
         let rx_start = s:GetRegionStartRx(a:0 >= 1 ? a:1 : '')
@@ -2418,7 +2427,8 @@ fun! s:GetRegionGeometry(...) "{{{3
         endif
         return [0, 0, 0, '']
     finally
-        call setpos('.', p)
+        " call setpos('.', p)
+        call winrestview(view)
     endtry
 endf
 

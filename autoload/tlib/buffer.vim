@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-06-30.
-" @Last Change: 2009-02-15.
-" @Revision:    0.0.268
+" @Last Change: 2009-08-03.
+" @Revision:    0.0.269
 
 if &cp || exists("loaded_tlib_buffer_autoload")
     finish
@@ -338,11 +338,13 @@ endf
 
 " Evaluate cmd while maintaining the cursor position and jump registers.
 function! tlib#buffer#KeepCursorPosition(cmd) "{{{3
-    let pos = getpos('.')
+    " let pos = getpos('.')
+    let view = winsaveview()
     try
         keepjumps exec a:cmd
     finally
-        call setpos('.', pos)
+        " call setpos('.', pos)
+        call winrestview(view)
     endtry
 endf
 

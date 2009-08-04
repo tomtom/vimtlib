@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-06-24.
-" @Last Change: 2009-02-28.
-" @Revision:    0.1.169
+" @Last Change: 2009-08-03.
+" @Revision:    0.1.170
 
 if &cp || exists("loaded_tlib_agent_autoload") "{{{2
     finish
@@ -475,12 +475,14 @@ function! tlib#agent#DoAtLine(world, selected) "{{{3
         let cmd = input('Command: ', '', 'command')
         if !empty(cmd)
             call a:world.SwitchWindow('win')
-            let pos = getpos('.')
+            " let pos = getpos('.')
+            let view = winsaveview()
             for l in a:selected
                 call tlib#buffer#ViewLine(l, '')
                 exec cmd
             endfor
-            call setpos('.', pos)
+            " call setpos('.', pos)
+            call winrestview(view)
         endif
     endif
     call a:world.ResetSelected()

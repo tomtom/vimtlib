@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-12-05.
-" @Last Change: 2009-02-15.
-" @Revision:    0.0.24
+" @Last Change: 2009-08-03.
+" @Revision:    0.0.25
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -33,7 +33,8 @@ fun! tEchoPair#Echo(backwards, type, ...)
     let l0 = line('.')
     let c0 = col('.')
     " let c0 = col['.']
-    let pos = getpos('.')
+    " let pos = getpos('.')
+    let view = winsaveview()
     try
         if a:type == 'fold'
             let what = '.'
@@ -130,7 +131,8 @@ fun! tEchoPair#Echo(backwards, type, ...)
         " return a:what
     finally
         call s:Normal(w0 .'zt')
-        call setpos('.', pos)
+        " call setpos('.', pos)
+        call winrestview(view)
         let &lz = lz
     endtry
 endf

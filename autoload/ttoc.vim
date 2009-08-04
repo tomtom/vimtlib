@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-11-11.
-" @Last Change: 2009-03-15.
-" @Revision:    0.0.73
+" @Last Change: 2009-08-03.
+" @Revision:    0.0.75
 
 if &cp || exists("loaded_ttoc_autoload")
     finish
@@ -18,7 +18,8 @@ set cpo&vim
 function! ttoc#Collect(world, return_index, ...) "{{{3
     TVarArg ['additional_lines', 0]
     " TLogVAR additional_lines
-    let pos = getpos('.')
+    " let pos = getpos('.')
+    let view = winsaveview()
     let s:accum = []
     let s:table  = []
     let s:current_line = line('.')
@@ -37,7 +38,8 @@ function! ttoc#Collect(world, return_index, ...) "{{{3
         let @/ = rs
     endtry
 
-    call setpos('.', pos)
+    " call setpos('.', pos)
+    call winrestview(view)
     " let a:world.index_table = s:table
     if a:return_index
         return [s:accum, s:current_index]
@@ -55,7 +57,8 @@ function! s:ProcessLine() "{{{3
         let linesplus = 1
         " call TLogDBG("s:multiline=". s:multiline)
         if s:multiline
-            let pos = getpos('.')
+            " let pos = getpos('.')
+            let view = winsaveview()
             keepjumps let endline = search(s:world.ttoc_rx, 'ceW')
             " TLogVAR endline
             if endline == 0
@@ -65,7 +68,8 @@ function! s:ProcessLine() "{{{3
                 let t = [join(getline(l, endline), "\n")]
                 let linesplus += (endline - l)
             endif
-            call setpos('.', pos)
+            " call setpos('.', pos)
+            call winrestview(view)
         else
             let t = [matchstr(getline(l), s:rx)]
         endif
