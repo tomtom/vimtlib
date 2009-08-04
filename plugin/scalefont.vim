@@ -3,8 +3,8 @@
 " @Author:      Tom Link (micathom AT gmail com)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     18-Mai-2004.
-" @Last Change: 2009-07-25.
-" @Revision:    279
+" @Last Change: 2009-08-02.
+" @Revision:    283
 " 
 " GetLatestVimScripts: 1030 1 scalefont.vim
 
@@ -100,7 +100,7 @@ let g:scaleFontCols_0  = &co
 let g:scaleFontWinX_0  = -1
 let g:scaleFontWinY_0  = -1
 " if !exists("g:scaleFontExec_0") | let g:scaleFontExec_0 = 'set guioptions='. s:scaleFontGuioptions .'| set laststatus='. s:lastStatus | endif
-if !exists("g:scaleFontExec_0") | let g:scaleFontExec_0 = ScaleFontSaveOptions('guioptions', 'ruler', 'laststatus', 'fdc') | endif "{{{2
+if !exists("g:scaleFontExec_0") | let g:scaleFontExec_0 = ScaleFontSaveOptions('guioptions', 'ruler', 'laststatus', 'fdc', 'linespace') | endif "{{{2
 
 
 
@@ -152,6 +152,7 @@ call ScaleFontSet('NormalMax', {
 call ScaleFontSet('NormalFull', deepcopy(ScaleFontGet('NormalMax')))
 call ScaleFontSet('NormalFull', {
             \ 'Exec': 'let &guioptions=substitute(&guioptions, "\\C[mrlRLbT]", "", "g")|set laststatus=0 ruler |'. ScaleFontGet('Normal', 'Exec'),
+            \ 'WinExec': 'set fdc=0|'. ScaleFontGet('Normal', 'WinExec'),
             \ })
             " \ 'WinExec': 'set fdc=0|'. ScaleFontGet('Normal', 'WinExec'),
 
