@@ -4,8 +4,8 @@
 " @GIT:         http://github.com/tomtom/vimtlib/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-03-14.
-" @Last Change: 2009-07-29.
-" @Revision:    271
+" @Last Change: 2009-08-02.
+" @Revision:    276
 " GetLatestVimScripts: 2584 1 :AutoInstall: quickfixsigns.vim
 
 if &cp || exists("loaded_quickfixsigns") || !has('signs')
@@ -56,10 +56,26 @@ if !exists('g:quickfixsigns_marks_def')
                 \ 'sign': '*s:MarkSign',
                 \ 'get': 's:Marks()',
                 \ 'id': 's:MarkId',
-                \ 'event': ['BufEnter', 'CursorHold', 'CursorHoldI'],
+                \ 'event': ['BufEnter', 'CursorHold', 'CursorHoldI', 'CursorMoved', 'CursorMovedI'],
                 \ 'timeout': 2
                 \ }
-                " \ 'event': ['BufEnter', 'CursorHold', 'CursorHoldI', 'CursorMoved', 'CursorMovedI'],
+    " \ 'event': ['BufEnter', 'CursorHold', 'CursorHoldI'],
+endif
+if !&lazyredraw
+    let s:cmn = index(g:quickfixsigns_marks_def.event, 'CursorMoved')
+    let s:cmi = index(g:quickfixsigns_marks_def.event, 'CursorMovedI')
+    if s:cmn >= 0 || s:cmi >= 0
+        echohl Error
+        echom "quickfixsigns: Support for CursorMoved(I) events requires 'lazyredraw' to be set"
+        echohl NONE
+        if s:cmn >= 0
+            call remove(g:quickfixsigns_marks_def.event, s:cmn)
+        endif
+        if s:cmi >= 0
+            call remove(g:quickfixsigns_marks_def.event, s:cmi)
+        endif
+    endif
+    unlet s:cmn s:cmi
 endif
 
 if !exists('g:quickfixsigns_balloon')
@@ -102,9 +118,9 @@ let s:last_run = {}
 "
 " Normally, the end-user doesn't need to call this function.
 function! QuickfixsignsSet(event) "{{{3
-    let lz = &lazyredraw
-    set lz
-    try
+    " let lz = &lazyredraw
+    " set lz
+    " try
         let bn = bufnr('%')
         let anyway = empty(a:event)
         for def in g:quickfixsigns_lists
@@ -134,11 +150,11 @@ function! QuickfixsignsSet(event) "{{{3
                 endif
             endif
         endfor
-    finally
-        if &lz != lz
-            let &lz = lz
-        endif
-    endtry
+    " finally
+    "     if &lz != lz
+    "         let &lz = lz
+    "     endif
+    " endtry
 endf
 
 
@@ -364,4 +380,5 @@ Incompatible changes:
 
 0.5
 - Set balloonexpr only if empty (don't try to be smart)
+- Disable CursorMoved(I) events, when &lazyredraw isn't set.
 
