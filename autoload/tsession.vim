@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-02.
-" @Last Change: 2009-03-01.
-" @Revision:    0.0.370
+" @Last Change: 2009-08-02.
+" @Revision:    0.0.377
 
 if &cp || exists("loaded_tsession_autoload")
     finish
@@ -20,8 +20,10 @@ function! tsession#Collect() "{{{3
                 \ 'winrestcmd': winrestcmd(),
                 \ 'restore_global': s:OptionsRestCmd('global')}
     " let s:winwidth  = &co - &fdc
-    let s:winwidth  = &co
-    let s:winheight = &lines
+    " let s:winwidth  = &co
+    " let s:winheight = &lines
+    let s:winwidth  = winwidth(0)
+    let s:winheight = winheight(0)
     " let s:next_vert = winwidth(1) != s:winwidth
     let s:next_vert = 0
     let wn = winnr()
@@ -43,9 +45,12 @@ function! s:CollectWindowsInfo(session) "{{{3
         echohl NONE
     endif
     let wn = winnr()
-    let ww = winwidth(0)
-    let wh = winheight(0)
+    let ww = winwidth(wn)
+    let wh = winheight(wn)
     " TLogVAR wn, ww, wh
+    " call tlog#Debug('s:winwidth='. s:winwidth)
+    let s:next_vert = ww != s:winwidth
+    " call tlog#Debug('s:next_vert='. s:next_vert)
     let a:session.windows[wn] = {
                 \ 'bn': bufnr('%'),
                 \ 'vertical': s:next_vert,
@@ -53,7 +58,6 @@ function! s:CollectWindowsInfo(session) "{{{3
                 \ 'restore_win': s:OptionsRestCmd('win'),
             \ }
     " TLogVAR a:session.windows[wn]
-    let s:next_vert = ww != s:winwidth
     if s:next_vert
         let ww = s:winwidth - ww - 1
     endif
