@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-10-04.
-" @Last Change: 2009-08-01.
-" @Revision:    0.3.224
+" @Last Change: 2009-08-03.
+" @Revision:    0.3.227
 
 if &cp || exists("loaded_hookcursormoved_autoload")
     finish
@@ -34,19 +34,24 @@ function! s:RunHooks(mode, condition) "{{{3
                 echom v:errmsg
                 echohl NONE
             endtry
-            call setpos('.', b:hookcursormoved_currpos)
+            if winsaveview() != b:hookcursormoved_currview
+                call winrestview(b:hookcursormoved_currview)
+                " call setpos('.', b:hookcursormoved_currpos)
+            endif
             unlet HookFn
         endfor
     endif
 endf
 
 
-function! s:SaveCursorPos() "{{{3
+function! s:SaveView() "{{{3
     if exists('b:hookcursormoved_currpos')
         let b:hookcursormoved_oldpos = b:hookcursormoved_currpos
+        let b:hookcursormoved_oldview = b:hookcursormoved_currview
         " TLogVAR b:hookcursormoved_oldpos
     endif
     let b:hookcursormoved_currpos = getpos('.')
+    let b:hookcursormoved_currview = winsaveview()
     " TLogVAR b:hookcursormoved_currpos
 endf
 
@@ -54,7 +59,7 @@ endf
 function! hookcursormoved#Enable(condition) "{{{3
     if !exists('b:hookcursormoved_enabled')
         let b:hookcursormoved_enabled = []
-        autocmd HookCursorMoved CursorMoved,CursorMovedI <buffer> call s:SaveCursorPos()
+        autocmd HookCursorMoved CursorMoved,CursorMovedI <buffer> call s:SaveView()
     endif
     if index(b:hookcursormoved_enabled, a:condition) == -1
         exec 'autocmd HookCursorMoved CursorMoved  <buffer> call s:RunHooks("n", '. string(a:condition) .')'
