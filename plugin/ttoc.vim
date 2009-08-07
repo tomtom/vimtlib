@@ -3,9 +3,10 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-07-09.
-" @Last Change: 2009-05-03.
-" @Revision:    462
+" @Last Change: 2009-08-04.
+" @Revision:    463
 " GetLatestVimScripts: 2014 0 ttoc.vim
+" TODO: The cursor isn't set to the old location after using "preview".
 
 if &cp || exists("loaded_ttoc")
     finish

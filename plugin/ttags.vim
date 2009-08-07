@@ -3,13 +3,12 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-09.
-" @Last Change: 2009-04-11.
-" @Revision:    161
+" @Last Change: 2009-08-04.
+" @Revision:    162
 " GetLatestVimScripts: 2018 1 ttags.vim
 "
-" TODO:
-" - Open in new window (split, vsplit, tab)
-" - Fix preview
+" TODO: Open in new window (split, vsplit, tab)
+" TODO: Fix preview
 
 if &cp || exists("loaded_ttags")
     finish

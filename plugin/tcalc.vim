@@ -3,15 +3,14 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-10-07.
-" @Last Change: 2009-02-15.
-" @Revision:    0.12.355
+" @Last Change: 2009-08-04.
+" @Revision:    0.12.356
 " GetLatestVimScripts: 2040 1 tcalc.vim
 "
-" TODO:
-" - Error checks for malformed input
-" - Pretty printing (of arrays)
-" - Doesn't work: [ 1 2 3 ] ( [ 'Numeric 'Numeric 'Numeric ] ) assert
-" - Integrate with some CAS package/library
+" TODO: Error checks for malformed input
+" TODO: Pretty printing (of arrays)
+" TODO: Doesn't work: [ 1 2 3 ] ( [ 'Numeric 'Numeric 'Numeric ] ) assert
+" TODO: Integrate with some CAS package/library
 
 if &cp || exists("loaded_tcalc") || !has('ruby')
     finish

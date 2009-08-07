@@ -3,19 +3,18 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2006-12-31.
-" @Last Change: 2009-08-03.
-" @Revision:    0.5.936
+" @Last Change: 2009-08-04.
+" @Revision:    0.5.937
 " GetLatestVimScripts: 1751 1 tGpg.vim
 "
-" TODO:
-" - Remove gpg messages from the top of the file & display them with 
-"   echom
-" - :read doesn't work ('<,'>:write?)
-" - test special characters (new template syntax)
-" - test multiple recipients
-" - passphrase vs multiple recipients?
-" - signing & verification (embedded vs detached)
-" - save cached values between sessions in a gpg encoded file?
+" TODO: Remove gpg messages from the top of the file & display them with 
+" echom
+" TODO: :read doesn't work ('<,'>:write?)
+" TODO: test special characters (new template syntax)
+" TODO: test multiple recipients
+" TODO: passphrase vs multiple recipients?
+" TODO: signing & verification (embedded vs detached)
+" TODO: save cached values between sessions in a gpg encoded file?
 
 
 if &cp || exists("loaded_tgpg") "{{{2

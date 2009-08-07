@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2009-08-02.
-" @Revision:    2633
+" @Last Change: 2009-08-04.
+" @Revision:    2634
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -21,17 +21,14 @@
 " - imaps.vim (vimscript #244 or #475 for |:VimQuote|)
 " - kpsewhich (not a vim plugin :-) for vikiLaTeX
 "
-" TODO:
-" - s:MarkInexistent() breaks cursor movement when called from a 
-"   CursorMoved(I) autocommand.
-" - File names containing # (the # is interpreted as URL component)
-" - Per Interviki simple name patterns
-" - Allow Wiki links like ::Word or even ::word (not in minor mode due 
-"   possible conflict with various programming languages?)
-" - :VikiRename command: rename links/files (requires a cross-plattform 
-"   grep or similar; or one could a global register)
-" - don't know how to deal with viki names that span several lines (e.g.  
-"   in LaTeX mode)
+" TODO: File names containing # (the # is interpreted as URL component)
+" TODO: Per Interviki simple name patterns
+" TODO: Allow Wiki links like ::Word or even ::word (not in minor mode 
+" due possible conflict with various programming languages?)
+" TODO: :VikiRename command: rename links/files (requires a 
+" cross-plattform grep or similar; or one could a global register)
+" TODO: don't know how to deal with viki names that span several lines 
+" (e.g.  in LaTeX mode)
 
 if &cp || exists("loaded_viki") "{{{2
     finish

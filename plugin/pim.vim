@@ -3,23 +3,22 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     30-Okt-2005.
-" @Last Change: 2009-02-15.
-" @Revision:    0.1.1070
+" @Last Change: 2009-08-04.
+" @Revision:    0.1.1071
 "
-" TODO:
-" - :PimDelete
-" - :PimArchive, :PimFinish (move to archive) (or always save a copy in the 
-" archive and simply delete obsolete entries?)
-" - Alarms
-" - Keywords, categories (show only certain categories)
-" - Sort tasks: date, category, priority
-" - Show obsolete tasks, tasks of some categories only ...
-" - Sync with palm, pi/ki (in ruby?)
-" - Portable PimSortTasks & PimSortDates (or wait for vim7)
-" - insert a small calendar in overviews
-" - general name pattern for all record types: category.name (use 
-"   directories instead of file name patterns?)
-" - Subcategories/overviews per tags (or simply use grep?)
+" TODO: :PimDelete
+" TODO: :PimArchive, :PimFinish (move to archive) (or always save a copy 
+" in the archive and simply delete obsolete entries?)
+" TODO: Alarms
+" TODO: Keywords, categories (show only certain categories)
+" TODO: Sort tasks: date, category, priority
+" TODO: Show obsolete tasks, tasks of some categories only ...
+" TODO: Sync with palm, pi/ki (in ruby?)
+" TODO: Portable PimSortTasks & PimSortDates (or wait for vim7)
+" TODO: insert a small calendar in overviews
+" TODO: general name pattern for all record types: category.name (use 
+" directories instead of file name patterns?)
+" TODO: Subcategories/overviews per tags (or simply use grep?)
 "
 " TEST:
 " - events: repeat, multiple dates

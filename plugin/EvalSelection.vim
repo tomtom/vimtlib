@@ -2,14 +2,13 @@
 " @Author:      Tom Link (micathom AT gmail com)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     29-Jän-2004.
-" @Last Change: 2009-02-15.
-" @Revision:    0.16.866
+" @Last Change: 2009-08-04.
+" @Revision:    0.16.867
 " 
 " vimscript #889
 " 
-" TODO:
-" - find & fix compilation errors
-" - fix interaction errors
+" TODO: find & fix compilation errors
+" TODO: fix interaction errors
 "
 
 """ Basic Functionality {{{1

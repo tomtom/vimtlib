@@ -3,13 +3,12 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-21.
-" @Last Change: 2009-02-15.
-" @Revision:    0.4.77
+" @Last Change: 2009-08-04.
+" @Revision:    0.4.78
 " GetLatestVimScripts: 1906 1 tmboxbrowser.vim
 "
-" TODO:
-" - Sending e-mails?
-" - Handle thunderbird drafts mbox?
+" TODO: Sending e-mails?
+" TODO: Handle thunderbird drafts mbox?
 
 if &cp || exists("loaded_tmboxbrowser")
     finish

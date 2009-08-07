@@ -4,12 +4,11 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-02.
 " @Last Change: 2009-08-04.
-" @Revision:    0.1.100
+" @Revision:    0.1.104
 " GetLatestVimScripts: 0 1 tsession.vim
 "
-" TODO:
-" - restore tab pages
-" - problems with certain window layouts
+" TODO: restore tab pages
+" FIXME: problems with certain window layouts
 
 if &cp || exists("loaded_tsession")
     finish
@@ -93,20 +92,22 @@ function! s:Swap(bang) "{{{3
 endf
 
 
-" :display: TSessionSave [SESSION]
 " See also |tsession#Save|.
 " EXAMPLES: >
 "   TSessionSave example
+" :display: TSessionSave [SESSION]
+" :read: command! TSessionSave
 command! -bang -nargs=? -bar -complete=customlist,s:SessionComplete
             \ TSessionSave call tsession#Save(<q-args>)
 
-" :display: TSessionLoad[!] [SESSION]
 " With !, buffers not registered in the session will be deleted if 
 " |g:tsession_swap| is false. If g:tsession_swap is true, the meaning of 
 " ! is inverted.
 " See also |tsession#Load|.
 " EXAMPLES: >
 "   TSessionLoad example
+" :display: TSessionLoad[!] [SESSION]
+" :read: command! TSessionLoad
 command! -bang -nargs=? -bar -complete=customlist,s:SessionComplete
             \ TSessionLoad call tsession#Load(<q-args>, {'swap': s:Swap('<bang>')})
 

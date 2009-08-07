@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-29.
-" @Last Change: 2009-07-25.
-" @Revision:    570
+" @Last Change: 2009-08-04.
+" @Revision:    584
 " GetLatestVimScripts: 2033 1 trag.vim
 
 if &cp || exists("loaded_trag")
@@ -307,22 +307,30 @@ command! -nargs=+ -bang -bar -complete=file Traggrep TRaggrep<bang> <args>
 "
 " These variables are tested in the order as listed here. If the value 
 " of a variable is non-empty, this one will be used instead of the other 
-" methods. The tags files are last.
+" methods.
+"
+" The tags file is used as a last ressort.
 
-" A list of files. Can be buffer local.
+" 1. A list of files. Can be buffer local.
 TLet g:trag_files = []
 
-" A glob pattern -- this should be an absolute path and may contain ** 
+" 2. A glob pattern -- this should be an absolute path and may contain ** 
 " (see |glob()| and |wildcards|). Can be buffer local.
 TLet g:trag_glob = ''
 
-" The name of a file containing the projects file list. This file could be 
+" 3. Filetype-specific project files.
+TLet g:trag_project_ruby = 'Manifest.txt'
+
+" 4. The name of a file containing the projects file list. This file could be 
 " generated via make. Can be buffer local.
 TLet g:trag_project = ''
 
-" Filetype-specific project files.
-TLet g:trag_project_ruby = 'Manifest.txt'
-
+" 5. The name of a git repository that includes all files of interest. 
+" If the value is "*", trag will search from the current directory 
+" (|getcwd()|) upwards for a .git directory.
+" If the value is "finddir", use |finddir()| to find a .git directory.
+" Can be buffer local.
+TLet g:trag_git = ''
 
 " :display: :TRagsetfiles [FILELIST]
 " The file list is set only once per buffer. If the list of the project 
@@ -343,6 +351,9 @@ command! -nargs=1 -bar -complete=file TRagaddfiles call trag#AddFiles(<args>)
 " :display: :TRagclearfiles
 " Remove any files from the project list.
 command! TRagclearfiles call trag#ClearFiles()
+
+" :display: :TRagGitFiles GIT_REPOS
+command! -nargs=1 -bar -complete=dir TRagGitFiles call trag#SetGitFiles(<q-args>)
 
 
 let &cpo = s:save_cpo
@@ -416,4 +427,5 @@ default file list will be used.
 - Generalized trag#rename#Rename()
 - Enabled "trace cursor" functionality (mapped to the <c-insert> key).
 - :Traglw
+- TRagGitFiles, trag#SetGitFiles(), g:trag_git
 
