@@ -3,8 +3,8 @@
 " @Website:     http://members.a1.net/t.link/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-05-01.
-" @Last Change: 2009-05-24.
-" @Revision:    0.1.724
+" @Last Change: 2009-08-04.
+" @Revision:    0.1.727
 
 " :filedoc:
 " A prototype used by |tlib#input#List|.
@@ -534,6 +534,7 @@ function! s:prototype.CloseScratch(...) dict "{{{3
         return 0
     else
         let rv = tlib#scratch#CloseScratch(self, reset_scratch)
+        " TLogVAR rv
         if rv
             call self.SwitchWindow('win')
         endif

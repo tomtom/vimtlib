@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-08-24.
-" @Last Change: 2009-02-26.
-" @Revision:    0.0.49
+" @Last Change: 2009-08-04.
+" @Revision:    0.0.51
 
 if &cp || exists("loaded_tlib_win_autoload")
     finish
@@ -56,6 +56,7 @@ function! tlib#win#SetLayout(layout) "{{{3
             let winnr = winnr()
             " TLogVAR winnr
             for [w, v] in items(a:layout.views)
+                " TLogVAR w, v
                 call tlib#win#Set(w)
                 call winrestview(v)
             endfor
