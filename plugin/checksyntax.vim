@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     04-Mai-2005.
-" @Last Change: 2009-08-02.
-" @Revision:    344
+" @Last Change: 2009-08-07.
+" @Revision:    348
 
 if exists('g:checksyntax')
     finish
@@ -263,7 +263,11 @@ function! CheckSyntax(manually, ...)
         "     call tlib#signs#ClearAll('CheckSyntax')
         "     call tlib#signs#Mark('CheckSyntax', getqflist())
         " endif
-        if output == '' || (okrx != '' && output =~ okrx) || (failrx != '' && output !~ failrx)
+        let qfl = getqflist()
+        call filter(qfl, 'v:val.lnum != 0 || v:val.pattern != ""')
+        call setqflist(qfl)
+        " if output == '' || (okrx != '' && output =~ okrx) || (failrx != '' && output !~ failrx)
+        if len(qfl) == 0
             " TLogVAR output, okrx, failrx
             " TLogDBG okrx != '' && output =~ okrx
             " TLogDBG output !~ failrx
