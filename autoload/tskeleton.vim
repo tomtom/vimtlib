@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-03.
-" @Last Change: 2009-05-03.
-" @Revision:    0.0.1199
+" @Last Change: 2009-08-05.
+" @Revision:    0.0.1218
 
 if &cp || exists("loaded_tskeleton_autoload")
     finish
@@ -2577,4 +2577,31 @@ function! tskeleton#DefineAutoCmd(template) "{{{3
     endif
 endf
 
+
+" In the current buffer, map the tab key so that
+"   - if the cursor is located at the beginning of the line, indent the 
+"     current line
+"   - otherwise expand the bit under the cursor
+function! tskeleton#MapKeyTab(...) "{{{3
+    TVarArg ['default', '==']
+    exec 'noremap <buffer> <tab> :call tskeleton#KeyTab("n", '. string(default) .')<cr>'
+    exec 'inoremap <buffer> <tab> <c-\><c-o>:call tskeleton#KeyTab("i", '. string(default) .')<cr>'
+endf
+
+
+function! tskeleton#KeyTab(mode, default) "{{{3
+    let col = col('.') - 1
+    if a:mode == 'i' && col > 0
+        let col -= 1
+    endif
+    let pre = getline('.')[0 : col]
+    " TLogVAR col, pre
+    if pre =~ '^\s*$'
+        let view = winsaveview()
+        exec 'norm! '. a:default
+        call winrestview(view)
+    else
+        call tskeleton#ExpandBitUnderCursor(a:mode)
+    endif
+endf
 
