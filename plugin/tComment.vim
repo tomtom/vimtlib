@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     27-Dez-2004.
-" @Last Change: 2009-02-15.
-" @Revision:    1.9.670
+" @Last Change: 2009-08-07.
+" @Revision:    1.9.671
 " 
 " GetLatestVimScripts: 1173 1 tComment.vim
 
@@ -159,6 +159,7 @@ call TCommentDefineType('java',             '/* %s */'         )
 call TCommentDefineType('java_inline',      g:tcommentInlineC  )
 call TCommentDefineType('java_block',       g:tcommentBlockC   )
 call TCommentDefineType('java_doc_block',   g:tcommentBlockC2  )
+call TCommentDefineType('jproperties',      '# %s'             )
 call TCommentDefineType('lisp',             '; %s'             )
 call TCommentDefineType('lynx',             '# %s'             )
 call TCommentDefineType('m4',               'dnl %s'           )
