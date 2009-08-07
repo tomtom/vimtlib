@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-07-18.
-" @Last Change: 2009-07-10.
-" @Revision:    0.0.139
+" @Last Change: 2009-08-04.
+" @Revision:    0.0.144
 
 if &cp || exists("loaded_tlib_scratch_autoload")
     finish
@@ -75,6 +75,8 @@ endf
 
 
 " Close a scratch buffer as defined in keyargs (usually a World).
+" Return 1 if the scratch buffer is closed (or if it already was 
+" closed).
 function! tlib#scratch#CloseScratch(keyargs, ...) "{{{3
     TVarArg ['reset_scratch', 1]
     let scratch = get(a:keyargs, 'scratch', '')
@@ -91,8 +93,8 @@ function! tlib#scratch#CloseScratch(keyargs, ...) "{{{3
                 " exec wb 
                 " redraw
                 " TLogVAR winnr()
-                return 1
             endif
+            return 1
         finally
             if reset_scratch
                 let a:keyargs.scratch = ''
