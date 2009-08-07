@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-29.
-" @Last Change: 2009-07-25.
-" @Revision:    0.0.655
+" @Last Change: 2009-08-05.
+" @Revision:    0.0.691
 
 if &cp || exists("loaded_trag_autoload")
     finish
@@ -59,6 +59,53 @@ function! trag#AddFiles(files) "{{{3
 endf
 
 
+function! trag#GetProjectFiles(manifest) "{{{3
+    if filereadable(a:manifest)
+        " TLogVAR a:manifest
+        let files = readfile(a:manifest)
+        let cwd   = getcwd()
+        try
+            call tlib#dir#CD(fnamemodify(a:manifest, ':h'), 1)
+            call map(files, 'fnamemodify(v:val, ":p")')
+            return files
+        finally
+            call tlib#dir#CD(cwd, 1)
+        endtry
+    endif
+    return []
+endf
+
+
+function! trag#GetGitFiles(repos) "{{{3
+    let repos   = tlib#dir#PlainName(a:repos)
+    let basedir = substitute(repos, '[\/]\.git\([\/]\)\?$', '', '')
+    " TLogVAR repos, basedir
+    " TLogVAR getcwd()
+    call tlib#dir#Push(basedir)
+    " TLogVAR getcwd()
+    try
+        let files = split(system('git ls-files'), '\n')
+        " TLogVAR files
+        call map(files, 'basedir . g:tlib_filename_sep . v:val')
+        return files
+    finally
+        call tlib#dir#Pop()
+    endtry
+    return []
+endf
+
+
+" Set the files list from the files included in a given git repository.
+function! trag#SetGitFiles(repos) "{{{3
+    let files = trag#GetGitFiles(a:repos)
+    if !empty(files)
+        call trag#ClearFiles()
+        let b:trag_files_ = files
+        echom len(files) ." files from the git repository."
+    endif
+endf
+
+
 " :def: function! trag#SetFiles(?files=[])
 function! trag#SetFiles(...) "{{{3
     TVarArg ['files', []]
@@ -78,17 +125,17 @@ function! trag#SetFiles(...) "{{{3
                 if !empty(proj)
                     " let proj = fnamemodify(proj, ':p')
                     let proj = findfile(proj, '.;')
-                    if filereadable(proj)
-                        " TLogVAR proj
-                        let files = readfile(proj)
-                        let cwd   = getcwd()
-                        try
-                            call tlib#dir#CD(fnamemodify(proj, ':h'), 1)
-                            call map(files, 'fnamemodify(v:val, ":p")')
-                        finally
-                            call tlib#dir#CD(cwd, 1)
-                        endtry
+                    let files = trag#GetProjectFiles(proj)
+                else
+                    let git_repos = tlib#var#Get('trag_git', 'bg', '')
+                    if git_repos == '*'
+                        let git_repos = trag#FindGitRepos()
+                    elseif git_repos == "finddir"
+                        let git_repos = finddir('.git')
                     endif
+                    if !empty(git_repos)
+                        let files = trag#GetGitFiles(git_repos)
+                    end
                 endif
             endif
         endif
@@ -126,6 +173,26 @@ function! trag#SetFiles(...) "{{{3
 endf
 
 
+function! trag#FindGitRepos() "{{{3
+    let dir = fnamemodify(getcwd(), ':p')
+    let git = tlib#file#Join([dir, '.git'])
+    while !isdirectory(git)
+        let dir1 = fnamemodify(dir, ':h')
+        if dir == dir1
+            break
+        else
+            let dir = dir1
+        endif
+        let git = tlib#file#Join([dir, '.git'])
+    endwh
+    if isdirectory(git)
+        return git
+    else
+        return ''
+    endif
+endf
+
+
 " Edit a file from the project catalog. See |g:trag_project| and 
 " |:TRagfile|.
 function! trag#Edit() "{{{3
@@ -147,10 +214,9 @@ endf
 " Test j trag
 " Test n tragfoo
 
-" TODO:
-" If the use of regular expressions alone doesn't meet your demands, you 
-" can define the functions trag#Process_{kind}_{filesuffix} or 
-" trag#Process_{kind}, which will be run on every line with the 
+" TODO: If the use of regular expressions alone doesn't meet your 
+" demands, you can define the functions trag#Process_{kind}_{filesuffix} 
+" or trag#Process_{kind}, which will be run on every line with the 
 " arguments: match, line, quicklist, filename, lineno. This function 
 " returns [match, line]. If match != -1, the line will be added to the 
 " quickfix list.
