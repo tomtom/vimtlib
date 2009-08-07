@@ -67,12 +67,9 @@ If you want to redistribute files containing assertions but don't want
 to have people install this plugin, insert this close to the top of 
 your file: >
 
-    if exists(':TAssert')
-        exec TAssertInit()
-    else
-        command! -nargs=* -bang TAssert :
-        command! -nargs=* -bang TAssertBegin :
-        command! -nargs=* -bang TAssertEnd :
+    if !exists(':TAssert')
+        command! -nargs=* -bar -bang TAssert :
+        command! -nargs=* -bar -bang TAssertType :
     endif
 
 Alternatively, use the |:TAssertComment| command.

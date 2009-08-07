@@ -1,5 +1,5 @@
 *setsyntax.txt*     Set options specific for the syntax group under cursor
-                    Author: Thomas Link, micathom at gmail com
+                    Author: Tom Link, micathom at gmail com
 
 
 This plugin sets options/variables according to the syntax under the 
@@ -34,6 +34,8 @@ Contents~
         setsyntax#Set ............ |setsyntax#Set()|
 
 
+========================================================================
+plugin/setsyntax.vim~
 
                                                     *g:setsyntax_options*
 g:setsyntax_options
@@ -75,6 +77,8 @@ g:setsyntax_options
     backslash. See the help page on <f-args> for details.
 
 
+========================================================================
+autoload/setsyntax.vim~
 
                                                     *setsyntax#Initialize()*
 setsyntax#Initialize()

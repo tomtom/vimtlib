@@ -1,5 +1,5 @@
 *ttagcomplete.txt*  Context-sensitive tags-based completion and code skeletons
-                    Author: Thomas Link, micathom at gmail com
+                    Author: Tom Link, micathom at gmail com
 
 In theory, this plugin provides a framework for context-sensitive 
 tags-based completion and code skeletons (requires tSkeleton vimscript 
@@ -71,6 +71,8 @@ Contents~
         ttagcomplete#FindJavaClassInTags ... |ttagcomplete#FindJavaClassInTags()|
 
 
+========================================================================
+plugin/ttagcomplete.vim~
 
                                                     *g:ttagcomplete_constraints*
 g:ttagcomplete_constraints     (default: {})
@@ -94,6 +96,8 @@ g:ttagecho_min_chars           (default: 1)
 :TTagCompleteOff
 
 
+========================================================================
+autoload/ttagcomplete.vim~
 
                                                     *ttagcomplete#On()*
 ttagcomplete#On(...)

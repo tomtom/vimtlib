@@ -1,5 +1,5 @@
 *cmdlinehelp.txt*   Display help on the command in the command line
-                    Author: Thomas Link, micathom at gmail com
+                    Author: Tom Link, micathom at gmail com
 
 Has this ever happened to you? You are typing a command and cannot remember 
 whether that particular option is an "u" or an "o". cmdlinehelp to the 
@@ -45,6 +45,8 @@ Contents~
         c_<c-c> .................. |c_<c-c>|
 
 
+========================================================================
+plugin/cmdlinehelp.vim~
 
 
 NOTE:

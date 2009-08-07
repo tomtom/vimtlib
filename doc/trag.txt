@@ -179,24 +179,29 @@ Contents~
         :Tragfile ................ |:Tragfile|
         :TRagcw .................. |:TRagcw|
         :Tragcw .................. |:Tragcw|
+        :Traglw .................. |:Traglw|
         :TRagsearch .............. |:TRagsearch|
         :Tragsearch .............. |:Tragsearch|
         :TRaggrep ................ |:TRaggrep|
         :Traggrep ................ |:Traggrep|
         g:trag_files ............. |g:trag_files|
         g:trag_glob .............. |g:trag_glob|
-        g:trag_project ........... |g:trag_project|
         g:trag_project_ruby ...... |g:trag_project_ruby|
+        g:trag_project ........... |g:trag_project|
+        g:trag_git ............... |g:trag_git|
         :TRagsetfiles ............ |:TRagsetfiles|
         :TRagaddfiles ............ |:TRagaddfiles|
         :TRagclearfiles .......... |:TRagclearfiles|
+        :TRagGitFiles ............ |:TRagGitFiles|
         trag#ClearFiles .......... |trag#ClearFiles()|
         trag#AddFiles ............ |trag#AddFiles()|
+        trag#SetGitFiles ......... |trag#SetGitFiles()|
         trag#SetFiles ............ |trag#SetFiles()|
         trag#Edit ................ |trag#Edit()|
         trag#Grep ................ |trag#Grep()|
         trag#ClearCachedRx ....... |trag#ClearCachedRx()|
         trag#QuickList ........... |trag#QuickList()|
+        trag#LocList ............. |trag#LocList()|
         trag#AgentEditQFE ........ |trag#AgentEditQFE()|
         trag#AgentPreviewQFE ..... |trag#AgentPreviewQFE()|
         trag#AgentGotoQFE ........ |trag#AgentGotoQFE()|
@@ -208,6 +213,7 @@ Contents~
         trag#AgentRefactor ....... |trag#AgentRefactor()|
         trag#CWord ............... |trag#CWord()|
         trag#RefactorRename ...... |trag#RefactorRename()|
+        trag#SetFollowCursor ..... |trag#SetFollowCursor()|
 
 
 ========================================================================
@@ -301,6 +307,10 @@ TRagDefFiletype FILETYPE EXTENSION ... FILENAME ...
                                                     *:Tragcw*
 :Tragcw
 
+                                                    *:Traglw*
+:Traglw
+    Display a |location-list| using |tlib#input#ListD()|.
+
                                                     *:TRagsearch*
 :TRagsearch[!] KIND REGEXP
     Scan the files registered in your tag files for REGEXP. Generate a 
@@ -334,25 +344,32 @@ your project's file list on the basis of you tags files.
 
 These variables are tested in the order as listed here. If the value 
 of a variable is non-empty, this one will be used instead of the other 
-methods. The tags files are last.
+methods.
+
+The tags file is used as a last ressort.
 
                                                     *g:trag_files*
 g:trag_files                   (default: [])
-    A list of files. Can be buffer local.
+    1. A list of files. Can be buffer local.
 
                                                     *g:trag_glob*
 g:trag_glob                    (default: '')
-    A glob pattern -- this should be an absolute path and may contain ** 
+    2. A glob pattern -- this should be an absolute path and may contain ** 
     (see |glob()| and |wildcards|). Can be buffer local.
-
-                                                    *g:trag_project*
-g:trag_project                 (default: '')
-    The name of a file containing the projects file list. This file could be 
-    generated via make. Can be buffer local.
 
                                                     *g:trag_project_ruby*
 g:trag_project_ruby            (default: 'Manifest.txt')
-    Filetype-specific project files.
+    3. Filetype-specific project files.
+
+                                                    *g:trag_project*
+g:trag_project                 (default: '')
+    4. The name of a file containing the projects file list. This file could be 
+    generated via make. Can be buffer local.
+
+                                                    *g:trag_git*
+g:trag_git                     (default: '')
+    5. The name of a git repository that includes all files of interest.
+    Can be buffer local.
 
                                                     *:TRagsetfiles*
 :TRagsetfiles [FILELIST]
@@ -375,6 +392,9 @@ g:trag_project_ruby            (default: 'Manifest.txt')
 :TRagclearfiles
     Remove any files from the project list.
 
+                                                    *:TRagGitFiles*
+:TRagGitFiles GIT_REPOS
+
 
 ========================================================================
 autoload/trag.vim~
@@ -384,6 +404,10 @@ trag#ClearFiles()
 
                                                     *trag#AddFiles()*
 trag#AddFiles(files)
+
+                                                    *trag#SetGitFiles()*
+trag#SetGitFiles(repos)
+    Set the files list from the files included in a given git repository.
 
                                                     *trag#SetFiles()*
 trag#SetFiles(?files=[])
@@ -419,7 +443,12 @@ trag#Grep(args, ?replace=1, ?files=[])
 trag#ClearCachedRx()
 
                                                     *trag#QuickList()*
-trag#QuickList()
+trag#QuickList(...)
+    Display the |quickfix| list with |tlib#input#ListW()|.
+
+                                                    *trag#LocList()*
+trag#LocList(...)
+    Display the |location-list| with |tlib#input#ListW()|.
 
                                                     *trag#AgentEditQFE()*
 trag#AgentEditQFE(world, selected, ...)
@@ -455,6 +484,9 @@ trag#CWord()
 
                                                     *trag#RefactorRename()*
 trag#RefactorRename(world, selected)
+
+                                                    *trag#SetFollowCursor()*
+trag#SetFollowCursor(world, selected)
 
 
 

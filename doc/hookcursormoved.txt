@@ -1,5 +1,5 @@
 *hookcursormoved.txt*  Call functions when the cursor position changed
-                       Author: Thomas Link, micathom at gmail com
+                       Author: Tom Link, micathom at gmail com
 
 This experimental plugin provides some help with the definition of 
 functions that should be called when the cursor position changed.
@@ -65,6 +65,8 @@ Contents~
         hookcursormoved#Test_syntaxleave_oneline ....... |hookcursormoved#Test_syntaxleave_oneline()|
 
 
+========================================================================
+plugin/hookcursormoved.vim~
 
 
 Modes:
@@ -106,6 +108,8 @@ g:hookcursormoved_syntaxleave_oneline (default: 'hookcursormoved#Test_syntaxleav
     changes.
 
 
+========================================================================
+autoload/hookcursormoved.vim~
 
                                                     *hookcursormoved#Enable()*
 hookcursormoved#Enable(condition)

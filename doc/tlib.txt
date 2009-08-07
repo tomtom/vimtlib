@@ -70,6 +70,7 @@ Contents~
         prototype.Super
         prototype.Methods
         tlib#World#New .......................... |tlib#World#New()|
+        prototype.DisplayList
         tlib#agent#Exit ......................... |tlib#agent#Exit()|
         tlib#agent#CopyItems .................... |tlib#agent#CopyItems()|
         tlib#agent#PageUp ....................... |tlib#agent#PageUp()|
@@ -187,6 +188,9 @@ Contents~
         tlib#rx#Suffixes ........................ |tlib#rx#Suffixes()|
         tlib#scratch#UseScratch ................. |tlib#scratch#UseScratch()|
         tlib#scratch#CloseScratch ............... |tlib#scratch#CloseScratch()|
+        tlib#signs#ClearAll ..................... |tlib#signs#ClearAll()|
+        tlib#signs#ClearBuffer .................. |tlib#signs#ClearBuffer()|
+        tlib#signs#Mark ......................... |tlib#signs#Mark()|
         tlib#string#RemoveBackslashes ........... |tlib#string#RemoveBackslashes()|
         tlib#string#Chomp ....................... |tlib#string#Chomp()|
         tlib#string#Format ...................... |tlib#string#Format()|
@@ -355,7 +359,11 @@ g:tlib_filename_sep            (default: '/')
 
                                                     *g:tlib_cache*
 g:tlib_cache                   (default: '')
-    The cache directory. If empty, use |tlib#dir#MyRuntime|.'/cache'
+    The cache directory. If empty, use |tlib#dir#MyRuntime|.'/cache'.
+    You might want to delete old files from this directory from time to 
+    time with a command like: >
+      find ~/vimfiles/cache/ -atime +31 -type f -print -delete
+<
 
                                                     *g:tlib_viewline_position*
 g:tlib_viewline_position       (default: 'zz')
@@ -520,6 +528,9 @@ Inherits from |tlib#Object#New|.
 
                                                     *tlib#World#New()*
 tlib#World#New(...)
+
+
+prototype.DisplayList
 
 
 ========================================================================
@@ -1163,6 +1174,29 @@ tlib#scratch#UseScratch(?keyargs={})
                                                     *tlib#scratch#CloseScratch()*
 tlib#scratch#CloseScratch(keyargs, ...)
     Close a scratch buffer as defined in keyargs (usually a World).
+    Return 1 if the scratch buffer is closed (or if it already was 
+    closed).
+
+
+========================================================================
+autoload/tlib/signs.vim~
+
+                                                    *tlib#signs#ClearAll()*
+tlib#signs#ClearAll(sign)
+    Clear all signs with name SIGN.
+
+                                                    *tlib#signs#ClearBuffer()*
+tlib#signs#ClearBuffer(sign, bufnr)
+    Clear all signs with name SIGN in buffer BUFNR.
+
+                                                    *tlib#signs#Mark()*
+tlib#signs#Mark(sign, list)
+    Add signs for all locations in LIST. LIST must confirm with the 
+    quickfix list format (see |getqflist()|; only the fields lnum and 
+    bufnr are required).
+    
+    list:: a quickfix or location list
+    sign:: a sign defined with |:sign-define|
 
 
 ========================================================================

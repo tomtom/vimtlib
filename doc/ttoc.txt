@@ -1,5 +1,5 @@
 *ttoc.txt*  ttoc - A regexp-based ToC of the current buffer
-            Author: Thomas Link, micathom at gmail com
+            Author: Tom Link, micathom at gmail com
 
 
 This plugin tries to duplicate the functionality of Marc Weber's 
@@ -113,6 +113,8 @@ Contents~
         :Ttocbg ................ |:Ttocbg|
 
 
+========================================================================
+plugin/ttoc.vim~
 
                                                     *g:ttoc_markers*
 g:ttoc_markers                 (default: 1)
@@ -148,7 +150,7 @@ g:ttoc_rx_html                 (default: '\(<h\d.\{-}</h\d>\|<\(html\|head\|body
 g:ttoc_rx_java                 (default: '^\s*\(\(package\|import\|private\|public\|protected\|void\|int\|boolean\)\s\+\|\u\).*')
 
                                                     *g:ttoc_rx_javascript*
-g:ttoc_rx_javascript           (default: '^\s*\(var\s\+.\{-}\|\w\+\s*:\s*.\{-}\)\s*$')
+g:ttoc_rx_javascript           (default: '^\(var\s\+.\{-}\|\s*\w\+\s*:\s*\S.\{-}[,{]\)\s*$')
 
                                                     *g:ttoc_rx_perl*
 g:ttoc_rx_perl                 (default: '^\([$%@]\|\s*\(use\|sub\)\>\).*')

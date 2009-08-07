@@ -1,5 +1,5 @@
 *loremipsum.txt*    A dummy text generator
-                    Author: Thomas Link, micathom at gmail com
+                    Author: Tom Link, micathom at gmail com
 
 Insert a dummy text of a certain length. Actually, the text isn't 
 generated but selected from some text. By default, the following text is 
@@ -37,6 +37,8 @@ Contents~
         loremipsum#Replace ................ |loremipsum#Replace()|
 
 
+========================================================================
+plugin/loremipsum.vim~
 
                                                     *g:loremipsum_paragraph_template*
 g:loremipsum_paragraph_template
@@ -73,6 +75,8 @@ g:loremipsum_files             (default: {})
     Replace loremipsum text with something else. Or simply remove it.
 
 
+========================================================================
+autoload/loremipsum.vim~
 
                                                     *loremipsum#Generate()*
 loremipsum#Generate(nwords, template)

@@ -1,5 +1,5 @@
 *shymenu.txt*  Show the menu bar only when pressing an accelerator key
-               Author: Thomas Link, micathom at gmail com
+               Author: Tom Link, micathom at gmail com
 
 shymenu will show the menu bar only when the user presses an accelerator 
 key. The menu will be hidden again after an item was selected.
@@ -49,6 +49,8 @@ Contents~
         ShyMenu ....................... |ShyMenu()|
 
 
+========================================================================
+plugin/shymenu.vim~
 
                                                     *g:shymenu_emenu*
 g:shymenu_emenu                (default: !has('gui_running'))

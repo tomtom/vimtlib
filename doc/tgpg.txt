@@ -1,5 +1,5 @@
 *tgpg.txt*          Yet another plugin for encrypting files with gpg
-                    Author: Thomas Link, micathom at gmail com
+                    Author: Tom Link, micathom at gmail com
 
 Features:
 
@@ -74,42 +74,36 @@ Double-check the following variables for correct values:
 ========================================================================
 Contents~
 
-        g:tgpg_timeout ............. |g:tgpg_timeout|
-        g:tgpg_gpg_cmd ............. |g:tgpg_gpg_cmd|
-        g:tgpg_gpg_md5_check ....... |g:tgpg_gpg_md5_check|
-        g:tgpg_gpg_md5_sum ......... |g:tgpg_gpg_md5_sum|
-        g:tgpg_options ............. |g:tgpg_options|
-        g:tgpg_registers ........... |g:tgpg_registers|
-        g:tgpgCachePW .............. |g:tgpgCachePW|
-        g:tgpgBackup ............... |g:tgpgBackup|
-        g:tgpgMode ................. |g:tgpgMode|
-        g:tgpgModes ................ |g:tgpgModes|
-        g:tgpgPattern_symmetric .... |g:tgpgPattern_symmetric|
-        g:tgpgWrite_symmetric ...... |g:tgpgWrite_symmetric|
-        g:tgpgRead_symmetric ....... |g:tgpgRead_symmetric|
-        g:tgpgPattern_encrypt ...... |g:tgpgPattern_encrypt|
-        g:tgpgWrite_encrypt ........ |g:tgpgWrite_encrypt|
-        g:tgpgRead_encrypt ......... |g:tgpgRead_encrypt|
-        g:tgpgPattern_clearsign .... |g:tgpgPattern_clearsign|
-        g:tgpgWrite_clearsign ...... |g:tgpgWrite_clearsign|
-        g:tgpgOptions .............. |g:tgpgOptions|
-        g:tgpgCmdRecipient ......... |g:tgpgCmdRecipient|
-        g:tgpgSepRecipient ......... |g:tgpgSepRecipient|
-        g:tgpgCmdPassphrase ........ |g:tgpgCmdPassphrase|
-        g:tgpgShellQuote ........... |g:tgpgShellQuote|
-        g:tgpgTempSuffix ........... |g:tgpgTempSuffix|
-        g:tgpgInputsecret .......... |g:tgpgInputsecret|
-        :TGpgResetCache ............ |:TGpgResetCache|
-        TGpgUserInput_GPG .......... |TGpgUserInput_GPG()|
-        TGpgUserInput_G_OPTIONS .... |TGpgUserInput_G_OPTIONS()|
-        TGpgUserInput_B_OPTIONS .... |TGpgUserInput_B_OPTIONS()|
-        TGpgUserInput_PASSPHRASE ... |TGpgUserInput_PASSPHRASE()|
-        TGpgUserInput_RECIPIENTS ... |TGpgUserInput_RECIPIENTS()|
-        TGpgRead ................... |TGpgRead()|
-        TGpgWrite .................. |TGpgWrite()|
-        TGpgWrite_clearsign ........ |TGpgWrite_clearsign()|
+        g:tgpg_timeout ............ |g:tgpg_timeout|
+        g:tgpg_gpg_cmd ............ |g:tgpg_gpg_cmd|
+        g:tgpg_gpg_md5_check ...... |g:tgpg_gpg_md5_check|
+        g:tgpg_gpg_md5_sum ........ |g:tgpg_gpg_md5_sum|
+        g:tgpg_options ............ |g:tgpg_options|
+        g:tgpg_registers .......... |g:tgpg_registers|
+        g:tgpgCachePW ............. |g:tgpgCachePW|
+        g:tgpgBackup .............. |g:tgpgBackup|
+        g:tgpgMode ................ |g:tgpgMode|
+        g:tgpgModes ............... |g:tgpgModes|
+        g:tgpgPattern_symmetric ... |g:tgpgPattern_symmetric|
+        g:tgpgWrite_symmetric ..... |g:tgpgWrite_symmetric|
+        g:tgpgRead_symmetric ...... |g:tgpgRead_symmetric|
+        g:tgpgPattern_encrypt ..... |g:tgpgPattern_encrypt|
+        g:tgpgWrite_encrypt ....... |g:tgpgWrite_encrypt|
+        g:tgpgRead_encrypt ........ |g:tgpgRead_encrypt|
+        g:tgpgPattern_clearsign ... |g:tgpgPattern_clearsign|
+        g:tgpgWrite_clearsign ..... |g:tgpgWrite_clearsign|
+        g:tgpgOptions ............. |g:tgpgOptions|
+        g:tgpgCmdRecipient ........ |g:tgpgCmdRecipient|
+        g:tgpgSepRecipient ........ |g:tgpgSepRecipient|
+        g:tgpgCmdPassphrase ....... |g:tgpgCmdPassphrase|
+        g:tgpgShellQuote .......... |g:tgpgShellQuote|
+        g:tgpgTempSuffix .......... |g:tgpgTempSuffix|
+        g:tgpgInputsecret ......... |g:tgpgInputsecret|
+        :TGpgResetCache ........... |:TGpgResetCache|
 
 
+========================================================================
+plugin/tGpg.vim~
 
                                                     *g:tgpg_timeout*
 g:tgpg_timeout                 (default: 1800)
@@ -121,7 +115,7 @@ g:tgpg_gpg_cmd                 (default: '/usr/bin/gpg')
     The gpg command. Should be a full filename.
 
                                                     *g:tgpg_gpg_md5_check*
-g:tgpg_gpg_md5_check           (default: 'md5sum '. s:tgpg_gpg_cmd)
+g:tgpg_gpg_md5_check           (default: 'md5sum '. g:tgpg_gpg_cmd)
     The command to calculate the md5 checksum.
 
                                                     *g:tgpg_gpg_md5_sum*
@@ -130,7 +124,7 @@ g:tgpg_gpg_md5_sum             (default: '')
     If empty, the binary's integrity won't be checked.
 
                                                     *g:tgpg_options*
-g:tgpg_options                 (default: {'verbosefile': '', 'verbose': 0,})
+g:tgpg_options                 (default: {'verbosefile': '', 'verbose': 0})
     Set these options during read/write operations.
 
                                                     *g:tgpg_registers*
@@ -165,7 +159,7 @@ g:tgpgModes                    (default: ['symmetric', 'encrypt', 'clearsign'])
 Mode definitions~
 
 The template values are returned by functions 
-TGpgUserInput_{FIELD}(params).
+s:TGpgUserInput_{FIELD}(params).
 
                                                     *g:tgpgPattern_symmetric*
 g:tgpgPattern_symmetric        (default: g:tgpgMode == 'symmetric' ? '*.\(gpg\|asc\|pgp\)' : '')
@@ -229,30 +223,6 @@ Commands and functions~
 
                                                     *:TGpgResetCache*
 :TGpgResetCache
-
-                                                    *TGpgUserInput_GPG()*
-TGpgUserInput_GPG(parms)
-
-                                                    *TGpgUserInput_G_OPTIONS()*
-TGpgUserInput_G_OPTIONS(parms)
-
-                                                    *TGpgUserInput_B_OPTIONS()*
-TGpgUserInput_B_OPTIONS(parms)
-
-                                                    *TGpgUserInput_PASSPHRASE()*
-TGpgUserInput_PASSPHRASE(parms)
-
-                                                    *TGpgUserInput_RECIPIENTS()*
-TGpgUserInput_RECIPIENTS(parms)
-
-                                                    *TGpgRead()*
-TGpgRead(parms, range)
-
-                                                    *TGpgWrite()*
-TGpgWrite(parms)
-
-                                                    *TGpgWrite_clearsign()*
-TGpgWrite_clearsign(parms)
 
 
 

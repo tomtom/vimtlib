@@ -1,5 +1,5 @@
 *tsession.txt*      tsession - An alternativ approach to sessions
-                    Author: Thomas Link, micathom at gmail com
+                    Author: Tom Link, micathom at gmail com
 
 
 These functions provide an alternative to vim's session handling to 
@@ -60,9 +60,13 @@ Contents~
         g:tsession_register_special .... |g:tsession_register_special|
         g:tsession_swap ................ |g:tsession_swap|
         g:tsession_world ............... |g:tsession_world|
+        :TSessionSave .................. |:TSessionSave|
+        :TSessionLoad .................. |:TSessionLoad|
         :TSession ...................... |:TSession|
 
 
+========================================================================
+plugin/tsession.vim~
 
                                                     *g:tsession_dir*
 g:tsession_dir                 (default: '')
@@ -118,7 +122,7 @@ g:tsession_swap                (default: 0)
                                                     *g:tsession_world*
 g:tsession_world               (default: {)
 
-
+                                                    *:TSessionSave*
 TSessionSave [SESSION]
     See also |tsession#Save|.
     EXAMPLES: >
@@ -126,6 +130,9 @@ TSessionSave [SESSION]
 <
 
 
+:SessionComplete
+
+                                                    *:TSessionLoad*
 TSessionLoad[!] [SESSION]
     With !, buffers not registered in the session will be deleted if 
     |g:tsession_swap| is false. If g:tsession_swap is true, the meaning of 
@@ -134,6 +141,9 @@ TSessionLoad[!] [SESSION]
     EXAMPLES: >
       TSessionLoad example
 <
+
+
+:SessionComplete
 
                                                     *:TSession*
 TSession[!]

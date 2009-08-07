@@ -1,5 +1,5 @@
 *tcalc.txt*         A ruby-based RPN calculator for vim
-                    Author: Thomas Link, micathom at gmail com
+                    Author: Tom Link, micathom at gmail com
 
 It turns out that ruby is pretty good at maths and deals well with 
 complex or rational numbers etc. Anyway, in certain occasions a postfix 
@@ -462,6 +462,8 @@ Contents~
         tcalc#Complete ....... |tcalc#Complete()|
 
 
+========================================================================
+plugin/tcalc.vim~
 
                                                     *g:tcalc_initialize*
 g:tcalc_initialize
@@ -481,6 +483,8 @@ TCalc[!]
     With !, reset stack & input queue.
 
 
+========================================================================
+autoload/tcalc.vim~
 
                                                     *tcalc#Calculator()*
 tcalc#Calculator(reset, initial_args)
