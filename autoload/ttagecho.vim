@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-10-28.
-" @Last Change: 2009-03-17.
-" @Revision:    0.0.184
+" @Last Change: 2009-08-09.
+" @Revision:    0.0.210
 
 if &cp || exists("loaded_ttagecho_autoload")
     finish
@@ -135,10 +135,20 @@ endf
 
 " Echo the tag in front of an opening round parenthesis.
 function! ttagecho#OverParanthesis(mode) "{{{3
-    let line = strpart(getline('.'), 0, col('.') - 1)
-    let chrx = s:GetCharRx()
-    let text = matchstr(line, chrx .'\+\ze\((.\{-}\)\?$')
-    " TLogVAR text, line
+    let line = getline('.')
+    let scol = col('.') - 1
+    let char = line[scol]
+    if char == ')'
+        let view = winsaveview()
+        call searchpair('(', '', ')', 'bW')
+        let scol = col('.') - 1
+        call winrestview(view)
+    endif
+    " TLogVAR scol
+    let line = strpart(line, 0, scol)
+    let chrx = s:GetCharRx() .'\+$'
+    let text = matchstr(line, chrx)
+    " TLogVAR char, chrx, text, line
     if &showmode && a:mode == 'i' && g:ttagecho_restore_showmode != -1 && &cmdheight == 1
         let g:ttagecho_restore_showmode = 1
         " TLogVAR g:ttagecho_restore_showmode

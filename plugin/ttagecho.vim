@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-10-28.
-" @Last Change: 2009-03-14.
-" @Revision:    0.5.133
+" @Last Change: 2009-08-09.
+" @Revision:    0.5.135
 " GetLatestVimScripts: 2055 0 ttagecho.vim
 
 if &cp || exists("loaded_ttagecho")
@@ -93,6 +93,7 @@ augroup TTagecho
     if exists('loaded_hookcursormoved')
         for s:pattern in g:ttagecho_parentheses_patterns
             exec 'autocmd BufNewFile,BufReadPost,FileType '. s:pattern .' call hookcursormoved#Register("parenthesis_round_open", "ttagecho#OverParanthesis")'
+            exec 'autocmd BufNewFile,BufReadPost,FileType '. s:pattern .' call hookcursormoved#Register("parenthesis_round_close", "ttagecho#OverParanthesis")'
             exec 'autocmd InsertLeave '. s:pattern .' if g:ttagecho_restore_showmode == 1 | set showmode | echo | endif'
         endfor
         if has('balloon_eval')
@@ -156,4 +157,5 @@ instead)
 0.6
 - NEW: g:ttagecho_char_rx: custom keyword char regexp
 - Always use compact style when there is only one tag that matches and if many_lines < 0
+- Find the right keyword, when the current line contains more than one
 
