@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-03.
-" @Last Change: 2009-08-05.
-" @Revision:    0.0.1218
+" @Last Change: 2009-08-09.
+" @Revision:    0.0.1400
 
 if &cp || exists("loaded_tskeleton_autoload")
     finish
@@ -1404,7 +1404,8 @@ function! s:PrepareMenuEntry(name, subpriority, mode) "{{{3
             " TLogVAR spri
             let pri   = g:tskelMenuPriority .'.'. spri
             " TLogVAR pri
-            if a:mode == 'i'
+            " if a:mode == 'i'
+            if s:IsInsertMode(a:mode)
                 call add(acc, 'imenu '. pri .' '. g:tskelMenuPrefix .'.'. menu_name .
                             \ ' <c-\><c-o>:call tskeleton#ExpandBitUnderCursor("i", '. string(a:name) .')<cr>')
             else
@@ -1979,6 +1980,7 @@ endf
 
 function! s:InsertBitText(mode, bittext) "{{{3
     " TLogVAR a:mode, a:bittext
+    " TLogDBG "Pre: ". getline('.')
     " call tlib#buffer#InsertText0(a:bittext, {
     "             \ 'pos': 's',
     "             \ 'indent': a:mode =~# 'l' ? 0 : 1,
@@ -1989,6 +1991,7 @@ function! s:InsertBitText(mode, bittext) "{{{3
                 \ 'pos': 's',
                 \ 'indent': a:mode =~# 'l' ? 0 : 1,
                 \ })
+    " TLogDBG "Post: ". getline('.')
 endf
 
 
@@ -2234,25 +2237,27 @@ endf
 
 
 function! s:Eol(mode, col) "{{{3
-    " TLogVAR a:mode, a:col
+    " TLogVAR a:mode, a:col, col('$'), a:col >= col('$')
     " TLogDBG col('.') .'-'. col('$')
     " echom "DBG Eol ". a:mode .' '. s:IsInsertMode(a:mode)
     if s:IsInsertMode(a:mode)
         " return a:col + 1 >= col('$')
-        return a:col >= col('$')
+        return a:col >= col('$') - 1
     else
         return a:col >= col('$') && &virtualedit =~ '^\(block\|onemore\)\?$'
     endif
 endf
 
 
-" tskeleton#ExpandBitUnderCursor(mode, ?bit, ?default)
+" tskeleton#ExpandBitUnderCursor(mode, ?bit="", ?default={})
+" See also |g:tskelHyperComplete|.
 function! tskeleton#ExpandBitUnderCursor(mode, ...) "{{{3
     let bit     = a:0 >= 1 && a:1 != '' ? a:1 : ''
-    let default = a:0 >= 2 && a:2 != '' ? a:2 : ''
-    let l     = getline('.')
+    let default = a:0 >= 2 && !empty(a:2) ? a:2 : {}
     let line  = line('.')
+    let l     = getline(line)
     let col0  = col('.')
+    let view  = winsaveview()
     " TLogVAR line, col0, l
     " TLogVAR bit
     call tskeleton#PrepareBits()
@@ -2301,10 +2306,11 @@ function! tskeleton#ExpandBitUnderCursor(mode, ...) "{{{3
                 silent norm! h"tdiw
                 " TLogDBG " 2 @t='". @t ."'"
             else
-               silent norm! "tdiw
+                silent norm! "tdiw
                 " TLogDBG " 3 @t='". @t ."'"
             endif
         endif
+        " TLogDBG "#1". getline(line)
         let bit = @t
         if bit =~ '^\s\+$'
             let bit = ''
@@ -2313,23 +2319,40 @@ function! tskeleton#ExpandBitUnderCursor(mode, ...) "{{{3
         if bit != '' && tskeleton#Bit(bit, mode) == 1
             " call TLogDBG("TSkeletonBit succeeded!")
             return 1
-        elseif (bit	!= '' || default == '') && s:BitMenu(bit, mode, ft)
+        elseif (bit	!= '' || empty(default)) && s:BitMenu(bit, mode, ft)
             " call TLogDBG("s:BitMenu succeeded!")
             " TLogVAR mode, bit, default
-            return s:InsertDefault(mode, bit, default)
+            " return s:InsertDefault(mode, bit, default)
+            return 0
         endif
+        " TLogDBG "#2". getline(line)
         " TLogVAR bit
         " TLogVAR default
+        let s:got_default_string = 0
         if s:InsertDefault(mode, bit, default)
             " TLogDBG 's:InsertDefault succeeded!'
             return 1
         else
+            " TLogDBG "#3". getline(line)
+            " TLogDBG 'Last ressort'
             " silent norm! u
-            call s:InsertBitText(mode, bit.default)
+            if s:got_default_string
+                call s:InsertBitText(mode, bit)
+                let success = 0
+            else
+                let [success, default_string] = s:GetDefaultString(bit, default)
+                " TLogVAR success, default_string
+                call s:InsertBitText(mode, default_string)
+            endif
+            if !success
+                echom "TSkeletonBit: Unknown bit '". bit ."'"
+            endif
+            " TLogVAR line, col0
             " call cursor(line, col0, imode)
-            call cursor(line, col0)
-            echom "TSkeletonBit: Unknown bit '". bit ."'"
-            return 0
+            " call cursor(line, col0)
+            " TLogDBG col('.')
+            call winrestview(view)
+            return success
         endif
     finally
         let @t = t
@@ -2363,12 +2386,112 @@ endf
 
 
 function! s:InsertDefault(mode, bit, default) "{{{3
-    if a:default != ''
-        call s:InsertBitText(a:mode, a:bit . a:default)
-        return 1
+    " TLogVAR a:mode, a:bit, a:default
+    if !empty(a:default)
+        let [success, default_string] = s:GetDefaultString(a:bit, a:default)
+        " TLogVAR success, default_string
+        if success
+            call s:InsertBitText(a:mode, default_string)
+            let left = len(default_string)
+            " TLogDBG col('.')
+            if col('.') == 1
+                let left -= 1
+            endif
+            exec 'norm! '. left .'l'
+            if s:IsInsertMode(a:mode)
+                call cursor(line('.'), col('.') + 1)
+            endif
+        endif
+        return success
     else
         return 0
     endif
+endf
+
+
+function! s:GetDefaultString(bit, default) "{{{3
+    " TLogVAR a:bit, a:default
+    " Don't call this function twice in one go -- see tskeleton#ExpandBitUnderCursor().
+    let s:got_default_string = 1
+    let bit_rx = tlib#rx#Escape(a:bit)
+    let s:tskelQueryAcc = []
+
+    if has_key(a:default, 'use_omnifunc')
+        if !empty(&omnifunc)
+            " TLogDBG 'use_omnifunc'
+            let s:tskelQueryAcc += s:GetCompletions(&omnifunc, a:bit)
+        endif
+    endif
+
+    if has_key(a:default, 'use_completefunc')
+        if !empty(&completefunc)
+            " TLogDBG 'use_completefunc'
+            let s:tskelQueryAcc += s:GetCompletions(&completefunc, a:bit)
+        endif
+        " call tlog#Debug(string(s:tskelQueryAcc))
+    endif
+    
+    if has_key(a:default, 'scan_words')
+        " TLogDBG 'scan_tags'
+        let view = winsaveview()
+        " let kw = tlib#var#Get('tskelKeyword_'. &filetype, 'bg', '\w*')
+        let kw = '\w\+'
+        let rx = bit_rx . kw
+        " TLogVAR kw, rx
+        norm! G$
+        let [lnum, col] = searchpos(rx, 'w')
+        " TLogVAR lnum, col
+        while lnum > 0
+            let subline = getline(lnum)[col - 1 : -1]
+            let match = matchstr(subline, '^'. rx)
+            if !empty(match)
+                call add(s:tskelQueryAcc, match)
+            endif
+            norm! w
+            " TLogVAR lnum, col, match, subline
+            let [lnum, col] = searchpos(rx, 'W')
+        endwh
+        call winrestview(view)
+    endif
+    
+    if has_key(a:default, 'scan_tags')
+        " TLogDBG 'scan_tags'
+        let tags = taglist('^'. bit_rx)
+        if !empty(tags)
+            call map(tags, 'v:val.name')
+            " TLogVAR tags
+            let s:tskelQueryAcc += tags
+        endif
+    endif
+
+    if !empty(s:tskelQueryAcc)
+        " TLogDBG 'Process s:tskelQueryAcc'
+        let s:tskelQueryAcc = tlib#list#Uniq(s:tskelQueryAcc)
+        call sort(s:tskelQueryAcc)
+        " call tlog#Debug(string(s:tskelQueryAcc))
+        let rv = s:Query("s:tskelQueryAcc|Select bit:")
+        " TLogVAR rv
+        return [!empty(rv), rv]
+    endif
+
+    if has_key(a:default, 'string')
+        " TLogDBG 'Process string'
+        " TLogVAR a:default.string
+        return [1, a:bit . a:default.string]
+    endif
+
+    " TLogDBG "Fall back"
+    " TLogVAR a:bit
+    return [0, a:bit]
+endf
+
+
+function! s:GetCompletions(func, bit) "{{{3
+    let b:compl_context = getline('.')[0 : col('.')] . a:bit
+    let completions = call(a:func, [0, a:bit])
+    call map(completions, 'substitute(v:val.word, "($", "", "")')
+    call filter(completions, 'v:val != a:bit')
+    return completions
 endf
 
 
@@ -2397,9 +2520,9 @@ function! s:TagSelect(chars, mode) "{{{3
     let chars = &selection == 'exclusive' ? a:chars : a:chars - 1
     " TLogVAR chars
     if a:mode == 'd'
-        let cp = (col('.') + chars)
+        let cp = col('.') + chars
         " TLogDBG 'col.='. col('.') .' colp='. cp .' col$='. col('$')
-        if cp == col('$')
+        if cp >= col('$')
             if &ve =~ 'all'
                 let correction = '$l'
             else
@@ -2441,9 +2564,21 @@ function! tskeleton#GoToNextTag() "{{{3
                 let defrx = tskeleton#WrapMarker('.\{-}/\zs.\{-}\ze', 'rx')
                 if ms =~ defrx
                     let default = matchstr(ms, defrx)
+                    " TLogVAR getline('.')
                     call s:TagSelect(ml, 'd')
-                    call tlib#buffer#InsertText(default, {'pos': 's', 'shift': s:Eol('i', col('.')) ? 0 : -1})
-                    exec 'norm! lv'. len(default) .'l'
+                    " TLogVAR getline('.')
+                    let shift = s:Eol('i', col('.')) ? 0 : -1
+                    " TLogVAR shift
+                    call tlib#buffer#InsertText(default, {'pos': 's', 'shift': shift})
+                    " TLogVAR getline('.')
+                    " TLogVAR col('.'), col('$')
+                    if col('.') > 1
+                        norm! l
+                    endif
+                    exec 'norm! v'. len(default) .'l'
+                    if !empty(&selectmode)
+                        call feedkeys("\<c-g>")
+                    endif
                 else
                     call s:TagSelect(ml, 'v')
                 endif
@@ -2578,30 +2713,21 @@ function! tskeleton#DefineAutoCmd(template) "{{{3
 endf
 
 
-" In the current buffer, map the tab key so that
-"   - if the cursor is located at the beginning of the line, indent the 
-"     current line
-"   - otherwise expand the bit under the cursor
-function! tskeleton#MapKeyTab(...) "{{{3
-    TVarArg ['default', '==']
-    exec 'noremap <buffer> <tab> :call tskeleton#KeyTab("n", '. string(default) .')<cr>'
-    exec 'inoremap <buffer> <tab> <c-\><c-o>:call tskeleton#KeyTab("i", '. string(default) .')<cr>'
-endf
-
-
-function! tskeleton#KeyTab(mode, default) "{{{3
+function! tskeleton#HyperComplete(mode, default) "{{{3
     let col = col('.') - 1
-    if a:mode == 'i' && col > 0
+    if s:IsInsertMode(a:mode) && col > 0
         let col -= 1
     endif
     let pre = getline('.')[0 : col]
     " TLogVAR col, pre
-    if pre =~ '^\s*$'
+    if empty(pre) || pre =~ '\s$'
+        " TLogVAR a:default
         let view = winsaveview()
         exec 'norm! '. a:default
         call winrestview(view)
     else
-        call tskeleton#ExpandBitUnderCursor(a:mode)
+        " TLogVAR a:mode
+        call tskeleton#ExpandBitUnderCursor(a:mode, '', tlib#var#Get('tskelHyperComplete_'. &filetype, 'bg', tlib#var#Get('tskelHyperComplete', 'bg', {})))
     endif
 endf
 

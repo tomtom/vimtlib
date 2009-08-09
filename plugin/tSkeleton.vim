@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     21-Sep-2004.
-" @Last Change: 2009-08-05.
-" @Revision:    3817
+" @Last Change: 2009-08-09.
+" @Revision:    3848
 "
 " GetLatestVimScripts: 1160 1 tSkeleton.vim
 " http://www.vim.org/scripts/script.php?script_id=1160
@@ -92,6 +92,17 @@ if !exists("g:tskelChangeDir")   | let g:tskelChangeDir   = 1  | endif "{{{2
 if !exists("g:tskelMapComplete") | let g:tskelMapComplete = 1  | endif "{{{2
 if g:tskelMapComplete
     set completefunc=tskeleton#Complete
+endif
+
+if !exists("g:tskelMapHyperComplete") "{{{2
+    if empty(maparg('<c-space>') . maparg('<c-space>', 'i'))
+        let g:tskelMapHyperComplete = '<c-space>'
+    else
+        let g:tskelMapHyperComplete = ''
+    endif
+endif
+if !exists("g:tskelHyperComplete") "{{{2
+    let g:tskelHyperComplete = {'use_completefunc': 1, 'use_omnifunc': 1, 'scan_words': 1, 'scan_tags': 1}
 endif
 
 if !exists("g:tskelMenuPrefix")     | let g:tskelMenuPrefix  = 'TSke&l'    | endif "{{{2
@@ -263,6 +274,23 @@ function! TSkeletonMapGoToNextTag() "{{{3
 endf
 
 
+" In the current buffer, map a:key so that
+"   - If the cursor is located at the beginning of the line or if the 
+"     the cursor is over a whitespace character, indent the current
+"     line
+"   - otherwise expand the bit under the cursor or (if not suitable bit
+"     was found) use &omnifunc, &completefunc, tags, and (as fallback 
+"     strategy) the words in the buffer as possible completions.
+function! TSkeletonMapHyperComplete(key, ...) "{{{3
+    let default = a:0 >= 1 ? a:1 : '=='
+    exec 'noremap '. a:key .' :call tskeleton#HyperComplete("n", '. string(default) .')<cr>'
+    exec 'inoremap '. a:key .' <c-\><c-o>:call tskeleton#HyperComplete("i", '. string(default) .')<cr>'
+endf
+if !empty(g:tskelMapHyperComplete)
+    call TSkeletonMapHyperComplete(g:tskelMapHyperComplete)
+endif
+
+
 command! -nargs=* -complete=custom,tskeleton#SelectTemplate TSkeletonSetup 
             \ call tskeleton#Setup(<f-args>)
 
@@ -295,7 +323,7 @@ endif
 if !hasmapto("tskeleton#ExpandBitUnderCursor") "{{{2
     exec "nnoremap <unique> ". g:tskelMapLeader ."# :call tskeleton#ExpandBitUnderCursor('n')<cr>"
     if g:tskelAddMapInsert
-        exec "inoremap <unique> ". g:tskelMapInsert ." <c-\\><c-o>:call tskeleton#ExpandBitUnderCursor('i','', ". string(g:tskelMapInsert) .")<cr>"
+        exec "inoremap <unique> ". g:tskelMapInsert ." <c-\\><c-o>:call tskeleton#ExpandBitUnderCursor('i','', {'string':". string(g:tskelMapInsert) ."})<cr>"
     else
         exec "inoremap <unique> ". g:tskelMapInsert ." <c-\\><c-o>:call tskeleton#ExpandBitUnderCursor('i')<cr>"
     endif
@@ -657,6 +685,12 @@ rtp-directory
 - Require tlib 0.29
 
 4.7
-- TSkeletonSetup allows a full filename as argument
+- TSkeletonSetup: allow full filenames as argument
 - Auto templates: don't cd into the templates directory
+- tskeleton#ExpandBitUnderCursor(): Third argument is a dictionary.
+- TSkeletonMapHyperComplete() (default: <c-space>): Map a magic key that 
+expands skeletons or, if no matching templates were found, completions, 
+tags, words etc.
+- FIX: Problem with <+name/expandsion+> kind of tags when located at 
+the beginning or end of a line
 
