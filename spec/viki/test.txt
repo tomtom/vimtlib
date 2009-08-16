@@ -1,0 +1,19 @@
+Bla bla
+
+head
+
+    foo head bar
+
+    foo head
+
+    head bar
+
+foo head bar
+
+foo head
+
+head bar
+
+
+Bla bla
+% vi: ft=viki:tw=72:ts=4
