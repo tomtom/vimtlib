@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-03.
-" @Last Change: 2009-08-09.
-" @Revision:    0.0.1400
+" @Last Change: 2009-08-16.
+" @Revision:    0.0.1558
 
 if &cp || exists("loaded_tskeleton_autoload")
     finish
@@ -897,11 +897,9 @@ function! tskeleton#EditBitCompletion(ArgLead, CmdLine, CursorPos) "{{{3
     if a:CmdLine =~ '^.\{-}\s\+.\{-}\s'
         return []
     endif
-    if !exists('b:tskelBitDefs')
-        call tskeleton#PrepareBits()
-    endif
-    if exists('b:tskelBitDefs')
-        let bits  = filter(copy(b:tskelBitDefs), 'has_key(v:val, "bitfile")')
+    let bitdefs = s:GetBitDefs()
+    if !empty(bitdefs)
+        let bits  = filter(copy(bitdefs), 'has_key(v:val, "bitfile")')
         let bits  = map(bits, 'tlib#file#Relative(v:val["bitfile"], g:tskelBitsDir)')
         let bvals = values(bits)
         if !empty(a:ArgLead)
@@ -1342,7 +1340,7 @@ endf
 function! tskeleton#BitDef(name, ...) "{{{3
     TVarArg 'field', 'default'
     " TLogVAR a:name, field, default
-    let def = get(b:tskelBitDefs, a:name, {})
+    let def = get(s:GetBitDefs(), a:name, {})
     " TLogVAR def
     if empty(field)
         return def
@@ -1562,7 +1560,7 @@ function! s:CacheBufferBits(filetype) "{{{3
     let cname = s:GetBufferCacheFilename(a:filetype, 1)
     if !empty(cname)
         " TLogVAR cname
-        call writefile([string(b:tskelBitDefs)], cname, 'b')
+        call writefile([string(s:GetBitDefs())], cname, 'b')
     endif
 endf
 
@@ -1617,7 +1615,7 @@ function! s:PrepareBuffer(filetype)
     " TLogVAR fns
     for fn in fns
         " TLogDBG 'PrepareBuffer '.fn
-        call {fn}(b:tskelBitDefs, a:filetype)
+        call {fn}(s:GetBitDefs(), a:filetype)
     endfor
     " TLogDBG string(keys(b:tskelBitDefs))
     return !empty(fns)
@@ -1666,11 +1664,13 @@ function! s:ReadSkeleton(filename) "{{{3
     let lines = readfile(a:filename)
     let [text, meta] = tskeleton#ExtractMeta(join(lines, "\n"))
     " TLogVAR text
+    " TLogDBG string(getlines(1, line('$')))
     " let lines = split(text, '\n', 1)
     " TLogVAR lines
     " call append(0, lines)
     call tlib#buffer#InsertText(text)
     " norm! Gdd
+    " TLogDBG string(getlines(1, line('$')))
     return meta
 endf
 
@@ -1766,7 +1766,7 @@ function! s:EligibleBits(type) "{{{3
             return eligible
         endif
     endif
-    let ok = filter(items(b:tskelBitDefs), 'eval(get(get(get(v:val, 1, {}), "meta", {}), "condition", 1))')
+    let ok = filter(items(s:GetBitDefs()), 'eval(get(get(get(v:val, 1, {}), "meta", {}), "condition", 1))')
     return map(ok, 'v:val[0]')
     " if exists('b:tskelBitNames')
     "     " TAssert IsList(b:tskelBitNames)
@@ -1844,8 +1844,7 @@ function! s:RetrieveBit(agent, bit, ...) "{{{3
     if s:tskelScratchIdx >= g:tskelMaxRecDepth
         return 0
     endif
-    " TLogVAR a:agent
-    " TLogVAR a:bit
+    " TLogVAR a:agent, a:bit
     let indent = a:0 >= 1 ? a:1 : ''
     let ft     = a:0 >= 2 ? a:2 : &filetype
     let rv     = ''
@@ -1868,6 +1867,7 @@ function! s:RetrieveBit(agent, bit, ...) "{{{3
         endif
         let type = tskeleton#BitDef(a:bit, 'type', 'tskeleton')
         " TLogVAR type
+        " TLogExec sleep 3 | redraw
         if type != 'tskeleton'
             let retriever = printf('tskeleton#%s#Retrieve', type)
             " TLogVAR retriever
@@ -1884,6 +1884,7 @@ function! s:RetrieveBit(agent, bit, ...) "{{{3
             " TLogDBG string(getline(1, '$'))
             " TLogVAR setCursor
         endif
+        " TLogExec sleep 3 | redraw
         let bot = line('$')
         let rv = join(getline(1, bot), "\n")
         " TLogVAR rv
@@ -1942,6 +1943,10 @@ function! s:RetrieveAgent_text(bit) "{{{3
         " endif
         " TLogVAR lines
         call append(0, lines)
+        if line('$') > len(lines)
+        " if getline('$') == ""
+            norm! Gdd
+        endif
     endif
     " norm! Gdd
     " TLogDBG string(getline(1, '$'))
@@ -1949,31 +1954,38 @@ endf
 
 
 function! s:InsertBit(agent, bit, mode) "{{{3
-    " TLogVAR a:agent
-    " TLogVAR a:bit
+    " TLogVAR a:agent, a:bit, a:mode
     let c  = col(".")
     let e  = col("$")
     let l  = line(".")
     let li = getline(l)
+    let sli = s:Subline(li, c, a:mode)
     let by = line2byte(l) + c
     " Adjust for vim idiosyncrasy
     if c == e - 1 && li[c - 1] == " "
         let e = e - 1
     endif
-    let i = s:GetIndent(li)
+    " TLogVAR li, sli, c, e, l, by
+    let i = s:GetIndent(sli)
     let [setCursor, bittext] = s:RetrieveBit(a:agent, a:bit, i)
     " TLogVAR setCursor, bittext
+    " TLogVAR getpos('.')
     call cursor(0, c)
-    call s:InsertBitText(a:mode, bittext)
+    " TLogVAR getpos('.')
+    let shift = s:InsertBitText(a:mode, bittext)
+    " TLogVAR shift, getpos('.')
     if setCursor
         let ll = l + setCursor - 1
+        " TLogVAR ll
         call tskeleton#SetCursor(l, ll, a:mode)
     else
-        let byte = by + len(bittext) - 1
+        let byte = by + len(bittext) - 1 + shift
+        " TLogVAR byte, by, len(bittext)
         if s:IsInsertMode(a:mode) && s:IsEOL(a:mode) && len(li) > 0
             let byte += 1
         end
         exec 'go '. byte
+        " TLogVAR getpos('.')
     endif
 endf
 
@@ -1986,12 +1998,20 @@ function! s:InsertBitText(mode, bittext) "{{{3
     "             \ 'indent': a:mode =~# 'l' ? 0 : 1,
     "             \ 'mode': a:mode,
     "             \ })
-    call tlib#buffer#InsertText(a:bittext, {
+    " TLogDBG string(getline(1, '$'))
+    " TLogExec sleep 3 | redraw
+    let rv = tlib#buffer#InsertText(a:bittext, {
                 \ 'shift': s:IsEOL(a:mode) ? 0 : -1,
                 \ 'pos': 's',
                 \ 'indent': a:mode =~# 'l' ? 0 : 1,
                 \ })
+    if !s:IsInsertMode(a:mode) && !s:IsEOL(a:mode)
+        let rv -= 1
+    endif
+    " TLogExec sleep 3 | redraw
+    " TLogDBG string(getline(1, '$'))
     " TLogDBG "Post: ". getline('.')
+    return rv
 endf
 
 
@@ -2054,6 +2074,14 @@ function! s:IsDefined(bit) "{{{3
 endf
 
 
+function! s:GetBitDefs() "{{{3
+    if !exists('b:tskelBitDefs')
+        call tskeleton#PrepareBits()
+    endif
+    return exists('b:tskelBitDefs') ? b:tskelBitDefs : {}
+endf
+
+
 function! s:SelectAndInsert(bit, mode) "{{{3
     " TLogVAR a:bit
     if s:IsDefined(a:bit)
@@ -2083,7 +2111,7 @@ function! tskeleton#Bit(bit, ...) "{{{3
         else
             " call TLogDBG("TSkeletonBit: Unknown bit '". a:bit ."'")
             if s:IsPopup(mode)
-                call s:InsertBitText(mode a:bit)
+                call s:InsertBitText(mode, a:bit)
                 return 1
             endif
             return 0
@@ -2117,6 +2145,25 @@ endf
 
 function! s:IsPopup(mode) "{{{3
     return a:mode =~? 'p'
+endf
+
+
+function! s:Subline(line, col, mode) "{{{3
+    " TLogVAR a:line, a:col, a:mode
+    let e = a:col - 1
+    " if s:IsInsertMode(a:mode) || s:IsEOL(a:mode)
+    " if a:col == 1 && s:IsInsertMode(a:mode)
+    "     let e -= 1
+    " endif
+    if s:IsEOL(a:mode)
+        let e += 1
+    endif
+    if e < 0
+        let e = 0
+    endif
+    let rv = strpart(a:line, 0, e)
+    " TLogVAR rv
+    return rv
 endf
 
 
@@ -2257,6 +2304,7 @@ function! tskeleton#ExpandBitUnderCursor(mode, ...) "{{{3
     let line  = line('.')
     let l     = getline(line)
     let col0  = col('.')
+    " TLogDBG 'ExpandBit saveview '. line('w0')
     let view  = winsaveview()
     " TLogVAR line, col0, l
     " TLogVAR bit
@@ -2329,8 +2377,9 @@ function! tskeleton#ExpandBitUnderCursor(mode, ...) "{{{3
         " TLogVAR bit
         " TLogVAR default
         let s:got_default_string = 0
+        " TLogDBG 'ExpandBit w0='. line('w0')
         if s:InsertDefault(mode, bit, default)
-            " TLogDBG 's:InsertDefault succeeded!'
+            " TLogDBG 's:InsertDefault succeeded! '. line('w0')
             return 1
         else
             " TLogDBG "#3". getline(line)
@@ -2352,6 +2401,7 @@ function! tskeleton#ExpandBitUnderCursor(mode, ...) "{{{3
             " call cursor(line, col0)
             " TLogDBG col('.')
             call winrestview(view)
+            " TLogDBG 'ExpandBit restview '. line('w0')
             return success
         endif
     finally
@@ -2388,9 +2438,11 @@ endf
 function! s:InsertDefault(mode, bit, default) "{{{3
     " TLogVAR a:mode, a:bit, a:default
     if !empty(a:default)
+        let view = winsaveview()
         let [success, default_string] = s:GetDefaultString(a:bit, a:default)
         " TLogVAR success, default_string
         if success
+            call winrestview(view)
             call s:InsertBitText(a:mode, default_string)
             let left = len(default_string)
             " TLogDBG col('.')
@@ -2413,61 +2465,19 @@ function! s:GetDefaultString(bit, default) "{{{3
     " TLogVAR a:bit, a:default
     " Don't call this function twice in one go -- see tskeleton#ExpandBitUnderCursor().
     let s:got_default_string = 1
-    let bit_rx = tlib#rx#Escape(a:bit)
-    let s:tskelQueryAcc = []
+    let s:bit_rx = tlib#rx#Escape(a:bit)
+    let completions = {}
 
-    if has_key(a:default, 'use_omnifunc')
-        if !empty(&omnifunc)
-            " TLogDBG 'use_omnifunc'
-            let s:tskelQueryAcc += s:GetCompletions(&omnifunc, a:bit)
+    for [name, fn] in items(tlib#var#Get('tskel_completions', 'bg', {}))
+        if has_key(a:default, name)
+            call call(fn, [a:bit, completions])
         endif
-    endif
+    endfor
 
-    if has_key(a:default, 'use_completefunc')
-        if !empty(&completefunc)
-            " TLogDBG 'use_completefunc'
-            let s:tskelQueryAcc += s:GetCompletions(&completefunc, a:bit)
-        endif
-        " call tlog#Debug(string(s:tskelQueryAcc))
-    endif
-    
-    if has_key(a:default, 'scan_words')
-        " TLogDBG 'scan_tags'
-        let view = winsaveview()
-        " let kw = tlib#var#Get('tskelKeyword_'. &filetype, 'bg', '\w*')
-        let kw = '\w\+'
-        let rx = bit_rx . kw
-        " TLogVAR kw, rx
-        norm! G$
-        let [lnum, col] = searchpos(rx, 'w')
-        " TLogVAR lnum, col
-        while lnum > 0
-            let subline = getline(lnum)[col - 1 : -1]
-            let match = matchstr(subline, '^'. rx)
-            if !empty(match)
-                call add(s:tskelQueryAcc, match)
-            endif
-            norm! w
-            " TLogVAR lnum, col, match, subline
-            let [lnum, col] = searchpos(rx, 'W')
-        endwh
-        call winrestview(view)
-    endif
-    
-    if has_key(a:default, 'scan_tags')
-        " TLogDBG 'scan_tags'
-        let tags = taglist('^'. bit_rx)
-        if !empty(tags)
-            call map(tags, 'v:val.name')
-            " TLogVAR tags
-            let s:tskelQueryAcc += tags
-        endif
-    endif
-
-    if !empty(s:tskelQueryAcc)
-        " TLogDBG 'Process s:tskelQueryAcc'
-        let s:tskelQueryAcc = tlib#list#Uniq(s:tskelQueryAcc)
-        call sort(s:tskelQueryAcc)
+    if !empty(completions)
+        " TLogDBG 'Process completions'
+        let s:tskelQueryAcc = keys(completions)
+        " call sort(s:tskelQueryAcc, 1)
         " call tlog#Debug(string(s:tskelQueryAcc))
         let rv = s:Query("s:tskelQueryAcc|Select bit:")
         " TLogVAR rv
@@ -2486,6 +2496,62 @@ function! s:GetDefaultString(bit, default) "{{{3
 endf
 
 
+function! tskeleton#Complete_use_omnifunc(bit, completions) "{{{3
+    " TLogDBG 'use_omnifunc'
+    if !empty(&omnifunc)
+        for w in s:GetCompletions(&omnifunc, a:bit)
+            let a:completions[w] = 1
+        endfor
+    endif
+endf
+
+
+function! tskeleton#Complete_use_completefunc(bit, completions) "{{{3
+    if !empty(&completefunc)
+        " TLogDBG 'use_completefunc'
+        for w in s:GetCompletions(&completefunc, a:bit)
+            let a:completions[w] = 1
+        endfor
+    endif
+endfun
+
+
+function! tskeleton#Complete_scan_words(bit, completions) "{{{3
+    " TLogDBG 'scan_tags saveview '. line('w0')
+    let view = winsaveview()
+    " let kw = tlib#var#Get('tskelKeyword_'. &filetype, 'bg', '\w*')
+    let kw = '\w\+'
+    let rx = s:bit_rx . kw
+    " TLogVAR kw, rx
+    norm! G$
+    let [lnum, col] = searchpos(rx, 'w')
+    " TLogVAR lnum, col
+    while lnum > 0
+        let subline = getline(lnum)[col - 1 : -1]
+        let match = matchstr(subline, '^'. rx)
+        if !empty(match)
+            let a:completions[match] = 1
+        endif
+        norm! w
+        " TLogVAR lnum, col, match, subline
+        let [lnum, col] = searchpos(rx, 'W')
+    endwh
+    call winrestview(view)
+    " TLogDBG 'scan_tags restview '. line('w0')
+endf
+
+
+function! tskeleton#Complete_scan_tags(bit, completions) "{{{3
+    " TLogDBG 'scan_tags'
+    let tags = taglist('^'. s:bit_rx)
+    if !empty(tags)
+        for tag in tags
+            let a:completions[tag.name] = 1
+        endfor
+    endif
+endf
+
+
 function! s:GetCompletions(func, bit) "{{{3
     let b:compl_context = getline('.')[0 : col('.')] . a:bit
     let completions = call(a:func, [0, a:bit])
@@ -2495,22 +2561,63 @@ function! s:GetCompletions(func, bit) "{{{3
 endf
 
 
+" A function suitable for use as 'completefunc' or 'omnifunc'.
+" You have to accept a match with <c-y> in order to trigger skeleton 
+" expansion. See |popupmenu-keys|.
 function! tskeleton#Complete(findstart, base)
+    " TLogVAR a:findstart, a:base
     if a:findstart
         let pattern = tlib#var#Get('tskelKeyword_'. &filetype, 'bg', '\w\+')
-        let line    = getline('.')[0:(col('.') - 1)]
+        let line    = strpart(getline('.'), 0, col('.') - 1)
         let start   = match(line, pattern.'$')
+        " TLogVAR line, start
         return start == -1 ? col('.') - 1 : start
     else
         let t = s:BitMenuEligible('complete', a:base, 'i', &filetype)
-        if s:DidSetup(&filetype)
+        let setup_done = s:DidSetup(&filetype)
+        " TLogVAR len(t), setup_done
+        if setup_done
             for [bit, def] in items(g:tskelBits_{&filetype})
                 " TAssert IsDictionary(def)
                 call add(t, {'word': def['text'], 'abbr': bit})
             endfor
         endif
+        if len(t) > 0
+            let s:pum_complete_args = {
+                        \ 'pos': getpos('.'),
+                        \ 'eol': col('.') >= col('$'),
+                        \ 'view': winsaveview(),
+                        \ 'eligible': t,
+                        \ }
+            " TLogVAR s:pum_complete_pos, s:pum_complete_view
+            autocmd! tSkeleton CursorMoved,CursorMovedI,CursorHold,CursorHoldI <buffer>
+            autocmd tSkeleton CursorMoved,CursorMovedI,CursorHold,CursorHoldI <buffer> call s:ExpandCompletion(s:pum_complete_args)
+        endif
         " TAssert IsList(t)
         return t
+    endif
+endf
+
+
+function! s:ExpandCompletion(args) "{{{3
+    " TLogVAR pumvisible()
+    if !pumvisible()
+        autocmd! tSkeleton CursorMoved,CursorMovedI,CursorHold,CursorHoldI <buffer>
+        " TLogVAR a:args.pos, bufnr('%'), col('.')
+        if a:args.pos[0] == 0 || a:args.pos[0] == bufnr('%')
+            let line = getline('.')
+            let beg  = a:args.pos[2] - 1
+            let end  = col('.') - 1
+            let bit  = strpart(line, beg, end)
+            " TLogVAR line, beg, end, bit
+            if index(a:args.eligible, bit) != -1
+                " exec 'norm! a'. repeat("\<BS>", len(bit))
+                " call tskeleton#ExpandBitUnderCursor("n", bit)
+                " norm! a<++><Left><Left><Left><Left><Left>
+                call tskeleton#ExpandBitUnderCursor("i")
+                redraw
+            endif
+        endif
     endif
 endf
 
@@ -2713,7 +2820,7 @@ function! tskeleton#DefineAutoCmd(template) "{{{3
 endf
 
 
-function! tskeleton#HyperComplete(mode, default) "{{{3
+function! tskeleton#HyperComplete_query(mode, default) "{{{3
     let col = col('.') - 1
     if s:IsInsertMode(a:mode) && col > 0
         let col -= 1
@@ -2729,5 +2836,23 @@ function! tskeleton#HyperComplete(mode, default) "{{{3
         " TLogVAR a:mode
         call tskeleton#ExpandBitUnderCursor(a:mode, '', tlib#var#Get('tskelHyperComplete_'. &filetype, 'bg', tlib#var#Get('tskelHyperComplete', 'bg', {})))
     endif
+endf
+
+
+function! tskeleton#HyperComplete_pum(mode, default) "{{{3
+    let start = tskeleton#Complete(1, "")
+    let col   = col('.')
+    let pre   = strpart(getline('.'), 0, col - 1)
+    let base  = strpart(pre, start)
+    let line  = line('.')
+    let text  = getline(line)
+    let pos   = getpos('.')
+    let pos[2] = start
+    exec line .'delete'
+    call append(line - 1, strpart(text, 0, start - 1))
+    call setpos('.', pos)
+    let completions = tskeleton#Complete(0, base)
+    call complete(col, completions)
+    return ''
 endf
 

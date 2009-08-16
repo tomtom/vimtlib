@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     21-Sep-2004.
-" @Last Change: 2009-08-09.
-" @Revision:    3848
+" @Last Change: 2009-08-16.
+" @Revision:    3865
 "
 " GetLatestVimScripts: 1160 1 tSkeleton.vim
 " http://www.vim.org/scripts/script.php?script_id=1160
@@ -90,9 +90,9 @@ if !exists("g:tskelRevisionGrpIdx")   | let g:tskelRevisionGrpIdx = 3 | endif "{
 if !exists("g:tskelMaxRecDepth") | let g:tskelMaxRecDepth = 10 | endif "{{{2
 if !exists("g:tskelChangeDir")   | let g:tskelChangeDir   = 1  | endif "{{{2
 if !exists("g:tskelMapComplete") | let g:tskelMapComplete = 1  | endif "{{{2
-if g:tskelMapComplete
-    set completefunc=tskeleton#Complete
-endif
+" if g:tskelMapComplete
+"     set completefunc=tskeleton#Complete
+" endif
 
 if !exists("g:tskelMapHyperComplete") "{{{2
     if empty(maparg('<c-space>') . maparg('<c-space>', 'i'))
@@ -100,6 +100,13 @@ if !exists("g:tskelMapHyperComplete") "{{{2
     else
         let g:tskelMapHyperComplete = ''
     endif
+endif
+if !exists('g:tskelHyperType')
+    " Either query or pum.
+    " If you set the variable to "pum", you have to accept completions 
+    " with <c-y>.
+    let g:tskelHyperType = 'query'   "{{{2
+    " let g:tskelHyperType = 'pum'   "{{{2
 endif
 if !exists("g:tskelHyperComplete") "{{{2
     let g:tskelHyperComplete = {'use_completefunc': 1, 'use_omnifunc': 1, 'scan_words': 1, 'scan_tags': 1}
@@ -165,6 +172,16 @@ if !exists("g:tskelBitGroup_viki") "{{{2
 endif
 if !exists("g:tskelBitGroup_xslt") "{{{2
     let g:tskelBitGroup_xslt = ['xslt', 'xml']
+endif
+
+
+if !exists("g:tskel_completions") "{{{2
+    let g:tskel_completions = {
+                \ 'use_omnifunc': 'tskeleton#Complete_use_omnifunc',
+                \ 'use_completefunc': 'tskeleton#Complete_use_completefunc',
+                \ 'scan_words': 'tskeleton#Complete_scan_words',
+                \ 'scan_tags': 'tskeleton#Complete_scan_tags',
+                \ }
 endif
 
 
@@ -283,8 +300,14 @@ endf
 "     strategy) the words in the buffer as possible completions.
 function! TSkeletonMapHyperComplete(key, ...) "{{{3
     let default = a:0 >= 1 ? a:1 : '=='
-    exec 'noremap '. a:key .' :call tskeleton#HyperComplete("n", '. string(default) .')<cr>'
-    exec 'inoremap '. a:key .' <c-\><c-o>:call tskeleton#HyperComplete("i", '. string(default) .')<cr>'
+    if g:tskelHyperType == 'pum'
+        exec 'inoremap '. a:key .' <C-R>=tskeleton#HyperComplete_{g:tskelHyperType}("i", '. string(default) .')<cr>'
+    elseif g:tskelHyperType == 'query'
+        exec 'inoremap '. a:key .' <c-\><c-o>:call tskeleton#HyperComplete_{g:tskelHyperType}("i", '. string(default) .')<cr>'
+    else
+        echoerr "tSkeleton: Unknown type for g:tskelHyperType: "+ g:tskelHyperType
+    endif
+    exec 'noremap '. a:key .' :call tskeleton#HyperComplete_query("n", '. string(default) .')<cr>'
 endf
 if !empty(g:tskelMapHyperComplete)
     call TSkeletonMapHyperComplete(g:tskelMapHyperComplete)
@@ -691,6 +714,10 @@ rtp-directory
 - TSkeletonMapHyperComplete() (default: <c-space>): Map a magic key that 
 expands skeletons or, if no matching templates were found, completions, 
 tags, words etc.
-- FIX: Problem with <+name/expandsion+> kind of tags when located at 
-the beginning or end of a line
+- FIX: Problem with <+name/expandsion+> kind of tags when located at the 
+beginning or end of a line
+- s:GetBitDefs()
+- Improved tskeleton#Complete() (for use as completefunc or omnifunc)
+- FIX: Cursor positioning after expanding templates without a <+CURSOR+> 
+tag
 
