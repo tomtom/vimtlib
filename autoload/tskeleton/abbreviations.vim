@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-15.
-" @Last Change: 2009-02-15.
-" @Revision:    0.0.58
+" @Last Change: 2009-08-11.
+" @Revision:    0.0.62
 
 if &cp || exists("loaded_tskeleton_abbreviations_autoload")
     finish
@@ -12,15 +12,28 @@ endif
 let loaded_tskeleton_abbreviations_autoload = 1
 
 
+function! tskeleton#abbreviations#Reset() "{{{3
+    let s:abbrevs = tlib#cmd#OutputAsList('abbrev')
+endf
+
+
 function! tskeleton#abbreviations#Initialize() "{{{3
+    call tskeleton#abbreviations#Reset()
+endf
+
+
+function! tskeleton#abbreviations#GetAbbreviations() "{{{3
+    if !exists('s:abbrev')
+        call tskeleton#abbreviations#Reset()
+    endif
+    return s:abbrev
 endf
 
 
 function! tskeleton#abbreviations#BufferBits(dict, filetype) "{{{3
-    let abbrevs = tlib#cmd#OutputAsList('abbrev')
-    call filter(abbrevs, 'v:val =~ ''^[i!]''')
+    call filter(s:abbrevs, 'v:val =~ ''^[i!]''')
     let rx = '^\(.\)\s\+\(\S\+\)\s\+\(.\+\)$'
-    for abbr in sort(abbrevs)
+    for abbr in sort(s:abbrevs)
         let matches = matchlist(abbr, rx)
         " TLogVAR abbr, rx, matches
         let name = matches[2]
