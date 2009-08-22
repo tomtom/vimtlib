@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-03.
-" @Last Change: 2009-08-16.
-" @Revision:    0.0.1558
+" @Last Change: 2009-08-22.
+" @Revision:    0.0.1561
 
 if &cp || exists("loaded_tskeleton_autoload")
     finish
@@ -1527,8 +1527,10 @@ function! tskeleton#PrepareBits(...) "{{{3
                         " TLogDBG 'CacheFiletypeBits'
                         call s:CacheFiletypeBits(ft)
                     endif
-                    " TLogDBG 'PrepareFiletypeMenu'
-                    call s:PrepareFiletypeMenu(ft)
+                    if !tskeleton#IsScratchBuffer()
+                        " TLogDBG 'PrepareFiletypeMenu'
+                        call s:PrepareFiletypeMenu(ft)
+                    endif
                 endif
             endfor
             " if s:PrepareBuffer(filetype) && empty(&buftype)

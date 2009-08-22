@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     21-Sep-2004.
-" @Last Change: 2009-08-16.
-" @Revision:    3865
+" @Last Change: 2009-08-22.
+" @Revision:    3866
 "
 " GetLatestVimScripts: 1160 1 tSkeleton.vim
 " http://www.vim.org/scripts/script.php?script_id=1160
@@ -720,4 +720,5 @@ beginning or end of a line
 - Improved tskeleton#Complete() (for use as completefunc or omnifunc)
 - FIX: Cursor positioning after expanding templates without a <+CURSOR+> 
 tag
+- Don't build the menu for tSkeleton scratch buffers
 
