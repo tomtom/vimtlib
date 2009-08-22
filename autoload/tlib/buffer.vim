@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-06-30.
-" @Last Change: 2009-08-16.
-" @Revision:    0.0.281
+" @Last Change: 2009-08-17.
+" @Revision:    0.0.283
 
 if &cp || exists("loaded_tlib_buffer_autoload")
     finish
@@ -297,8 +297,8 @@ function! tlib#buffer#InsertText(text, ...) "{{{3
             let text[i] = idt . text[i]
             let grow += idtl1
         endfor
-        " TLogVAR text
     endif
+    " TLogVAR text
     " exec 'norm! '. lineno .'Gdd'
     call tlib#normal#WithRegister('"tdd', 't')
     call append(lineno - 1, text)
