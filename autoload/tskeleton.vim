@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-03.
-" @Last Change: 2009-08-22.
-" @Revision:    0.0.1561
+" @Last Change: 2009-08-29.
+" @Revision:    0.0.1575
 
 if &cp || exists("loaded_tskeleton_autoload")
     finish
@@ -2180,12 +2180,15 @@ endf
 
 
 function! s:BitMenuEligible(agent, bit, mode, ft) "{{{3
+    " TLogVAR a:agent, a:bit, a:mode, a:ft
     call s:SetLine(a:mode)
     let t = copy(s:EligibleBits(a:ft))
+    " TLogVAR len(t)
     " TAssert IsList(t)
     let s:tskelMenuEligibleIdx = 0
     let s:tskelMenuEligibleRx  = '^'. s:BitRx(a:bit, 0)
     call filter(t, 'v:val =~ ''\S'' && s:MatchBit(v:val, s:tskelMenuEligibleRx)')
+    " TLogVAR len(t)
     if g:tskelPopupNumbered
         call sort(t)
     endif
@@ -2501,7 +2504,7 @@ endf
 function! tskeleton#Complete_use_omnifunc(bit, completions) "{{{3
     " TLogDBG 'use_omnifunc'
     if !empty(&omnifunc)
-        for w in s:GetCompletions(&omnifunc, a:bit)
+        for w in tskeleton#GetCompletions(&omnifunc, a:bit)
             let a:completions[w] = 1
         endfor
     endif
@@ -2511,7 +2514,7 @@ endf
 function! tskeleton#Complete_use_completefunc(bit, completions) "{{{3
     if !empty(&completefunc)
         " TLogDBG 'use_completefunc'
-        for w in s:GetCompletions(&completefunc, a:bit)
+        for w in tskeleton#GetCompletions(&completefunc, a:bit)
             let a:completions[w] = 1
         endfor
     endif
@@ -2554,10 +2557,11 @@ function! tskeleton#Complete_scan_tags(bit, completions) "{{{3
 endf
 
 
-function! s:GetCompletions(func, bit) "{{{3
+function! tskeleton#GetCompletions(func, bit) "{{{3
     let b:compl_context = getline('.')[0 : col('.')] . a:bit
     let completions = call(a:func, [0, a:bit])
-    call map(completions, 'substitute(v:val.word, "($", "", "")')
+    " TLogVAR completions
+    call map(completions, 'substitute(type(v:val) == 4 ? v:val.word : v:val, "($", "", "")')
     call filter(completions, 'v:val != a:bit')
     return completions
 endf
@@ -2591,7 +2595,7 @@ function! tskeleton#Complete(findstart, base)
                         \ 'view': winsaveview(),
                         \ 'eligible': t,
                         \ }
-            " TLogVAR s:pum_complete_pos, s:pum_complete_view
+            " call tlog#Debug("s:pum_complete_args: ". string(s:pum_complete_args))
             autocmd! tSkeleton CursorMoved,CursorMovedI,CursorHold,CursorHoldI <buffer>
             autocmd tSkeleton CursorMoved,CursorMovedI,CursorHold,CursorHoldI <buffer> call s:ExpandCompletion(s:pum_complete_args)
         endif
