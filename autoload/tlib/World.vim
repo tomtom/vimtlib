@@ -3,8 +3,8 @@
 " @Website:     http://members.a1.net/t.link/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-05-01.
-" @Last Change: 2009-08-04.
-" @Revision:    0.1.727
+" @Last Change: 2009-08-23.
+" @Revision:    0.1.738
 
 " :filedoc:
 " A prototype used by |tlib#input#List|.
@@ -758,10 +758,15 @@ function! s:prototype.SetStatusline(query) dict "{{{3
         call add(options, '#')
     endif
     if !empty(options)
-        let query .= printf('%%=[%s] ', join(options, ', '))
+        let sopts = printf('[%s]', join(options, ', '))
+        " let echo  = query . repeat(' ', &columns - len(sopts) - len(query) - 20) . sopts
+        let echo  = query . '  ' . sopts
+        " let query .= '%%='. sopts .' '
     endif
     " TLogVAR &l:statusline, query
-    let &l:statusline = query
+    " let &l:statusline = query
+    echo
+    echo echo
 endf
 
 

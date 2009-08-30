@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-06-30.
-" @Last Change: 2009-08-04.
-" @Revision:    0.0.646
+" @Last Change: 2009-08-23.
+" @Revision:    0.0.648
 
 if &cp || exists("loaded_tlib_input_autoload")
     finish
@@ -133,10 +133,10 @@ function! tlib#input#ListW(world, ...) "{{{3
         endif
     endfor
     " let statusline  = &l:statusline
-    let laststatus  = &laststatus
+    " let laststatus  = &laststatus
     let lastsearch  = @/
     let @/ = ''
-    let &laststatus = 2
+    " let &laststatus = 2
     let world.initial_display = 1
 
     try
@@ -277,7 +277,12 @@ function! tlib#input#ListW(world, ...) "{{{3
                     " TLogDBG 8
                     if world.initial_display || !tlib#char#IsAvailable()
                         " TLogDBG len(dlist)
-                        call world.DisplayList(world.query .' (filter: '. world.DisplayFilter() .'; press "?" for help)', dlist)
+                        if g:tlib_inputlist_shortmessage
+                            let query = 'Filter: '. world.DisplayFilter()
+                        else
+                            let query = world.query .' (filter: '. world.DisplayFilter() .'; press "?" for help)'
+                        endif
+                        call world.DisplayList(query, dlist)
                         call world.FollowCursor()
                         let world.initial_display = 0
                         " TLogDBG 9
@@ -473,7 +478,7 @@ function! tlib#input#ListW(world, ...) "{{{3
     finally
         " TLogVAR statusline
         " let &l:statusline = statusline
-        let &laststatus = laststatus
+        " let &laststatus = laststatus
         silent! let @/  = lastsearch
         " TLogDBG 'finally 2'
         " TLogDBG string(world.Methods())
