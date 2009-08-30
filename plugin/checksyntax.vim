@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     04-Mai-2005.
-" @Last Change: 2009-08-07.
-" @Revision:    348
+" @Last Change: 2009-08-27.
+" @Revision:    351
 
 if exists('g:checksyntax')
     finish
@@ -288,6 +288,7 @@ function! CheckSyntax(manually, ...)
                 exec 'compiler '. cc
             endif
         endif
+        redraw!
     endtry
 endf
 
@@ -348,4 +349,5 @@ restored in the wrong window
 - Don't automatically check php files if eclim is installed.
 - Allow auto_* parameters to be buffer local.
 - FIX: Unlet current_compiler, use g:current_compiler
+- FIX: garbled screen: use redraw! (thanks to Vincent de Lau)
 
