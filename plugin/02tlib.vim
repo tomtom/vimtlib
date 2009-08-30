@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-10.
-" @Last Change: 2009-08-04.
-" @Revision:    579
+" @Last Change: 2009-08-23.
+" @Revision:    581
 " GetLatestVimScripts: 1863 1 tlib.vim
 "
 " Please see also ../test/tlib.vim for usage examples.
@@ -148,6 +148,9 @@ TLet g:tlib_inputlist_filename_indicators = 0
 "   cnf   :: substrings
 "   fuzzy :: match characters
 TLet g:tlib_inputlist_match = 'cnf'
+
+" If non null, display only a short info about the filter.
+TLet g:tlib_inputlist_shortmessage = 0
 
 " Extra tags for |tlib#tag#Retrieve()| (see there). Can also be buffer-local.
 TLet g:tlib_tags_extra = ''
@@ -547,4 +550,4 @@ pressing <esc> when browsing an index-list, returns 0 and not "")
 - Don't reset statusline
 - Don't use fnamemodify() to split filenames (for performance reasons)
 - scratch: Set ft after setting up scratch options
-
+- tlib#map#PumAccept(key)
