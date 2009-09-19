@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     04-Mai-2005.
-" @Last Change: 2009-08-27.
-" @Revision:    351
+" @Last Change: 2009-08-31.
+" @Revision:    356
 
 if exists('g:checksyntax')
     finish
@@ -27,7 +27,7 @@ endif
 if !exists('g:checksyntax_failrx')
     let g:checksyntax_failrx = '\ *\(\d \f\{-}:\)\?\d\{-}:'
 endif
-        
+
 """ Php specific
 """""" Check syntax
 if !exists('g:checksyntax_cmd_php')
@@ -149,6 +149,19 @@ if !exists('g:checksyntax_alt_java')
 endif
 if !exists('g:checksyntax_compiler_javaCheckstyle')
     let g:checksyntax_compiler_javaCheckstyle = 'checkstyle'
+endif
+
+""" lua
+if !exists('g:checksyntax_cmd_lua')
+    let g:checksyntax_cmd_lua = 'luac -p'
+endif
+if !exists('g:checksyntax_auto_lua')
+    " File:Line:Column:Warning number:Warning message
+    let g:checksyntax_efm_lua  = 'luac\:\ %f:%l:\ %m'
+endif
+if !exists('g:checksyntax_auto_lua')
+    let g:checksyntax_auto_lua = 1
+    " let g:checksyntax_auto_lua = 0
 endif
 
 """ tidy (HTML)
@@ -322,7 +335,7 @@ command! -bang -nargs=? CheckSyntax call CheckSyntax(1, "<bang>", <f-args>)
 
 if !hasmapto(':CheckSyntax')
     noremap <F5> :CheckSyntax<cr>
-    inoremap <F5> <c-o>:CheckSyntax<cr> 
+    inoremap <F5> <c-o>:CheckSyntax<cr>
 endif
 
 if g:checksyntax_auto
@@ -350,4 +363,5 @@ restored in the wrong window
 - Allow auto_* parameters to be buffer local.
 - FIX: Unlet current_compiler, use g:current_compiler
 - FIX: garbled screen: use redraw! (thanks to Vincent de Lau)
+- Support for lua (thanks to norman)
 
