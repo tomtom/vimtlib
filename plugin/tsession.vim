@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-02.
-" @Last Change: 2009-08-04.
-" @Revision:    0.1.104
+" @Last Change: 2009-10-03.
+" @Revision:    0.1.105
 " GetLatestVimScripts: 0 1 tsession.vim
 "
 " TODO: restore tab pages
@@ -97,8 +97,7 @@ endf
 "   TSessionSave example
 " :display: TSessionSave [SESSION]
 " :read: command! TSessionSave
-command! -bang -nargs=? -bar -complete=customlist,s:SessionComplete
-            \ TSessionSave call tsession#Save(<q-args>)
+command! -bang -nargs=? -bar -complete=customlist,s:SessionComplete TSessionSave call tsession#Save(<q-args>)
 
 " With !, buffers not registered in the session will be deleted if 
 " |g:tsession_swap| is false. If g:tsession_swap is true, the meaning of 
@@ -108,8 +107,7 @@ command! -bang -nargs=? -bar -complete=customlist,s:SessionComplete
 "   TSessionLoad example
 " :display: TSessionLoad[!] [SESSION]
 " :read: command! TSessionLoad
-command! -bang -nargs=? -bar -complete=customlist,s:SessionComplete
-            \ TSessionLoad call tsession#Load(<q-args>, {'swap': s:Swap('<bang>')})
+command! -bang -nargs=? -bar -complete=customlist,s:SessionComplete TSessionLoad call tsession#Load(<q-args>, {'swap': s:Swap('<bang>')})
 
 " :display: TSession[!]
 " With !, buffers not registered in the session will be deleted if 

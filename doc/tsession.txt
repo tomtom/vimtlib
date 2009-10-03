@@ -61,7 +61,9 @@ Contents~
         g:tsession_swap ................ |g:tsession_swap|
         g:tsession_world ............... |g:tsession_world|
         :TSessionSave .................. |:TSessionSave|
+        :SessionComplete ............... |:TSessionSave|
         :TSessionLoad .................. |:TSessionLoad|
+        :SessionComplete ............... |:TSessionLoad|
         :TSession ...................... |:TSession|
 
 
@@ -129,7 +131,7 @@ TSessionSave [SESSION]
       TSessionSave example
 <
 
-
+                                                    *:TSessionSave*
 :SessionComplete
 
                                                     *:TSessionLoad*
@@ -142,7 +144,7 @@ TSessionLoad[!] [SESSION]
       TSessionLoad example
 <
 
-
+                                                    *:TSessionLoad*
 :SessionComplete
 
                                                     *:TSession*
