@@ -3,7 +3,7 @@
 # @Author:      Tom Link (micathom AT gmail com)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2009-02-10.
-# @Last Change: 2009-02-25.
+# @Last Change: 2009-10-03.
 #
 # This script creates and installs vimballs without vim.
 #
@@ -38,7 +38,7 @@ require 'zlib'
 class Vimball
 
     APPNAME = 'vimball'
-    VERSION = '1.0.196'
+    VERSION = '1.0.206'
     HEADER = <<HEADER
 " Vimball Archiver by Charles E. Campbell, Jr., Ph.D.
 UseVimball
@@ -147,6 +147,10 @@ HEADER
 
                 opts.on('-r', '--[no-]record', 'Save record in .VimballRecord') do |bool|
                     config['record'] = bool
+                end
+
+                opts.on('-u', '--[no-]update', 'Create VBA only if it is outdated') do |bool|
+                    config['update'] = bool
                 end
 
                 opts.on('-z', '--gzip', 'Save as vba.gz') do |value|
@@ -267,6 +271,25 @@ HEADER
         vimball = [HEADER]
 
         files = File.readlines(recipe)
+        vbafile = File.join(@config['outdir'], File.basename(recipe, '.recipe') + '.vba')
+        vbafile << '.gz' if @config['compress']
+
+        if @config['update'] and File.exist?(vbafile)
+            vba_mtime = File.mtime(vbafile)
+            $logger.debug "MTIME VBA: #{vbafile}: #{vba_mtime}"
+            if files.all? {|file|
+                file = file.strip
+                filename = File.join(@config['vimfiles'], file)
+                mtime = File.mtime(filename)
+                older = mtime <= vba_mtime
+                $logger.debug "MTIME: #{filename}: #{mtime} => #{older}"
+                older
+            }
+                $logger.info "VBA is up to date: #{vbafile}"
+                return
+            end   
+        end
+
         files.each do |file|
             file = file.strip
             unless file.empty?
@@ -297,12 +320,10 @@ HEADER
             end
         end
 
-        vbafile = File.join(@config['outdir'], File.basename(recipe, '.recipe') + '.vba')
         ensure_dir_exists(File.dirname(vbafile))
         vimball = vimball.join
 
         if @config['compress']
-            vbafile << '.gz'
             $logger.info "Save as: #{vbafile}"
             unless @config['dry']
                 Zlib::GzipWriter.open(vbafile) do |gz|
