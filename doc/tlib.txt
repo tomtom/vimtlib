@@ -43,6 +43,7 @@ Contents~
         g:tlib_inputlist_livesearch_threshold ... |g:tlib_inputlist_livesearch_threshold|
         g:tlib_inputlist_filename_indicators .... |g:tlib_inputlist_filename_indicators|
         g:tlib_inputlist_match .................. |g:tlib_inputlist_match|
+        g:tlib_inputlist_shortmessage ........... |g:tlib_inputlist_shortmessage|
         g:tlib_tags_extra ....................... |g:tlib_tags_extra|
         g:tlib_tag_substitute ................... |g:tlib_tag_substitute|
         g:tlib_filename_sep ..................... |g:tlib_filename_sep|
@@ -177,6 +178,7 @@ Contents~
         tlib#list#RemoveAll ..................... |tlib#list#RemoveAll()|
         tlib#list#Zip ........................... |tlib#list#Zip()|
         tlib#list#Uniq .......................... |tlib#list#Uniq()|
+        tlib#map#PumAccept ...................... |tlib#map#PumAccept()|
         tlib#normal#WithRegister ................ |tlib#normal#WithRegister()|
         tlib#notify#Echo ........................ |tlib#notify#Echo()|
         tlib#notify#TrimMessage ................. |tlib#notify#TrimMessage()|
@@ -344,6 +346,10 @@ g:tlib_inputlist_match         (default: 'cnf')
     Can be "cnf" or "fuzzy".
       cnf   :: substrings
       fuzzy :: match characters
+
+                                                    *g:tlib_inputlist_shortmessage*
+g:tlib_inputlist_shortmessage  (default: 0)
+    If non null, display only a short info about the filter.
 
                                                     *g:tlib_tags_extra*
 g:tlib_tags_extra              (default: '')
@@ -1094,6 +1100,17 @@ tlib#list#Zip(lists, ?default='')
 
                                                     *tlib#list#Uniq()*
 tlib#list#Uniq(list, ...)
+
+
+========================================================================
+autoload/tlib/map.vim~
+
+                                                    *tlib#map#PumAccept()*
+tlib#map#PumAccept(key)
+    If |pumvisible()| is true, return "\<c-y>". Otherwise return a:key.
+    For use in maps like: >
+      imap <expr> <cr> tlib#map#PumAccept("\<cr>")
+<
 
 
 ========================================================================

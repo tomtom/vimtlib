@@ -195,8 +195,11 @@ Contents~
         :TRagGitFiles ............ |:TRagGitFiles|
         trag#ClearFiles .......... |trag#ClearFiles()|
         trag#AddFiles ............ |trag#AddFiles()|
+        trag#GetProjectFiles ..... |trag#GetProjectFiles()|
+        trag#GetGitFiles ......... |trag#GetGitFiles()|
         trag#SetGitFiles ......... |trag#SetGitFiles()|
         trag#SetFiles ............ |trag#SetFiles()|
+        trag#FindGitRepos ........ |trag#FindGitRepos()|
         trag#Edit ................ |trag#Edit()|
         trag#Grep ................ |trag#Grep()|
         trag#ClearCachedRx ....... |trag#ClearCachedRx()|
@@ -368,7 +371,10 @@ g:trag_project                 (default: '')
 
                                                     *g:trag_git*
 g:trag_git                     (default: '')
-    5. The name of a git repository that includes all files of interest.
+    5. The name of a git repository that includes all files of interest. 
+    If the value is "*", trag will search from the current directory 
+    (|getcwd()|) upwards for a .git directory.
+    If the value is "finddir", use |finddir()| to find a .git directory.
     Can be buffer local.
 
                                                     *:TRagsetfiles*
@@ -405,12 +411,21 @@ trag#ClearFiles()
                                                     *trag#AddFiles()*
 trag#AddFiles(files)
 
+                                                    *trag#GetProjectFiles()*
+trag#GetProjectFiles(manifest)
+
+                                                    *trag#GetGitFiles()*
+trag#GetGitFiles(repos)
+
                                                     *trag#SetGitFiles()*
 trag#SetGitFiles(repos)
     Set the files list from the files included in a given git repository.
 
                                                     *trag#SetFiles()*
 trag#SetFiles(?files=[])
+
+                                                    *trag#FindGitRepos()*
+trag#FindGitRepos()
 
                                                     *trag#Edit()*
 trag#Edit()

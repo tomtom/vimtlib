@@ -17,8 +17,10 @@ appropriate interpreter, lint or whatsoever).
 
 By default, :CheckSyntax is mapped to <F5>. The :CheckSyntax takes one 
 optional argument: the mode (default: &filetype). The following modes 
-are pre-defined:
+are pre-defined (and maybe some more):
 
+    javascript :: Check syntax via jsl
+    lua :: Parse file (luac -p)
     php  :: Check syntax (php -l)
     phpp :: Parse a file (php -f)
     ruby :: Check syntax (ruby -c; no auto-checks)
