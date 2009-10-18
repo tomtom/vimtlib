@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     27-Dez-2004.
-" @Last Change: 2009-08-07.
-" @Revision:    1.9.671
+" @Last Change: 2009-10-12.
+" @Revision:    1.9.672
 " 
 " GetLatestVimScripts: 1173 1 tComment.vim
 
@@ -139,6 +139,7 @@ call TCommentDefineType('dosini',           '; %s'             )
 call TCommentDefineType('dsl',              '; %s'             )
 call TCommentDefineType('dylan',            '// %s'            )
 call TCommentDefineType('eiffel',           '-- %s'            )
+call TCommentDefineType('erlang',           '%%%% %s'          )
 call TCommentDefineType('eruby',            '<%%# %s%%>'       )
 call TCommentDefineType('gtkrc',            '# %s'             )
 call TCommentDefineType('gitcommit',        '# %s'             )
@@ -382,4 +383,7 @@ new: >)
 1.10
 - tcomment#Operator defines w:tcommentPos if invoked repeatedly
 - s:GuessFileType: use len(getline()) instead of col()
+
+1.11
+- Support for erlang (thanks to Zhang Jinzhu)
 
