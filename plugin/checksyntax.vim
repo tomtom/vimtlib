@@ -2,13 +2,13 @@
 " @Author:      Tom Link (micathom AT gmail com)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     04-Mai-2005.
-" @Last Change: 2009-08-31.
-" @Revision:    356
+" @Last Change: 2009-10-10.
+" @Revision:    368
 
 if exists('g:checksyntax')
     finish
 endif
-let g:checksyntax = 5
+let g:checksyntax = 6
 
 
 augroup CheckSyntax
@@ -234,8 +234,8 @@ function! CheckSyntax(manually, ...)
         echom "Buffer was modified. Please save it before calling :CheckSyntax."
         return
     end
-    let compiler = s:GetVar('g:checksyntax_compiler_', ft, a:manually)
-    let makecmd  = s:GetVar('g:checksyntax_cmd_', ft, a:manually)
+    let compiler = s:GetVar('checksyntax_compiler_', ft, a:manually)
+    let makecmd  = s:GetVar('checksyntax_cmd_', ft, a:manually)
     if empty(compiler) && empty(makecmd)
         return
     endif
@@ -306,13 +306,14 @@ function! CheckSyntax(manually, ...)
 endf
 
 function! s:GetVar(var, ft, manually) "{{{3
-    if !a:manually && exists(a:var .'auto_'. a:ft)
-        return {a:var}auto_{a:ft}
-    elseif exists(a:var . a:ft)
-        return {a:var}{a:ft}
-    else
-        return ''
-    endif
+    for context in ['b', 'g']
+        if !a:manually && exists(context .':'. a:var .'auto_'. a:ft)
+            return {context}:{a:var}auto_{a:ft}
+        elseif exists(context .':'. a:var . a:ft)
+            return {context}:{a:var}{a:ft}
+        endif
+    endfor
+    return ''
 endf
 
 if !exists('*CheckSyntaxSucceed')
@@ -364,4 +365,8 @@ restored in the wrong window
 - FIX: Unlet current_compiler, use g:current_compiler
 - FIX: garbled screen: use redraw! (thanks to Vincent de Lau)
 - Support for lua (thanks to norman)
+
+0.6
+- checksyntax_compiler_{&ft} & checksyntax_cmd_{&ft} variables can be 
+buffer local
 
