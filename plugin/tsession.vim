@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-02.
-" @Last Change: 2009-10-03.
-" @Revision:    0.1.105
+" @Last Change: 2009-10-29.
+" @Revision:    0.1.106
 " GetLatestVimScripts: 0 1 tsession.vim
 "
 " TODO: restore tab pages
@@ -96,7 +96,6 @@ endf
 " EXAMPLES: >
 "   TSessionSave example
 " :display: TSessionSave [SESSION]
-" :read: command! TSessionSave
 command! -bang -nargs=? -bar -complete=customlist,s:SessionComplete TSessionSave call tsession#Save(<q-args>)
 
 " With !, buffers not registered in the session will be deleted if 
@@ -106,7 +105,6 @@ command! -bang -nargs=? -bar -complete=customlist,s:SessionComplete TSessionSave
 " EXAMPLES: >
 "   TSessionLoad example
 " :display: TSessionLoad[!] [SESSION]
-" :read: command! TSessionLoad
 command! -bang -nargs=? -bar -complete=customlist,s:SessionComplete TSessionLoad call tsession#Load(<q-args>, {'swap': s:Swap('<bang>')})
 
 " :display: TSession[!]
