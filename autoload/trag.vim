@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-29.
-" @Last Change: 2009-08-05.
-" @Revision:    0.0.691
+" @Last Change: 2009-12-13.
+" @Revision:    0.0.700
 
 if &cp || exists("loaded_trag_autoload")
     finish
@@ -248,12 +248,14 @@ function! trag#Grep(args, ...) "{{{3
         let rx = '*'
         " throw 'Malformed arguments (should be: "KIND REGEXP"): '. string(a:args)
     endif
+    " TAssertType rx, 'string'
     let s:grep_rx = rx
     " TLogVAR kindspos, kindsneg, rx, files
     if empty(files)
         let files = s:GetFiles()
         " TLogVAR files
     endif
+    " TAssertType files, 'list'
     call tlib#progressbar#Init(len(files), 'TRag: Grep %s', 20)
     if replace
         call setqflist([])
@@ -497,14 +499,17 @@ function! s:FormatQFLE(qfe) "{{{3
 endf
 
 
+" :display: trag#QuickList(?world={})
 " Display the |quickfix| list with |tlib#input#ListW()|.
 function! trag#QuickList(...) "{{{3
+    TVarArg ['world', {}]
     " TVarArg ['sign', 'TRag']
     " if !empty(sign) && !empty(g:trag_sign)
     "     " call tlib#signs#ClearAll(sign)
     "     " call tlib#signs#Mark(sign, getqflist())
     " endif
-    let w = tlib#World#New(copy(g:trag_qfl_world))
+    let w = extend(copy(g:trag_qfl_world), world)
+    let w = tlib#World#New(w)
     let w.qfl  = copy(getqflist())
     " TLogVAR w.qfl
     call s:FormatBase(w)

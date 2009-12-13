@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-29.
-" @Last Change: 2009-08-04.
-" @Revision:    584
+" @Last Change: 2009-12-13.
+" @Revision:    589
 " GetLatestVimScripts: 2033 1 trag.vim
 
 if &cp || exists("loaded_trag")
@@ -17,7 +17,7 @@ if !exists('g:loaded_tlib') || g:loaded_tlib < 32
         finish
     endif
 endif
-let loaded_trag = 5
+let loaded_trag = 7
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -428,4 +428,7 @@ default file list will be used.
 - Enabled "trace cursor" functionality (mapped to the <c-insert> key).
 - :Traglw
 - TRagGitFiles, trag#SetGitFiles(), g:trag_git
+
+0.7
+- trag#QuickList(): Accept a dict as optional argument.
 
