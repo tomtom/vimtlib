@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2006-12-12.
-" @Last Change: 2009-03-11.
-" @Revision:    807
+" @Last Change: 2009-12-13.
+" @Revision:    811
 "
 " GetLatestVimScripts: 1730 1 07tAssert.vim
 
@@ -16,7 +16,7 @@ if &cp || exists("loaded_tassert")
         finish
     endif
 endif
-let loaded_tassert = 100
+let loaded_tassert = 101
 
 
 if !exists('g:TASSERT')    | let g:TASSERT = 0    | endif
@@ -59,7 +59,7 @@ if g:TASSERT
     " Check if EXPRESSION is of a certain TYPE (see |IsA()|).
     "
     " This command requires macros/tassert.vim to be loaded.
-    command! -nargs=+ -bang -bar TAssertType TAssert<bang> IsA(<args>)
+    command! -nargs=+ -bang -bar TAssertType TAssert<bang> IsItA(<args>)
 
 else
 
@@ -143,4 +143,7 @@ the backtrace.
 that doesn't really belong here.
 - :TAssertType command (requires macros/tassert.vim)
 - Moved Is*() functions to macros/tassert.vim.
+
+1.1
+- IsItA() -- verbose version of IsA()
 

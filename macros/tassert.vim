@@ -3,8 +3,8 @@
 " @GIT:         http://github.com/tomtom/vimtlib/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-03-07.
-" @Last Change: 2009-03-07.
-" @Revision:    7
+" @Last Change: 2009-12-13.
+" @Revision:    8
 
 if &cp || exists("loaded_macros_tassert")
     finish
@@ -66,6 +66,16 @@ endf
 
 fun! IsA(expr, type)
     return s:CheckType(a:expr, a:type)
+endf
+
+function! IsItA(expr, type) "{{{3
+    let rv = IsA(a:expr, a:type)
+    if !rv
+        echohl Error
+        echom "Expected a ". a:type ." but got: ". string(a:expr)
+        echohl NONE
+    endif
+    return rv
 endf
 
 fun! IsNumber(expr)
