@@ -23,11 +23,14 @@ autoload/tlib/eval.vim
 autoload/tlib/hook.vim
 autoload/tlib/input.vim
 autoload/tlib/list.vim
+autoload/tlib/map.vim
 autoload/tlib/normal.vim
 autoload/tlib/notify.vim
+autoload/tlib/paragraph.vim
 autoload/tlib/progressbar.vim
 autoload/tlib/rx.vim
 autoload/tlib/scratch.vim
+autoload/tlib/signs.vim
 autoload/tlib/string.vim
 autoload/tlib/syntax.vim
 autoload/tlib/tab.vim
