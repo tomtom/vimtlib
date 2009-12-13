@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-13.
-" @Last Change: 2009-05-24.
-" @Revision:    268
+" @Last Change: 2009-12-06.
+" @Revision:    274
 " GetLatestVimScripts: 1864 1 tmru.vim
 
 if &cp || exists("loaded_tmru")
@@ -136,6 +136,8 @@ function! s:SNR()
     return matchstr(expand('<sfile>'), '<SNR>\d\+_\zeSNR$')
 endf
 
+" Return 0 if the file isn't readable/doesn't exist.
+" Otherwise return 1.
 function! s:Edit(filename) "{{{3
     if a:filename == expand('%:p')
         return 1
@@ -147,7 +149,9 @@ function! s:Edit(filename) "{{{3
             return 1
         elseif filereadable(a:filename)
             try
-                exec 'edit '. tlib#arg#Ex(a:filename)
+                let file = tlib#arg#Ex(a:filename)
+                " TLogVAR file
+                exec 'edit '. file
             catch
                 echohl error
                 echom v:errmsg
