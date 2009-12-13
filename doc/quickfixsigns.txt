@@ -59,7 +59,8 @@ g:quickfixsigns_lists          (default: [...])
 
                                                     *g:quickfixsigns_marks*
 g:quickfixsigns_marks          (default: split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ<>', '\zs'))
-    A list of marks that should be displayed as signs.
+    A list of marks that should be displayed as signs. If empty, 
+    disable the display of marks.
 
                                                     *g:quickfixsigns_marks_def*
 g:quickfixsigns_marks_def      (default: {...})

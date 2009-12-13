@@ -4,8 +4,8 @@
 " @GIT:         http://github.com/tomtom/vimtlib/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-03-14.
-" @Last Change: 2009-08-02.
-" @Revision:    276
+" @Last Change: 2009-12-01.
+" @Revision:    297
 " GetLatestVimScripts: 2584 1 :AutoInstall: quickfixsigns.vim
 
 if &cp || exists("loaded_quickfixsigns") || !has('signs')
@@ -41,7 +41,8 @@ if !exists('g:quickfixsigns_lists')
 endif
 
 if !exists('g:quickfixsigns_marks')
-    " A list of marks that should be displayed as signs.
+    " A list of marks that should be displayed as signs. If empty, 
+    " disable the display of marks.
     let g:quickfixsigns_marks = split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ<>', '\zs') "{{{2
     " let g:quickfixsigns_marks = split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ<>''`^.(){}[]', '\zs') "{{{2
     " let g:quickfixsigns_marks = split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ<>.''`^', '\zs') "{{{2
@@ -61,7 +62,7 @@ if !exists('g:quickfixsigns_marks_def')
                 \ }
     " \ 'event': ['BufEnter', 'CursorHold', 'CursorHoldI'],
 endif
-if !&lazyredraw
+if !&lazyredraw && !empty(g:quickfixsigns_marks_def)
     let s:cmn = index(g:quickfixsigns_marks_def.event, 'CursorMoved')
     let s:cmi = index(g:quickfixsigns_marks_def.event, 'CursorMovedI')
     if s:cmn >= 0 || s:cmi >= 0
@@ -202,9 +203,9 @@ endf
 
 function! s:MarkId(item) "{{{3
     let bn = bufnr('%')
-    let item = filter(values(s:register), 'v:val.bn == bn && v:val.item.text ==# a:item.text')
+    let item = filter(values(s:register), 'v:val.bn == bn && get(v:val.item, "text", "") ==# get(a:item, "text", "")')
     if empty(item)
-        return s:base + a:item.bufnr * 67 + char2nr(a:item.text[-1 : -1]) - 65
+        return s:base + a:item.bufnr * 67 + char2nr(get(a:item, "text", "")[-1 : -1]) - 65
     else
         " TLogVAR item
         return item[0].idx
@@ -381,4 +382,7 @@ Incompatible changes:
 0.5
 - Set balloonexpr only if empty (don't try to be smart)
 - Disable CursorMoved(I) events, when &lazyredraw isn't set.
+
+0.6
+- Don't require qfl.item.text to be set
 
