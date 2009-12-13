@@ -6,14 +6,51 @@ a multitude of viki files. Depending on your settings, you can quickly
 search all "homepages" of intervikis or search only project-specific 
 files.
 
+
 Usage:
     :VikiTask[!] [GLOB PATTERNS]
+
 
 Features:
     - Collect tasks from viki's priority lists
     - Sort those tasks
     - Browse tasks with a given date
     - Optionally browse all tasks (incl. those without a date)
+
+
+-----------------------------------------------------------------------
+Tutorial: How does it work?~
+
+Let's say you have the files:
+
+foo.txt: >
+    * Foo
+        #A 2009-12-13 Do this
+        #A 2009-12-20 Call @Anna
+        #A Whatever
+
+bar.txt: >
+    * Bar
+        #A 2009-11-01 Do that
+        #A 2009-12-24 Wish @Bernie good luck
+
+From a viki buffer, call >
+
+    :VikiTask *.txt
+
+and you get the following list: >
+
+    Bar.txt|2| #A 2009-11-01 Do that
+    Foo.txt|2| #A 2009-12-13 Do this
+    Foo.txt|3| #A 2009-12-20 Call @Anna
+    Bar.txt|3| #A 2009-12-24 Wish @Bernie good luck
+
+If you do/had done this on the 15 December 2009, the third line would be 
+highlighted, i.e. the entries above the cursor refer to passed/missed 
+events.
+
+If you had called :VikiTask! (behold the bang), then the "Whatever" 
+entry would have been included in the list too.
 
 
 -----------------------------------------------------------------------
@@ -39,6 +76,7 @@ Contents~
         g:vikitasks_files ................ |g:vikitasks_files|
         g:vikitasks_intervikis ........... |g:vikitasks_intervikis|
         g:vikitasks_intervikis_ignored ... |g:vikitasks_intervikis_ignored|
+        g:vikitasks_qfl_viewer ........... |g:vikitasks_qfl_viewer|
         :VikiTasks ....................... |:VikiTasks|
         vikitasks#Tasks .................. |vikitasks#Tasks()|
 
@@ -50,9 +88,7 @@ plugin/vikitasks.vim~
 g:vikitasks_files              (default: [])
     A list of glob patterns (or files) that will be searched for task 
     lists.
-    
     Can be buffer-local.
-    
     Add new items in ~/vimfiles/after/plugin/vikitasks.vim
 
                                                     *g:vikitasks_intervikis*
@@ -64,10 +100,16 @@ g:vikitasks_intervikis         (default: 0)
 g:vikitasks_intervikis_ignored (default: [])
     A list of ignored intervikis.
 
+                                                    *g:vikitasks_qfl_viewer*
+g:vikitasks_qfl_viewer         (default: '')
+    The viewer for the quickfix list. If empty, use |:TRagcw|.
+
                                                     *:VikiTasks*
 VikiTasks[!] [FILE PATTERNS]
     Collect a list of tasks from a set of viki pages.
     With the optional !, show all tasks not just those with a date
+    The current buffer has to be a viki buffer. If it isn't, your 
+    |g:vikiHomePage|, which must be set, is opened first.
 
 
 ========================================================================

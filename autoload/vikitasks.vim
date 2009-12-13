@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
 " @Last Change: 2009-12-13.
-" @Revision:    0.0.74
+" @Revision:    0.0.78
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -15,6 +15,12 @@ set cpo&vim
 " instead of those defined in |g:vikitasks_files|.
 function! vikitasks#Tasks(...) "{{{3
     TVarArg ['all_tasks', 0]
+
+    if &filetype != 'viki' && !viki#HomePage()
+        echoerr "VikiTasks: Not a viki buffer and cannot open the homepage"
+        return
+    endif
+
     " TLogVAR all_tasks, a:0
     if a:0 > 1
         let files = map(range(2, a:0), 'a:{v:val}')
@@ -60,11 +66,16 @@ function! vikitasks#Tasks(...) "{{{3
             endif
         endfor
 
-        let w = {}
-        if i > 1
-            let w.initial_index = i
+        if empty(g:vikitasks_qfl_viewer)
+            let w = {}
+            if i > 1
+                let w.initial_index = i
+            endif
+            call trag#QuickList(w)
+        else
+            exec g:vikitasks_qfl_viewer
         endif
-        call trag#QuickList(w)
+
     else
         echom "VikiTasks: No task files"
     endif

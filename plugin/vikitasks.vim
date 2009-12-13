@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
 " @Last Change: 2009-12-13.
-" @Revision:    26
+" @Revision:    31
 " GetLatestVimScripts: 0 0 :AutoInstall: vikitasks.vim
 " Search for task lists and display them in a list
 
@@ -34,9 +34,7 @@ set cpo&vim
 
 " A list of glob patterns (or files) that will be searched for task 
 " lists.
-"
 " Can be buffer-local.
-"
 " Add new items in ~/vimfiles/after/plugin/vikitasks.vim
 TLet g:vikitasks_files = []
 
@@ -47,6 +45,9 @@ TLet g:vikitasks_intervikis = 0
 " A list of ignored intervikis.
 TLet g:vikitasks_intervikis_ignored = []
 
+" The viewer for the quickfix list. If empty, use |:TRagcw|.
+TLet g:vikitasks_qfl_viewer = ''
+
 
 TRagDefKind tasks viki /^[[:blank:]]\+\zs#\(T: \+.\{-}\u.\{-}:\|\d*\u\d*\( \+\(_\|[0-9%-]\+\)\)\?\)\( \+\[[^[].\{-}\]\)\?\ze /
 
@@ -54,6 +55,8 @@ TRagDefKind tasks viki /^[[:blank:]]\+\zs#\(T: \+.\{-}\u.\{-}:\|\d*\u\d*\( \+\(_
 " :display: VikiTasks[!] [FILE PATTERNS]
 " Collect a list of tasks from a set of viki pages.
 " With the optional !, show all tasks not just those with a date
+" The current buffer has to be a viki buffer. If it isn't, your 
+" |g:vikiHomePage|, which must be set, is opened first.
 command! -bang -nargs=? VikiTasks call vikitasks#Tasks(!empty("<bang>"), <f-args>)
 cabbr vikitasks VikiTasks
 
