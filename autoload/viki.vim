@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
 " @Last Change: 2009-12-13.
-" @Revision:    0.558
+" @Revision:    0.562
 
 if &cp || exists("loaded_viki_auto") "{{{2
     finish
@@ -1793,6 +1793,19 @@ function! viki#InterEditArg(iname, name) "{{{3
 endf
 
 
+" :display: viki#HomePage(?winNr=0)
+" Open the homepage.
+function! viki#HomePage(...) "{{{3
+    TVarArg ['winNr', 0]
+    if g:vikiHomePage != ''
+        call viki#OpenLink(g:vikiHomePage, '', '', '', winNr)
+        return 1
+    else
+        return 0
+    endif
+endf
+
+
 " Edit a vikiname
 " viki#Edit(name, ?bang='', ?winNr=0, ?ìgnoreSpecial=0)
 function! viki#Edit(name, ...) "{{{3
@@ -1801,9 +1814,7 @@ function! viki#Edit(name, ...) "{{{3
     if exists('b:vikiEnabled') && bang != '' && 
                 \ exists('b:vikiFamily') && b:vikiFamily != ''
                 " \ (!exists('b:vikiFamily') || b:vikiFamily != '')
-        if g:vikiHomePage != ''
-            call viki#OpenLink(g:vikiHomePage, '', '', '', winNr)
-        else
+        if !viki#HomePage(winNr)
             call s:EditWrapper('buffer', 1)
         endif
     endif
