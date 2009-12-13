@@ -34,6 +34,7 @@ The vimball recipes for the following plugins are located in the vimballs subdir
     #B ttagcomplete     -- Context-sensitive tag completion
     #C spec             -- Behaviour-driven design: easy on the eye specifications of VIM scripts
     #C tbak             -- Yet another simple backup plugin using diff
+    #C vikitasks        -- Search viki files for tasks and display them in a list
     #D concordance      -- Concordance table (sort of)
     #D glark            -- a wrapper for the glark command (superseded by trag)
     #D linglang         -- Perform actions on basis of the current line's language
