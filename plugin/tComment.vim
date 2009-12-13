@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     27-Dez-2004.
-" @Last Change: 2009-10-12.
-" @Revision:    1.9.672
+" @Last Change: 2009-11-28.
+" @Revision:    1.9.673
 " 
 " GetLatestVimScripts: 1173 1 tComment.vim
 
@@ -141,8 +141,12 @@ call TCommentDefineType('dylan',            '// %s'            )
 call TCommentDefineType('eiffel',           '-- %s'            )
 call TCommentDefineType('erlang',           '%%%% %s'          )
 call TCommentDefineType('eruby',            '<%%# %s%%>'       )
-call TCommentDefineType('gtkrc',            '# %s'             )
 call TCommentDefineType('gitcommit',        '# %s'             )
+call TCommentDefineType('gtkrc',            '# %s'             )
+call TCommentDefineType('groovy',           '// %s'            )
+call TCommentDefineType('groovy_inline',    g:tcommentInlineC  )
+call TCommentDefineType('groovy_block',     g:tcommentBlockC   )
+call TCommentDefineType('groovy_doc_block', g:tcommentBlockC2  )
 call TCommentDefineType('haskell',          '-- %s'            )
 call TCommentDefineType('haskell_block',    "{-%s-}\n   "      )
 call TCommentDefineType('haskell_inline',   '{- %s -}'         )
