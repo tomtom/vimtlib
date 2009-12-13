@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2009-08-03.
-" @Revision:    0.533
+" @Last Change: 2009-12-13.
+" @Revision:    0.558
 
 if &cp || exists("loaded_viki_auto") "{{{2
     finish
@@ -39,6 +39,12 @@ endf
 
 let s:InterVikiRx = '^\(['. g:vikiUpperCharacters .']\+\)::\(.*\)$'
 let s:InterVikis  = []
+
+
+function! viki#GetInterVikis() "{{{3
+    return s:InterVikis
+endf
+
 
 " Define an interviki name
 " viki#Define(name, prefix, ?suffix="*", ?index="Index.${suffix}")
@@ -395,7 +401,7 @@ function! viki#HighlightInexistent() "{{{3
             exe 'syntax clear '. b:vikiInexistentHighlight
             let rx = viki#RxFromCollection(b:vikiNamesNull)
             if rx != ''
-                exe 'syntax match '. b:vikiInexistentHighlight .' /'. rx .'/'
+                exe 'syntax match '. b:vikiInexistentHighlight .' /\C'. rx .'/'
             endif
         endif
     elseif b:vikiMarkInexistent == 2
@@ -404,7 +410,7 @@ function! viki#HighlightInexistent() "{{{3
             syntax clear vikiExtendedOkLink
             let rx = viki#RxFromCollection(b:vikiNamesOk)
             if rx != ''
-                exe 'syntax match vikiOkLink /'. rx .'/'
+                exe 'syntax match vikiOkLink /\C'. rx .'/'
             endif
         endif
     endif
@@ -1575,15 +1581,21 @@ function! viki#InterVikiDest(vikiname, ...)
         else
             if empty(v_dest) && exists('i_index')
                 let v_dest = i_index
+                " TLogVAR v_dest, i_index
             endif
-            let i_dest = expand(i_dest)
+            " let i_dest = expand(i_dest)
+            let i_dest = fnamemodify(i_dest, ':p')
+            " TLogVAR i_dest, rx
             if !empty(rx)
-                let sep    = '[\/]'
                 let i_dest = s:RxifyFilename(i_dest)
+                " TLogVAR i_dest
+                if i_dest !~ '\[\\/\]$'
+                    let i_dest .= '[\/]'
+                endif
+                let v_dest = i_dest . v_dest
             else
-                let sep    = g:vikiDirSeparator
+                let v_dest = tlib#file#Join([i_dest, v_dest], 1)
             endif
-            let v_dest = i_dest . sep . v_dest
         endif
         " TLogVAR v_dest
         return v_dest
@@ -1899,7 +1911,9 @@ function! s:EditCompleteMapAgent1(val, sfx, iv, rx) "{{{3
     endif
     " TLogVAR rv, a:rx
     " let rv = substitute(rv, a:rx, '\1', '')
-    let rv = matchlist(rv, a:rx)[1]
+    let m = matchlist(rv, a:rx)
+    " TLogVAR m
+    let rv = m[1]
     " TLogVAR rv
     if empty(a:iv)
         return rv

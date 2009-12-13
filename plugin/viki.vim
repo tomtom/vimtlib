@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2009-08-04.
-" @Revision:    2634
+" @Last Change: 2009-11-01.
+" @Revision:    2636
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -40,7 +40,7 @@ if !exists('g:loaded_tlib') || g:loaded_tlib < 32
         finish
     endif
 endif
-let loaded_viki = 312
+let loaded_viki = 313
 
 " This is what we consider nil, in the absence of nil in vimscript
 let g:vikiDefNil  = ''
@@ -1043,5 +1043,9 @@ problems with file names containing an unencoded %)
 - Require tlib 0.32
 - viki#ExecExternal(): Escape !
 - special file: xmind
+
+3.13
+- Make regexp for inexistent links case sensitive
+
 
 " vim: ff=unix
