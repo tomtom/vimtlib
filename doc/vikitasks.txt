@@ -2,17 +2,17 @@
                     Author: Tom Link, micathom at gmail com
 
 This plugin provides a quick overview of priority/task lists maintained 
-a multitude of viki files. Depending on your settings, you can quickly 
+in different viki files. Depending on your settings, you can quickly 
 search all "homepages" of intervikis or search only project-specific 
 files.
 
 
 Usage:
-    :VikiTask[!] [GLOB PATTERNS]
+    :VikiTasks[!] [SELECT] [GLOB PATTERNS]
 
 
 Features:
-    - Collect tasks from viki's priority lists
+    - Collect tasks from viki's priority lists (see |viki-tasks|)
     - Sort those tasks
     - Browse tasks with a given date
     - Optionally browse all tasks (incl. those without a date)
@@ -26,31 +26,41 @@ Let's say you have the files:
 foo.txt: >
     * Foo
         #A 2009-12-13 Do this
-        #A 2009-12-20 Call @Anna
+        #C 2009-12-20 Call @Anna
         #A Whatever
 
 bar.txt: >
     * Bar
-        #A 2009-11-01 Do that
-        #A 2009-12-24 Wish @Bernie good luck
+        #C 2009-12-24 Wish @Bernie good luck
+        #D 2009-11-01 Do that
 
-From a viki buffer, call >
+Let's assume you have added both files to |g:vikitasks_files|. Switch to 
+the buffer foo.txt and call >
 
-    :VikiTask *.txt
+    :VikiTasks
 
 and you get the following list: >
 
-    Bar.txt|2| #A 2009-11-01 Do that
+    Bar.txt|2| #D 2009-11-01 Do that
     Foo.txt|2| #A 2009-12-13 Do this
-    Foo.txt|3| #A 2009-12-20 Call @Anna
-    Bar.txt|3| #A 2009-12-24 Wish @Bernie good luck
+    Foo.txt|3| #C 2009-12-20 Call @Anna
+    Bar.txt|3| #C 2009-12-24 Wish @Bernie good luck
 
 If you do/had done this on the 15 December 2009, the third line would be 
 highlighted, i.e. the entries above the cursor refer to passed/missed 
-events.
+events. If you had called :VikiTasks! (behold the bang), then the 
+"Whatever" entry would have been included in the list too.
 
-If you had called :VikiTask! (behold the bang), then the "Whatever" 
-entry would have been included in the list too.
+If you had called >
+    
+    :VikiTasks current
+
+only the first two items would be listed.
+
+This week's tasks (i.e. the tasks that should be accomplished today or 
+within the following six days) could be listed with >
+    
+    :VikiTasks 6
 
 
 -----------------------------------------------------------------------
@@ -77,8 +87,12 @@ Contents~
         g:vikitasks_intervikis ........... |g:vikitasks_intervikis|
         g:vikitasks_intervikis_ignored ... |g:vikitasks_intervikis_ignored|
         g:vikitasks_qfl_viewer ........... |g:vikitasks_qfl_viewer|
+        g:vikitasks_rx_letters ........... |g:vikitasks_rx_letters|
+        g:vikitasks_rx_levels ............ |g:vikitasks_rx_levels|
         :VikiTasks ....................... |:VikiTasks|
+        :VikiTasksGrep ................... |:VikiTasksGrep|
         vikitasks#Tasks .................. |vikitasks#Tasks()|
+        vikitasks#TasksGrep .............. |vikitasks#TasksGrep()|
 
 
 ========================================================================
@@ -95,30 +109,63 @@ g:vikitasks_files              (default: [])
 g:vikitasks_intervikis         (default: 0)
     If non-null, automatically add the homepages of your intervikis to 
     |g:vikitasks_files|.
+    Can be buffer-local.
 
                                                     *g:vikitasks_intervikis_ignored*
 g:vikitasks_intervikis_ignored (default: [])
     A list of ignored intervikis.
+    Can be buffer-local.
 
                                                     *g:vikitasks_qfl_viewer*
 g:vikitasks_qfl_viewer         (default: '')
     The viewer for the quickfix list. If empty, use |:TRagcw|.
 
+                                                    *g:vikitasks_rx_letters*
+g:vikitasks_rx_letters         (default: 'A-Z')
+    Item classes that should be included in the list
+
+                                                    *g:vikitasks_rx_levels*
+g:vikitasks_rx_levels          (default: '0-5')
+    Item levels that should be included in the list
+
                                                     *:VikiTasks*
-VikiTasks[!] [FILE PATTERNS]
-    Collect a list of tasks from a set of viki pages.
+VikiTasks[!] [SELECT] [FILE_PATTERNS]
+    SELECT items by date. Possible values for SELECT are: today, current, 
+    NUMBER (of days). If SELECT is *, all items are elegible.
+    Collect a list of tasks from a set of viki pages matching 
+    FILE_PATTERNS.
     With the optional !, show all tasks not just those with a date
     The current buffer has to be a viki buffer. If it isn't, your 
     |g:vikiHomePage|, which must be set, is opened first.
+    
+    Examples:
+        Show all tasks with a date: >
+            VikiTasks
+<       Show all tasks: >
+            VikiTasks!
+<       Show all tasks for today: >
+            VikiTasks today
+<       Show all current tasks (today or with a deadline in the past) in a 
+        specified list of files: >
+            VikiTasks current Notes*.txt
+<
+
+                                                    *:VikiTasksGrep*
+VikiTasksGrep[!] REGEXP [FILE PATTERNS]
+    Like |:VikiTasks| but display only those items matching REGEXP.
+    The |regexp| pattern is prepended with |\<| if it seems to be a word.
 
 
 ========================================================================
 autoload/vikitasks.vim~
 
                                                     *vikitasks#Tasks()*
-vikitasks#Tasks(?all_tasks=0, *files)
+vikitasks#Tasks(?all_tasks=0, ?{"files": []})
     If files is non-empty, use these files (glob patterns actually) 
     instead of those defined in |g:vikitasks_files|.
+
+                                                    *vikitasks#TasksGrep()*
+vikitasks#TasksGrep(all_tasks, pattern, ...)
 
 
 

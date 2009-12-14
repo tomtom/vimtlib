@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
-" @Last Change: 2009-12-13.
-" @Revision:    0.0.99
+" @Last Change: 2009-12-14.
+" @Revision:    0.0.130
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -15,6 +15,7 @@ set cpo&vim
 " instead of those defined in |g:vikitasks_files|.
 function! vikitasks#Tasks(...) "{{{3
     TVarArg ['all_tasks', 0], ['args', {}]
+    " TLogVAR args
 
     if &filetype != 'viki' && !viki#HomePage()
         echoerr "VikiTasks: Not a viki buffer and cannot open the homepage"
@@ -42,6 +43,21 @@ function! vikitasks#Tasks(...) "{{{3
         let qfl = getqflist()
         if !all_tasks
             call filter(qfl, 'v:val.text =~ date_rx')
+            let select = get(args, 'select', '*')
+            let from = 0
+            let to = 0
+            if select =~ '^t\%[oday]'
+                let from = localtime()
+                let to = from
+            elseif select =~ '^c\%[urrent]'
+                let to = localtime()
+            elseif select =~ '^\d\+$'
+                let from = localtime()
+                let to = from + select * 86400
+            endif
+            if from != 0 || to != 0
+                call filter(qfl, 's:Select(v:val.text, date_rx, from, to)')
+            endif
         endif
 
         let rx = get(args, 'rx', [])
@@ -90,14 +106,24 @@ endf
 
 function! vikitasks#TasksGrep(all_tasks, pattern, ...) "{{{3
     if a:0 > 0
-        let files = map(range(1, a:0), 'a:{v:val}')
+        let args = map(range(1, a:0), 'a:{v:val}')
     else
-        let files = []
+        let args = []
     endif
     " let pattern = '\v'. a:pattern
     let pattern = a:pattern
+    if pattern =~ '^\w'
+        let pattern = '\<'. pattern
+    endif
+    if &smartcase && pattern =~ '\u'
+        let pattern = '\C'. pattern
+    endif
     " TLogVAR a:all_tasks, a:pattern, pattern, files
-    call vikitasks#Tasks(a:all_tasks, {'rx': pattern, 'files': files})
+    call vikitasks#Tasks(a:all_tasks, {
+                \ 'rx': pattern,
+                \ 'select': '*',
+                \ 'files': args
+                \ })
 endf
 
 
@@ -136,6 +162,16 @@ function! s:AddInterVikis(files) "{{{3
         endif
     endfor
 endf
+
+
+function! s:Select(text, date_rx, from, to) "{{{3
+    let date = matchstr(a:text, a:date_rx)
+    let sfrom = strftime('%Y-%m-%d', a:from)
+    let sto = strftime('%Y-%m-%d', a:to)
+    " TLogVAR date, sfrom, sto
+    return date >= sfrom && date <= sto
+endf
+
 
 
 let &cpo = s:save_cpo
