@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-29.
 " @Last Change: 2009-12-13.
-" @Revision:    589
+" @Revision:    590
 " GetLatestVimScripts: 2033 1 trag.vim
 
 if &cp || exists("loaded_trag")
@@ -195,7 +195,7 @@ TRagDefKind d viki /\C^\s*#\u\w*\s\+.\{-}\(id=%s\|%s=\)/
 TRagDefKind h viki /\C^\*\+\s\+%s/
 TRagDefKind l viki /\C^\s\+%s\s\+::/
 TRagDefKind r viki /\C^\s\+\(.\{-}\s::\|[-+*#]\|[@?].\)\s\+%s/
-TRagDefKind todo viki /\C\(TODO\|FIXME\|+++\|!!!\|###\|???\)/
+TRagDefKind todo viki /\C\(TODO:\?\|FIXME:\?\|+++\|!!!\|###\|???\)\s\+%s/
 
 
 " :nodoc:
