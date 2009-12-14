@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2009-11-01.
-" @Revision:    2636
+" @Last Change: 2009-12-14.
+" @Revision:    2638
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -1046,6 +1046,8 @@ problems with file names containing an unencoded %)
 
 3.13
 - Make regexp for inexistent links case sensitive
+- viki#HomePage()
+- viki#GetInterVikis()
 
 
 " vim: ff=unix

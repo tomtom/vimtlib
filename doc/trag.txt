@@ -458,7 +458,7 @@ trag#Grep(args, ?replace=1, ?files=[])
 trag#ClearCachedRx()
 
                                                     *trag#QuickList()*
-trag#QuickList(...)
+trag#QuickList(?world={})
     Display the |quickfix| list with |tlib#input#ListW()|.
 
                                                     *trag#LocList()*

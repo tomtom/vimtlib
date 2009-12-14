@@ -9,6 +9,13 @@ quickfixsigns also displays signs for the marks a-zA-Z.
 The attached text ist displayed in a balloon -- it is possible though 
 that other plugins that set 'balloonexpr' disable this feature.
 
+If you want nicer looking images instead of the ASCII markers, you have 
+to change the following signs' definition in your |vimrc| file:
+
+    QFS_QFL ... Entries in the |quickfix| list
+    QFS_LOC ... Entries in the |location-list|
+    QFS_Mark_[a-zA-Z] ... Marks
+
 
 -----------------------------------------------------------------------
 Install~
