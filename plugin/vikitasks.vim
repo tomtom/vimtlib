@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
 " @Last Change: 2009-12-13.
-" @Revision:    31
+" @Revision:    49
 " GetLatestVimScripts: 0 0 :AutoInstall: vikitasks.vim
 " Search for task lists and display them in a list
 
@@ -40,16 +40,27 @@ TLet g:vikitasks_files = []
 
 " If non-null, automatically add the homepages of your intervikis to 
 " |g:vikitasks_files|.
+" Can be buffer-local.
 TLet g:vikitasks_intervikis = 0
 
 " A list of ignored intervikis.
+" Can be buffer-local.
 TLet g:vikitasks_intervikis_ignored = []
 
 " The viewer for the quickfix list. If empty, use |:TRagcw|.
 TLet g:vikitasks_qfl_viewer = ''
 
+" Item classes that should be included in the list
+TLet g:vikitasks_rx_letters = 'A-Z'
 
-TRagDefKind tasks viki /^[[:blank:]]\+\zs#\(T: \+.\{-}\u.\{-}:\|\d*\u\d*\( \+\(_\|[0-9%-]\+\)\)\?\)\( \+\[[^[].\{-}\]\)\?\ze /
+" Item levels that should be included in the list
+TLet g:vikitasks_rx_levels = '0-5'
+
+
+exec 'TRagDefKind tasks viki /\C^[[:blank:]]\+\zs'.
+            \ '#\(T: \+.\{-}'. g:vikitasks_rx_letters .'.\{-}:\|'. 
+            \ '['. g:vikitasks_rx_levels .']\?['. g:vikitasks_rx_letters ']['. g:vikitasks_rx_levels .']\?'.
+            \ '\( \+\(_\|['. g:vikitasks_rx_levels .'%-]\+\)\)\?\)\( \+\[[^[].\{-}\]\)\? %s/'
 
 
 " :display: VikiTasks[!] [FILE PATTERNS]
@@ -57,9 +68,13 @@ TRagDefKind tasks viki /^[[:blank:]]\+\zs#\(T: \+.\{-}\u.\{-}:\|\d*\u\d*\( \+\(_
 " With the optional !, show all tasks not just those with a date
 " The current buffer has to be a viki buffer. If it isn't, your 
 " |g:vikiHomePage|, which must be set, is opened first.
-command! -bang -nargs=? VikiTasks call vikitasks#Tasks(!empty("<bang>"), <f-args>)
+command! -bang -nargs=? VikiTasks call vikitasks#Tasks(!empty("<bang>"), {'files': [<f-args>]})
 cabbr vikitasks VikiTasks
 
+
+" :display: VikiTasksGrep[!] REGEXP [FILE PATTERNS]
+" Like |:VikiTasks| but display only those items matching REGEXP.
+command! -bang -nargs=+ VikiTasksGrep call vikitasks#TasksGrep(!empty("<bang>"), <f-args>)
 
 
 let &cpo = s:save_cpo

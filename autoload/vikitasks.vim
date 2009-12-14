@@ -4,17 +4,17 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
 " @Last Change: 2009-12-13.
-" @Revision:    0.0.78
+" @Revision:    0.0.99
 
 let s:save_cpo = &cpo
 set cpo&vim
 
 
-" :display: vikitasks#Tasks(?all_tasks=0, *files)
+" :display: vikitasks#Tasks(?all_tasks=0, ?{"files": []})
 " If files is non-empty, use these files (glob patterns actually) 
 " instead of those defined in |g:vikitasks_files|.
 function! vikitasks#Tasks(...) "{{{3
-    TVarArg ['all_tasks', 0]
+    TVarArg ['all_tasks', 0], ['args', {}]
 
     if &filetype != 'viki' && !viki#HomePage()
         echoerr "VikiTasks: Not a viki buffer and cannot open the homepage"
@@ -22,11 +22,10 @@ function! vikitasks#Tasks(...) "{{{3
     endif
 
     " TLogVAR all_tasks, a:0
-    if a:0 > 1
-        let files = map(range(2, a:0), 'a:{v:val}')
-    else
+    let files = get(args, 'files', [])
+    if empty(files)
         let files = copy(tlib#var#Get('vikitasks_files', 'bg', []))
-        if g:vikitasks_intervikis
+        if tlib#var#Get('vikitasks_intervikis', 'bg', 0)
             call s:AddInterVikis(files)
         endif
         " TLogVAR files
@@ -38,11 +37,18 @@ function! vikitasks#Tasks(...) "{{{3
     if !empty(files)
         call trag#Grep('tasks', 1, files)
 
-        let date_rx = '^\s*#[A-Z0-9]\+ \zs\d\+-\d\+-\d\+'
+        let date_rx = '\C^\s*#['. g:vikitasks_rx_letters . g:vikitasks_rx_levels .']\+ \zs\d\+-\d\+-\d\+'
+        " TLogVAR date_rx
         let qfl = getqflist()
         if !all_tasks
             call filter(qfl, 'v:val.text =~ date_rx')
         endif
+
+        let rx = get(args, 'rx', [])
+        if !empty(rx)
+            call filter(qfl, 'v:val.text =~ rx')
+        endif
+
         call sort(qfl, "s:SortTasks")
         " let last = {}
         " let qflu = []
@@ -82,10 +88,24 @@ function! vikitasks#Tasks(...) "{{{3
 endf
 
 
+function! vikitasks#TasksGrep(all_tasks, pattern, ...) "{{{3
+    if a:0 > 0
+        let files = map(range(1, a:0), 'a:{v:val}')
+    else
+        let files = []
+    endif
+    " let pattern = '\v'. a:pattern
+    let pattern = a:pattern
+    " TLogVAR a:all_tasks, a:pattern, pattern, files
+    call vikitasks#Tasks(a:all_tasks, {'rx': pattern, 'files': files})
+endf
+
+
 function! s:SortTasks(a, b) "{{{3
     let a = a:a.text
     let b = a:b.text
-    let date_rx = '^\s*#[A-Z0-9]\+ \zs\d\+-\d\+-\d\+'
+    " let date_rx = '\C^\s*#['. g:vikitasks_rx_letters . g:vikitasks_rx_levels .']\+ \zs\d\+-\d\+-\d\+'
+    let date_rx = '\C^\s*#[A-Z0-9]\+ \zs\d\+-\d\+-\d\+'
     let ad = matchstr(a, date_rx)
     let bd = matchstr(b, date_rx)
     if ad && !bd
@@ -102,8 +122,9 @@ endf
 
 function! s:AddInterVikis(files) "{{{3
     " TLogVAR a:files
+    let ivignored = tlib#var#Get('vikitasks_intervikis_ignored', 'bg', [])
     for iv in viki#GetInterVikis()
-        if index(g:vikitasks_intervikis_ignored, matchstr(iv, '^\u\+')) == -1
+        if index(ivignored, matchstr(iv, '^\u\+')) == -1
             " TLogVAR iv
             let def = viki#GetLink(1, '[['. iv .']]', 0, '')
             " TLogVAR def
