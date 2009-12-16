@@ -3,8 +3,8 @@
 " @GIT:         http://github.com/tomtom/vimtlib/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
-" @Last Change: 2009-12-14.
-" @Revision:    78
+" @Last Change: 2009-12-16.
+" @Revision:    100
 " GetLatestVimScripts: 0 0 :AutoInstall: vikitasks.vim
 " Search for task lists and display them in a list
 
@@ -35,7 +35,9 @@ set cpo&vim
 " A list of glob patterns (or files) that will be searched for task 
 " lists.
 " Can be buffer-local.
-" Add new items in ~/vimfiles/after/plugin/vikitasks.vim
+" If you add ! to 'viminfo', this variable will be automatically saved 
+" between editing sessions.
+" Alternatively, add new items in ~/vimfiles/after/plugin/vikitasks.vim
 TLet g:vikitasks_files = []
 
 " If non-null, automatically add the homepages of your intervikis to 
@@ -50,11 +52,15 @@ TLet g:vikitasks_intervikis_ignored = []
 " The viewer for the quickfix list. If empty, use |:TRagcw|.
 TLet g:vikitasks_qfl_viewer = ''
 
-" Item classes that should be included in the list
+" Item classes that should be included in the list.
 TLet g:vikitasks_rx_letters = 'A-Z'
 
-" Item levels that should be included in the list
+" Item levels that should be included in the list.
 TLet g:vikitasks_rx_levels = '0-5'
+
+" Cache file name.
+" By default, use |tlib#cache#Filename()| to determine the file name.
+TLet g:vikitasks_cache = tlib#cache#Filename('vikitasks', 'files', 1)
 
 
 exec 'TRagDefKind tasks viki /\C^[[:blank:]]\+\zs'.
@@ -90,10 +96,21 @@ command! -bang -nargs=* VikiTasks
 cabbr vikitasks VikiTasks
 
 
-" :display: VikiTasksGrep[!] REGEXP [FILE PATTERNS]
+" :display: :VikiTasksGrep[!] REGEXP [FILE PATTERNS]
 " Like |:VikiTasks| but display only those items matching REGEXP.
 " The |regexp| pattern is prepended with |\<| if it seems to be a word.
 command! -bang -nargs=+ VikiTasksGrep call vikitasks#TasksGrep(!empty("<bang>"), <f-args>)
+
+
+" :display: :VikiTasksAdd
+" Add the current buffer to |g:vikitasks_files|.
+command! VikiTasksAdd call vikitasks#AddBuffer(expand('%:p'))
+
+
+" :display: :VikiTasksFiles
+" Edit |g:vikitasks_files|. This allows you to remove buffers from the 
+" list.
+command! VikiTasksFiles call vikitasks#EditFiles()
 
 
 let &cpo = s:save_cpo

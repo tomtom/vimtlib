@@ -89,10 +89,15 @@ Contents~
         g:vikitasks_qfl_viewer ........... |g:vikitasks_qfl_viewer|
         g:vikitasks_rx_letters ........... |g:vikitasks_rx_letters|
         g:vikitasks_rx_levels ............ |g:vikitasks_rx_levels|
+        g:vikitasks_cache ................ |g:vikitasks_cache|
         :VikiTasks ....................... |:VikiTasks|
         :VikiTasksGrep ................... |:VikiTasksGrep|
+        :VikiTasksAdd .................... |:VikiTasksAdd|
+        :VikiTasksFiles .................. |:VikiTasksFiles|
         vikitasks#Tasks .................. |vikitasks#Tasks()|
         vikitasks#TasksGrep .............. |vikitasks#TasksGrep()|
+        vikitasks#AddBuffer .............. |vikitasks#AddBuffer()|
+        vikitasks#EditFiles .............. |vikitasks#EditFiles()|
 
 
 ========================================================================
@@ -103,7 +108,9 @@ g:vikitasks_files              (default: [])
     A list of glob patterns (or files) that will be searched for task 
     lists.
     Can be buffer-local.
-    Add new items in ~/vimfiles/after/plugin/vikitasks.vim
+    If you add ! to 'viminfo', this variable will be automatically saved 
+    between editing sessions.
+    Alternatively, add new items in ~/vimfiles/after/plugin/vikitasks.vim
 
                                                     *g:vikitasks_intervikis*
 g:vikitasks_intervikis         (default: 0)
@@ -122,11 +129,16 @@ g:vikitasks_qfl_viewer         (default: '')
 
                                                     *g:vikitasks_rx_letters*
 g:vikitasks_rx_letters         (default: 'A-Z')
-    Item classes that should be included in the list
+    Item classes that should be included in the list.
 
                                                     *g:vikitasks_rx_levels*
 g:vikitasks_rx_levels          (default: '0-5')
-    Item levels that should be included in the list
+    Item levels that should be included in the list.
+
+                                                    *g:vikitasks_cache*
+g:vikitasks_cache              (default: tlib#cache#Filename('vikitasks', 'files', 1))
+    Cache file name.
+    By default, use |tlib#cache#Filename()| to determine the file name.
 
                                                     *:VikiTasks*
 VikiTasks[!] [SELECT] [FILE_PATTERNS]
@@ -151,21 +163,36 @@ VikiTasks[!] [SELECT] [FILE_PATTERNS]
 <
 
                                                     *:VikiTasksGrep*
-VikiTasksGrep[!] REGEXP [FILE PATTERNS]
+:VikiTasksGrep[!] REGEXP [FILE PATTERNS]
     Like |:VikiTasks| but display only those items matching REGEXP.
     The |regexp| pattern is prepended with |\<| if it seems to be a word.
+
+                                                    *:VikiTasksAdd*
+:VikiTasksAdd
+    Add the current buffer to |g:vikitasks_files|.
+
+                                                    *:VikiTasksFiles*
+:VikiTasksFiles
+    Edit |g:vikitasks_files|. This allows you to remove buffers from the 
+    list.
 
 
 ========================================================================
 autoload/vikitasks.vim~
 
                                                     *vikitasks#Tasks()*
-vikitasks#Tasks(?all_tasks=0, ?{"files": []})
+vikitasks#Tasks(?all=0, ?{'files': [], 'select': '', 'rx': ''})
     If files is non-empty, use these files (glob patterns actually) 
     instead of those defined in |g:vikitasks_files|.
 
                                                     *vikitasks#TasksGrep()*
-vikitasks#TasksGrep(all_tasks, pattern, ...)
+vikitasks#TasksGrep(all_tasks, pattern, *files)
+
+                                                    *vikitasks#AddBuffer()*
+vikitasks#AddBuffer(buffer)
+
+                                                    *vikitasks#EditFiles()*
+vikitasks#EditFiles()
 
 
 

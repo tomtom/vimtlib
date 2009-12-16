@@ -3,14 +3,15 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
-" @Last Change: 2009-12-14.
-" @Revision:    0.0.130
+" @Last Change: 2009-12-16.
+" @Revision:    0.0.161
 
 let s:save_cpo = &cpo
 set cpo&vim
 
 
-" :display: vikitasks#Tasks(?all_tasks=0, ?{"files": []})
+
+" :display: vikitasks#Tasks(?all=0, ?{'files': [], 'select': '', 'rx': ''})
 " If files is non-empty, use these files (glob patterns actually) 
 " instead of those defined in |g:vikitasks_files|.
 function! vikitasks#Tasks(...) "{{{3
@@ -25,10 +26,7 @@ function! vikitasks#Tasks(...) "{{{3
     " TLogVAR all_tasks, a:0
     let files = get(args, 'files', [])
     if empty(files)
-        let files = copy(tlib#var#Get('vikitasks_files', 'bg', []))
-        if tlib#var#Get('vikitasks_intervikis', 'bg', 0)
-            call s:AddInterVikis(files)
-        endif
+        let files = s:MyFiles()
         " TLogVAR files
     endif
     " TAssertType files, 'list'
@@ -104,6 +102,7 @@ function! vikitasks#Tasks(...) "{{{3
 endf
 
 
+" :display: vikitasks#TasksGrep(all_tasks, pattern, *files)
 function! vikitasks#TasksGrep(all_tasks, pattern, ...) "{{{3
     if a:0 > 0
         let args = map(range(1, a:0), 'a:{v:val}')
@@ -146,6 +145,29 @@ function! s:SortTasks(a, b) "{{{3
 endf
 
 
+function! s:Files() "{{{3
+    if !exists('s:files')
+        let s:files = get(tlib#cache#Get(g:vikitasks_cache), 'files', [])
+    endif
+    return s:files
+endf
+
+
+function! s:SaveInfo() "{{{3
+    call tlib#cache#Save(g:vikitasks_cache, {'files': s:files})
+endf
+
+
+function! s:MyFiles() "{{{3
+    let files = copy(tlib#var#Get('vikitasks_files', 'bg', []))
+    let files += s:Files()
+    if tlib#var#Get('vikitasks_intervikis', 'bg', 0)
+        call s:AddInterVikis(files)
+    endif
+    return files
+endf
+
+
 function! s:AddInterVikis(files) "{{{3
     " TLogVAR a:files
     let ivignored = tlib#var#Get('vikitasks_intervikis_ignored', 'bg', [])
@@ -172,6 +194,23 @@ function! s:Select(text, date_rx, from, to) "{{{3
     return date >= sfrom && date <= sto
 endf
 
+
+function! vikitasks#AddBuffer(buffer) "{{{3
+    let fname = fnamemodify(a:buffer, ':p')
+    if filereadable(fname) && index(g:vikitasks_files, fname) == -1
+        call add(s:Files(), fname)
+        call s:SaveInfo()
+    endif
+endf
+
+
+function! vikitasks#EditFiles() "{{{3
+    let files = tlib#input#EditList('Edit task files:', s:Files())
+    if files != s:files
+        let s:files = files
+        call s:SaveInfo()
+    endif
+endf
 
 
 let &cpo = s:save_cpo
