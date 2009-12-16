@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-06-30.
-" @Last Change: 2009-08-23.
-" @Revision:    0.0.648
+" @Last Change: 2009-12-16.
+" @Revision:    0.0.654
 
 if &cp || exists("loaded_tlib_input_autoload")
     finish
@@ -553,12 +553,17 @@ endf
 " EXAMPLES: >
 "   echo tlib#input#EditList('Edit:', [100,200,300])
 function! tlib#input#EditList(query, list, ...) "{{{3
-    let handlers = a:0 >= 1 ? a:1 : g:tlib_handlers_EditList
-    let rv       = a:0 >= 2 ? a:2 : ''
+    let handlers = a:0 >= 1 && !empty(a:1) ? a:1 : g:tlib_handlers_EditList
+    let default  = a:0 >= 2 ? a:2 : ''
     let timeout  = a:0 >= 3 ? a:3 : 0
     " TLogVAR handlers
-    let [success, list] = tlib#input#List('m', a:query, copy(a:list), handlers, rv, timeout)
-    return success ? list : a:list
+    let rv = tlib#input#List('m', a:query, copy(a:list), handlers, default, timeout)
+    if empty(rv)
+        return a:list
+    else
+        let [success, list] = rv
+        return success ? list : a:list
+    endif
 endf
 
 
