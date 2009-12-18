@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-29.
-" @Last Change: 2009-12-13.
-" @Revision:    0.0.700
+" @Last Change: 2009-12-18.
+" @Revision:    0.0.716
 
 if &cp || exists("loaded_trag_autoload")
     finish
@@ -243,9 +243,11 @@ endf
 "   if foo == 1
 function! trag#Grep(args, ...) "{{{3
     TVarArg ['replace', 1], ['files', []]
+    " TLogVAR replace, files
     let [kindspos, kindsneg, rx] = s:SplitArgs(a:args)
+    " TLogVAR kindspos, kindsneg, rx, a:args
     if empty(rx)
-        let rx = '*'
+        let rx = '.\{-}'
         " throw 'Malformed arguments (should be: "KIND REGEXP"): '. string(a:args)
     endif
     " TAssertType rx, 'string'
@@ -261,6 +263,7 @@ function! trag#Grep(args, ...) "{{{3
         call setqflist([])
     endif
     let search_mode = g:trag_search_mode
+    " TLogVAR search_mode
     let scratch = {}
     try
         if search_mode == 2
@@ -334,7 +337,7 @@ function! trag#Grep(args, ...) "{{{3
                     norm! ggdG
                     call setqflist(qfl, 'a')
                 else
-                    " TLogDBG 'vimgrepadd /'. escape(rxpos, '/') .'/gj '. tlib#arg#Ex(f)
+                    " TLogDBG 'vimgrepadd /'. escape(rxpos, '/') .'/j '. tlib#arg#Ex(f)
                     " TLogVAR len(getqflist())
                     " silent! exec 'vimgrepadd /'. escape(rxpos, '/') .'/gj '. tlib#arg#Ex(f)
                     silent! exec 'vimgrepadd /'. escape(rxpos, '/') .'/j '. tlib#arg#Ex(f)
@@ -458,6 +461,7 @@ function! s:GetRx(filename, kinds, rx, default) "{{{3
                     if rx =~ '^\W' && rxf =~ '\\<%s'
                         let rxf = substitute(rxf, '\\<%s', '%s', 'g')
                     endif
+                    " TLogVAR rxf, rx
                     let rx = tlib#string#Printf1(rxf, rx)
                 endif
             endfor
