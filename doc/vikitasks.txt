@@ -9,6 +9,7 @@ files.
 
 Usage:
     :VikiTasks[!] [SELECT] [GLOB PATTERNS]
+    :VikiTasksGrep[!] [REGEXP] [GLOB PATTERNS]
 
 
 Features:
@@ -128,12 +129,18 @@ g:vikitasks_qfl_viewer         (default: '')
     The viewer for the quickfix list. If empty, use |:TRagcw|.
 
                                                     *g:vikitasks_rx_letters*
-g:vikitasks_rx_letters         (default: 'A-Z')
-    Item classes that should be included in the list.
+g:vikitasks_rx_letters         (default: 'A-T')
+    Item classes that should be included in the list when calling 
+    |:VikiTasks|.
+    A user-defined value must be set in |vimrc| before the plugin is 
+    loaded.
 
                                                     *g:vikitasks_rx_levels*
-g:vikitasks_rx_levels          (default: '0-5')
-    Item levels that should be included in the list.
+g:vikitasks_rx_levels          (default: '1-5')
+    Item levels that should be included in the list when calling 
+    |:VikiTasks|.
+    A user-defined value must be set in |vimrc| before the plugin is 
+    loaded.
 
                                                     *g:vikitasks_cache*
 g:vikitasks_cache              (default: tlib#cache#Filename('vikitasks', 'files', 1))
@@ -186,7 +193,7 @@ vikitasks#Tasks(?all=0, ?{'files': [], 'select': '', 'rx': ''})
     instead of those defined in |g:vikitasks_files|.
 
                                                     *vikitasks#TasksGrep()*
-vikitasks#TasksGrep(all_tasks, pattern, *files)
+vikitasks#TasksGrep(all_tasks, ?pattern='.', *files)
 
                                                     *vikitasks#AddBuffer()*
 vikitasks#AddBuffer(buffer)
