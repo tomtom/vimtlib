@@ -3,8 +3,8 @@
 " @GIT:         http://github.com/tomtom/vimtlib/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
-" @Last Change: 2009-12-16.
-" @Revision:    100
+" @Last Change: 2009-12-18.
+" @Revision:    113
 " GetLatestVimScripts: 0 0 :AutoInstall: vikitasks.vim
 " Search for task lists and display them in a list
 
@@ -52,21 +52,34 @@ TLet g:vikitasks_intervikis_ignored = []
 " The viewer for the quickfix list. If empty, use |:TRagcw|.
 TLet g:vikitasks_qfl_viewer = ''
 
-" Item classes that should be included in the list.
-TLet g:vikitasks_rx_letters = 'A-Z'
+" Item classes that should be included in the list when calling 
+" |:VikiTasks|.
+" A user-defined value must be set in |vimrc| before the plugin is 
+" loaded.
+TLet g:vikitasks_rx_letters = 'A-T'
 
-" Item levels that should be included in the list.
-TLet g:vikitasks_rx_levels = '0-5'
+" Item levels that should be included in the list when calling 
+" |:VikiTasks|.
+" A user-defined value must be set in |vimrc| before the plugin is 
+" loaded.
+TLet g:vikitasks_rx_levels = '1-5'
 
 " Cache file name.
 " By default, use |tlib#cache#Filename()| to determine the file name.
 TLet g:vikitasks_cache = tlib#cache#Filename('vikitasks', 'files', 1)
 
 
-exec 'TRagDefKind tasks viki /\C^[[:blank:]]\+\zs'.
-            \ '#\(T: \+.\{-}'. g:vikitasks_rx_letters .'.\{-}:\|'. 
-            \ '['. g:vikitasks_rx_levels .']\?['. g:vikitasks_rx_letters ']['. g:vikitasks_rx_levels .']\?'.
-            \ '\( \+\(_\|['. g:vikitasks_rx_levels .'%-]\+\)\)\?\)\( \+\[[^[].\{-}\]\)\? %s/'
+function! s:VikitasksRx(letters, levels) "{{{3
+    return '\C^[[:blank:]]\+\zs'.
+                \ '#\(T: \+.\{-}'. a:letters .'.\{-}:\|'. 
+                \ '['. a:levels .']\?['. a:letters .']['. a:levels .']\?'.
+                \ '\( \+\(_\|['. a:levels .'%-]\+\)\)\?\)\( \+\[[^[].\{-}\]\)\? %s'
+endf
+
+exec 'TRagDefKind tasks viki /'. s:VikitasksRx('A-Z', '0-9') .'/'
+exec 'TRagDefKind sometasks viki /'. s:VikitasksRx(g:vikitasks_rx_letters, g:vikitasks_rx_levels) .'/'
+
+delf s:VikitasksRx
 
 
 " :display: VikiTasks[!] [SELECT] [FILE_PATTERNS]
@@ -90,6 +103,7 @@ exec 'TRagDefKind tasks viki /\C^[[:blank:]]\+\zs'.
 "         VikiTasks current Notes*.txt
 command! -bang -nargs=* VikiTasks 
             \ call vikitasks#Tasks(!empty("<bang>"), {
+            \   'tasks': 'sometasks', 
             \   'select': get([<f-args>], 0, '*'), 
             \   'files': [<f-args>][1:-1]
             \ })
@@ -99,7 +113,7 @@ cabbr vikitasks VikiTasks
 " :display: :VikiTasksGrep[!] REGEXP [FILE PATTERNS]
 " Like |:VikiTasks| but display only those items matching REGEXP.
 " The |regexp| pattern is prepended with |\<| if it seems to be a word.
-command! -bang -nargs=+ VikiTasksGrep call vikitasks#TasksGrep(!empty("<bang>"), <f-args>)
+command! -bang -nargs=* VikiTasksGrep call vikitasks#TasksGrep(!empty("<bang>"), <f-args>)
 
 
 " :display: :VikiTasksAdd

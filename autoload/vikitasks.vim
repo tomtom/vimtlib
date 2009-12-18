@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
-" @Last Change: 2009-12-16.
-" @Revision:    0.0.161
+" @Last Change: 2009-12-18.
+" @Revision:    0.0.183
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -16,7 +16,7 @@ set cpo&vim
 " instead of those defined in |g:vikitasks_files|.
 function! vikitasks#Tasks(...) "{{{3
     TVarArg ['all_tasks', 0], ['args', {}]
-    " TLogVAR args
+    " TLogVAR all_tasks, args
 
     if &filetype != 'viki' && !viki#HomePage()
         echoerr "VikiTasks: Not a viki buffer and cannot open the homepage"
@@ -34,14 +34,20 @@ function! vikitasks#Tasks(...) "{{{3
     call map(files, 'glob(v:val)')
     let files = split(join(files, "\n"), '\n')
     if !empty(files)
-        call trag#Grep('tasks', 1, files)
+        let tasks = get(args, 'tasks', 'tasks')
+        " TLogVAR tasks
+        call trag#Grep(tasks, 1, files)
 
-        let date_rx = '\C^\s*#['. g:vikitasks_rx_letters . g:vikitasks_rx_levels .']\+ \zs\d\+-\d\+-\d\+'
+        let date_rx = '\C^\s*#[A-Z0-9]\+ \zs\d\+-\d\+-\d\+'
         " TLogVAR date_rx
         let qfl = getqflist()
+        " TLogVAR qfl
+        " TLogVAR filter(copy(qfl), 'v:val.text =~ "#D7"')
         if !all_tasks
             call filter(qfl, 'v:val.text =~ date_rx')
+            " TLogVAR len(qfl)
             let select = get(args, 'select', '*')
+            " TLogVAR select
             let from = 0
             let to = 0
             if select =~ '^t\%[oday]'
@@ -53,6 +59,7 @@ function! vikitasks#Tasks(...) "{{{3
                 let from = localtime()
                 let to = from + select * 86400
             endif
+            " TLogVAR from, to
             if from != 0 || to != 0
                 call filter(qfl, 's:Select(v:val.text, date_rx, from, to)')
             endif
@@ -102,20 +109,23 @@ function! vikitasks#Tasks(...) "{{{3
 endf
 
 
-" :display: vikitasks#TasksGrep(all_tasks, pattern, *files)
-function! vikitasks#TasksGrep(all_tasks, pattern, ...) "{{{3
-    if a:0 > 0
-        let args = map(range(1, a:0), 'a:{v:val}')
+" :display: vikitasks#TasksGrep(all_tasks, ?pattern='.', *files)
+function! vikitasks#TasksGrep(all_tasks, ...) "{{{3
+    TVarArg ['pattern', '']
+    if a:0 > 2
+        let args = map(range(2, a:0), 'a:{v:val}')
     else
         let args = []
     endif
-    " let pattern = '\v'. a:pattern
-    let pattern = a:pattern
-    if pattern =~ '^\w'
-        let pattern = '\<'. pattern
-    endif
-    if &smartcase && pattern =~ '\u'
-        let pattern = '\C'. pattern
+    if empty(pattern)
+        let pattern = '.'
+    else
+        if pattern =~ '^\w'
+            let pattern = '\<'. pattern
+        endif
+        if &smartcase && pattern =~ '\u'
+            let pattern = '\C'. pattern
+        endif
     endif
     " TLogVAR a:all_tasks, a:pattern, pattern, files
     call vikitasks#Tasks(a:all_tasks, {
@@ -129,7 +139,6 @@ endf
 function! s:SortTasks(a, b) "{{{3
     let a = a:a.text
     let b = a:b.text
-    " let date_rx = '\C^\s*#['. g:vikitasks_rx_letters . g:vikitasks_rx_levels .']\+ \zs\d\+-\d\+-\d\+'
     let date_rx = '\C^\s*#[A-Z0-9]\+ \zs\d\+-\d\+-\d\+'
     let ad = matchstr(a, date_rx)
     let bd = matchstr(b, date_rx)
