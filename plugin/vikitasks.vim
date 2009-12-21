@@ -3,16 +3,16 @@
 " @GIT:         http://github.com/tomtom/vimtlib/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
-" @Last Change: 2009-12-18.
-" @Revision:    113
+" @Last Change: 2009-12-21.
+" @Revision:    114
 " GetLatestVimScripts: 0 0 :AutoInstall: vikitasks.vim
 " Search for task lists and display them in a list
 
 
-if !exists('g:loaded_tlib') || g:loaded_tlib < 34
+if !exists('g:loaded_tlib') || g:loaded_tlib < 35
     runtime plugin/02tlib.vim
-    if !exists('g:loaded_tlib') || g:loaded_tlib < 34
-        echoerr 'tlib >= 0.34 is required'
+    if !exists('g:loaded_tlib') || g:loaded_tlib < 35
+        echoerr 'tlib >= 0.35 is required'
         finish
     endif
 endif

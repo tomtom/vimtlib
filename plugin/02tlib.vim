@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-10.
-" @Last Change: 2009-12-13.
-" @Revision:    589
+" @Last Change: 2009-12-21.
+" @Revision:    592
 " GetLatestVimScripts: 1863 1 tlib.vim
 "
 " Please see also ../test/tlib.vim for usage examples.
@@ -29,7 +29,7 @@ if v:version < 700 "{{{2
     echoerr "tlib requires Vim >= 7"
     finish
 endif
-let loaded_tlib = 34
+let loaded_tlib = 35
 let s:save_cpo = &cpo
 set cpo&vim
 
@@ -561,4 +561,5 @@ pressing <esc> when browsing an index-list, returns 0 and not "")
 (reported by Sergey Khorev)
 
 0.35
-- 
+- tlib#input#EditList(): return the list if the user presses esc
+

@@ -1,5 +1,7 @@
 autoload/trag/general.vim
 autoload/trag/java.vim
+autoload/trag/rename.vim
+autoload/trag/viki.vim
 autoload/trag.vim
 plugin/trag.vim
 doc/trag.txt
