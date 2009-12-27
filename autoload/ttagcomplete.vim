@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-11-02.
-" @Last Change: 2009-08-03.
-" @Revision:    0.0.204
+" @Last Change: 2009-12-26.
+" @Revision:    0.0.217
 
 if &cp || exists("loaded_ttagcomplete_autoload")
     finish
@@ -12,27 +12,41 @@ endif
 let loaded_ttagcomplete_autoload = 1
 
 
+let s:unsupported = {}
+
+
 " function! ttagcomplete#On(?option="omni")
 " If option is "complete", set 'completefunc' instead of 'omnifunc' (the 
 " default).
+" This will call ttagcomplete#{&filetype}#Init() if the variable 
+" b:ttagcomplete_collect isn't already set. b:ttagcomplete_collect will 
+" be set to a function that follows the protocol for |complete-functions|.
 function! ttagcomplete#On(...) "{{{3
     TVarArg ['option', 'omni']
-    let var = 'option_'. option
-    if option == 'omni'
-        let b:ttagcomplete_option_{option} = &omnifunc
-        setlocal omnifunc=ttagcomplete#Complete
-    elseif option == 'complete'
-        let b:ttagcomplete_option_{option} = &completefunc
-        setlocal completefunc=ttagcomplete#Complete
-    else
-        echoerr 'Unknown option: '. option
+    if !get(s:unsupported, &filetype, 0)
+        try
+            if !exists('b:ttagcomplete_collect') && empty(b:ttagcomplete_collect)
+                call ttagcomplete#{&filetype}#Init()
+            endif
+            if option == 'omni'
+                let b:ttagcomplete_option_{option} = &omnifunc
+                setlocal omnifunc=ttagcomplete#Complete
+            elseif option == 'complete'
+                let b:ttagcomplete_option_{option} = &completefunc
+                setlocal completefunc=ttagcomplete#Complete
+            else
+                echoerr 'Unknown option: '. option
+            endif
+        catch
+            let s:unsupported[&filetype] = 1
+            echoerr 'Unsupported filetype: '. &filetype
+        endtry
     endif
 endf
 
 
 function! ttagcomplete#Off(...) "{{{3
     TVarArg ['option', 'omni']
-    let var = 'option_'. option
     if option == 'omni'
         if exists('b:ttagcomplete_option_'.option)
             let &l:omnifunc=b:ttagcomplete_option_{option}
@@ -142,88 +156,4 @@ function! s:TSkeletonTemplate(kinds, tag, restarg) "{{{3
         return get(dict[rv], 'text', a:tag.name)
     endif
 endf
-
-
-function! ttagcomplete#Java(constraints, base, context) "{{{3
-    " TLogVAR a:constraints, a:base, a:context
-    let ml = matchstr(a:context, '\C\<\zs\u\w*\ze\.\w*$')
-    if !empty(ml)
-        " TLogDBG 'Class or constant'
-        " TLogVAR ml
-        let a:constraints.class = ml
-        " TLogVAR a:constraints.class
-        return a:constraints
-    endif
-
-    let ml = matchstr(a:context, '\C\<\zs\l\w*\ze\.\w*$')
-    if !empty(ml) && ml != 'this'
-        " TLogDBG 'Method or field'
-        " TLogVAR ml
-        let class = ttagcomplete#FindJavaClass(ml)
-        " TLogVAR class
-        if !empty(class)
-            let a:constraints.class = class
-            " TLogVAR a:constraints.class
-        else
-            let class = ttagcomplete#FindJavaClassInTags(ml)
-            if !empty(class)
-                let a:constraints.class = class
-                " TLogVAR a:constraints.class
-            endif
-        endif
-        return a:constraints
-    endif
-
-    if a:base =~ '\C^\u'
-        " TLogDBG 'base is a class or constant'
-        let a:constraints.kind = 'cf'
-        " TLogVAR a:constraints.kind
-        return a:constraints
-    endif
-
-    " TLogDBG 'Current method or field'
-    " import statements are currently ignored.
-    let a:constraints.class = expand('%:t:r')
-    let a:constraints.kind = 'mf'
-    " TLogVAR a:constraints.class, a:constraints.kind
-    return a:constraints
-endf
-
-
-function! ttagcomplete#FindJavaClass(name) "{{{3
-    " let pos = getpos('.')
-    let view = winsaveview()
-    try
-        let rx   = '\(^\C\s*\(\(@\w\+\((.\{-})\)\?\|final\|public\|private\|protected\)\s\+\)*\|(\([^,]\+,\s*\)*\)\(\u\w*\|void\|int\|boolean\|double\|float\|byte\|char\)\(<.\{-}>\)*\(\[\]\)*\s\+'.tlib#rx#Escape(a:name)
-        let line = search(rx, 'bnw')
-        " TLogVAR rx, line
-        if line
-            let ml = matchlist(getline(line), rx)
-            " TLogVAR ml
-            return ml[6]
-        endif
-    finally
-        " call setpos('.', pos)
-        call winrestview(view)
-    endtry
-    return ''
-endf
-
-
-function! ttagcomplete#FindJavaClassInTags(name) "{{{3
-    let trx  = tlib#rx#Escape(a:name)
-    let tags = tlib#tag#Collect({'name': trx}, g:ttagecho_use_extra)
-    " TLogVAR a:name, trx, tags
-    let rx   = []
-    for tag in tags
-        let ml = matchstr(tag.cmd, '\C\<\u\w*\(<.\{-}>\)*\(\[\]\)*\ze\s\+'. trx)
-        " TLogVAR ml, tag
-        if !empty(ml)
-            call add(rx, tlib#rx#Escape(ml))
-        endif
-    endfor
-    " TLogVAR rx
-    return join(rx, '\|')
-endf
-
 

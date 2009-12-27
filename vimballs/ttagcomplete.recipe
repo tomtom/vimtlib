@@ -1,3 +1,4 @@
+autoload/ttagcomplete/java.vim
 autoload/ttagcomplete.vim
 doc/ttagcomplete.txt
 plugin/ttagcomplete.vim
