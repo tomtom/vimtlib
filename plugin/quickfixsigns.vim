@@ -4,14 +4,14 @@
 " @GIT:         http://github.com/tomtom/vimtlib/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-03-14.
-" @Last Change: 2009-12-01.
-" @Revision:    297
+" @Last Change: 2009-12-26.
+" @Revision:    310
 " GetLatestVimScripts: 2584 1 :AutoInstall: quickfixsigns.vim
 
 if &cp || exists("loaded_quickfixsigns") || !has('signs')
     finish
 endif
-let loaded_quickfixsigns = 4
+let loaded_quickfixsigns = 7
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -119,12 +119,18 @@ let s:last_run = {}
 "
 " Normally, the end-user doesn't need to call this function.
 function! QuickfixsignsSet(event) "{{{3
+    if exists("b:noquickfixsigns") && b:noquickfixsigns
+        return
+    endif
     " let lz = &lazyredraw
     " set lz
     " try
         let bn = bufnr('%')
         let anyway = empty(a:event)
         for def in g:quickfixsigns_lists
+            " if exists("b:noquickfixsigns") && b:noquickfixsigns
+            "     call s:ClearBuffer(def.sign, bn, [])
+            " elseif anyway || index(get(def, 'event', ['BufEnter']), a:event) != -1
             if anyway || index(get(def, 'event', ['BufEnter']), a:event) != -1
                 let t_d = get(def, 'timeout', 0)
                 let t_l = localtime()
@@ -186,9 +192,10 @@ endf
 function! s:Marks() "{{{3
     let acc = []
     let bn  = bufnr('%')
+    let ignore = exists('b:quickfixsigns_ignore_marks') ? b:quickfixsigns_ignore_marks : []
     for mark in g:quickfixsigns_marks
         let pos = getpos("'". mark)
-        if pos[0] == 0 || pos[0] == bn
+        if (pos[0] == 0 || pos[0] == bn) && index(ignore, mark) == -1
             call add(acc, {'bufnr': bn, 'lnum': pos[1], 'col': pos[2], 'text': 'Mark_'. mark})
         endif
     endfor
@@ -385,4 +392,9 @@ Incompatible changes:
 
 0.6
 - Don't require qfl.item.text to be set
+
+0.7
+- b:noquickfixsigns: If true, disable quickfixsigns for the current 
+buffer (patch by Sergey Khorev; must be set before entering a buffer)
+- b:quickfixsigns_ignore_marks: A list of ignored marks (per buffer)
 
