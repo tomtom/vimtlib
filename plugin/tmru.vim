@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-13.
-" @Last Change: 2009-12-06.
-" @Revision:    274
+" @Last Change: 2009-12-21.
+" @Revision:    276
 " GetLatestVimScripts: 1864 1 tmru.vim
 
 if &cp || exists("loaded_tmru")
@@ -195,8 +195,10 @@ endf
 
 function! s:EditMRU()
     let tmru = s:MruRetrieve()
-    let tmru = tlib#input#EditList('Edit MRU', tmru)
-    call s:MruStore(tmru)
+    let tmru1 = tlib#input#EditList('Edit MRU', tmru)
+    if tmru != tmru1
+        call s:MruStore(tmru)
+    endif
 endf
 
 function! s:AutoMRU(filename) "{{{3
@@ -256,5 +258,5 @@ already registered.
 - If viminfo doesn't include '!', then use tlib to save the file list.
 
 0.8
-- 
+- s:EditMRU(): Save tmru list only if it was changed.
 
