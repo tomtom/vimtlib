@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2009-12-13.
-" @Revision:    0.562
+" @Last Change: 2009-12-26.
+" @Revision:    0.575
 
 if &cp || exists("loaded_viki_auto") "{{{2
     finish
@@ -43,6 +43,32 @@ let s:InterVikis  = []
 
 function! viki#GetInterVikis() "{{{3
     return s:InterVikis
+endf
+
+
+" Get a rx that matches a simple name
+function! viki#GetSimpleRx4SimpleWikiName() "{{{3
+    let upper = s:UpperCharacters()
+    let lower = s:LowerCharacters()
+    let simpleWikiName = '\<['.upper.']['.lower.']\+\(['.upper.']['.lower.'0-9]\+\)\+\>'
+    " This will mistakenly highlight words like LaTeX
+    " let simpleWikiName = '\<['.upper.']['.lower.']\+\(['.upper.']['.lower.'0-9]\+\)\+'
+    return simpleWikiName
+endf
+
+
+" Return a viki name for a vikiname on a specified interviki
+" viki#MakeName(iviki, name, ?quote=1)
+function! viki#MakeName(iviki, name, ...) "{{{3
+    let quote = a:0 >= 1 ? a:1 : 1
+    let name  = a:name
+    if quote && name !~ '\C'. viki#GetSimpleRx4SimpleWikiName()
+        let name = '[-'. name .'-]'
+    endif
+    if a:iviki != ''
+        let name = a:iviki .'::'. name
+    endif
+    return name
 endf
 
 
@@ -736,30 +762,6 @@ function! s:CollectVikiWords(table, filename, basedir) "{{{3
             call tlib#dir#Pop()
         endtry
     endif
-endf
-
-" Get a rx that matches a simple name
-function! viki#GetSimpleRx4SimpleWikiName() "{{{3
-    let upper = s:UpperCharacters()
-    let lower = s:LowerCharacters()
-    let simpleWikiName = '\<['.upper.']['.lower.']\+\(['.upper.']['.lower.'0-9]\+\)\+\>'
-    " This will mistakenly highlight words like LaTeX
-    " let simpleWikiName = '\<['.upper.']['.lower.']\+\(['.upper.']['.lower.'0-9]\+\)\+'
-    return simpleWikiName
-endf
-
-" Return a viki name for a vikiname on a specified interviki
-" viki#MakeName(iviki, name, ?quote=1)
-function! viki#MakeName(iviki, name, ...) "{{{3
-    let quote = a:0 >= 1 ? a:1 : 1
-    let name  = a:name
-    if quote && name !~ '\C'. viki#GetSimpleRx4SimpleWikiName()
-        let name = '[-'. name .'-]'
-    endif
-    if a:iviki != ''
-        let name = a:iviki .'::'. name
-    endif
-    return name
 endf
 
 " Return a string defining upper-case characters
@@ -2487,5 +2489,22 @@ endf
 
 fun! viki#FilesGetComment(t) "{{{3
     return matchstr(a:t, '^\s*\[\[.\{-}\]!\]\( {.\{-}}\)\?\zs.*')
+endf
+
+
+function! viki#Balloon() "{{{3
+    if synIDattr(synID(v:beval_lnum, v:beval_col, 1), "name") =~ '^viki'
+        let def = viki#GetLink(1, getline(v:beval_lnum), v:beval_col)
+        exec viki#SplitDef(def)
+        " TLogVAR v_dest
+        if !viki#IsSpecial(v_dest) 
+            try
+                let text = readfile(v_dest)[0 : eval(g:vikiBalloonLines)]
+                return join(text, "\n")
+            catch
+            endtry
+        endif
+    endif
+    return ''
 endf
 

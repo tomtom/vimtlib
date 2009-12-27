@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2009-12-14.
-" @Revision:    2638
+" @Last Change: 2009-12-26.
+" @Revision:    2644
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -40,7 +40,7 @@ if !exists('g:loaded_tlib') || g:loaded_tlib < 32
         finish
     endif
 endif
-let loaded_viki = 313
+let loaded_viki = 314
 
 " This is what we consider nil, in the absence of nil in vimscript
 let g:vikiDefNil  = ''
@@ -305,6 +305,16 @@ if !exists("g:vikiSaveHistory")     | let g:vikiSaveHistory = 0          | endif
 
 " The variable that keeps back-links information
 if !exists("g:VIKIBACKREFS")        | let g:VIKIBACKREFS = {}            | endif "{{{2
+
+" An expression that evaluates to the number of lines that should be 
+" included in the balloon tooltop text if &ballonexpr is set to 
+" viki#Balloon().
+if !exists("g:vikiBalloonLines")    | let g:vikiBalloonLines = '&lines / 3' | endif "{{{2
+
+" If true, show some line of the target file in a balloon tooltip 
+" window.
+if !exists("g:vikiBalloon")         | let g:vikiBalloon = 1 | endif "{{{2
+
 
 " A list of files that contain special viki names
 if v:version >= 700 && !exists("g:vikiHyperWordsFiles") "{{{2
@@ -1048,6 +1058,10 @@ problems with file names containing an unencoded %)
 - Make regexp for inexistent links case sensitive
 - viki#HomePage()
 - viki#GetInterVikis()
+
+3.14
+- viki#Balloon(), g:vikiBalloonLines: Display text from the target file 
+in a balloon tooltip if &balloonexpr is set to viki#Balloon().
 
 
 " vim: ff=unix
