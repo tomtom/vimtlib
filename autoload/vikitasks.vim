@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
-" @Last Change: 2009-12-18.
-" @Revision:    0.0.183
+" @Last Change: 2009-12-23.
+" @Revision:    0.0.187
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -46,7 +46,7 @@ function! vikitasks#Tasks(...) "{{{3
         if !all_tasks
             call filter(qfl, 'v:val.text =~ date_rx')
             " TLogVAR len(qfl)
-            let select = get(args, 'select', '*')
+            let select = get(args, 'select', '.')
             " TLogVAR select
             let from = 0
             let to = 0
@@ -109,14 +109,29 @@ function! vikitasks#Tasks(...) "{{{3
 endf
 
 
-" :display: vikitasks#TasksGrep(all_tasks, ?pattern='.', *files)
-function! vikitasks#TasksGrep(all_tasks, ...) "{{{3
-    TVarArg ['pattern', '']
-    if a:0 > 2
-        let args = map(range(2, a:0), 'a:{v:val}')
-    else
-        let args = []
-    endif
+" " :display: vikitasks#TasksGrep(all_tasks, ?pattern='.', *files)
+" function! vikitasks#TasksGrep(all_tasks, ...) "{{{3
+"     TVarArg ['pattern', '']
+"     if a:0 > 2
+"         let args = map(range(2, a:0), 'a:{v:val}')
+"     else
+"         let args = []
+"     endif
+"     let pattern = vikitasks#MakePattern(pattern)
+"     " TLogVAR a:all_tasks, a:pattern, pattern, files
+"     call vikitasks#Tasks(a:all_tasks, {
+"                 \ 'rx': pattern,
+"                 \ 'select': '.',
+"                 \ 'files': args
+"                 \ })
+" endf
+
+
+" The |regexp| PATTERN is prepended with |\<| if it seems to be a word. 
+" The PATTERN is made case sensitive if it contains an upper-case letter 
+" and if 'smartcase' is true.
+function! vikitasks#MakePattern(pattern) "{{{3
+    let pattern = a:pattern
     if empty(pattern)
         let pattern = '.'
     else
@@ -127,12 +142,7 @@ function! vikitasks#TasksGrep(all_tasks, ...) "{{{3
             let pattern = '\C'. pattern
         endif
     endif
-    " TLogVAR a:all_tasks, a:pattern, pattern, files
-    call vikitasks#Tasks(a:all_tasks, {
-                \ 'rx': pattern,
-                \ 'select': '*',
-                \ 'files': args
-                \ })
+    return pattern
 endf
 
 
