@@ -1,6 +1,13 @@
-* Status
+* Install
 
-The vimball recipes for the following plugins are located in the vimballs subdirectory.
+You can use this repository by
+
+    # adding a local copy of it to 'runtimepath' (you can still disable specific plugins by setting loaded_* variables in your vimrc file), 
+    # by symlinking the files to your vimfiles directory (you could use tools like graft for this),
+    # building vimballs (the vimball recipes for the following plugins are located in the vimballs subdirectory).
+
+
+* Status
 
     #A bbcode           -- syntax & templates
     #A checksyntax      -- Check syntax when saving a file (php etc.)
@@ -53,8 +60,6 @@ Legend:
     #C ... Work in progress
     #D ... Not in use (I wouldn't know if there were problems)
     #E ... Major known problems or unfinished work
-
-
 
 
 * Scripts
