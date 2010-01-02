@@ -1,0 +1,30 @@
+VIMTLIB=~/vimfiles
+VIMDIRS=autoload compiler ftplugin indent macros plugin plugin_experimental ruby syntax
+
+tags:
+	cd ${VIMTLIB}; \
+		rm tags || echo "..."; \
+		ctags -R -f - ${VIMDIRS} | grep -v -e '^s:' > tags
+
+loaded:
+	cd ${VIMTLIB}; \
+		rm macros/vimtlib.vim || echo "..." ; \
+		echo "command! -nargs=+ TLibUse exec 'unlet '. join(map([<f-args>], '''loaded_''. v:val'))" > macros/vimtlib.vim ; \
+		grep -oh -w -E "loaded_[a-zA-Z]+" plugin/*.vim | sort -u | sed -e 's/\(.*\)/let \1 = 1/' >> macros/vimtlib.vim
+
+vimtips.xml:
+	mkdir ${VIMTLIB}/tmp; cd ${VIMTLIB}/tmp; \
+		wget http://wikistats.wikia.com/dbdumps/vim/pages_current.xml.gz; \
+		gunzip pages_current.xml.gz
+
+vimtips:
+	cd ${VIMTLIB}; \
+		ruby/vimtips2help.rb --xml tmp/pages_current.xml --out doc/vimtips.txt -v -m "*´"
+
+vba:
+	echo "If you get 'File does not exists' messages, that's because the plugin was moved to plugin_experimental"
+	cd ${VIMTLIB}; \
+		for recipe in vimballs/*.recipe; do \
+		ruby/vimball.rb -u -z -b ${VIMTLIB} -d ${VIMTLIB}/vimballs vba $${recipe}; \
+		done
+
