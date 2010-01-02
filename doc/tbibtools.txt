@@ -266,32 +266,3 @@ Extract a few entries >
     tbibtools -P -q author="Husserl|Merleau-Ponty" < monos.bib
 
 
-
-Changes~
-
-0.1
-- Initial version
-
-0.2
-- The configuration file is always loaded (also when called from Vim)
-- The configuration file is evaluated in the context of the configuration object (use some kind of configuration DSL)
-- Use optargs for parsing command line arguments (i.e. command line options have slightly changed)
-- Improved simple_bibtex_parser()
-
-0.3
-- Syntax of the query command has changed: query FIELD1 => RX1, FIELD2 => RX2 ...
-- Merge duplicate entries
-- Merge certain conflicting fields
-- FIX: Problem with --ls
-
-0.4
-- sortCrossref: Put cross-referenced entries to the back.
-- New format: (un)selectCrossref: View only entries that are (not) cross-referenced
-- VIM: Improved TBibList (include keywords in list; if g:tbibUseCache is set, the listing will be cached between editing sessions)
-
-0.5
-- VIM: Require tlib 0.9
-
-0.6
-- Format "squeeze": Remove redundant whitespace
-
