@@ -3,7 +3,7 @@
   'version' : "dev",
   'author' : "Tom Link <micathom at gmail com>",
   'maintainer' : "Tom Link <micathom at gmail com>",
-  'repository' : {'type': 'git', 'url': 'git://github.com/tomtom/vimtlib.git'}
+  'repository' : {'type': 'git', 'url': 'git://github.com/tomtom/vimtlib.git'},
   'dependencies' : {'tinymode': {}},
   'description' : 'A collection of vim plugins and miscellaneous functions'
 }
