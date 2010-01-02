@@ -1,10 +1,15 @@
 * Install
 
-You can use this repository by
+This repository includes several plugins. I am well aware that this is bad practice. Anyway, here are a few suggestions of how to make use of this repository:
 
-    # adding a local copy of it to 'runtimepath' (you can still disable specific plugins by setting loaded_* variables in your vimrc file), 
-    # by symlinking the files to your vimfiles directory (you could use tools like graft for this),
-    # building vimballs (the vimball recipes for the following plugins are located in the vimballs subdirectory).
+    # Add a local copy of it to 'runtimepath' (you can still disable specific plugins by setting loaded_* variables in your vimrc file).
+
+    # Symlink the files to your vimfiles directory (you could use tools like graft for this).
+
+    # Build vimballs (the vimball recipes for the following plugins are located in the vimballs subdirectory). In the ruby subdirectory, there is a ruby-based script that help automating this process. Type ''...vimtlib/ruby/vimball.rb -h'' to find out which command-line options to use. See also:
+        - [[http://www.vim.org/scripts/script.php?script_id=1502][VimBall plugin]]
+        - [[http://vim.wikia.com/wiki/Using_VimBall_with_make][Using VimBall with make]]
+        - [[http://mysite.verizon.net/astronaut/src/index.html#MKVIMBALL][C-based program to handle vimballs]]
 
 
 * Status
