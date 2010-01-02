@@ -3,7 +3,7 @@
 # @Author:      Tom Link (micathom AT gmail com)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2009-02-10.
-# @Last Change: 2009-10-03.
+# @Last Change: 2010-01-02.
 #
 # This script creates and installs vimballs without vim.
 #
@@ -38,7 +38,7 @@ require 'zlib'
 class Vimball
 
     APPNAME = 'vimball'
-    VERSION = '1.0.206'
+    VERSION = '1.0.208'
     HEADER = <<HEADER
 " Vimball Archiver by Charles E. Campbell, Jr., Ph.D.
 UseVimball
@@ -280,6 +280,10 @@ HEADER
             if files.all? {|file|
                 file = file.strip
                 filename = File.join(@config['vimfiles'], file)
+                unless File.exist?(filename)
+                    $logger.fatal "File does not exist: #{filename}"
+                    exit 5
+                end
                 mtime = File.mtime(filename)
                 older = mtime <= vba_mtime
                 $logger.debug "MTIME: #{filename}: #{mtime} => #{older}"
