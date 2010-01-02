@@ -1,28 +1,44 @@
 * Install from GIT
 
-** runtimepath
-
-The easiest way would be to check out the repository and append the path 
-to your local copy to ''runtimepath''. You can always disable plugins 
-by setting the variable ''loaded_{PLUGIN_NAME}'' in your vimrc file.
+This repository includes several plugins. I am well aware that this is bad practice. Anyway, here are a few suggestions of how to make use of this repository:
 
 
-** vimballs
+** Modify the ''runtimepath''
 
-The vimballs subdirectory contains recipes for building vimballs. You 
-might want to add the vimtlib as an extra basedir argument to 
-'':MkVimball''.
+Add a local copy of it to 'runtimepath':
 
-Alternatively, the ruby script ruby/vimball.rb can be used to create 
-and install vimballs without vim.
+#Code <<
+set runtimepath+={PATH TO YOU LOCAL COPY}/vimtlib
 
-Build all vimballs:
-''ruby/vimball.rb -z -d vimballs vba vimballs/*.recipe''
+Plugins like Marc Weber's vim-plugin-manager or Tim Pope's pathogen could be of help here.
 
-Not recomended but if you insist:
-Install a vimball (check the values of ''helptags'' and ''vimfiles'' in 
-advance, see ''vimball.rb --print-config''):
-''ruby/vimball.rb install vimballs/VIMBALL ...''
+If you choose this option, you will by default load all plugins---even those you don't care about. You can disable specific plugins by setting loaded_* variables in your vimrc file.
+
+If you have GNU make available, run ''make -f Makefile_vimfiles loaded'', which will generate a file ''macros/vimtlib.vim''. Add ''runtime macros/vimtlib.vim'' to your ''vimrc' file and ''unlet'' all those ''loaded_*'' variables that refer to those plugins you want to load.
+
+Example: Load only the tlib, tskeleton, and viki plugins
+
+#Code <<
+runtime macros/vimtlib.vim
+TLibUse tlib tskeleton viki
+
+
+** Use symbolic links
+
+Symlink the files to your vimfiles directory. You could use tools like graft for this.
+
+
+** Build vimballs
+
+Vimball recipes for the following plugins are located in the vimballs subdirectory.
+
+In the ruby subdirectory, there is a ruby-based script that help automating this process. If you have ruby installed, type ''...vimtlib/ruby/vimball.rb -h'' to find out which command-line options to use. Re-generate all vimballs with ''make -f Makefile_vimtlib VIMTLIB=... vba''.
+
+See also:
+
+    - [[http://www.vim.org/scripts/script.php?script_id=1502][VimBall plugin]]
+    - [[http://vim.wikia.com/wiki/Using_VimBall_with_make][Using VimBall with make]]
+    - [[http://mysite.verizon.net/astronaut/src/index.html#MKVIMBALL][C-based program to handle vimballs]]
 
 
 % vi: ft=viki:tw=72:ts=4
