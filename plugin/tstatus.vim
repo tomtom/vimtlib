@@ -3,10 +3,13 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-02.
-" @Last Change: 2009-02-15.
-" @Revision:    0.1.12
+" @Last Change: 2010-01-02.
+" @Revision:    0.1.17
 
-if &cp || exists("loaded_tstatus")
+if &cp || exists("loaded_tstatus") || !exists('TOptionsSummary()')
+    " You have to execute
+    "     runtime macros/toptions.vim
+    " in your vimrc file in order to be able to use this plugin.
     finish
 endif
 let loaded_tstatus = 1
@@ -29,5 +32,6 @@ command! -bang TStatus let statussel=empty("<bang>")
             \ | let &statusline  = g:tstatusline{statussel}
             \ | let &rulerformat = g:trulerformat{statussel}
             \ | unlet statussel
+
 TStatus
 
