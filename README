@@ -51,6 +51,7 @@ You can use this repository by
     #D tsession         -- An alternativ approach to sessions
     #E pim              -- The vim pim (not really useful yet)
     #E tEchoPair        -- Display matching parenthesis in the echo area
+    #E worksheet        -- Somewhat "Mathematica-like" worksheets (sort of)
 
 
 Legend:
