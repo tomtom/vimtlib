@@ -7,7 +7,7 @@ this repository:
 
 ** Modify the ''runtimepath''
 
-Add a local copy of it to 'runtimepath':
+Add the path to the local copy to 'runtimepath':
 
 #Code <<
 set runtimepath+={PATH TO YOU LOCAL COPY}/vimtlib
@@ -20,7 +20,7 @@ those you don't care about. You can disable specific plugins by setting
 loaded_* variables in your vimrc file.
 
 If you have GNU make available, run ''make -f Makefile_vimfiles 
-loaded'', which will generate a file ''macros/vimtlib.vim''. Add 
+loaded'', which will generate a file ''macros/vimtlib.vim''. Then add 
 ''runtime macros/vimtlib.vim'' to your ''vimrc' file and ''unlet'' all 
 those ''loaded_*'' variables that refer to those plugins you want to 
 load.
@@ -43,7 +43,7 @@ graft for this.
 Vimball recipes for the following plugins are located in the vimballs 
 subdirectory.
 
-In the ruby subdirectory, there is a ruby-based script that help 
+In the ruby subdirectory, there is a ruby-based script that helps 
 automating this process. If you have ruby installed, type 
 ''...vimtlib/ruby/vimball.rb -h'' to find out which command-line options 
 to use. Re-generate all vimballs with ''make -f Makefile_vimtlib 

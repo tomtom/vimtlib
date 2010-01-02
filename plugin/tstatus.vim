@@ -4,9 +4,9 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-02.
 " @Last Change: 2010-01-02.
-" @Revision:    0.1.17
+" @Revision:    0.1.18
 
-if &cp || exists("loaded_tstatus") || !exists('TOptionsSummary()')
+if &cp || exists("loaded_tstatus") || !exists('*TOptionsSummary')
     " You have to execute
     "     runtime macros/toptions.vim
     " in your vimrc file in order to be able to use this plugin.
