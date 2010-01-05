@@ -1,0 +1,139 @@
+*tplugin.txt*       A simple plugin loader/runtimepath manager
+                    Author: Tom Link, micathom at gmail com
+
+With the distribution of vim plugins as git repositories, the usual 
+directory layout has become somewhat disadvantagous. This script 
+provides a way to load those plugins in an efficient manner. 
+
+Raison d'être: Help users of the vimtlib repository 
+(http://github.com/tomtom/vimtlib/) to pick the plugins they want to 
+use. But it is usable for any plugin that is distributed as git or svn 
+repository etc.
+
+It also assumes that your local copies follow a certain directory 
+layout:
+
+    ROOT/
+      repo1/
+        after/
+        autoload/
+        doc/
+        plugin/
+      repo2/
+        after/
+        autoload/
+        doc/
+        plugin/
+      ...
+
+In order to use this plugin insert the following lines at the top of 
+your |vimrc| file: >
+
+    source WHEREVER/macros/tplugin.vim
+
+If you have installed this script in your default user |vimfiles| 
+directory, you could also use: >
+    
+    runtime macros/tplugin.vim
+
+It is advantageous to source the macro rather at the top of your vimrc 
+file before making any changes to the 'runtimepath'. If you don't change 
+the 'runtimepath', the position is of no importance.
+
+If the ROOT directory is not the subdirectory "repos" of the first 
+directory in your 'runtimepath' (i.e. something like ~/vimfiles/repos), 
+you also have to add the following command: >
+
+    TPluginRoot ~/vimfiles/repos
+
+Now, for each plugin repository you want to load, add a |:TPlugin| 
+command. I.e. you have to enable every single repository (a.k.a. 
+opt-in).
+
+1.) Load all plugins in repository "repo1":
+
+    TPlugin repo1
+
+2.) Load certain plugins in repository "repo2" (this is relevant for 
+comprehensive repositories like vimtlib although it would be better to 
+split such repositories into specific ones):
+
+    TPlugin repo2 foo bar
+
+Full example: >
+
+    runtime macros/tplugin.vim
+    TPluginRoot F:\repos
+    TPlugin vim-surround
+    let g:snippets_dir = 'F:\repos\snipmate.vim\snippets'
+    TPlugin snipmate.vim
+    TPlugin vimtlib 02tlib viki trag checksyntax
+
+CAVEAT: If you have a file after/plugin/foo.vim in you user vimfiles 
+directory, this file will be loaded before any "managed" plugin "foo". 
+You thus have to check in your after/plugin/foo.vim file if the plugin 
+was already loaded.
+
+Other than the default plugin behaviour, those managed plugins are 
+loaded when the |VimEnter| event is triggered, i.e. after all plugins 
+(incl. the after directory) and |gvimrc| was loaded. This approach 
+provides for a better control of which plugins should be loaded. You can 
+load a managed plugin immediately by adding a bang '!' to the |:TPlugin| 
+command.
+
+
+Related work~
+
+    - Marc Weber's vim-plugin-manager (my main source of inspiration for 
+      this script), which also provides automatic dependency management:
+      http://github.com/MarcWeber/vim-plugin-manager (vimscript #2905)
+
+    - Tim Pope's pathogen (vimscript #2332).
+
+
+
+-----------------------------------------------------------------------
+Install~
+
+Edit the vba file and type: >
+
+    :so %
+
+See :help vimball for details. If you have difficulties or use vim 7.0, 
+please make sure, you have the current version of vimball
+(vimscript #1502) installed or update your runtime.
+
+Also available via git: http://github.com/tomtom/vimtlib/
+
+
+========================================================================
+Contents~
+
+        g:tplugin_helptags ... |g:tplugin_helptags|
+        :TPlugin ............. |:TPlugin|
+        :TPluginRoot ......... |:TPluginRoot|
+
+
+========================================================================
+macros/tplugin.vim~
+
+                                                    *g:tplugin_helptags*
+g:tplugin_helptags             (default: 1)
+    If non-nil, optionally generate helptags for the repository's doc 
+    subdirectory.
+
+                                                    *:TPlugin*
+:TPlugin[!] REPOSITORY [PLUGINS ...]
+    Register certain plugins for being sourced at |VimEnter| time.
+    See |tplugin.txt| for details.
+    With the optional '!', the plugin will be loaded immediately.
+    In interactive use, i.e. once vim was loaded, plugins will be loaded 
+    immediately anyway.
+
+                                                    *:TPluginRoot*
+:TPluginRoot DIRECTORY
+    Define the root directory for the following |:TPlugin| commands.
+
+
+
+vim:tw=78:fo=tcq2:isk=!-~,^*,^|,^":ts=8:ft=help:norl:
