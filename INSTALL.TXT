@@ -12,9 +12,15 @@ Add the path to the local copy to 'runtimepath':
 #Code <<
 set runtimepath+={PATH TO YOU LOCAL COPY}/vimtlib
 
+You have the following options to facilitate doing this:
+
+
+#1
 Plugins like Marc Weber's vim-plugin-manager or Tim Pope's pathogen 
 could be of help here.
 
+
+#2
 If you choose this option, you will by default load all plugins---even 
 those you don't care about. You can disable specific plugins by setting 
 loaded_* variables in your vimrc file.
@@ -30,6 +36,15 @@ Example: Load only the tlib, tskeleton, and viki plugins
 #Code <<
 runtime macros/vimtlib.vim
 TLibUse tlib tskeleton viki
+
+
+#3
+vimtlib includes a script macros/tplugin.vim that help managing the 
+runtimepath. This script also allows users to use only certain plugins 
+from the vimtlib repository.
+
+See doc/tplugin.txt for details.
+
 
 
 ** Use symbolic links
@@ -51,12 +66,12 @@ VIMTLIB=... vba''.
 
 See also:
 
-    - [[http://www.vim.org/scripts/script.php?script_id=1502][VimBall 
-      plugin]]
-    - [[http://vim.wikia.com/wiki/Using_VimBall_with_make][Using VimBall 
-      with make]]
-    - [[http://mysite.verizon.net/astronaut/src/index.html#MKVIMBALL][C-based 
-      program to handle vimballs]]
+    - [[http://www.vim.org/scripts/script.php?script_id=1502]\
+      [\VimBall plugin]]
+    - [[http://vim.wikia.com/wiki/Using_VimBall_with_make]\
+      [Using \VimBall with make]]
+    - [[http://mysite.verizon.net/astronaut/src/index.html#MKVIMBALL]\
+      [C-based program to handle vimballs]]
 
 
 % vi: ft=viki:tw=72:ts=4

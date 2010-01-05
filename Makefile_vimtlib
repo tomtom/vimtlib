@@ -14,7 +14,7 @@ loaded:
 
 vimtips.xml:
 	mkdir ${VIMTLIB}/tmp; cd ${VIMTLIB}/tmp; \
-		wget http://wikistats.wikia.com/dbdumps/vim/pages_current.xml.gz; \
+		wget http://wikistats.wikia.com/v/vi/vim/pages_current.xml.gz; \
 		gunzip pages_current.xml.gz
 
 vimtips:
@@ -24,7 +24,5 @@ vimtips:
 vba:
 	echo "If you get 'File does not exists' messages, that's because the plugin was moved to plugin_experimental"
 	cd ${VIMTLIB}; \
-		for recipe in vimballs/*.recipe; do \
-		ruby/vimball.rb -u -z -b ${VIMTLIB} -d ${VIMTLIB}/vimballs vba $${recipe}; \
-		done
+		ruby/vimball.rb -u -z -b ${VIMTLIB} -d ${VIMTLIB}/vimballs vba vimballs/*.recipe
 
