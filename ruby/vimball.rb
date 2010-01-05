@@ -3,7 +3,7 @@
 # @Author:      Tom Link (micathom AT gmail com)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2009-02-10.
-# @Last Change: 2010-01-02.
+# @Last Change: 2010-01-04.
 #
 # This script creates and installs vimballs without vim.
 #
@@ -38,7 +38,7 @@ require 'zlib'
 class Vimball
 
     APPNAME = 'vimball'
-    VERSION = '1.0.208'
+    VERSION = '1.0.216'
     HEADER = <<HEADER
 " Vimball Archiver by Charles E. Campbell, Jr., Ph.D.
 UseVimball
@@ -280,13 +280,14 @@ HEADER
             if files.all? {|file|
                 file = file.strip
                 filename = File.join(@config['vimfiles'], file)
-                unless File.exist?(filename)
-                    $logger.fatal "File does not exist: #{filename}"
-                    exit 5
+                filename1 = get_file(filename)
+                unless File.exist?(filename1)
+                    $logger.error "File does not exist: #{filename1}"
+                    return
                 end
-                mtime = File.mtime(filename)
+                mtime = File.mtime(filename1)
                 older = mtime <= vba_mtime
-                $logger.debug "MTIME: #{filename}: #{mtime} => #{older}"
+                $logger.debug "MTIME: #{filename1}: #{mtime} => #{older}"
                 older
             }
                 $logger.info "VBA is up to date: #{vbafile}"
@@ -298,18 +299,18 @@ HEADER
             file = file.strip
             unless file.empty?
                 filename = File.join(@config['vimfiles'], file)
-                if File.readable?(filename)
-                    content = File.readlines(filename)
+                filename1 = get_file(filename)
+                if File.readable?(filename1)
+                    content = File.readlines(filename1)
                 else
-                    $logger.fatal "Cannot read file: #{filename}"
-                    exit 5
+                    $logger.error "File does not exist: #{filename}"
+                    return
                 end
                 # content.each do |line|
                 #     line.sub!(/(\r\n|\r)$/, "\n")
                 # end
 
-                filename = Pathname.new(filename).relative_path_from(Pathname.new(@config['vimfiles'])).to_s
-                filename.gsub!(/\\/, '/')
+                filename = clean_filename(filename)
 
                 rewrite = @config['rewrite']
                 if rewrite
@@ -460,6 +461,32 @@ HEADER
                 $logger.warn "Overwrite existing file"
             end
             File.open(filename, mode, &block)
+        end
+    end
+
+
+    def clean_filename(filename)
+        filename = Pathname.new(filename).relative_path_from(Pathname.new(@config['vimfiles'])).to_s
+        filename.gsub!(/\\/, '/')
+        return filename
+    end
+
+    def get_file(filename)
+        if File.exist?(filename)
+            return filename
+        else
+            r = @config['replacements']
+            if r and r[filename]
+                return r[filename]
+            else
+                g = @config['gsub']
+                if g
+                    for rxs, rpl in g
+                        filename = filename.gsub(Regexp.new(rxs), rpl)
+                    end
+                end
+                return filename
+            end
         end
     end
 
