@@ -14,6 +14,7 @@ See INSTALL.TXT
     #A quickfixsigns    -- Mark quickfix & location list items with signs
     #A scalefont        -- Switch between your favourite font/gui settings
     #A shymenu          -- Show the menu bar only when pressing an accelerator key
+    #A startup_profile  -- Profile vim startup
     #A tAssert          -- Simple Assertions
     #A tbibtools        -- bibtex related tools (sort, filter ...)
     #A tcalc            -- A simple ruby-based RPN calculator with a vim frontend
@@ -23,6 +24,7 @@ See INSTALL.TXT
     #A tmarks           -- A simple marks browser
     #A tmru             -- Most Recently Used Files
     #A toptions/tstatus -- display changed options in the status line (toptions should be sourced from vimrc)
+    #A tplugin          -- A simple plugin loader/runtimepath manager
     #A trag             -- Jump to a file registered in your tags
     #A tregisters       -- List, edit, and run/execute registers/clipboards
     #A tselectbuffer    -- A simplicistic buffer selector/switcher
