@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-10-07.
-" @Last Change: 2009-08-04.
-" @Revision:    0.12.356
+" @Last Change: 2010-01-03.
+" @Revision:    359
 " GetLatestVimScripts: 2040 1 tcalc.vim
 "
 " TODO: Error checks for malformed input
@@ -15,42 +15,10 @@
 if &cp || exists("loaded_tcalc") || !has('ruby')
     finish
 endif
-let loaded_tcalc = 12
+let loaded_tcalc = 13
 
 let s:save_cpo = &cpo
 set cpo&vim
-
-if !exists('g:tcalc_initialize')
-    " A string that will be read when first invoking |:TCalc|.
-    " Define some abbreviations. Use 'ls' to see them.
-    " :nodefault:
-    " :read: let g:tcalc_initialize = '' "{{{2
-    let g:tcalc_initialize = '
-                \ :binom ( n:Numeric k:Numeric ) args n fak k fak n k - fak * / ;
-                \ :fak ( Numeric ) args dup 1 > ( dup 1 - fak * ) ( . 1 ) ifelse ;
-                \ :fib ( Numeric ) args dup 1 > ( dup 1 - fib swap 2 - fib + ) if ;
-                \ :ld ( Numeric ) args log 2 log / ;
-                \ :ln ( Numeric ) args log ;
-                \ :logx ( number:Numeric base:Numeric ) args number log base log / ;
-                \ :rev ( Numeric ) args 1 swap / ;
-                \ :Z ( Numeric ) args Integer ;
-                \ :Q ( Numeric ) args Rational ;
-                \ :C ( Numeric ) args Complex ;
-                \ '
-    " \ :binom ( Numeric Numeric ) args copy1 fak rot2 dup fak rot2 - fak * / ;
-    " \ :logx ( Numeric Numeric ) args swap log swap log / ;
-endif
-
-if !exists('g:tcalc_lines')
-    " The height of the window. If negative, use fixed height.
-    let g:tcalc_lines = 10 "{{{2
-endif
-
-
-if !exists('g:tcalc_dir')
-    " The default directory where "source" finds files.
-    let g:tcalc_dir = fnamemodify('~/.tcalc', ':p') "{{{2
-endif
 
 
 " :display: TCalc[!]
@@ -178,6 +146,10 @@ to 'ls'.
 0.12
 - Force arrity for methods: METHOD@N -> pass the N top items on the 
 stack as arguments to method
+
+0.13
+- Moved the definition of some variables from plugin/tcalc.vim to 
+autoload/tcalc.vim
 
 
 " - TCalcEval command that evaluates an expression and copies the result 

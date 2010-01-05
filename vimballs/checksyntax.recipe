@@ -1,2 +1,3 @@
 doc/checksyntax.txt
 plugin/checksyntax.vim
+autoload/checksyntax.vim

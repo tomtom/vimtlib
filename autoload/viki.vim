@@ -3,15 +3,434 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2009-12-31.
-" @Revision:    0.577
+" @Last Change: 2010-01-03.
+" @Revision:    0.586
 
-if &cp || exists("loaded_viki_auto") "{{{2
-    finish
-endif
-let loaded_viki_auto = 1
+" call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
+
 
 """ General {{{1
+
+
+" This is what we consider nil, in the absence of nil in vimscript
+let g:vikiDefNil  = ''
+
+" In a previous version this was used as list separator and as nil too
+let g:vikiDefSep  = "\n"
+
+" let s:vikiSelfEsc = '\'
+
+" In extended viki links this is considered as a reference to the current 
+" document. This is likely to go away.
+let g:vikiSelfRef = '.'
+
+" let s:vikiEnabledID = loaded_viki .'_'. strftime('%c')
+
+" A simple viki name is made from a series of upper and lower characters 
+" (i.e. CamelCase-names). These two variables define what is considered as 
+" upper and lower-case characters. We don't rely on the builtin 
+" functionality for this.
+if !exists("g:vikiUpperCharacters") "{{{2
+    let g:vikiUpperCharacters = "A-Z"
+endif
+if !exists("g:vikiLowerCharacters") "{{{2
+    let g:vikiLowerCharacters = "a-z"
+endif
+
+" Characters allowed in anchors
+" Defaults to:
+" [b:vikiLowerCharacters][b:vikiLowerCharacters +  b:vikiUpperCharacters + '_0-9]*
+if !exists('g:vikiAnchorNameRx')
+    let g:vikiAnchorNameRx = '' "{{{2
+endif
+
+if !exists('g:vikiUrlRestRx')
+    let g:vikiUrlRestRx = '['. g:vikiLowerCharacters . g:vikiUpperCharacters .'0-9?%_=&+-]*'  "{{{2
+endif
+
+
+
+
+
+" URLs matching these protocols are handled by VikiOpenSpecialProtocol()
+if !exists("g:vikiSpecialProtocols") "{{{2
+    let g:vikiSpecialProtocols = 'https\?\|ftps\?\|nntp\|mailto\|mailbox\|file'
+endif
+
+" Exceptions from g:vikiSpecialProtocols
+if !exists("g:vikiSpecialProtocolsExceptions") "{{{2
+    let g:vikiSpecialProtocolsExceptions = ""
+endif
+
+" Files matching these suffixes are handled by viki#OpenSpecialFile()
+if !exists("g:vikiSpecialFiles") "{{{2
+    let g:vikiSpecialFiles = [
+                \ 'aac',
+                \ 'aif',
+                \ 'aiff',
+                \ 'au',
+                \ 'avi',
+                \ 'bmp',
+                \ 'dia',
+                \ 'doc',
+                \ 'dvi',
+                \ 'eps',
+                \ 'eps',
+                \ 'gif',
+                \ 'htm',
+                \ 'html',
+                \ 'jpeg',
+                \ 'jpg',
+                \ 'm3u',
+                \ 'mp1',
+                \ 'mp2',
+                \ 'mp3',
+                \ 'mp4',
+                \ 'mpeg',
+                \ 'mpg',
+                \ 'odg',
+                \ 'ods',
+                \ 'odt',
+                \ 'ogg',
+                \ 'pdf',
+                \ 'png',
+                \ 'ppt',
+                \ 'ps',
+                \ 'rtf',
+                \ 'voc',
+                \ 'wav',
+                \ 'wma',
+                \ 'wmf',
+                \ 'wmv',
+                \ 'xhtml',
+                \ 'xls',
+                \ 'xmind',
+                \ ]
+endif
+
+" Exceptions from g:vikiSpecialFiles
+if !exists("g:vikiSpecialFilesExceptions") "{{{2
+    let g:vikiSpecialFilesExceptions = ""
+endif
+
+if !exists('g:viki_highlight_hyperlink_light') "{{{2
+    " let g:viki_highlight_hyperlink_light = 'term=bold,underline cterm=bold,underline gui=bold,underline ctermfg=DarkBlue guifg=DarkBlue'
+    let g:viki_highlight_hyperlink_light = 'term=underline cterm=underline gui=underline ctermfg=DarkBlue guifg=DarkBlue'
+endif
+if !exists('g:viki_highlight_hyperlink_dark') "{{{2
+    " let g:viki_highlight_hyperlink_dark = 'term=bold,underline cterm=bold,underline gui=bold,underline ctermfg=DarkBlue guifg=LightBlue'
+    let g:viki_highlight_hyperlink_dark = 'term=underline cterm=underline gui=underline ctermfg=LightBlue guifg=#bfbfff'
+endif
+
+if !exists('g:viki_highlight_inexistent_light') "{{{2
+    " let g:viki_highlight_inexistent_light = 'term=bold,underline cterm=bold,underline gui=bold,underline ctermfg=DarkRed guifg=DarkRed'
+    let g:viki_highlight_inexistent_light = 'term=underline cterm=underline gui=underline ctermfg=DarkRed guifg=DarkRed'
+endif
+if !exists('g:viki_highlight_inexistent_dark') "{{{2
+    " let g:viki_highlight_inexistent_dark = 'term=bold,underline cterm=bold,underline gui=bold,underline ctermfg=Red guifg=Red'
+    let g:viki_highlight_inexistent_dark = 'term=underline cterm=underline gui=underline ctermfg=Red guifg=Red'
+endif
+
+" If set to true, any files loaded by viki will become viki enabled (in 
+" minor mode); this was the default behaviour in earlier versions
+if !exists('g:vikiPromote') "{{{2
+    let g:vikiPromote = 0
+endif
+
+" If non-nil, use the parent document's suffix.
+if !exists("g:vikiUseParentSuffix") | let g:vikiUseParentSuffix = 0      | endif "{{{2
+
+" Prefix for anchors
+if !exists("g:vikiAnchorMarker")    | let g:vikiAnchorMarker = "#"       | endif "{{{2
+
+" If non-nil, search anchors anywhere in the text too (without special 
+" markup)
+if !exists("g:vikiFreeMarker")      | let g:vikiFreeMarker = 0           | endif "{{{2
+
+if !exists('g:vikiPostFindAnchor') "{{{2
+    let g:vikiPostFindAnchor = 'norm! zz'
+endif
+
+" List of enabled viki name types
+" c ... Camel case
+" s ... Simple names
+" S ... Quoted simple names
+" e ... Extended names
+" u ... URLs
+" i ... Intervikis
+" x ... Commands
+" w ... "hyperwords"
+" f ... Filenames as "hyperwords"
+if !exists("g:vikiNameTypes")       | let g:vikiNameTypes = "csSeuixwf"  | endif "{{{2
+
+" Which directory explorer to use to edit directories
+if !exists("g:vikiExplorer")        | let g:vikiExplorer = "Sexplore"    | endif "{{{2
+" if !exists("g:vikiExplorer")        | let g:vikiExplorer = "split"    | endif "{{{2
+" if !exists("g:vikiExplorer")        | let g:vikiExplorer = "edit"          | endif "{{{2
+"
+" If hide or update: use the respective command when leaving a buffer
+if !exists("g:vikiHide")            | let g:vikiHide = ''                | endif "{{{2
+
+" Don't use g:vikiHide for commands matching this rx
+if !exists("g:vikiNoWrapper")       | let g:vikiNoWrapper = '\cexplore'  | endif "{{{2
+
+" Cache information about a document's inexistent names
+if !exists("g:vikiCacheInexistent") | let g:vikiCacheInexistent = 0      | endif "{{{2
+
+" If non-nil, map keys that trigger the evaluation of inexistent names
+if !exists("g:vikiMapInexistent")   | let g:vikiMapInexistent = 1        | endif "{{{2
+
+" Map these keys for g:vikiMapInexistent to LineQuick
+if !exists("g:vikiMapKeys")         | let g:vikiMapKeys = "]).,;:!?\"' " | endif "{{{2
+
+" Map these keys for g:vikiMapInexistent to ParagraphVisible
+if !exists("g:vikiMapQParaKeys")    | let g:vikiMapQParaKeys = "\n"      | endif "{{{2
+
+" Install hooks for these conditions (requires hookcursormoved to be 
+" installed)
+" "linechange" could cause some slowdown.
+if !exists("g:vikiHCM") "{{{2
+    let g:vikiHCM = ['syntaxleave_oneline']
+endif
+
+" Check the viki name before inserting this character
+if !exists("g:vikiMapBeforeKeys")   | let g:vikiMapBeforeKeys = ']'      | endif "{{{2
+
+" Some functions a gathered in families/classes. See vikiLatex.vim for 
+" an example.
+if !exists("g:vikiFamily")          | let g:vikiFamily = ""              | endif "{{{2
+
+" The directory separator
+if !exists("g:vikiDirSeparator")    | let g:vikiDirSeparator = "/"       | endif "{{{2
+
+" The version of Deplate markup
+if !exists("g:vikiTextstylesVer")   | let g:vikiTextstylesVer = 2        | endif "{{{2
+
+" The default viki page (as absolute filename)
+if !exists("g:vikiHomePage")        | let g:vikiHomePage = ''            | endif "{{{2
+
+" How often the feedback is changed when marking inexisting links
+if !exists("g:vikiFeedbackMin")     | let g:vikiFeedbackMin = &lines     | endif "{{{2
+
+" The map leader for most viki key maps.
+if !exists("g:vikiMapLeader")       | let g:vikiMapLeader = '<LocalLeader>v' | endif "{{{2
+
+" If non-nil, anchors like #mX are turned into vim marks
+if !exists("g:vikiAutoMarks")       | let g:vikiAutoMarks = 1            | endif "{{{2
+
+" If non-nil, cache back-links information
+if !exists("g:vikiSaveHistory")     | let g:vikiSaveHistory = 0          | endif "{{{2
+
+" The variable that keeps back-links information
+if !exists("g:VIKIBACKREFS")        | let g:VIKIBACKREFS = {}            | endif "{{{2
+
+" An expression that evaluates to the number of lines that should be 
+" included in the balloon tooltop text if &ballonexpr is set to 
+" viki#Balloon().
+if !exists("g:vikiBalloonLines")    | let g:vikiBalloonLines = '&lines / 3' | endif "{{{2
+
+" If true, show some line of the target file in a balloon tooltip 
+" window.
+if !exists("g:vikiBalloon")         | let g:vikiBalloon = 1 | endif "{{{2
+
+
+" A list of files that contain special viki names
+if v:version >= 700 && !exists("g:vikiHyperWordsFiles") "{{{2
+    let g:vikiHyperWordsFiles = [
+                \ get(split(&rtp, ','), 0).'/vikiWords.txt',
+                \ './.vikiWords',
+                \ ]
+endif
+
+" Definition of intervikis. (This variable won't be evaluated until 
+" autoload/viki.vim is loaded).
+if !exists('g:viki_intervikis')
+    let g:viki_intervikis = {}   "{{{2
+endif
+
+" Define which keys to map
+if !exists("g:vikiMapFunctionality") "{{{2
+    " b     ... go back
+    " c     ... follow link (c-cr)
+    " e     ... edit
+    " F     ... find
+    " f     ... follow link (<LocalLeader>v)
+    " i     ... check for inexistant destinations
+    " I     ... map keys in g:vikiMapKeys and g:vikiMapQParaKeys
+    " m[fb] ... map mouse (depends on f or b)
+    " p     ... edit parent (or backlink)
+    " q     ... quote
+    " tF    ... tab as find
+    " Files ... #Files related
+    " let g:vikiMapFunctionality      = 'mf mb tF c q e i I Files'
+    let g:vikiMapFunctionality      = 'ALL'
+endif
+" Define which keys to map in minor mode (invoked via :VikiMinorMode)
+if !exists("g:vikiMapFunctionalityMinor") "{{{2
+    " let g:vikiMapFunctionalityMinor = 'f b p mf mb tF c q e i'
+    let g:vikiMapFunctionalityMinor = 'f b p mf mb tF c q e'
+endif
+
+
+
+
+" This is mostly a legacy function. Using set ft=viki should work too.
+" Set filetype=viki
+function! viki#Mode(...) "{{{3
+    TVarArg 'family'
+    " if exists('b:vikiEnabled')
+    "     if b:vikiEnabled
+    "         return 0
+    "     endif
+    "     " if b:vikiEnabled && a:state < 0
+    "     "     return 0
+    "     " endif
+    "     " echom "VIKI: Viki mode already set."
+    " endif
+    unlet! b:did_ftplugin
+    if !empty(family)
+        let b:vikiFamily = family
+    endif
+    set filetype=viki
+endf
+
+
+" Special file handlers {{{1
+if !exists('g:vikiOpenFileWith_ws') && exists(':WsOpen') "{{{2
+    function! VikiOpenAsWorkspace(file)
+        exec 'WsOpen '. escape(a:file, ' &!%')
+        exec 'lcd '. escape(fnamemodify(a:file, ':p:h'), ' &!%')
+    endf
+    let g:vikiOpenFileWith_ws = "call VikiOpenAsWorkspace('%{FILE}')"
+    call add(g:vikiSpecialFiles, 'ws')
+endif
+if type(g:vikiSpecialFiles) != 3
+    echoerr 'Viki: g:vikiSpecialFiles must be a list'
+endif
+" TAssert IsList(g:vikiSpecialFiles)
+
+if !exists("g:vikiOpenFileWith_ANY") "{{{2
+    if exists('g:netrw_browsex_viewer')
+        let g:vikiOpenFileWith_ANY = "exec 'silent !'. g:netrw_browsex_viewer .' '. shellescape('%{FILE}')"
+    elseif has("win32") || has("win16") || has("win64")
+        let g:vikiOpenFileWith_ANY = "exec 'silent ! start \"\" '. shellescape('%{FILE}')"
+    elseif has("mac")
+        let g:vikiOpenFileWith_ANY = "exec 'silent !open '. shellescape('%{FILE}')"
+    elseif $GNOME_DESKTOP_SESSION_ID != ""
+        let g:vikiOpenFileWith_ANY = "exec 'silent !gnome-open '. shellescape('%{FILE}')"
+    elseif $KDEDIR != ""
+        let g:vikiOpenFileWith_ANY = "exec 'silent !kfmclient exec '. shellescape('%{FILE}')"
+    endif
+endif
+
+if !exists('*VikiOpenSpecialFile') "{{{2
+    function! VikiOpenSpecialFile(file) "{{{3
+        " let proto = tolower(matchstr(a:file, '\c\.\zs[a-z]\+$'))
+        let proto = tolower(fnamemodify(a:file, ':e'))
+        if exists('g:vikiOpenFileWith_'. proto)
+            let prot = g:vikiOpenFileWith_{proto}
+        elseif exists('g:vikiOpenFileWith_ANY')
+            let prot = g:vikiOpenFileWith_ANY
+        else
+            let prot = ''
+        endif
+        if prot != ''
+            " let openFile = viki#SubstituteArgs(prot, 'FILE', fnameescape(a:file))
+            let openFile = viki#SubstituteArgs(prot, 'FILE', a:file)
+            " TLogVAR openFile
+            call viki#ExecExternal(openFile)
+        else
+            throw 'Viki: Please define g:vikiOpenFileWith_'. proto .' or g:vikiOpenFileWith_ANY!'
+        endif
+    endf
+endif
+
+
+" Special protocol handlers {{{1
+if !exists('g:vikiOpenUrlWith_mailbox') "{{{2
+    let g:vikiOpenUrlWith_mailbox="call VikiOpenMailbox('%{URL}')"
+    function! VikiOpenMailbox(url) "{{{3
+        exec viki#DecomposeUrl(strpart(a:url, 10))
+        let idx = matchstr(args, 'number=\zs\d\+$')
+        if filereadable(filename)
+            call viki#OpenLink(filename, '', 0, 'go '.idx)
+        else
+            throw 'Viki: Can't find mailbox url: '.filename
+        endif
+    endf
+endif
+
+" Possible values: special*, query, normal
+if !exists("g:vikiUrlFileAs") | let g:vikiUrlFileAs = 'special' | endif "{{{2
+
+if !exists("g:vikiOpenUrlWith_file") "{{{2
+    let g:vikiOpenUrlWith_file="call VikiOpenFileUrl('%{URL}')"
+    function! VikiOpenFileUrl(url) "{{{3
+        " TLogVAR url
+        if viki#IsSpecialFile(a:url)
+            if g:vikiUrlFileAs == 'special'
+                let as_special = 1
+            elseif g:vikiUrlFileAs == 'query'
+                echo a:url
+                let as_special = input('Treat URL as special file? (Y/n) ')
+                let as_special = (as_special[0] !=? 'n')
+            else
+                let as_special = 0
+            endif
+            " TLogVAR as_special
+            if as_special
+                call VikiOpenSpecialFile(a:url)
+                return
+            endif
+        endif
+        exec viki#DecomposeUrl(strpart(a:url, 7))
+        if filereadable(filename) || isdirectory(filename)
+            call viki#OpenLink(filename, anchor)
+        else
+            throw "Viki: Can't find file url: ". filename
+        endif
+    endf
+endif
+
+if !exists("g:vikiOpenUrlWith_ANY") "{{{2
+    " let g:vikiOpenUrlWith_ANY = "exec 'silent !". g:netrw_browsex_viewer ." '. escape('%{URL}', ' &!%')"
+    if has("win32")
+        let g:vikiOpenUrlWith_ANY = "exec 'silent !rundll32 url.dll,FileProtocolHandler '. shellescape('%{URL}')"
+    elseif has("mac")
+        let g:vikiOpenUrlWith_ANY = "exec 'silent !open '. escape('%{URL}', ' &!%')"
+    elseif $GNOME_DESKTOP_SESSION_ID != ""
+        let g:vikiOpenUrlWith_ANY = "exec 'silent !gnome-open '. shellescape('%{URL}')"
+    elseif $KDEDIR != ""
+        let g:vikiOpenUrlWith_ANY = "exec 'silent !kfmclient exec '. shellescape('%{URL}')"
+    endif
+endif
+
+if !exists("*VikiOpenSpecialProtocol") "{{{2
+    function! VikiOpenSpecialProtocol(url) "{{{3
+        " TLogVAR a:url
+        " TLogVAR a:url
+        let proto = tolower(matchstr(a:url, '\c^[a-z]\{-}\ze:'))
+        let prot  = 'g:vikiOpenUrlWith_'. proto
+        let protp = exists(prot)
+        if !protp
+            let prot  = 'g:vikiOpenUrlWith_ANY'
+            let protp = exists(prot)
+        endif
+        if protp
+            exec 'let openURL = '. prot
+            " let url = shellescape(a:url)
+            let url = a:url
+            " TLogVAR url, a:url
+            let openURL = viki#SubstituteArgs(openURL, 'URL', url)
+            " TLogVAR openURL
+            call viki#ExecExternal(openURL)
+        else
+            throw 'Viki: Please define g:vikiOpenUrlWith_'. proto .' or g:vikiOpenUrlWith_ANY!'
+        endif
+    endf
+endif
+
+
 
 " Outdated way to keep cursor information
 function! s:ResetSavedCursorPosition() "{{{3
@@ -38,11 +457,10 @@ function! s:sprintf1(string, arg) "{{{3
 endf
 
 let s:InterVikiRx = '^\(['. g:vikiUpperCharacters .']\+\)::\(.*\)$'
-let s:InterVikis  = []
 
 
 function! viki#GetInterVikis() "{{{3
-    return s:InterVikis
+    return g:vikiInterVikiNames
 endf
 
 
@@ -56,76 +474,6 @@ function! viki#GetSimpleRx4SimpleWikiName() "{{{3
     return simpleWikiName
 endf
 
-
-" Return a viki name for a vikiname on a specified interviki
-" viki#MakeName(iviki, name, ?quote=1)
-function! viki#MakeName(iviki, name, ...) "{{{3
-    let quote = a:0 >= 1 ? a:1 : 1
-    let name  = a:name
-    if quote && name !~ '\C'. viki#GetSimpleRx4SimpleWikiName()
-        let name = '[-'. name .'-]'
-    endif
-    if a:iviki != ''
-        let name = a:iviki .'::'. name
-    endif
-    return name
-endf
-
-
-" Define an interviki name
-" viki#Define(name, prefix, ?suffix="*", ?index="Index.${suffix}")
-" suffix == "*" -> g:vikiNameSuffix
-function! viki#Define(name, prefix, ...) "{{{3
-    if a:name =~ '[^A-Z]'
-        throw 'Invalid interviki name: '. a:name
-    endif
-    call add(s:InterVikis, a:name .'::')
-    call sort(s:InterVikis)
-    let g:vikiInter{a:name}          = a:prefix
-    let g:vikiInter{a:name}_suffix   = a:0 >= 1 && a:1 != '*' ? a:1 : g:vikiNameSuffix
-    let index = a:0 >= 2 && a:2 != '' ? a:2 : g:vikiIndex
-    let findex = fnamemodify(g:vikiInter{a:name} .'/'. index . g:vikiInter{a:name}_suffix, ':p')
-    if filereadable(findex)
-        let vname = viki#MakeName(a:name, index, 0)
-        let g:vikiInter{a:name}_index = index
-    else
-        " let vname = '[['. a:name .'::]]'
-        let vname = a:name .'::'
-    end
-    " let vname = escape(vname, ' \%#')
-    " exec 'command! -bang -nargs=? -complete=customlist,viki#EditComplete '. a:name .' call viki#Edit(escape(empty(<q-args>) ?'. string(vname) .' : <q-args>, "#"), "<bang>")'
-    if !exists(':'+ a:name)
-        exec 'command -bang -nargs=? -complete=customlist,viki#EditComplete '. a:name .' call viki#Edit(empty(<q-args>) ? '. string(vname) .' : viki#InterEditArg('. string(a:name) .', <q-args>), "<bang>")'
-    else
-        echom "Viki: Command already exists. Cannot define a command for "+ a:name
-    endif
-    if g:vikiMenuPrefix != ''
-        if g:vikiMenuLevel > 0
-            let name = [ a:name[0 : g:vikiMenuLevel - 1] .'&'. a:name[g:vikiMenuLevel : -1] ]
-            let weight = []
-            for i in reverse(range(g:vikiMenuLevel))
-                call insert(name, a:name[i])
-                call insert(weight, char2nr(a:name[i]) + 500)
-            endfor
-            let ml = len(split(g:vikiMenuPrefix, '[^\\]\zs\.'))
-            let mw = repeat('500.', ml) . join(weight, '.')
-        else
-            let name = [a:name]
-            let mw = ''
-        endif
-        exec 'amenu '. mw .' '. g:vikiMenuPrefix . join(name, '.') .' :VikiEdit! '. vname .'<cr>'
-    endif
-endf
-
-for [s:iname, s:idef] in items(g:viki_intervikis)
-    " viki#Define(name, prefix, ?suffix="*", ?index="Index.${suffix}")
-    if type(s:idef) == 1
-        call call('viki#Define', [s:iname, s:idef])
-    else
-        call call('viki#Define', [s:iname] + s:idef)
-    endif
-    unlet! s:iname s:idef
-endfor
 
 function! s:AddToRegexp(regexp, pattern) "{{{3
     if a:pattern == ''
@@ -1875,7 +2223,7 @@ function! viki#Browse(name) "{{{3
 endf
 
 function! viki#BrowseComplete(ArgLead, CmdLine, CursorPos) "{{{3
-    let rv = copy(s:InterVikis)
+    let rv = copy(g:vikiInterVikiNames)
     let rv = filter(rv, 'v:val =~ ''^'. a:ArgLead .'''')
     let rv = map(rv, 'matchstr(v:val, ''\w\+'')')
     return rv
@@ -1948,7 +2296,7 @@ function! viki#EditComplete(ArgLead, CmdLine, CursorPos) "{{{3
     endif
     let i = viki#InterVikiName(arglead)
     " TLogVAR i, arglead
-    if index(s:InterVikis, i.'::') >= 0
+    if index(g:vikiInterVikiNames, i.'::') >= 0
         if exists('g:vikiInter'. i .'_suffix')
             let sfx = g:vikiInter{i}_suffix
         else
@@ -1987,9 +2335,9 @@ function! viki#EditComplete(ArgLead, CmdLine, CursorPos) "{{{3
         " call map(rv, 'escape(v:val, " ")')
         " TLogVAR rv
         if arglead == ''
-            let rv += s:InterVikis
+            let rv += g:vikiInterVikiNames
         else
-            let rv += filter(copy(s:InterVikis), 'v:val =~ ''\V\^''.arglead')
+            let rv += filter(copy(g:vikiInterVikiNames), 'v:val =~ ''\V\^''.arglead')
         endif
     endif
     " TLogVAR rv

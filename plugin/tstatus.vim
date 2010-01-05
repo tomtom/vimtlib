@@ -3,24 +3,24 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-02.
-" @Last Change: 2010-01-02.
-" @Revision:    0.1.18
+" @Last Change: 2010-01-03.
+" @Revision:    0.1.22
 
-if &cp || exists("loaded_tstatus") || !exists('*TOptionsSummary')
-    " You have to execute
-    "     runtime macros/toptions.vim
-    " in your vimrc file in order to be able to use this plugin.
+if &cp || exists("loaded_tstatus")
     finish
 endif
 let loaded_tstatus = 1
 
-""" von ??? {{{1
-" set statusline=%1*[%{winnr()}:%02n]%*\ %(%M%R%H%W%k%)\ *\ %2*%t%*\ *%=%{TmlStatusline()}\ %3*<%l,%c%V,%p%%,%B>%*
-" set statusline=%1*[%{winnr()}:%02n]%*\ %2t\ %(%M%R%H%W%k%)\ %=%{TOptionsSummary()}\ %3*<%l,%c%V,%p%%>%*
-let g:tstatusline1='%1*[%{winnr()}:%02n]%* %2t %(%M%R%H%W%k%) %=%{TOptionsSummary()} %3*<%l,%c%V,%p%%>%*'
+if exists('*TOptionsSummary')
+    " TOptionsSummary is loaded by
+    "     runtime macros/toptions.vim
+    " in your vimrc file if you want to make use of it.
+    let g:tstatusline1='%1*[%{winnr()}:%02n]%* %2t %(%M%R%H%W%k%) %=%{TOptionsSummary()} %3*<%l,%c%V,%p%%>%*'
+else
+    let g:tstatusline1='%1*[%{winnr()}:%02n]%* %2t %(%M%R%H%W%k%) %=%3*<%l,%c%V,%p%%>%*'
+endif
 let g:tstatusline0='%1*[%{winnr()}:%02n]%* %2t %(%M%R%H%W%k%) %=%3*<%l,%c%V,%p%%>%*'
-" set rulerformat=%15(%y\ %c%V\ %p%%%M%R%)
-" set rulerformat=%-010.25(%Y%M%R\ %lx%c%V\ %P%)
+
 " let g:trulerformat1='%-010.25(%Y%M%R %lx%c%V %P%)'
 " let g:trulerformat1='%-010.25(%M%R %lx%c%V %P%)'
 " let g:trulerformat1='%-010.25(B%n%R%M%W %lx%c%V %P%)'

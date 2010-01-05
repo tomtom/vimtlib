@@ -3,13 +3,11 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-21.
-" @Last Change: 2009-02-15.
-" @Revision:    664
+" @Last Change: 2010-01-03.
+" @Revision:    666
 
-if &cp || exists("loaded_tmboxbrowser_autoload")
-    finish
-endif
-let loaded_tmboxbrowser_autoload = 1
+" call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
+
 
 let s:scratch_name = '__MBOX_Browser__'
 

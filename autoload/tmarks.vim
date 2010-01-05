@@ -3,11 +3,20 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-03-29.
-" @Last Change: 2009-03-29.
-" @Revision:    0.0.24
+" @Last Change: 2010-01-03.
+" @Revision:    0.0.27
 
 let s:save_cpo = &cpo
 set cpo&vim
+" call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
+
+
+if !exists('g:tmarks_handlers') "{{{2
+    let g:tmarks_handlers = [
+            \ {'key':  4, 'agent': 'tmarks#AgentDeleteMark', 'key_name': '<c-d>', 'help': 'Delete mark'},
+            \ ]
+            " \ {'pick_last_item': 0},
+endif
 
 
 function! tmarks#AgentDeleteMark(world, selected) "{{{3

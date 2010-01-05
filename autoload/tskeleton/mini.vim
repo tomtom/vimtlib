@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-15.
-" @Last Change: 2009-02-15.
-" @Revision:    0.0.5
+" @Last Change: 2010-01-03.
+" @Revision:    0.0.7
 
 if &cp || exists("loaded_tskeleton_mini_autoload") "{{{2
     finish
@@ -17,6 +17,7 @@ endf
 
 
 function! tskeleton#mini#FiletypeBits(dict, type) "{{{3
+    " TLogVAR a:dict, a:type
     call tskeleton#FetchMiniBits(a:dict, expand('%:p:h') .'/.tskelmini', 1)
 endf
 

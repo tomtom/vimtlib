@@ -3,15 +3,13 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-07-11.
-" @Last Change: 2009-02-15.
-" @Revision:    0.0.132
+" @Last Change: 2010-01-03.
+" @Revision:    0.0.134
 
-if &cp || exists("loaded_linglang_autoload")
-    finish
-endif
-let loaded_linglang_autoload = 1
 let s:save_cpo = &cpo
 set cpo&vim
+" call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
+
 
 let s:language_rx = {}
 let s:dir = expand('<sfile>:p:h')

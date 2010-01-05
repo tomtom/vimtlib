@@ -3,15 +3,12 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-07-15.
-" @Last Change: 2009-05-24.
-" @Revision:    0.0.665
+" @Last Change: 2010-01-03.
+" @Revision:    0.0.667
 
-if &cp || exists("loaded_worksheet_autoload")
-    " finish
-endif
-let loaded_worksheet_autoload = 1
 let s:save_cpo = &cpo
 set cpo&vim
+" call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
 
 let s:modes = {}

@@ -3,14 +3,232 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-29.
-" @Last Change: 2009-12-21.
-" @Revision:    0.0.743
+" @Last Change: 2010-01-03.
+" @Revision:    0.0.758
 
-if &cp || exists("loaded_trag_autoload")
-    finish
-endif
-let loaded_trag_autoload = 1
+" call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
+
+""" Known Types {{{1
+
+" 0 ... use the built-in search.
+" 1 ... use vimgrep.
+" 2 ... use vimgrep but set 'ei' to all; this means special file 
+"       encodings won't be detected
+" Please not, this is only in effect with simple searches (as for 0.3 
+" all searches are simple). For more complex multi-line patterns, the 
+" built-in search will be used (some day in the future).
+TLet g:trag_search_mode = 2
+
+" If no project files are defined, evaluate this expression as 
+" fallback-strategy.
+TLet g:trag_get_files = 'split(glob("*"), "\n")'
+TLet g:trag_get_files_java = 'split(glob("**/*.java"), "\n")'
+TLet g:trag_get_files_c = 'split(glob("**/*.[ch]"), "\n")'
+TLet g:trag_get_files_cpp = 'split(glob("**/*.[ch]"), "\n")'
+
+" " If non-empty, display signs at matching lines.
+" TLet g:trag_sign = has('signs') ? '>' : ''
+" if !empty(g:trag_sign)
+"     exec 'sign define TRag text='. g:trag_sign .' texthl=Special'
+" 
+"     " Clear all trag-related signs.
+"     command! TRagClearSigns call tlib#signs#ClearAll('TRag')
+" endif
+
+
+" :nodoc:
+function! trag#TRagDefKind(args) "{{{3
+    " TLogVAR a:args
+    " TLogDBG string(matchlist(a:args, '^\(\S\+\)\s\+\(\S\+\)\s\+/\(.\{-}\)/$'))
+    let [match, kind, filetype, regexp; rest] = matchlist(a:args, '^\(\S\+\)\s\+\(\S\+\)\s\+/\(.\{-}\)/$')
+    let var = ['g:trag_rxf', kind]
+    if filetype != '*' && filetype != '.'
+        call add(var, filetype)
+    endif
+    let varname = join(var, '_')
+    let {varname} = substitute(regexp, '\\/', '/', 'g')
+    if has_key(g:trag_kinds, kind)
+        call add(g:trag_kinds[kind], filetype)
+    else
+        let g:trag_kinds[kind] = [filetype]
+    endif
+endf
+
+
+
+
+TRagDefKind identity * /\C%s/
+
+" Left hand side value in an assignment.
+" Examples:
+" l foo =~ foo = 1
+TRagDefKind l * /\C%s\s*[^=]*=[^=~<>]/
+" TRagDefKind l * /\C\<%s\>\s*=[^=~<>]/
+" L foo =~ fufoo0 = 1
+" TRagDefKind L * /\C%s[^=]*=[^=~<>]/
+
+" Right hand side value in an assignment.
+" Examples:
+" r foo =~ bar = foo
+TRagDefKind r * /\C[^!=~<>]=.\{-}%s/
+" L foo =~ bar = fufoo0
+" TRagDefKind r * /\C[^!=~<>]=.\{-}\<%s\>/
+" TRagDefKind R * /\C[^!=~<>]=.\{-}%s/
+
+" Markers: TODO, TBD, FIXME, OPTIMIZE
+TRagDefKind todo * /\C\(TBD\|TODO\|FIXME\|OPTIMIZE\)/
+
+" A mostly general rx format string for function calls.
+TRagDefKind f * /\C%s\S*\s*(/
+" TRagDefKind f * /\C\<%s\>\s*(/
+" TRagDefKind F * /\C%s\S*\s*(/
+
+" A mostly general rx format string for words.
+TRagDefKind w * /\C\<%s\>/
+TRagDefKind W * /\C.\{-}%s.\{-}/
+
+TRagDefKind fuzzy * /\c%{fuzzyrx}/
+
+
+TRagDefFiletype java java
+let s:java_mod = '\(\<\(final\|public\|protected\|private\|synchronized\|volatile\|abstract\)\s\+\)*'
+let s:java_type = '\(boolean\|byte\|short\|int\|long\|float\|double\|char\|void\|\u[[:alnum:]_.]*\)\s\+'
+exec 'TRagDefKind c java /\C^\s*'. s:java_mod .'class\s\+%s/'
+exec 'TRagDefKind d java /\C^\s*'. s:java_mod .'\(\w\+\(\[\]\)*\)\s\+%s\s*(/'
+exec 'TRagDefKind f java /\(\(;\|{\|^\)\s*'. s:java_mod . s:java_type .'\)\@<!%s\s*\([(;]\|$\)/'
+TRagDefKind i java /\C^\s*\(\/\/\|\/\*\).\{-}%s/
+TRagDefKind x java /\C^.\{-}\<\(interface\|class\)\s\+.\{-}\s\+\(extends\|implements\)\s\+%s/
+unlet s:java_mod s:java_type
+
+
+
+TRagDefFiletype ruby rb
+TRagDefKind w ruby /\C[:@]\?\<%s\>/
+TRagDefKind W ruby /\C[^;()]\{-}%s[^;()]\{-}/
+TRagDefKind c ruby /\C\<class\s\+\(\u\w*::\)*%s\>/
+" TRagDefKind d ruby /\C\<\(def\s\+\(\u\w*\.\)*\|attr\(_\w\+\)\?\s\+\(:\w\+,\s\+\)*:\)%s\>/
+" TRagDefKind D ruby /\C\<\(def\s\+\(\u\w*\.\)*\|attr\(_\w\+\)\?\s\+\(:\w\+,\s\+\)*:\).\{-}%s/
+TRagDefKind d ruby /\C\<\(def\s\+\(\u\w*\.\)*\|attr\(_\w\+\)\?\s\+\(:\w\+,\s\+\)*:\)%s/
+" TRagDefKind f ruby /\C\(\<def\s\+\(\u\w*\.\)*\|:\)\@<!\<%s\>\s*\([(;]\|$\)/
+" TRagDefKind f ruby /\(;\|^\)\s*\<%s\>\s*\([(;]\|$\)/
+" TRagDefKind f ruby /\(;\|^\)\s*[^();]\{-}%s\s*\([(;]\|$\)/
+" TRagDefKind f ruby /\(;\|^\)\s*%s\s*\([(;]\|$\)/
+TRagDefKind f ruby /\(\<def\s\+\)\@<!%s\s*\([(;]\|$\)/
+" TRagDefKind i ruby /\C^\s*#.\{-}%s/
+TRagDefKind i ruby /\C^\s*#%s/
+TRagDefKind m ruby /\C\<module\s\+\(\u\w*::\)*%s/
+" TRagDefKind l ruby /\C\<%s\>\(\s*,\s*[[:alnum:]_@$]\+\s*\)*\s*=[^=~<>]/
+TRagDefKind l ruby /\C%s\(\s*,\s*[[:alnum:]_@$]\+\s*\)*\s*=[^=~<>]/
+TRagDefKind x ruby /\C\s\*class\>.\{-}<\s*%s/
+
+
+TRagDefFiletype vim vim .vimrc _vimrc
+TRagKeyword vim [:alnum:]_:#
+TRagDefKind W vim /\C[^|]\{-}%s[^|]\{-}/
+" TRagDefKind d vim /\C\<\(fu\%%[nction]!\?\|com\%%[mand]!\?\(\s\+-\S\+\)*\)\s\+\<%s\>/
+" TRagDefKind D vim /\C\<\(fu\%%[nction]!\?\|com\%%[mand]!\?\(\s\+-\S\+\)*\)\.+%s/
+" TRagDefKind d vim /\C\<\(fu\%%[nction]!\?\|com\%%[mand]!\?\(\s\+-\S\+\)*\)[^|]\{-}%s/
+TRagDefKind d vim /\C\<\(fu\%%[nction]!\?\s\+\|com\%%[mand]!\?\s\+\(-\S\+\s\+\)*\)%s/
+" TRagDefKind f vim /\C\(\(^\s*\<fu\%%[nction]!\?\s\+\(s:\)\?\|com\%%[mand]!\?\(\s\+-\S\+\)*\s\+\)\@<!\<%s\>\s*(\|\(^\||\)\s*\<%s\>\)/
+" TRagDefKind F vim /\C\(\(^\s*\<fu\%%[nction]!\?\s\+\(s:\)\?\|com\%%[mand]\(\s\+-\S\+\)*\s\+\)\@<!\S\{-}%s\S\{-}(\|\(^\||\)\s*%s\)/
+TRagDefKind f vim /\C\(\(^\s*\<fu\%%[nction]!\?\s\+\(s:\)\?\|com\%%[mand]\(\s\+-\S\+\)*\s\+\)\@<!\S\{-}%s\S\{-}(\|\(^\||\)\s*%s\)/
+" TRagDefKind i vim /\C^\s*".\{-}%s/
+" This isn't correct. It doesn't find in-line comments.
+TRagDefKind i vim /\C^\s*"%s/
+" TRagDefKind r vim /\C^\s*let\s\+\S\+\s*=.\{-}\<%s\>/
+" TRagDefKind R vim /\C^\s*let\s\+\S\+\s*=.\{-}%s/
+TRagDefKind r vim /\C^\s*let\s\+\S\+\s*=[^|]\{-}%s/
+" TRagDefKind l vim /\C^\s*let\s\+\<%s\>/
+" TRagDefKind L vim /\C^\s*let\s.\{-}%s/
+TRagDefKind l vim /\C^\s*let\s\+[^=|]\{-}%s/
+
+
+TRagDefFiletype viki txt viki dpl
+TRagDefKind i viki /\C^\s\+%%%s/
+TRagDefKind d viki /\C^\s*#\u\w*\s\+.\{-}\(id=%s\|%s=\)/
+TRagDefKind h viki /\C^\*\+\s\+%s/
+TRagDefKind l viki /\C^\s\+%s\s\+::/
+TRagDefKind r viki /\C^\s\+\(.\{-}\s::\|[-+*#]\|[@?].\)\s\+%s/
+TRagDefKind todo viki /\C\(TODO:\?\|FIXME:\?\|+++\|!!!\|###\|???\)\s\+%s/
+
+
+
+""" File sets {{{1
+
+" :doc:
+" The following variables provide alternatives to collecting 
+" your project's file list on the basis of you tags files.
+"
+" These variables are tested in the order as listed here. If the value 
+" of a variable is non-empty, this one will be used instead of the other 
+" methods.
+"
+" The tags file is used as a last ressort.
+
+" 1. A list of files. Can be buffer local.
+TLet g:trag_files = []
+
+" 2. A glob pattern -- this should be an absolute path and may contain ** 
+" (see |glob()| and |wildcards|). Can be buffer local.
+TLet g:trag_glob = ''
+
+" 3. Filetype-specific project files.
+TLet g:trag_project_ruby = 'Manifest.txt'
+
+" 4. The name of a file containing the projects file list. This file could be 
+" generated via make. Can be buffer local.
+TLet g:trag_project = ''
+
+" 5. The name of a git repository that includes all files of interest. 
+" If the value is "*", trag will search from the current directory 
+" (|getcwd()|) upwards for a .git directory.
+" If the value is "finddir", use |finddir()| to find a .git directory.
+" Can be buffer local.
+TLet g:trag_git = ''
+
+
+
+""" input#List {{{1
+
+" :nodoc:
+TLet g:trag_edit_world = {
+            \ 'type': 's',
+            \ 'query': 'Select file',
+            \ 'pick_last_item': 1,
+            \ 'scratch': '__TRagEdit__',
+            \ 'return_agent': 'tlib#agent#ViewFile',
+            \ }
+
+
+" :nodoc:
+TLet g:trag_qfl_world = {
+            \ 'type': 'mi',
+            \ 'query': 'Select entry',
+            \ 'pick_last_item': 0,
+            \ 'resize_vertical': 0,
+            \ 'resize': 20,
+            \ 'scratch': '__TRagQFL__',
+            \ 'tlib_UseInputListScratch': 'syn match TTagedFilesFilename / \zs.\{-}\ze|\d\+| / | syn match TTagedFilesLNum /|\d\+|/ | hi def link TTagedFilesFilename Directory | hi def link TTagedFilesLNum LineNr',
+            \ 'key_handlers': [
+                \ {'key':  5, 'agent': 'trag#AgentWithSelected', 'key_name': '<c-e>', 'help': 'Run a command on selected lines'},
+                \ {'key':  6, 'agent': 'trag#AgentRefactor',     'key_name': '<c-f>', 'help': 'Run a refactor command'},
+                \ {'key': 16, 'agent': 'trag#AgentPreviewQFE',   'key_name': '<c-p>', 'help': 'Preview'},
+                \ {'key': 60, 'agent': 'trag#AgentGotoQFE',      'key_name': '<',     'help': 'Jump (don''t close the list)'},
+                \ {'key': 19, 'agent': 'trag#AgentSplitBuffer',  'key_name': '<c-s>', 'help': 'Show in split buffer'},
+                \ {'key': 20, 'agent': 'trag#AgentTabBuffer',    'key_name': '<c-t>', 'help': 'Show in tab'},
+                \ {'key': 22, 'agent': 'trag#AgentVSplitBuffer', 'key_name': '<c-v>', 'help': 'Show in vsplit buffer'},
+                \ {'key': "\<c-insert>", 'agent': 'trag#SetFollowCursor', 'key_name': '<c-ins>', 'help': 'Toggle trace cursor'},
+            \ ],
+            \ 'return_agent': 'trag#AgentEditQFE',
+            \ }
+                " \ {'key': 23, 'agent': 'trag#AgentOpenBuffer',   'key_name': '<c-w>', 'help': 'View in window'},
+
+
+
+
+
+""" Functions {{{1
     
 let s:grep_rx = ''
 
@@ -274,6 +492,7 @@ function! trag#Grep(args, ...) "{{{3
         let strip = 0
         " TLogVAR files
         for f in files
+            " TLogVAR f
             call tlib#progressbar#Display(fidx, ' '. pathshorten(f))
             let rxpos = s:GetRx(f, kindspos, rx, '.')
             " let rxneg = s:GetRx(f, kindsneg, rx, '')
@@ -284,7 +503,6 @@ function! trag#Grep(args, ...) "{{{3
                 " TLogDBG f .': continue '. filereadable(f) .' '. empty(rxpos)
                 continue
             endif
-            " TLogVAR f
             let fext = fnamemodify(f, ':e')
             let prcacc = []
             " TODO: This currently doesn't work.
@@ -414,6 +632,7 @@ call trag#ClearCachedRx()
 
 
 function! s:GetRx(filename, kinds, rx, default) "{{{3
+    " TLogVAR a:filename, a:kinds, a:rx, a:default
     if empty(a:kinds)
         return a:default
     endif
@@ -423,6 +642,9 @@ function! s:GetRx(filename, kinds, rx, default) "{{{3
         let ext = a:filename
     endif
     let filetype = get(g:trag_filenames, ext, '')
+    if empty(filetype) && !has('fname_case')
+        let filetype = get(g:trag_filenames, tolower(ext), '')
+    endif
     let id = filetype .'*'.string(a:kinds).'*'.a:rx
     " TLogVAR ext, filetype, id
     if has_key(s:rx_cache, id)

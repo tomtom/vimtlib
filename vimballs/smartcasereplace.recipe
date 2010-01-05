@@ -1,0 +1,3 @@
+doc/SmartCaseReplace.vim
+autoload/smartcasereplace.vim
+plugin/SmartCaseReplace.vim

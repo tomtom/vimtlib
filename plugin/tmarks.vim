@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-08-23.
-" @Last Change: 2009-03-29.
-" @Revision:    0.0.46
+" @Last Change: 2010-01-03.
+" @Revision:    0.0.50
 " GetLatestVimScripts: <+SCRIPTID+> 1 tmarks.vim
 
 if &cp || exists("loaded_tmarks")
@@ -17,17 +17,9 @@ if !exists('g:loaded_tlib') || g:loaded_tlib < 11
         finish
     endif
 endif
-let loaded_tmarks = 1
+let loaded_tmarks = 2
 let s:save_cpo = &cpo
 set cpo&vim
-
-
-if !exists('g:tmarks_handlers') "{{{2
-    let g:tmarks_handlers = [
-            \ {'key':  4, 'agent': 'tmarks#AgentDeleteMark', 'key_name': '<c-d>', 'help': 'Delete mark'},
-            \ ]
-            " \ {'pick_last_item': 0},
-endif
 
 
 " Browse all marks.
@@ -53,4 +45,8 @@ finish
 
 0.1
 Initial release
+
+0.2
+- Moved the definition of some variables from plugin/tmarks.vim to 
+autoload/tmarks.vim
 

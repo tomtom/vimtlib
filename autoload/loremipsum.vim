@@ -3,15 +3,49 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-07-10.
-" @Last Change: 2009-02-15.
-" @Revision:    0.0.139
+" @Last Change: 2010-01-03.
+" @Revision:    0.0.142
 
-if &cp || exists("loaded_loremipsum_autoload")
-    finish
+" call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
+
+
+if !exists('g:loremipsum_paragraph_template')
+    " A dictionary of filetypes and paragraph templates (as format 
+    " strings for |printf()|).
+    " :nodefault:
+    " :read: let g:loremipsum_paragraph_template = {} "{{{2
+    let g:loremipsum_paragraph_template = {
+                \ 'html': '<p>%s</p>',
+                \ 'php': '<p>%s</p>',
+                \ }
 endif
-let loaded_loremipsum_autoload = 1
-let s:save_cpo = &cpo
-set cpo&vim
+
+if !exists('g:loremipsum_marker')
+    " A dictionary of filetypes and array containing the prefix and the 
+    " postfix for the inserted text:
+    " [prefix, postfix, no_inline?]
+    " :read: let g:loremipsum_marker = {}  "{{{2
+    let g:loremipsum_marker = {
+                \ 'html': ['<!--lorem-->', '<!--/lorem-->', 0],
+                \ 'php': ['<!--lorem-->', '<!--/lorem-->', 0],
+                \ 'tex': ['% lorem{{{', '% lorem}}}', 1],
+                \ 'viki': ['% lorem{{{', '% lorem}}}', 1],
+                \ }
+endif
+
+if !exists('g:loremipsum_words')
+    " Default length.
+    let g:loremipsum_words = 100   "{{{2
+endif
+
+if !exists('g:loremipsum_files')
+    "                                                 *b:loremipsum_file*
+    " If b:loremipsum_file exists, it will be used as source. Otherwise, 
+    " g:loremipsum_files[&spelllang] will be checked. As a fallback, 
+    " .../autoload/loremipsum.txt will be used.
+    let g:loremipsum_files = {}   "{{{2
+endif
+
 
 " http://www.lorem-ipsum-dolor-sit-amet.com/lorem-ipsum-dolor-sit-amet.html
 let s:data = expand('<sfile>:p:h') .'/loremipsum.txt'
@@ -152,6 +186,3 @@ function! loremipsum#Replace(...) "{{{3
     endif
 endf
 
-
-let &cpo = s:save_cpo
-unlet s:save_cpo

@@ -3,13 +3,11 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-10-04.
-" @Last Change: 2009-08-03.
-" @Revision:    0.3.227
+" @Last Change: 2010-01-03.
+" @Revision:    0.3.230
 
-if &cp || exists("loaded_hookcursormoved_autoload")
-    finish
-endif
-let loaded_hookcursormoved_autoload = 3
+" call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
+
 
 let s:unknown_hooks = []
 

@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-06-03.
-" @Last Change: 2009-02-15.
-" @Revision:    0.1.38
+" @Last Change: 2010-01-03.
+" @Revision:    0.1.39
 " GetLatestVimScripts: 0 0 :AutoInstall: pim.vim
 
 if &cp || exists("loaded_pim_autoload")
@@ -649,7 +649,7 @@ function! pim#DefClass(class) "{{{3
     if !exists('g:vikiInter'. class)
         let path = s:GetClassDir(a:class)
         call tlib#dir#Ensure(path)
-        call viki#Define(class, path, g:pimFileSuffix)
+        call VikiDefine(class, path, g:pimFileSuffix)
         call add(s:pimClasses, class)
         exec 'command! -narg=1 -complete=customlist,pim#Complete Pim'. class 
             \ .' call pim#NewFile(tlib#file#Join([g:vikiInter'. class .', <q-args>.g:pimFileSuffix]), "'. a:class .'")'

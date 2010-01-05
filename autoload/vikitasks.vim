@@ -3,12 +3,62 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
-" @Last Change: 2009-12-23.
-" @Revision:    0.0.187
+" @Last Change: 2010-01-03.
+" @Revision:    0.0.196
 
 let s:save_cpo = &cpo
 set cpo&vim
+" call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
+
+" A list of glob patterns (or files) that will be searched for task 
+" lists.
+" Can be buffer-local.
+" If you add ! to 'viminfo', this variable will be automatically saved 
+" between editing sessions.
+" Alternatively, add new items in ~/vimfiles/after/plugin/vikitasks.vim
+TLet g:vikitasks_files = []
+
+" If non-null, automatically add the homepages of your intervikis to 
+" |g:vikitasks_files|.
+" Can be buffer-local.
+TLet g:vikitasks_intervikis = 0
+
+" A list of ignored intervikis.
+" Can be buffer-local.
+TLet g:vikitasks_intervikis_ignored = []
+
+" The viewer for the quickfix list. If empty, use |:TRagcw|.
+TLet g:vikitasks_qfl_viewer = ''
+
+" Item classes that should be included in the list when calling 
+" |:VikiTasks|.
+" A user-defined value must be set in |vimrc| before the plugin is 
+" loaded.
+TLet g:vikitasks_rx_letters = 'A-T'
+
+" Item levels that should be included in the list when calling 
+" |:VikiTasks|.
+" A user-defined value must be set in |vimrc| before the plugin is 
+" loaded.
+TLet g:vikitasks_rx_levels = '1-5'
+
+" Cache file name.
+" By default, use |tlib#cache#Filename()| to determine the file name.
+TLet g:vikitasks_cache = tlib#cache#Filename('vikitasks', 'files', 1)
+
+
+function! s:VikitasksRx(letters, levels) "{{{3
+    return '\C^[[:blank:]]\+\zs'.
+                \ '#\(T: \+.\{-}'. a:letters .'.\{-}:\|'. 
+                \ '['. a:levels .']\?['. a:letters .']['. a:levels .']\?'.
+                \ '\( \+\(_\|['. a:levels .'%-]\+\)\)\?\)\( \+\[[^[].\{-}\]\)\? %s'
+endf
+
+exec 'TRagDefKind tasks viki /'. s:VikitasksRx('A-Z', '0-9') .'/'
+exec 'TRagDefKind sometasks viki /'. s:VikitasksRx(g:vikitasks_rx_letters, g:vikitasks_rx_levels) .'/'
+
+delf s:VikitasksRx
 
 
 " :display: vikitasks#Tasks(?all=0, ?{'files': [], 'select': '', 'rx': ''})
@@ -33,6 +83,7 @@ function! vikitasks#Tasks(...) "{{{3
 
     call map(files, 'glob(v:val)')
     let files = split(join(files, "\n"), '\n')
+    " TLogVAR files
     if !empty(files)
         let tasks = get(args, 'tasks', 'tasks')
         " TLogVAR tasks

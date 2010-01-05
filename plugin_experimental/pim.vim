@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     30-Okt-2005.
-" @Last Change: 2009-08-04.
-" @Revision:    0.1.1071
+" @Last Change: 2010-01-03.
+" @Revision:    0.1.1072
 "
 " TODO: :PimDelete
 " TODO: :PimArchive, :PimFinish (move to archive) (or always save a copy 
@@ -135,7 +135,7 @@ augroup Pim
 augroup END
 
 """ Commands "{{{1
-call viki#Define('PIM', g:pimHome . 'db', g:pimFileSuffix)
+call VikiDefine('PIM', g:pimHome . 'db', g:pimFileSuffix)
 for fn in split(glob(g:pimHome . 'db/*'), '\n')
     if isdirectory(fn)
         call pim#DefClass(fnamemodify(fn, ':t'))

@@ -3,54 +3,17 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-07-10.
-" @Last Change: 2009-02-15.
-" @Revision:    68
+" @Last Change: 2010-01-03.
+" @Revision:    71
 " GetLatestVimScripts: 2289 0 loremipsum.vim
 
 if &cp || exists("loaded_loremipsum")
     finish
 endif
-let loaded_loremipsum = 2
+let loaded_loremipsum = 3
 
 let s:save_cpo = &cpo
 set cpo&vim
-
-if !exists('g:loremipsum_paragraph_template')
-    " A dictionary of filetypes and paragraph templates (as format 
-    " strings for |printf()|).
-    " :nodefault:
-    " :read: let g:loremipsum_paragraph_template = {} "{{{2
-    let g:loremipsum_paragraph_template = {
-                \ 'html': '<p>%s</p>',
-                \ 'php': '<p>%s</p>',
-                \ }
-endif
-
-if !exists('g:loremipsum_marker')
-    " A dictionary of filetypes and array containing the prefix and the 
-    " postfix for the inserted text:
-    " [prefix, postfix, no_inline?]
-    " :read: let g:loremipsum_marker = {}  "{{{2
-    let g:loremipsum_marker = {
-                \ 'html': ['<!--lorem-->', '<!--/lorem-->', 0],
-                \ 'php': ['<!--lorem-->', '<!--/lorem-->', 0],
-                \ 'tex': ['% lorem{{{', '% lorem}}}', 1],
-                \ 'viki': ['% lorem{{{', '% lorem}}}', 1],
-                \ }
-endif
-
-if !exists('g:loremipsum_words')
-    " Default length.
-    let g:loremipsum_words = 100   "{{{2
-endif
-
-if !exists('g:loremipsum_files')
-    "                                                 *b:loremipsum_file*
-    " If b:loremipsum_file exists, it will be used as source. Otherwise, 
-    " g:loremipsum_files[&spelllang] will be checked. As a fallback, 
-    " .../autoload/loremipsum.txt will be used.
-    let g:loremipsum_files = {}   "{{{2
-endif
 
 
 " :display: :Loremipsum[!] [COUNT] [PARAGRAPH_TEMPLATE] [PREFIX POSTFIX]
@@ -82,4 +45,8 @@ template.
 - Loreplace: Replace loremipsum text with something else (provided a 
 marker was defined for the current filetype)
 - g:loremipsum_file, b:loremipsum_file
+
+0.3
+- Moved the definition of some variables from plugin/loremipsum.vim to 
+autoload/loremipsum.vim
 

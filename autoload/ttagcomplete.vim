@@ -3,13 +3,10 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-11-02.
-" @Last Change: 2009-12-26.
-" @Revision:    0.0.217
+" @Last Change: 2010-01-03.
+" @Revision:    0.0.219
 
-if &cp || exists("loaded_ttagcomplete_autoload")
-    finish
-endif
-let loaded_ttagcomplete_autoload = 1
+" call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
 
 let s:unsupported = {}

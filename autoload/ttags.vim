@@ -3,15 +3,65 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-09.
-" @Last Change: 2009-04-11.
-" @Revision:    316
+" @Last Change: 2010-01-03.
+" @Revision:    322
 
-if &cp || exists("loaded_ttags_autoload")
-    finish
-endif
-let loaded_ttags_autoload = 1
+
+" call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
+
 
 let s:tags = {}
+
+
+TLet g:ttags_kinds   = ''
+TLet g:ttags_name_rx = ''
+TLet g:ttags_filename_rx = ''
+
+" How to display the tags list. Can be one of: tlib, quickfix, locations
+TLet g:ttags_display = 'tlib'
+
+" The name of a function, which takes the filename as argument, that 
+" rewrites the tag filename (e.g. in order to circumvent 
+" incompatibilities between cygwin ctags & windows vim).
+TLet g:ttags_rewrite = ''
+
+" Show tags that begin with the pattern. Can be buffer-local.
+TLet g:ttags_match_front = 1
+
+" Show tags that end with the pattern. Can be buffer-local.
+TLet g:ttags_match_end   = 1
+
+" :nodefault:
+" This variable can be buffer local.
+"
+" Filetype specfic highlighting can be defined as 
+" g:ttags_highlighting_{&filetype}.
+TLet g:ttags_highlighting = {
+            \ 'a': 'Type',
+            \ 'c': 'Special',
+            \ 'f': 'Identifier',
+            \ 'F': 'Constant',
+            \ 'v': 'Statement',
+            \ 'm': 'PreProc',
+            \ }
+
+" :nodefault:
+TLet g:ttags_world = {
+            \ 'type': 'si',
+            \ 'query': 'Select tags',
+            \ 'pick_last_item': 0,
+            \ 'scratch': '__tags__',
+            \ 'return_agent': 'ttags#GotoTag',
+            \ 'key_handlers': [
+                \ {'key': 16, 'agent': 'ttags#PreviewTag',  'key_name': '<c-p>', 'help': 'Preview'},
+                \ {'key':  7, 'agent': 'ttags#GotoTag',     'key_name': '<c-g>', 'help': 'Jump (don''t close the list)'},
+                \ {'key': 60, 'agent': 'ttags#GotoTag',     'key_name': '<',     'help': 'Jump (don''t close the list)'},
+                \ {'key': 20, 'agent': 'ttags#InsertTemplate',  'key_name': '<c-t>', 'help': 'Insert template'},
+            \ ],
+            \ }
+            " \ 'scratch_vertical': 1,
+            " \ 'resize_vertical': '&co / 3',
+
 
 
 function! ttags#Kinds(...) "{{{3

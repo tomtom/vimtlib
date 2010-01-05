@@ -3,13 +3,10 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-02.
-" @Last Change: 2009-08-02.
-" @Revision:    0.0.377
+" @Last Change: 2010-01-03.
+" @Revision:    0.0.379
 
-if &cp || exists("loaded_tsession_autoload")
-    finish
-endif
-let loaded_tsession_autoload = 1
+" call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
 
 let s:none = '*** NONE ***'

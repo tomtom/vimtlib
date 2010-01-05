@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-13.
-" @Last Change: 2009-12-21.
-" @Revision:    276
+" @Last Change: 2010-01-03.
+" @Revision:    277
 " GetLatestVimScripts: 1864 1 tmru.vim
 
 if &cp || exists("loaded_tmru")
@@ -66,7 +66,7 @@ if !exists("g:tmru_ignorecase")
 endif
 
 if !exists('g:tmru_world') "{{{2
-    let g:tmru_world = tlib#World#New({
+    let g:tmru_world = {
                 \ 'type': 'm',
                 \ 'key_handlers': [
                 \ {'key': 3,  'agent': 'tlib#agent#CopyItems',        'key_name': '<c-c>', 'help': 'Copy file name(s)'},
@@ -78,9 +78,8 @@ if !exists('g:tmru_world') "{{{2
                 \ ],
                 \ 'allow_suspend': 0,
                 \ 'query': 'Select file',
-                \ })
+                \ }
                 " \ 'filter_format': 'fnamemodify(%s, ":t")',
-    call g:tmru_world.Set_display_format('filename')
 endif
 
 
@@ -170,7 +169,8 @@ function! s:SelectMRU()
     let tmru  = s:MruRetrieve()
     " TLogDBG "SelectMRU#2"
     " TLogVAR tmru
-    let world = copy(g:tmru_world)
+    let world = tlib#World#New(g:tmru_world)
+    call world.Set_display_format('filename')
     " TLogDBG "SelectMRU#3"
     let world.base = copy(tmru)
     " TLogDBG "SelectMRU#4"

@@ -3,13 +3,43 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-10-07.
-" @Last Change: 2009-02-15.
-" @Revision:    0.0.539
+" @Last Change: 2010-01-03.
+" @Revision:    0.0.542
 
-if &cp || exists("loaded_tcalc_autoload")
-    finish
+" call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
+
+
+if !exists('g:tcalc_initialize')
+    " A string that will be read when first invoking |:TCalc|.
+    " Define some abbreviations. Use 'ls' to see them.
+    " :nodefault:
+    " :read: let g:tcalc_initialize = '' "{{{2
+    let g:tcalc_initialize = '
+                \ :binom ( n:Numeric k:Numeric ) args n fak k fak n k - fak * / ;
+                \ :fak ( Numeric ) args dup 1 > ( dup 1 - fak * ) ( . 1 ) ifelse ;
+                \ :fib ( Numeric ) args dup 1 > ( dup 1 - fib swap 2 - fib + ) if ;
+                \ :ld ( Numeric ) args log 2 log / ;
+                \ :ln ( Numeric ) args log ;
+                \ :logx ( number:Numeric base:Numeric ) args number log base log / ;
+                \ :rev ( Numeric ) args 1 swap / ;
+                \ :Z ( Numeric ) args Integer ;
+                \ :Q ( Numeric ) args Rational ;
+                \ :C ( Numeric ) args Complex ;
+                \ '
+    " \ :binom ( Numeric Numeric ) args copy1 fak rot2 dup fak rot2 - fak * / ;
+    " \ :logx ( Numeric Numeric ) args swap log swap log / ;
 endif
-let loaded_tcalc_autoload = 1
+
+if !exists('g:tcalc_lines')
+    " The height of the window. If negative, use fixed height.
+    let g:tcalc_lines = 10 "{{{2
+endif
+
+
+if !exists('g:tcalc_dir')
+    " The default directory where "source" finds files.
+    let g:tcalc_dir = fnamemodify('~/.tcalc', ':p') "{{{2
+endif
 
 
 function! tcalc#Calculator(reset, initial_args) "{{{3

@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-16.
-" @Last Change: 2009-02-15.
-" @Revision:    605
+" @Last Change: 2010-01-03.
+" @Revision:    606
 " GetLatestVimScripts: 1865 1 tselectfiles.vim
 
 if &cp || exists("loaded_tselectfile")
@@ -16,112 +16,6 @@ if !exists('loaded_tlib') || loaded_tlib < 29
 endif
 let loaded_tselectfile = 10
 
-" Whether to cache directory listings (in memory). (per buffer, global)
-" If 0, disable the use of cached file listings all together.
-TLet g:tselectfiles_use_cache = 1
-
-" Don't use the cache for directories matching this rx. (per buffer, 
-" global)
-TLet g:tselectfiles_no_cache_rx = ''
-
-" Retain only files matching this regexp. (per window, per buffer, global)
-" Regexp |magic| must match the setting of |g:tlib_inputlist_match|.
-" Check: :echo tlib#Filter_{g:tlib_inputlist_match}#New().FilterRxPrefix()
-TLet g:tselectfiles_filter_rx = ''
-
-" In |tselectfiles#BaseFilter()|, rewrite name parts according to these 
-" rules.
-TLet g:tselectfiles_part_subst = {}
-" Poor man's singularize etc.
-TLet g:tselectfiles_part_subst_ruby = {'s$': '', '^\(controller\|test\|spec\)$': ''}
-
-" The max depth when globbing directories recursively. 0 = no limit.
-TLet g:tselectfiles_limit = 0
-
-" A dictionary of REGEXP => FUNCREF(filename) -> String describing the 
-" file (DEFAULT: the filename).
-TLet g:tselectfiles_filedescription_rx = {}
-
-" Apply filters to basename only.
-TLet g:tselectfiles_filter_basename = 0
-
-" Remove prefix from filenames in list.
-" buffer-local, global
-TLet g:tselectfiles_prefix = ''
-
-" Use these dirs (a comma separated list, see |globpath()|). (per window, per buffer, global)
-" TLet g:tselectfiles_dir = ''
-
-TLet g:tselectfiles_world = {
-            \ 'type': 'm',
-            \ 'query': 'Select files',
-            \ 'scratch': '__tselectfiles__',
-            \ 'return_agent': 'tselectfiles#ViewFile',
-            \ 'display_format': 'tselectfiles#FormatEntry(world, %s)',
-            \ 'filter_format': 'tselectfiles#FormatFilter(world, %s)',
-            \ 'pick_last_item': 0,
-            \ 'key_handlers': [
-                \ {'key':  4,  'agent': 'tselectfiles#AgentDeleteFile',      'key_name': '<c-d>', 'help': 'Delete file(s)'},
-                \ {'key': 18,  'agent': 'tselectfiles#AgentReset'},
-                \ {'key': 19,  'agent': 'tlib#agent#EditFileInSplit',        'key_name': '<c-s>', 'help': 'Edit files (split)'},
-                \ {'key': 22,  'agent': 'tlib#agent#EditFileInVSplit',       'key_name': '<c-v>', 'help': 'Edit files (vertical split)'},
-                \ {'key': 20,  'agent': 'tlib#agent#EditFileInTab',          'key_name': '<c-t>', 'help': 'Edit files (new tab)'},
-                \ {'key': 23,  'agent': 'tselectfiles#ViewFile',             'key_name': '<c-w>', 'help': 'View file in window'},
-                \ {'key': 21,  'agent': 'tselectfiles#AgentRenameFile',      'key_name': '<c-u>', 'help': 'Rename file(s)'},
-                \ {'key': 3,   'agent': 'tlib#agent#CopyItems',              'key_name': '<c-c>', 'help': 'Copy file name(s)'},
-                \ {'key': 11,  'agent': 'tselectfiles#AgentCopyFile',        'key_name': '<c-k>', 'help': 'Copy file(s)'},
-                \ {'key': 16,  'agent': 'tselectfiles#AgentPreviewFile',     'key_name': '<c-p>', 'help': 'Preview file'},
-                \ {'key':  2,  'agent': 'tselectfiles#AgentBatchRenameFile', 'key_name': '<c-b>', 'help': 'Batch rename file(s)'},
-                \ {'key': 126, 'agent': 'tselectfiles#AgentSelectBackups',   'key_name': '~',     'help': 'Select backup(s)'},
-                \ {'key': 9,   'agent': 'tlib#agent#ShowInfo',               'key_name': '<c-i>', 'help': 'Show info'},
-                \ {'key': 24,  'agent': 'tselectfiles#AgentHide',            'key_name': '<c-x>', 'help': 'Hide some files'},
-                \ {'key':  7,  'agent': 'tselectfiles#Grep',                 'key_name': '<c-g>', 'help': 'Run vimgrep on selected files'},
-                \ {'key': 28,  'agent': 'tlib#agent#ToggleStickyList',       'key_name': '<c-\>', 'help': 'Toggle sticky'},
-            \ ],
-            \ }
-            " \ 'scratch_vertical': (&lines > &co),
-
-TLet g:tselectfiles_suffixes = printf('\(%s\)\$', join(map(split(&suffixes, ','), 'v:val'), '\|'))
-
-" Don't include files matching this regexp.
-TLet g:tselectfiles_hidden_rx = '\V\(/.\|/CVS/\|/.attic/\|/.svn/\|/vimfiles\(/\[^/]\+\)\{-}/cache/\|'. tlib#rx#Suffixes('V') .'\)'
-let g:tselectfiles_hidden_rx = substitute(g:tselectfiles_hidden_rx, '/', '\\[\\/]', 'g')
-" TLet g:tselectfiles_skip_rx = tlib#rx#Suffixes('V')
-
-" " TODO: cwindow doesn't currently work as expected
-" TLet g:tselectfiles_show_quickfix_list = exists(':TRagcw') ? 'TRagcw' : 'cwindow'
-if exists(':TRagcw')
-    " The command that is run to show the quickfix list after running grep.
-    TLet g:tselectfiles_show_quickfix_list = 'TRagcw'
-endif
-
-" TLet g:tselectfiles_dir_edit = 'TSelectFiles'
-" 
-" if !empty(g:tselectfiles_dir_edit)
-"     if exists('g:loaded_netrwPlugin')
-"         au! FileExplorer BufEnter
-"     endif
-"     augroup TSelectFiles
-"         autocmd!
-"         autocmd BufEnter * silent! if isdirectory(expand("<amatch>")) | exec g:tselectfiles_dir_edit .' '. expand("<amatch>") | endif
-"     augroup END
-" endif
-
-
-if !exists('g:tselectfiles_favourites')
-    if has('win16') || has('win32') || has('win64')
-        let g:tselectfiles_favourites = ['c:/', 'd:/']
-    else
-        let g:tselectfiles_favourites = []
-    endif
-    if !empty($HOME)
-        call add(g:tselectfiles_favourites, $HOME)
-    endif
-    if !empty($USERPROFILE)
-        call add(g:tselectfiles_favourites, $USERPROFILE)
-        " call add(g:tselectfiles_favourites, $USERPROFILE .'/desktop/')
-    endif
-endif
 
 
 " :display: :TSelectFiles[!] [DIR]
@@ -222,4 +116,8 @@ a backslash).
 - tselectfiles_filter_rx is always evaluated unless a pattern is 
 provided as extra argument
 - tselectfiles_prefix is always evaluated
+
+0.11
+- Moved the definition of some variables from plugin/tselectfiles.vim to 
+autoload/tselectfiles.vim
 
