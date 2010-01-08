@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     21-Sep-2004.
-" @Last Change: 2010-01-03.
-" @Revision:    3885
+" @Last Change: 2010-01-05.
+" @Revision:    3888
 "
 " GetLatestVimScripts: 1160 1 tSkeleton.vim
 " http://www.vim.org/scripts/script.php?script_id=1160
@@ -41,7 +41,7 @@ let g:tskelDir = tlib#dir#CanonicName(g:tskelDir)
 
 if !exists('g:tskelBitsDir') "{{{2
     let g:tskelBitsDir = g:tskelDir .'bits/'
-    call tlib#dir#Ensure(g:tskelBitsDir)
+    " call tlib#dir#Ensure(g:tskelBitsDir)
 endif
 
 let g:tskeleton_SetFiletype = 1
@@ -60,16 +60,17 @@ if !exists("g:tskelMapHyperComplete") "{{{2
     endif
 endif
 
+if !exists("g:tskelHyperComplete") "{{{2
+    " let g:tskelHyperComplete = {'use_completefunc': 1, 'use_omnifunc': 1, 'scan_words': 1, 'scan_tags': 1}
+    let g:tskelHyperComplete = {'use_completefunc': 1, 'scan_words': 1, 'scan_tags': 1}
+endif
+
 if !exists('g:tskelHyperType')
     " Either query or pum.
     " If you set the variable to "pum", you have to accept completions 
     " with <c-y>.
     let g:tskelHyperType = 'query'   "{{{2
     " let g:tskelHyperType = 'pum'   "{{{2
-endif
-if !exists("g:tskelHyperComplete") "{{{2
-    " let g:tskelHyperComplete = {'use_completefunc': 1, 'use_omnifunc': 1, 'scan_words': 1, 'scan_tags': 1}
-    let g:tskelHyperComplete = {'use_completefunc': 1, 'scan_words': 1, 'scan_tags': 1}
 endif
 
 
@@ -531,4 +532,5 @@ autoload/tskeleton.vim
 - Don't build a menu if g:tskelMenuPrefix == ''.
 - If g:tskelDontSetup is defined and g:tskelMenuPrefix == '', 
 autoload/tskeleton.vim won't be loaded on startup.
+- Don't create g:tskelBitsDir if it doesn't exist
 
