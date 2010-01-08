@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2010-01-04.
-" @Revision:    2669
+" @Last Change: 2010-01-05.
+" @Revision:    2670
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -182,15 +182,6 @@ endfor
 
 
 command! -nargs=+ VikiDefine call VikiDefine(<f-args>)
-command! -count VikiFindNext call viki#DispatchOnFamily('Find', '', '',  <count>)
-command! -count VikiFindPrev call viki#DispatchOnFamily('Find', '', 'b', <count>)
-
-" command! -nargs=* -range=% VikiMarkInexistent
-"             \ call VikiSaveCursorPosition()
-"             \ | call <SID>VikiMarkInexistent(<line1>, <line2>, <f-args>)
-"             \ | call VikiRestoreCursorPosition()
-"             \ | call <SID>ResetSavedCursorPosition()
-command! -nargs=* -range=% VikiMarkInexistent call viki#MarkInexistentInRange(<line1>, <line2>)
 
 command! -nargs=? -bar VikiMinorMode call viki#DispatchOnFamily('MinorMode', empty(<q-args>) && exists('b:vikiFamily') ? b:vikiFamily : <q-args>, 1)
 command! -nargs=? -bar VikiMinorModeMaybe echom "Deprecated command: VikiMinorModeMaybe" | VikiMinorMode <q-args>
@@ -198,38 +189,13 @@ command! VikiMinorModeViki call viki_viki#MinorMode(1)
 command! VikiMinorModeLaTeX call viki_latex#MinorMode(1)
 command! VikiMinorModeAnyWord call viki_anyword#MinorMode(1)
 
-" this requires imaps to be installed
-command! -range VikiQuote :call VEnclose("[-", "-]", "[-", "-]")
-
 command! -nargs=? -bar VikiMode call viki#Mode(<q-args>)
 command! -nargs=? -bar VikiModeMaybe echom "Deprecated command: VikiModeMaybe: Please use 'set ft=viki' instead" | call viki#Mode(<q-args>)
-
-command! -narg=? VikiGoBack call viki#GoBack(<f-args>)
-
-command! VikiJump call viki#MaybeFollowLink(0,1)
-
-command! VikiIndex :call viki#Index()
-
-command! -nargs=1 -bang -complete=customlist,viki#EditComplete VikiEdit :call viki#Edit(<q-args>, "<bang>")
-command! -nargs=1 -bang -complete=customlist,viki#EditComplete VikiEditInVim :call viki#Edit(<q-args>, "<bang>", 0, 1)
-command! -nargs=1 -bang -complete=customlist,viki#EditComplete VikiEditTab :call viki#Edit(<q-args>, "<bang>", 'tab')
-command! -nargs=1 -bang -complete=customlist,viki#EditComplete VikiEditInWin1 :call viki#Edit(<q-args>, "<bang>", 1)
-command! -nargs=1 -bang -complete=customlist,viki#EditComplete VikiEditInWin2 :call viki#Edit(<q-args>, "<bang>", 2)
-command! -nargs=1 -bang -complete=customlist,viki#EditComplete VikiEditInWin3 :call viki#Edit(<q-args>, "<bang>", 3)
-command! -nargs=1 -bang -complete=customlist,viki#EditComplete VikiEditInWin4 :call viki#Edit(<q-args>, "<bang>", 4)
 
 command! -nargs=1 -complete=customlist,viki#BrowseComplete VikiBrowse :call viki#Browse(<q-args>)
 
 command! VikiHome :call viki#Edit('*', '!')
 command! VIKI :call viki#Edit('*', '!')
-
-command! VikiFilesUpdate call viki#FilesUpdate()
-command! VikiFilesUpdateAll call viki#FilesUpdateAll()
-
-command! -nargs=* -bang -complete=command VikiFileExec call viki#FilesExec(<q-args>, '<bang>', 1)
-command! -nargs=* -bang -complete=command VikiFilesExec call viki#FilesExec(<q-args>, '<bang>')
-command! -nargs=* -bang VikiFilesCmd call viki#FilesCmd(<q-args>, '<bang>')
-command! -nargs=* -bang VikiFilesCall call viki#FilesCall(<q-args>, '<bang>')
 
 
 augroup viki

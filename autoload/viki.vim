@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2010-01-03.
-" @Revision:    0.586
+" @Last Change: 2010-01-05.
+" @Revision:    0.588
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
@@ -47,9 +47,6 @@ endif
 if !exists('g:vikiUrlRestRx')
     let g:vikiUrlRestRx = '['. g:vikiLowerCharacters . g:vikiUpperCharacters .'0-9?%_=&+-]*'  "{{{2
 endif
-
-
-
 
 
 " URLs matching these protocols are handled by VikiOpenSpecialProtocol()
@@ -272,6 +269,46 @@ if !exists("g:vikiMapFunctionalityMinor") "{{{2
 endif
 
 
+""" Commands {{{1
+
+command! -count VikiFindNext call viki#DispatchOnFamily('Find', '', '',  <count>)
+command! -count VikiFindPrev call viki#DispatchOnFamily('Find', '', 'b', <count>)
+
+" command! -nargs=* -range=% VikiMarkInexistent
+"             \ call VikiSaveCursorPosition()
+"             \ | call <SID>VikiMarkInexistent(<line1>, <line2>, <f-args>)
+"             \ | call VikiRestoreCursorPosition()
+"             \ | call <SID>ResetSavedCursorPosition()
+command! -nargs=* -range=% VikiMarkInexistent call viki#MarkInexistentInRange(<line1>, <line2>)
+
+" this requires imaps to be installed
+command! -range VikiQuote :call VEnclose("[-", "-]", "[-", "-]")
+
+command! -narg=? VikiGoBack call viki#GoBack(<f-args>)
+
+command! VikiJump call viki#MaybeFollowLink(0,1)
+
+command! VikiIndex :call viki#Index()
+
+command! -nargs=1 -bang -complete=customlist,viki#EditComplete VikiEdit :call viki#Edit(<q-args>, "<bang>")
+command! -nargs=1 -bang -complete=customlist,viki#EditComplete VikiEditInVim :call viki#Edit(<q-args>, "<bang>", 0, 1)
+command! -nargs=1 -bang -complete=customlist,viki#EditComplete VikiEditTab :call viki#Edit(<q-args>, "<bang>", 'tab')
+command! -nargs=1 -bang -complete=customlist,viki#EditComplete VikiEditInWin1 :call viki#Edit(<q-args>, "<bang>", 1)
+command! -nargs=1 -bang -complete=customlist,viki#EditComplete VikiEditInWin2 :call viki#Edit(<q-args>, "<bang>", 2)
+command! -nargs=1 -bang -complete=customlist,viki#EditComplete VikiEditInWin3 :call viki#Edit(<q-args>, "<bang>", 3)
+command! -nargs=1 -bang -complete=customlist,viki#EditComplete VikiEditInWin4 :call viki#Edit(<q-args>, "<bang>", 4)
+
+command! VikiFilesUpdate call viki#FilesUpdate()
+command! VikiFilesUpdateAll call viki#FilesUpdateAll()
+
+command! -nargs=* -bang -complete=command VikiFileExec call viki#FilesExec(<q-args>, '<bang>', 1)
+command! -nargs=* -bang -complete=command VikiFilesExec call viki#FilesExec(<q-args>, '<bang>')
+command! -nargs=* -bang VikiFilesCmd call viki#FilesCmd(<q-args>, '<bang>')
+command! -nargs=* -bang VikiFilesCall call viki#FilesCall(<q-args>, '<bang>')
+
+
+
+""" Functions {{{1
 
 
 " This is mostly a legacy function. Using set ft=viki should work too.
