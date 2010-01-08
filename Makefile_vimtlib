@@ -19,6 +19,7 @@ vimtips.xml:
 
 vimtips:
 	cd ${VIMTLIB}; \
+		if [ ! -e tmp/pages_current.xml ]; then echo "Run 'make vimtips.xml' first"; fi; \
 		ruby/vimtips2help.rb --xml tmp/pages_current.xml --out doc/vimtips.txt -v -m "*´"
 
 vba:
