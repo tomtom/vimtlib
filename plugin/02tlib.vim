@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-10.
-" @Last Change: 2009-12-21.
-" @Revision:    592
+" @Last Change: 2010-01-08.
+" @Revision:    597
 " GetLatestVimScripts: 1863 1 tlib.vim
 "
 " Please see also ../test/tlib.vim for usage examples.
@@ -562,4 +562,7 @@ pressing <esc> when browsing an index-list, returns 0 and not "")
 
 0.35
 - tlib#input#EditList(): return the list if the user presses esc
+
+0.36
+- Display a message when the filter is for whatever reason invalid
 
