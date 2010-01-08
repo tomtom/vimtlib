@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     29-Jän-2004.
-" @Last Change: 2010-01-04.
-" @Revision:    885
+" @Last Change: 2010-01-07.
+" @Revision:    886
 " 
 " vimscript #889
 " 
@@ -155,4 +155,6 @@ processes)
 to autoload/evalselection.vim
 - Supported filetypes have to be enabled in your vimrc file by creating 
 an array of strings (g:evalSelectionFiletypes)
+- mzscheme: Check for hasmapto("EvalSelection_mz(") (reported by Sergey 
+Khorev)
 

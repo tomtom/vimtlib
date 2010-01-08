@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-03.
-" @Last Change: 2010-01-03.
-" @Revision:    0.0.4
+" @Last Change: 2010-01-07.
+" @Revision:    0.0.5
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -34,7 +34,7 @@ function! EvalSelection_mz_helper(text) "{{{3
     let @e = substitute(@e, '\^M$', '', '')
 endf
 
-if !hasmapto("EvalSelection_mzscheme(")
+if !hasmapto("EvalSelection_mz(")
     call EvalSelectionGenerateBindings("z", "mz")
 endif
 
