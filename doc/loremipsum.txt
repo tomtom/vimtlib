@@ -25,12 +25,12 @@ please make sure, you have the current version of vimball (vimscript
 ========================================================================
 Contents~
 
+        :Loremipsum ....................... |:Loremipsum|
+        :Loreplace ........................ |:Loreplace|
         g:loremipsum_paragraph_template ... |g:loremipsum_paragraph_template|
         g:loremipsum_marker ............... |g:loremipsum_marker|
         g:loremipsum_words ................ |g:loremipsum_words|
         g:loremipsum_files ................ |g:loremipsum_files|
-        :Loremipsum ....................... |:Loremipsum|
-        :Loreplace ........................ |:Loreplace|
         loremipsum#Generate ............... |loremipsum#Generate()|
         loremipsum#GenerateInline ......... |loremipsum#GenerateInline()|
         loremipsum#Insert ................. |loremipsum#Insert()|
@@ -39,6 +39,22 @@ Contents~
 
 ========================================================================
 plugin/loremipsum.vim~
+
+                                                    *:Loremipsum*
+:Loremipsum[!] [COUNT] [PARAGRAPH_TEMPLATE] [PREFIX POSTFIX]
+    With [!], insert the text "inline", don't apply paragraph templates.
+    If the PARAGRAPH_TEMPLATE is *, use the default template from 
+    |g:loremipsum_paragraph_template| (in case you want to change 
+    PREFIX and POSTFIX). If it is _, use no paragraph template.
+    If PREFIX is _, don't use markers.
+
+                                                    *:Loreplace*
+:Loreplace [REPLACEMENT] [PREFIX POSTFIX]
+    Replace loremipsum text with something else. Or simply remove it.
+
+
+========================================================================
+autoload/loremipsum.vim~
 
                                                     *g:loremipsum_paragraph_template*
 g:loremipsum_paragraph_template
@@ -61,22 +77,6 @@ g:loremipsum_files             (default: {})
     If b:loremipsum_file exists, it will be used as source. Otherwise, 
     g:loremipsum_files[&spelllang] will be checked. As a fallback, 
     .../autoload/loremipsum.txt will be used.
-
-                                                    *:Loremipsum*
-:Loremipsum[!] [COUNT] [PARAGRAPH_TEMPLATE] [PREFIX POSTFIX]
-    With [!], insert the text "inline", don't apply paragraph templates.
-    If the PARAGRAPH_TEMPLATE is *, use the default template from 
-    |g:loremipsum_paragraph_template| (in case you want to change 
-    PREFIX and POSTFIX). If it is _, use no paragraph template.
-    If PREFIX is _, don't use markers.
-
-                                                    *:Loreplace*
-:Loreplace [REPLACEMENT] [PREFIX POSTFIX]
-    Replace loremipsum text with something else. Or simply remove it.
-
-
-========================================================================
-autoload/loremipsum.vim~
 
                                                     *loremipsum#Generate()*
 loremipsum#Generate(nwords, template)

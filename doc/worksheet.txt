@@ -31,12 +31,6 @@ This script requires hookcursormoved (vimscript #2037) to be installed.
 ========================================================================
 Contents~
 
-        g:worksheet_default ........ |g:worksheet_default|
-        g:worksheet_suffix ......... |g:worksheet_suffix|
-        :Complete .................. |:Worksheet|
-        :WorksheetRestore .......... |:WorksheetRestore|
-        :WorksheetSaveAs ........... |:WorksheetSaveAs|
-        :WorksheetEvaluateAll ...... |:WorksheetEvaluateAll|
         u .......................... |worksheet-map-u|
         <c-n> ...................... |worksheet-map-<c-n>|
         <c-p> ...................... |worksheet-map-<c-p>|
@@ -80,38 +74,8 @@ Contents~
         prototype.SwapEntries
         prototype.SilentInput
         prototype.Submit
-
-
-========================================================================
-plugin/worksheet.vim~
-
-                                                    *g:worksheet_default*
-g:worksheet_default            (default: 'vim')
-    The default worksheet type
-
-                                                    *g:worksheet_suffix*
-g:worksheet_suffix             (default: '.wks')
-    The suffix for saved worksheets.
-    TODO: If non-empty, this will also add a line to the filetypedetect 
-    autogroup.
-
-                                                    *:Worksheet*
-:Worksheet [TYPE]
-    Open a new worksheet.
-
-                                                    *:WorksheetRestore*
-:WorksheetRestore
-    Restore a worksheet to the last know good state.
-
-                                                    *:WorksheetSaveAs*
-:WorksheetSaveAs
-    :WorksheetSaveAs[!] [FILENAME]
-    Save a worksheet to disk.
-    By default worksheets are 'buftype'=nofile and 'noswapfile'.
-
-                                                    *:WorksheetEvaluateAll*
-:WorksheetEvaluateAll
-    Evaluate all cells in the current worksheet.
+        :HiLink .................... |:HiLink|
+        :HiLink .................... |:HiLink|
 
 
 ========================================================================
@@ -267,6 +231,16 @@ prototype.Submit
     Special syntax:
     Last character is ";" ... silent
     Leading character is "%" ... comment
+
+
+========================================================================
+syntax/worksheet.vim~
+
+                                                    *:HiLink*
+:HiLink
+
+                                                    *:HiLink*
+:HiLink
 
 
 

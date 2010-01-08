@@ -84,6 +84,9 @@ Also available via git: http://github.com/tomtom/vimtlib/
 ========================================================================
 Contents~
 
+        :VikiTasks ....................... |:VikiTasks|
+        :VikiTasksAdd .................... |:VikiTasksAdd|
+        :VikiTasksFiles .................. |:VikiTasksFiles|
         g:vikitasks_files ................ |g:vikitasks_files|
         g:vikitasks_intervikis ........... |g:vikitasks_intervikis|
         g:vikitasks_intervikis_ignored ... |g:vikitasks_intervikis_ignored|
@@ -91,18 +94,52 @@ Contents~
         g:vikitasks_rx_letters ........... |g:vikitasks_rx_letters|
         g:vikitasks_rx_levels ............ |g:vikitasks_rx_levels|
         g:vikitasks_cache ................ |g:vikitasks_cache|
-        :VikiTasks ....................... |:VikiTasks|
-        :VikiTasksGrep ................... |:VikiTasksGrep|
-        :VikiTasksAdd .................... |:VikiTasksAdd|
-        :VikiTasksFiles .................. |:VikiTasksFiles|
         vikitasks#Tasks .................. |vikitasks#Tasks()|
-        vikitasks#TasksGrep .............. |vikitasks#TasksGrep()|
+        vikitasks#MakePattern ............ |vikitasks#MakePattern()|
         vikitasks#AddBuffer .............. |vikitasks#AddBuffer()|
         vikitasks#EditFiles .............. |vikitasks#EditFiles()|
 
 
 ========================================================================
 plugin/vikitasks.vim~
+
+                                                    *:VikiTasks*
+VikiTasks[!] [SELECT] [PATTERN] [FILE_PATTERNS]
+    SELECT items by date. Possible values for SELECT are: today, current, 
+    NUMBER (of days). If SELECT is *, all items are elegible.
+    Collect a list of tasks from a set of viki pages matching 
+    FILE_PATTERNS.
+    The optional |regexp| PATTERN argument is preprocesed by 
+    |vikitasks#MakePattern()|.
+    With the optional !, show all tasks not just those with a date
+    The current buffer has to be a viki buffer. If it isn't, your 
+    |g:vikiHomePage|, which must be set, is opened first.
+    Use a period "." for empty SELECT or PATTERN parameters.
+    
+    Examples:
+        Show all tasks with a date: >
+            VikiTasks
+<       Show all tasks: >
+            VikiTasks!
+<       Show all tasks for today: >
+            VikiTasks today
+<       Show all current tasks (today or with a deadline in the past) in a 
+        specified list of files: >
+            VikiTasks current Notes*.txt
+<
+
+                                                    *:VikiTasksAdd*
+:VikiTasksAdd
+    Add the current buffer to |g:vikitasks_files|.
+
+                                                    *:VikiTasksFiles*
+:VikiTasksFiles
+    Edit |g:vikitasks_files|. This allows you to remove buffers from the 
+    list.
+
+
+========================================================================
+autoload/vikitasks.vim~
 
                                                     *g:vikitasks_files*
 g:vikitasks_files              (default: [])
@@ -147,53 +184,16 @@ g:vikitasks_cache              (default: tlib#cache#Filename('vikitasks', 'files
     Cache file name.
     By default, use |tlib#cache#Filename()| to determine the file name.
 
-                                                    *:VikiTasks*
-VikiTasks[!] [SELECT] [FILE_PATTERNS]
-    SELECT items by date. Possible values for SELECT are: today, current, 
-    NUMBER (of days). If SELECT is *, all items are elegible.
-    Collect a list of tasks from a set of viki pages matching 
-    FILE_PATTERNS.
-    With the optional !, show all tasks not just those with a date
-    The current buffer has to be a viki buffer. If it isn't, your 
-    |g:vikiHomePage|, which must be set, is opened first.
-    
-    Examples:
-        Show all tasks with a date: >
-            VikiTasks
-<       Show all tasks: >
-            VikiTasks!
-<       Show all tasks for today: >
-            VikiTasks today
-<       Show all current tasks (today or with a deadline in the past) in a 
-        specified list of files: >
-            VikiTasks current Notes*.txt
-<
-
-                                                    *:VikiTasksGrep*
-:VikiTasksGrep[!] REGEXP [FILE PATTERNS]
-    Like |:VikiTasks| but display only those items matching REGEXP.
-    The |regexp| pattern is prepended with |\<| if it seems to be a word.
-
-                                                    *:VikiTasksAdd*
-:VikiTasksAdd
-    Add the current buffer to |g:vikitasks_files|.
-
-                                                    *:VikiTasksFiles*
-:VikiTasksFiles
-    Edit |g:vikitasks_files|. This allows you to remove buffers from the 
-    list.
-
-
-========================================================================
-autoload/vikitasks.vim~
-
                                                     *vikitasks#Tasks()*
 vikitasks#Tasks(?all=0, ?{'files': [], 'select': '', 'rx': ''})
     If files is non-empty, use these files (glob patterns actually) 
     instead of those defined in |g:vikitasks_files|.
 
-                                                    *vikitasks#TasksGrep()*
-vikitasks#TasksGrep(all_tasks, ?pattern='.', *files)
+                                                    *vikitasks#MakePattern()*
+vikitasks#MakePattern(pattern)
+    The |regexp| PATTERN is prepended with |\<| if it seems to be a word. 
+    The PATTERN is made case sensitive if it contains an upper-case letter 
+    and if 'smartcase' is true.
 
                                                     *vikitasks#AddBuffer()*
 vikitasks#AddBuffer(buffer)

@@ -46,23 +46,8 @@ This script requires hookcursormoved (vimscript #2037) to be installed.
 ========================================================================
 Contents~
 
-        g:linglang_actions ...... |g:linglang_actions|
-        :Linglang ............... |:Linglang|
         linglang#Linglang ....... |linglang#Linglang()|
         linglang#Set ............ |linglang#Set()|
-
-
-========================================================================
-plugin/linglang.vim~
-
-                                                    *g:linglang_actions*
-g:linglang_actions
-    Actions to be executed when switching languages.
-
-                                                    *:Linglang*
-:Linglang[!] [LANGS ...]
-    Toggle linglang support for the current buffer.
-    With [!], suppress message.
 
 
 ========================================================================

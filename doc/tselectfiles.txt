@@ -67,6 +67,8 @@ Suggested maps (to be set in ~/.vimrc): >
 ========================================================================
 Contents~
 
+        :TSelectFiles ................................ |:TSelectFiles|
+        :TSelectFilesInSubdirs ....................... |:TSelectFilesInSubdirs|
         g:tselectfiles_use_cache ..................... |g:tselectfiles_use_cache|
         g:tselectfiles_no_cache_rx ................... |g:tselectfiles_no_cache_rx|
         g:tselectfiles_filter_rx ..................... |g:tselectfiles_filter_rx|
@@ -80,8 +82,6 @@ Contents~
         g:tselectfiles_suffixes ...................... |g:tselectfiles_suffixes|
         g:tselectfiles_hidden_rx ..................... |g:tselectfiles_hidden_rx|
         g:tselectfiles_show_quickfix_list ............ |g:tselectfiles_show_quickfix_list|
-        :TSelectFiles ................................ |:TSelectFiles|
-        :TSelectFilesInSubdirs ....................... |:TSelectFilesInSubdirs|
         tselectfiles#GetFileList ..................... |tselectfiles#GetFileList()|
         tselectfiles#AgentPostprocess ................ |tselectfiles#AgentPostprocess()|
         tselectfiles#AgentOpenDir .................... |tselectfiles#AgentOpenDir()|
@@ -106,6 +106,27 @@ Contents~
 
 ========================================================================
 plugin/tselectfiles.vim~
+
+                                                    *:TSelectFiles*
+:TSelectFiles[!] [DIR]
+    Open/delete/rename files in the current directory.
+    A [!] forces the commands to rescan the directory. Otherwise a cached 
+    value will be used if available.
+    You can also type <c-r> to force rescanning a directory, which could 
+    be necessary if the file system were changed (e.g. by creating a new 
+    file or by some external command)
+
+                                                    *:TSelectFilesInSubdirs*
+:TSelectFilesInSubdirs
+    Recursively show all files in the current directory and subdirectories 
+    (don't show favourites and ".."); don't use this command when you're 
+    at /.
+    A [!] forces the commands to rescan the directory. Otherwise a cached 
+    value will be used if available.
+
+
+========================================================================
+autoload/tselectfiles.vim~
 
                                                     *g:tselectfiles_use_cache*
 g:tselectfiles_use_cache       (default: 1)
@@ -165,27 +186,6 @@ g:tselectfiles_show_quickfix_list (default: 'TRagcw')
     " TODO: cwindow doesn't currently work as expected
     TLet g:tselectfiles_show_quickfix_list = exists(':TRagcw') ? 'TRagcw' : 'cwindow'
     The command that is run to show the quickfix list after running grep.
-
-                                                    *:TSelectFiles*
-:TSelectFiles[!] [DIR]
-    Open/delete/rename files in the current directory.
-    A [!] forces the commands to rescan the directory. Otherwise a cached 
-    value will be used if available.
-    You can also type <c-r> to force rescanning a directory, which could 
-    be necessary if the file system were changed (e.g. by creating a new 
-    file or by some external command)
-
-                                                    *:TSelectFilesInSubdirs*
-:TSelectFilesInSubdirs
-    Recursively show all files in the current directory and subdirectories 
-    (don't show favourites and ".."); don't use this command when you're 
-    at /.
-    A [!] forces the commands to rescan the directory. Otherwise a cached 
-    value will be used if available.
-
-
-========================================================================
-autoload/tselectfiles.vim~
 
                                                     *tselectfiles#GetFileList()*
 tselectfiles#GetFileList(world, mode, ...)

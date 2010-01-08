@@ -84,128 +84,13 @@ Key maps in the list view:
 ========================================================================
 Contents~
 
-        g:ttoc_markers ......... |g:ttoc_markers|
-        g:ttoc_rx .............. |g:ttoc_rx|
-        g:ttoc_rx_bib .......... |g:ttoc_rx_bib|
-        g:ttoc_rx_c ............ |g:ttoc_rx_c|
-        g:ttoc_rx_cpp .......... |g:ttoc_rx_cpp|
-        g:ttoc_rx_html ......... |g:ttoc_rx_html|
-        g:ttoc_rx_java ......... |g:ttoc_rx_java|
-        g:ttoc_rx_javascript ... |g:ttoc_rx_javascript|
-        g:ttoc_rx_perl ......... |g:ttoc_rx_perl|
-        g:ttoc_rx_php .......... |g:ttoc_rx_php|
-        g:ttoc_rx_python ....... |g:ttoc_rx_python|
-        g:ttoc_rx_rd ........... |g:ttoc_rx_rd|
-        g:ttoc_rx_ruby ......... |g:ttoc_rx_ruby|
-        g:ttoc_rx_scheme ....... |g:ttoc_rx_scheme|
-        g:ttoc_rx_sh ........... |g:ttoc_rx_sh|
-        g:ttoc_rx_tcl .......... |g:ttoc_rx_tcl|
-        g:ttoc_rx_tex .......... |g:ttoc_rx_tex|
-        g:ttoc_rx_viki ......... |g:ttoc_rx_viki|
-        g:ttoc_rx_vim .......... |g:ttoc_rx_vim|
-        g:ttoc_world ........... |g:ttoc_world|
-        g:ttoc_vertical ........ |g:ttoc_vertical|
-        g:ttoc_win_size ........ |g:ttoc_win_size|
-        TToC_GetLine_viki ...... |TToC_GetLine_viki()|
-        TToC_GetLine_bib ....... |TToC_GetLine_bib()|
-        :TToC .................. |:TToC|
-        :Ttoc .................. |:Ttoc|
-        :Ttocbg ................ |:Ttocbg|
+        :TToC ............. |:TToC|
+        :Ttoc ............. |:Ttoc|
+        :Ttocbg ........... |:Ttocbg|
 
 
 ========================================================================
 plugin/ttoc.vim~
-
-                                                    *g:ttoc_markers*
-g:ttoc_markers                 (default: 1)
-    Markers as used by vim and other editors. Can be also buffer-local. 
-    This rx is added to the filetype-specific rx.
-    Values:
-      0      ... disable
-      1      ... use &foldmarker
-      2      ... use &foldmarker only if &foldmethod == marker
-      string ... use as rx
-
-                                                    *g:ttoc_rx*
-g:ttoc_rx                      (default: '^\w.*')
-    By default, assume that everything at the first column is important.
-
-
-Some filetype-specific regexps. If you don't like the default values, 
-set these variables in ~/.vimrc.
-
-                                                    *g:ttoc_rx_bib*
-g:ttoc_rx_bib                  (default: '^@\w\+\s*{\s*\zs\S\{-}\ze\s*,')
-
-                                                    *g:ttoc_rx_c*
-g:ttoc_rx_c                    (default: '^[[:alnum:]#].*')
-
-                                                    *g:ttoc_rx_cpp*
-g:ttoc_rx_cpp                  (default: g:ttoc_rx_c)
-
-                                                    *g:ttoc_rx_html*
-g:ttoc_rx_html                 (default: '\(<h\d.\{-}</h\d>\|<\(html\|head\|body\|div\|script\|a\s\+name=\).\{-}>\|<.\{-}\<id=.\{-}>\)')
-
-                                                    *g:ttoc_rx_java*
-g:ttoc_rx_java                 (default: '^\s*\(\(package\|import\|private\|public\|protected\|void\|int\|boolean\)\s\+\|\u\).*')
-
-                                                    *g:ttoc_rx_javascript*
-g:ttoc_rx_javascript           (default: '^\(var\s\+.\{-}\|\s*\w\+\s*:\s*\S.\{-}[,{]\)\s*$')
-
-                                                    *g:ttoc_rx_perl*
-g:ttoc_rx_perl                 (default: '^\([$%@]\|\s*\(use\|sub\)\>\).*')
-
-                                                    *g:ttoc_rx_php*
-g:ttoc_rx_php                  (default: '^\(\w\|\s*\(class\|function\|var\|require\w*\|include\w*\)\>\).*')
-
-                                                    *g:ttoc_rx_python*
-g:ttoc_rx_python               (default: '^\s*\(import\|class\|def\)\>.*')
-
-                                                    *g:ttoc_rx_rd*
-g:ttoc_rx_rd                   (default: '^\(=\+\|:\w\+:\).*')
-
-                                                    *g:ttoc_rx_ruby*
-g:ttoc_rx_ruby                 (default: '\C^\(if\>\|\s*\(class\|module\|def\|require\|private\|public\|protected\|module_functon\|alias\|attr\(_reader\|_writer\|_accessor\)\?\)\>\|\s*[[:upper:]_]\+\s*=\).*')
-
-                                                    *g:ttoc_rx_scheme*
-g:ttoc_rx_scheme               (default: '^\s*(define.*')
-
-                                                    *g:ttoc_rx_sh*
-g:ttoc_rx_sh                   (default: '^\s*\(\(export\|function\|while\|case\|if\)\>\|\w\+\s*()\s*{\).*')
-
-                                                    *g:ttoc_rx_tcl*
-g:ttoc_rx_tcl                  (default: '^\s*\(source\|proc\)\>.*')
-
-                                                    *g:ttoc_rx_tex*
-g:ttoc_rx_tex                  (default: '\C\\\(label\|\(sub\)*\(section\|paragraph\|part\)\)\>.*')
-
-                                                    *g:ttoc_rx_viki*
-g:ttoc_rx_viki                 (default: '^\(\*\+\|\s*#\l\).*')
-
-                                                    *g:ttoc_rx_vim*
-g:ttoc_rx_vim                  (default: '\C^\(fu\%[nction]\|com\%[mand]\|if\|wh\%[ile]\)\>.*')
-
-                                                    *g:ttoc_world*
-g:ttoc_world
-    ttoc-specific |tlib#input#ListD| configuration.
-    Customizations should be done in ~/.vimrc/after/plugin/ttoc.vim
-    E.g. in order to split horizontally, use: >
-        let g:ttoc_world.scratch_vertical = 0
-<
-
-                                                    *g:ttoc_vertical*
-g:ttoc_vertical                (default: '&lines < &co')
-    If true, split vertical.
-
-                                                    *g:ttoc_win_size*
-g:ttoc_win_size                (default: '((&lines > &co) ? &lines : &co) / 2')
-    Vim code that evaluates to the desired window width/heigth.
-
-                                                    *TToC_GetLine_viki()*
-TToC_GetLine_viki(lnum, acc)
-
-                                                    *TToC_GetLine_bib()*
-TToC_GetLine_bib(lnum, acc)
 
                                                     *:TToC*
 :[COUNT]TToC[!] [REGEXP]

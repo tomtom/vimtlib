@@ -165,11 +165,6 @@ See |trag#Grep()| for details of how to use this.
 ========================================================================
 Contents~
 
-        g:trag_search_mode ....... |g:trag_search_mode|
-        g:trag_get_files ......... |g:trag_get_files|
-        g:trag_get_files_java .... |g:trag_get_files_java|
-        g:trag_get_files_c ....... |g:trag_get_files_c|
-        g:trag_get_files_cpp ..... |g:trag_get_files_cpp|
         :TRagDefKind ............. |:TRagDefKind|
         :TRagKeyword ............. |:TRagKeyword|
         :TRagDefFiletype ......... |:TRagDefFiletype|
@@ -184,15 +179,20 @@ Contents~
         :Tragsearch .............. |:Tragsearch|
         :TRaggrep ................ |:TRaggrep|
         :Traggrep ................ |:Traggrep|
+        :TRagsetfiles ............ |:TRagsetfiles|
+        :TRagaddfiles ............ |:TRagaddfiles|
+        :TRagclearfiles .......... |:TRagclearfiles|
+        :TRagGitFiles ............ |:TRagGitFiles|
+        g:trag_search_mode ....... |g:trag_search_mode|
+        g:trag_get_files ......... |g:trag_get_files|
+        g:trag_get_files_java .... |g:trag_get_files_java|
+        g:trag_get_files_c ....... |g:trag_get_files_c|
+        g:trag_get_files_cpp ..... |g:trag_get_files_cpp|
         g:trag_files ............. |g:trag_files|
         g:trag_glob .............. |g:trag_glob|
         g:trag_project_ruby ...... |g:trag_project_ruby|
         g:trag_project ........... |g:trag_project|
         g:trag_git ............... |g:trag_git|
-        :TRagsetfiles ............ |:TRagsetfiles|
-        :TRagaddfiles ............ |:TRagaddfiles|
-        :TRagclearfiles .......... |:TRagclearfiles|
-        :TRagGitFiles ............ |:TRagGitFiles|
         trag#ClearFiles .......... |trag#ClearFiles()|
         trag#AddFiles ............ |trag#AddFiles()|
         trag#GetProjectFiles ..... |trag#GetProjectFiles()|
@@ -222,30 +222,6 @@ Contents~
 ========================================================================
 plugin/trag.vim~
 
-                                                    *g:trag_search_mode*
-g:trag_search_mode             (default: 2)
-    0 ... use the built-in search.
-    1 ... use vimgrep.
-    2 ... use vimgrep but set 'ei' to all; this means special file 
-          encodings won't be detected
-    Please not, this is only in effect with simple searches (as for 0.3 
-    all searches are simple). For more complex multi-line patterns, the 
-    built-in search will be used (some day in the future).
-
-                                                    *g:trag_get_files*
-g:trag_get_files               (default: 'split(glob("*"), "\n")')
-    If no project files are defined, evaluate this expression as 
-    fallback-strategy.
-
-                                                    *g:trag_get_files_java*
-g:trag_get_files_java          (default: 'split(glob("**/*.java"), "\n")')
-
-                                                    *g:trag_get_files_c*
-g:trag_get_files_c             (default: 'split(glob("**/*.[ch]"), "\n")')
-
-                                                    *g:trag_get_files_cpp*
-g:trag_get_files_cpp           (default: 'split(glob("**/*.[ch]"), "\n")')
-
                                                     *:TRagDefKind*
 :TRagDefKind KIND FILETYPE /REGEXP_FORMAT/
     The regexp argument is no real regexp but a format string. % thus have 
@@ -265,6 +241,8 @@ TRagDefFiletype FILETYPE EXTENSION ... FILENAME ...
     In order to recognize files based on their extension, you have to 
     declare filetypes first.
     If a file has no extension, the whole filename is used.
+    On systems where the case of the filename doesn't matter (check :echo 
+    has('fname_case')), EXTENSION should be defined in lower case letters.
     Examples: >
       TRagDefFiletype html html htm xhtml
 <
@@ -341,6 +319,58 @@ TRagDefFiletype FILETYPE EXTENSION ... FILENAME ...
                                                     *:Traggrep*
 :Traggrep
 
+                                                    *:TRagsetfiles*
+:TRagsetfiles [FILELIST]
+    The file list is set only once per buffer. If the list of the project 
+    files has changed, you have to run this command on order to reset the 
+    per-buffer list.
+    
+    If no filelist is given, collect the files in your tags files.
+    
+    Examples: >
+      :TRagsetfiles
+      :TRagsetfiles split(glob('foo*.txt'), '\n')
+<
+
+                                                    *:TRagaddfiles*
+:TRagaddfiles FILELIST
+    Add more files to the project list.
+
+                                                    *:TRagclearfiles*
+:TRagclearfiles
+    Remove any files from the project list.
+
+                                                    *:TRagGitFiles*
+:TRagGitFiles GIT_REPOS
+
+
+========================================================================
+autoload/trag.vim~
+
+                                                    *g:trag_search_mode*
+g:trag_search_mode             (default: 2)
+    0 ... use the built-in search.
+    1 ... use vimgrep.
+    2 ... use vimgrep but set 'ei' to all; this means special file 
+          encodings won't be detected
+    Please not, this is only in effect with simple searches (as for 0.3 
+    all searches are simple). For more complex multi-line patterns, the 
+    built-in search will be used (some day in the future).
+
+                                                    *g:trag_get_files*
+g:trag_get_files               (default: 'split(glob("*"), "\n")')
+    If no project files are defined, evaluate this expression as 
+    fallback-strategy.
+
+                                                    *g:trag_get_files_java*
+g:trag_get_files_java          (default: 'split(glob("**/*.java"), "\n")')
+
+                                                    *g:trag_get_files_c*
+g:trag_get_files_c             (default: 'split(glob("**/*.[ch]"), "\n")')
+
+                                                    *g:trag_get_files_cpp*
+g:trag_get_files_cpp           (default: 'split(glob("**/*.[ch]"), "\n")')
+
 
 The following variables provide alternatives to collecting 
 your project's file list on the basis of you tags files.
@@ -376,34 +406,6 @@ g:trag_git                     (default: '')
     (|getcwd()|) upwards for a .git directory.
     If the value is "finddir", use |finddir()| to find a .git directory.
     Can be buffer local.
-
-                                                    *:TRagsetfiles*
-:TRagsetfiles [FILELIST]
-    The file list is set only once per buffer. If the list of the project 
-    files has changed, you have to run this command on order to reset the 
-    per-buffer list.
-    
-    If no filelist is given, collect the files in your tags files.
-    
-    Examples: >
-      :TRagsetfiles
-      :TRagsetfiles split(glob('foo*.txt'), '\n')
-<
-
-                                                    *:TRagaddfiles*
-:TRagaddfiles FILELIST
-    Add more files to the project list.
-
-                                                    *:TRagclearfiles*
-:TRagclearfiles
-    Remove any files from the project list.
-
-                                                    *:TRagGitFiles*
-:TRagGitFiles GIT_REPOS
-
-
-========================================================================
-autoload/trag.vim~
 
                                                     *trag#ClearFiles()*
 trag#ClearFiles()

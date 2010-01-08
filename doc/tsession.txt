@@ -63,6 +63,14 @@ Contents~
         :TSessionSave .................. |:TSessionSave|
         :TSessionLoad .................. |:TSessionLoad|
         :TSession ...................... |:TSession|
+        tsession#Collect ............... |tsession#Collect()|
+        tsession#Sessions .............. |tsession#Sessions()|
+        tsession#Save .................. |tsession#Save()|
+        tsession#Load .................. |tsession#Load()|
+        tsession#AgentDeleteSession .... |tsession#AgentDeleteSession()|
+        tsession#AgentNewSession ....... |tsession#AgentNewSession()|
+        tsession#AgentSaveSession ...... |tsession#AgentSaveSession()|
+        tsession#Browse ................ |tsession#Browse()|
 
 
 ========================================================================
@@ -145,6 +153,37 @@ TSession[!]
     |g:tsession_swap| is false. If g:tsession_swap is true, the meaning of 
     ! is inverted.
     See also |tsession#Browse|.
+
+
+========================================================================
+autoload/tsession.vim~
+
+                                                    *tsession#Collect()*
+tsession#Collect()
+
+                                                    *tsession#Sessions()*
+tsession#Sessions()
+
+                                                    *tsession#Save()*
+tsession#Save(?name=g:tsession_current, ?args={})
+    Save a session description.
+
+                                                    *tsession#Load()*
+tsession#Load(?name=g:tsession_current, ?args={})
+    Load 'SESSION'; source 'SESSION.vim' if existent.
+    If args.swap == 1, delete (swap-out) any unregistered buffers.
+
+                                                    *tsession#AgentDeleteSession()*
+tsession#AgentDeleteSession(world, selected)
+
+                                                    *tsession#AgentNewSession()*
+tsession#AgentNewSession(world, selected)
+
+                                                    *tsession#AgentSaveSession()*
+tsession#AgentSaveSession(world, selected)
+
+                                                    *tsession#Browse()*
+tsession#Browse(?args={})
 
 
 

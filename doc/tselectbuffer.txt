@@ -1,0 +1,82 @@
+*tselectbuffer.txt*  A simplicistic buffer selector/switcher
+                     Author: Tom Link, micathom at gmail com
+
+This plugin provides a simple buffer selector. It doesn't have all the 
+features other buffer selectors have but can be useful for quickly 
+switching to a different buffer or for deleting buffers.
+
+The idea is to view the buffer list, to do something, and to close the 
+buffer list. If you really want to permanently watch the buffer list to 
+see whether it's changed, you might want to use a different plugin.
+
+Features:
+    - list buffers, dynamically filter buffers matching a pattern
+    - switch to a buffer
+    - rename a buffer (you may need to use :saveas! or :w! when writing 
+    the renamed buffer to disk)
+    - delete one or more buffer(s)
+
+:[N]TSelectBuffer[!]
+    List buffers. With a count or a !, show also hidden buffers.
+    Keys:
+    <cr>  ... Select (close the buffer list)
+    <c-s> ... Open in split window
+    <c-v> ... Open in vertically split window
+    <c-t> ... Open in new tab
+    <c-w> ... Show in original window (continue with the buffer list)
+    <c-d> ... Delete a buffer
+    <c-u> ... Rename a buffer
+    <     ... Jump to opened buffer in window/tab
+
+Suggested keymaps (put something like this into ~/.vimrc):
+    noremap <m-b> :TSelectBuffer<cr>
+    inoremap <m-b> <c-o>:TSelectBuffer<cr>
+
+
+-----------------------------------------------------------------------
+Install~
+
+Edit the vba file and type: >
+
+    :so %
+
+See :help vimball for details. If you have difficulties or use vim 7.0, 
+please make sure, you have the current version of vimball
+(vimscript #1502) installed or update your runtime.
+
+Also available via git: http://github.com/tomtom/vimtlib/
+
+
+========================================================================
+Contents~
+
+        :TSelectBuffer ............... |:TSelectBuffer|
+        g:tselectbuffer_order ........ |g:tselectbuffer_order|
+        tselectbuffer#Select ......... |tselectbuffer#Select()|
+
+
+========================================================================
+plugin/tselectbuffer.vim~
+
+                                                    *:TSelectBuffer*
+:TSelectBuffer
+
+
+========================================================================
+autoload/tselectbuffer.vim~
+
+                                                    *g:tselectbuffer_order*
+g:tselectbuffer_order          (default: 'bufnr')
+    Possible values:
+      bufnr :: Default behaviour
+      mru   :: Sort buffers according to most recent use
+    
+    NOTE: MRU order works on second invocation only. If you want to always 
+    use MRU order, call tlib#buffer#EnableMRU() in your ~/.vimrc file.
+
+                                                    *tselectbuffer#Select()*
+tselectbuffer#Select(show_hidden)
+
+
+
+vim:tw=78:fo=tcq2:isk=!-~,^*,^|,^":ts=8:ft=help:norl:

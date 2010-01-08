@@ -60,51 +60,22 @@ Some "should"-functions require tlib (vimscript #1863) to be installed.
 ========================================================================
 Contents~
 
-        g:spec_cwindow ........................... |g:spec_cwindow|
-        g:spec_option_sets ....................... |g:spec_option_sets|
-        :Spec .................................... |:Spec|
-        SpecInit ................................. |SpecInit()|
-        :SpecBegin ............................... |:SpecBegin|
-        :SpecInclude ............................. |:SpecInclude|
-        :It ...................................... |:It|
-        :Should .................................. |:Should|
-        :Replay .................................. |:Replay|
-        spec#RewriteRule ......................... |spec#RewriteRule()|
-        spec#Include ............................. |spec#Include()|
-        spec#Val ................................. |spec#Val()|
-        spec#OpenScratch ......................... |spec#OpenScratch()|
-        spec#CloseScratch ........................ |spec#CloseScratch()|
-        spec#Feedkeys ............................ |spec#Feedkeys()|
-        spec#Replay .............................. |spec#Replay()|
-        spec#speckiller#Reset .................... |spec#speckiller#Reset()|
-        spec#speckiller#OptionSets ............... |spec#speckiller#OptionSets()|
-        should#be#Type ........................... |should#be#Type()|
-        should#be#Number ......................... |should#be#Number()|
-        should#be#String ......................... |should#be#String()|
-        should#be#Funcref ........................ |should#be#Funcref()|
-        should#be#List ........................... |should#be#List()|
-        should#be#Dictionary ..................... |should#be#Dictionary()|
-        should#be#Equal .......................... |should#be#Equal()|
-        should#be#Unequal ........................ |should#be#Unequal()|
-        should#be#Greater ........................ |should#be#Greater()|
-        should#be#GreaterEqual ................... |should#be#GreaterEqual()|
-        should#be#Less ........................... |should#be#Less()|
-        should#be#LessEqual ...................... |should#be#LessEqual()|
-        should#be#Empty .......................... |should#be#Empty()|
-        should#be#NotEmpty ....................... |should#be#NotEmpty()|
-        should#be#Match .......................... |should#be#Match()|
-        should#be#NotMatch ....................... |should#be#NotMatch()|
-        should#be#Existent ....................... |should#be#Existent()|
-        should#be#Like ........................... |should#be#Like()|
-        should#be#Unlike ......................... |should#be#Unlike()|
-        should#finish#InSecs ..................... |should#finish#InSecs()|
-        should#finish#InMicroSecs ................ |should#finish#InMicroSecs()|
-        should#maintain#WindowLayout ............. |should#maintain#WindowLayout()|
-        should#test#Init ......................... |should#test#Init()|
-        should#throw#Something ................... |should#throw#Something()|
-        should#throw#Exception ................... |should#throw#Exception()|
-        should#yield#Buffer ...................... |should#yield#Buffer()|
-        should#yield#SqueezedBuffer .............. |should#yield#SqueezedBuffer()|
+        g:spec_cwindow ........ |g:spec_cwindow|
+        g:spec_option_sets .... |g:spec_option_sets|
+        :Spec ................. |:Spec|
+        SpecInit .............. |SpecInit()|
+        :SpecBegin ............ |:SpecBegin|
+        :SpecInclude .......... |:SpecInclude|
+        :It ................... |:It|
+        :Should ............... |:Should|
+        :Replay ............... |:Replay|
+        spec#RewriteRule ...... |spec#RewriteRule()|
+        spec#Include .......... |spec#Include()|
+        spec#Val .............. |spec#Val()|
+        spec#OpenScratch ...... |spec#OpenScratch()|
+        spec#CloseScratch ..... |spec#CloseScratch()|
+        spec#Feedkeys ......... |spec#Feedkeys()|
+        spec#Replay ........... |spec#Replay()|
 
 
 ========================================================================
@@ -265,148 +236,6 @@ spec#Feedkeys(sequence)
                                                     *spec#Replay()*
 spec#Replay(macro)
     Replay a recorded macro.
-
-
-========================================================================
-autoload/spec/speckiller.vim~
-
-                                                    *spec#speckiller#Reset()*
-spec#speckiller#Reset()
-
-                                                    *spec#speckiller#OptionSets()*
-spec#speckiller#OptionSets(options, i)
-    Return the i'th option set.
-
-
-========================================================================
-autoload/should/be.vim~
-
-
-should#be#A(expr, type)
-    Test if expr is of type, where type can be:
-    
-        - One of: 'number', 'string', 'funcref', 'list', 'dictionary'
-        - A list of above type names (one of which must match)
-        - A dictionary in which case the type is evaluated as object 
-          template. Keys in the template that do not have a value of 0, 
-          must exist in the object/expression.
-    
-    See also |type()|.
-
-                                                    *should#be#Type()*
-should#be#Type(expr, type)
-    Faster checks than version above but without descriptive messages and 
-    type must be a string.
-
-                                                    *should#be#Number()*
-should#be#Number(expr)
-
-                                                    *should#be#String()*
-should#be#String(expr)
-
-                                                    *should#be#Funcref()*
-should#be#Funcref(expr)
-
-                                                    *should#be#List()*
-should#be#List(expr)
-
-                                                    *should#be#Dictionary()*
-should#be#Dictionary(expr)
-
-                                                    *should#be#Equal()*
-should#be#Equal(expr, expected)
-
-                                                    *should#be#Unequal()*
-should#be#Unequal(expr, expected)
-
-                                                    *should#be#Greater()*
-should#be#Greater(a, b)
-
-                                                    *should#be#GreaterEqual()*
-should#be#GreaterEqual(a, b)
-
-                                                    *should#be#Less()*
-should#be#Less(a, b)
-
-                                                    *should#be#LessEqual()*
-should#be#LessEqual(a, b)
-
-                                                    *should#be#Empty()*
-should#be#Empty(expr)
-
-                                                    *should#be#NotEmpty()*
-should#be#NotEmpty(expr)
-
-                                                    *should#be#Match()*
-should#be#Match(expr, expected)
-
-                                                    *should#be#NotMatch()*
-should#be#NotMatch(expr, expected)
-
-                                                    *should#be#Existent()*
-should#be#Existent(expr)
-
-                                                    *should#be#Like()*
-should#be#Like(string, rx, ?case='')
-    Case can be "#" or "?".
-
-                                                    *should#be#Unlike()*
-should#be#Unlike(string, rx, ?case='')
-    Case can be "#" or "?".
-
-
-========================================================================
-autoload/should/finish.vim~
-
-                                                    *should#finish#InSecs()*
-should#finish#InSecs(expr, secs)
-
-                                                    *should#finish#InMicroSecs()*
-should#finish#InMicroSecs(expr, msecs)
-
-
-========================================================================
-autoload/should/maintain.vim~
-
-                                                    *should#maintain#WindowLayout()*
-should#maintain#WindowLayout(layout)
-    Require tlib.
-
-
-========================================================================
-autoload/should/test.vim~
-
-                                                    *should#test#Init()*
-should#test#Init()
-
-
-========================================================================
-autoload/should/throw.vim~
-
-                                                    *should#throw#Something()*
-should#throw#Something(expr)
-    Return the exception when evaluating expr or an empty string if 
-    nothing was thrown.
-
-                                                    *should#throw#Exception()*
-should#throw#Exception(expr, expected)
-    Check if the exception throws when evaluating expr matches the 
-    expected |regexp|.
-
-
-========================================================================
-autoload/should/yield.vim~
-
-                                                    *should#yield#Buffer()*
-should#yield#Buffer(expr, filename)
-    Compare the current buffer with the contents of filename after 
-    |:exe|cuting expr.
-    Useful for testing normal commands, mappings etc.
-
-                                                    *should#yield#SqueezedBuffer()*
-should#yield#SqueezedBuffer(expr, filename)
-    Compare the current buffer with the contents of filename after 
-    |:exe|cuting expr but ignore changes in whitespace.
 
 
 

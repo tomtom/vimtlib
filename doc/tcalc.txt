@@ -453,10 +453,10 @@ Simple-minded primes generator: >
 ========================================================================
 Contents~
 
+        :TCalc ............... |:TCalc|
         g:tcalc_initialize ... |g:tcalc_initialize|
         g:tcalc_lines ........ |g:tcalc_lines|
         g:tcalc_dir .......... |g:tcalc_dir|
-        :TCalc ............... |:TCalc|
         tcalc#Calculator ..... |tcalc#Calculator()|
         tcalc#Eval ........... |tcalc#Eval()|
         tcalc#Complete ....... |tcalc#Complete()|
@@ -464,6 +464,14 @@ Contents~
 
 ========================================================================
 plugin/tcalc.vim~
+
+                                                    *:TCalc*
+TCalc[!]
+    With !, reset stack & input queue.
+
+
+========================================================================
+autoload/tcalc.vim~
 
                                                     *g:tcalc_initialize*
 g:tcalc_initialize
@@ -477,14 +485,6 @@ g:tcalc_lines                  (default: 10)
                                                     *g:tcalc_dir*
 g:tcalc_dir                    (default: fnamemodify('~/.tcalc', ':p'))
     The default directory where "source" finds files.
-
-                                                    *:TCalc*
-TCalc[!]
-    With !, reset stack & input queue.
-
-
-========================================================================
-autoload/tcalc.vim~
 
                                                     *tcalc#Calculator()*
 tcalc#Calculator(reset, initial_args)

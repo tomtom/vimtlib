@@ -85,6 +85,7 @@ Contents~
         :TAssertComment ........ |:TAssertComment|
         :TAssertUncomment ...... |:TAssertUncomment|
         IsA .................... |IsA()|
+        IsItA .................. |IsItA()|
         IsNumber ............... |IsNumber()|
         IsString ............... |IsString()|
         IsFuncref .............. |IsFuncref()|
@@ -102,6 +103,7 @@ Contents~
         :TLog .................. |:TLog|
         :TLogTODO .............. |:TLogTODO|
         :TLogDBG ............... |:TLogDBG|
+        :TLogExec .............. |:TLogExec|
         :TLogStyle ............. |:TLogStyle|
         :TLogVAR ............... |:TLogVAR|
         :TLogOn ................ |:TLogOn|
@@ -171,6 +173,9 @@ this statement to your |vimrc| file: >
                                                     *IsA()*
 IsA(expr, type)
 
+                                                    *IsItA()*
+IsItA(expr, type)
+
                                                     *IsNumber()*
 IsNumber(expr)
 
@@ -227,6 +232,10 @@ plugin/05tlog.vim~
                                                     *:TLogDBG*
 :TLogDBG EXPRESSION
     Expression must evaluate to a string.
+
+                                                    *:TLogExec*
+:TLogExec EXPRESSION
+    Execute an expression.
 
                                                     *:TLogStyle*
 :TLogStyle STYLE EXPRESSION

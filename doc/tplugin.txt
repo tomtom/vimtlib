@@ -10,6 +10,9 @@ Raison d'être: Help users of the vimtlib repository
 use. But it is usable for any plugin that is distributed as git or svn 
 repository etc.
 
+tplugin also provides some sort of autoload mechanism for commands and 
+functions similar to the AsNeeded plugin. See below for details.
+
 It also assumes that your local copies follow a certain directory 
 layout:
 
@@ -60,7 +63,11 @@ split such repositories into specific ones):
 
     TPlugin repo2 foo bar
 
-Full example: >
+If you make use of tplugin's autoload mechanism (see |:TPluginScan|), it 
+isn't necessary to list every single plugin. In this case, setting the 
+root directory would suffice.
+
+Full example as it could be found in a |vimrc| file: >
 
     runtime macros/tplugin.vim
     TPluginRoot F:\repos
@@ -82,6 +89,14 @@ load a managed plugin immediately by adding a bang '!' to the |:TPlugin|
 command.
 
 
+AsNeeded Users~
+
+You could make use of tplugin's autoloading mechanism and move the files 
+in the AsNeeded subdirectory to REPOS/AsNeeded/plugin/. |:TPluginScan| 
+would then create dummy definitions for commands and functions. Maps are 
+not supported by tplugin (other than the AsNeeded plugin).
+
+
 Related work~
 
     - Marc Weber's vim-plugin-manager (my main source of inspiration for 
@@ -90,6 +105,7 @@ Related work~
 
     - Tim Pope's pathogen (vimscript #2332).
 
+    - Charles E. Campbell's AsNeeded (vimscript #915)
 
 
 -----------------------------------------------------------------------
@@ -109,9 +125,18 @@ Also available via git: http://github.com/tomtom/vimtlib/
 ========================================================================
 Contents~
 
-        g:tplugin_helptags ... |g:tplugin_helptags|
-        :TPlugin ............. |:TPlugin|
-        :TPluginRoot ......... |:TPluginRoot|
+        g:tplugin_helptags ......... |g:tplugin_helptags|
+        g:tplugin_autoload ......... |g:tplugin_autoload|
+        :TPlugin ................... |:TPlugin|
+        :TPluginRoot ............... |:TPluginRoot|
+        :TPluginFunction ........... |:TPluginFunction|
+        :TPluginCommand ............ |:TPluginCommand|
+        :TPluginScan ............... |:TPluginScan|
+        g:tplugin_menu_prefix ...... |g:tplugin_menu_prefix|
+        tplugin#RegisterFunction ... |tplugin#RegisterFunction()|
+        tplugin#Autoload ........... |tplugin#Autoload()|
+        tplugin#Scan ............... |tplugin#Scan()|
+        tplugin#Menu ............... |tplugin#Menu()|
 
 
 ========================================================================
@@ -122,17 +147,97 @@ g:tplugin_helptags             (default: 1)
     If non-nil, optionally generate helptags for the repository's doc 
     subdirectory.
 
+                                                    *g:tplugin_autoload*
+g:tplugin_autoload             (default: 1)
+    Enable autoloading. See |:TPluginScan|, |:TPluginCommand|, and 
+    |:TPluginFunction|.
+
                                                     *:TPlugin*
 :TPlugin[!] REPOSITORY [PLUGINS ...]
     Register certain plugins for being sourced at |VimEnter| time.
     See |tplugin.txt| for details.
+    
     With the optional '!', the plugin will be loaded immediately.
     In interactive use, i.e. once vim was loaded, plugins will be loaded 
     immediately anyway.
+    
+    IF REPOSITORY contains a slash or a backslash, it is considered the 
+    path relative from the current root directory to the plugin directory. 
+    This allows you to deal with repositories with a non-standard 
+    directory layout. Otherwise it is assumed that the source files are 
+    located in the "plugin" subdirectory.
 
                                                     *:TPluginRoot*
 :TPluginRoot DIRECTORY
     Define the root directory for the following |:TPlugin| commands.
+    Read autoload information if available (see |g:tplugin_autoload| and 
+    |:TPluginScan|).
+
+                                                    *:TPluginFunction*
+:TPluginFunction FUNCTION REPOSITORY [PLUGIN]
+    Load a certain plugin on demand (aka autoload) when FUNCTION is called 
+    for the first time.
+
+                                                    *:TPluginCommand*
+:TPluginCommand COMMAND REPOSITORY [PLUGIN]
+    Load a certain plugin on demand (aka autoload) when COMMAND is called 
+    for the first time. Then call the original command.
+    
+    Example: >
+      TPluginCommand TSelectBuffer vimtlib tselectbuffer
+<
+
+                                                    *:TPluginScan*
+:TPluginScan[!] [WHAT...]
+    Scan the current root directory for commands and functions. Save 
+    autoload information in "ROOT/.tplugin.vim".
+    
+    Where WHAT is a subset of: commands functions autoload all.
+    WHAT defaults to: commands functions.
+    
+    With the optional '!', the autocommands are immediatly usable.
+    
+    Other than the AsNeeded plugin, tplugin doesn't support the creation 
+    of autoload information for maps.
+    
+    If you collect repositories in one than more directory, I'd suggest to 
+    create a special script.
+    
+    Example: >
+      TPluginRoot dir1
+      TPluginScan
+      TPluginRoot dir2
+      TPluginScan
+<
+
+
+========================================================================
+autoload/tplugin.vim~
+
+                                                    *g:tplugin_menu_prefix*
+g:tplugin_menu_prefix          (default: '')
+    If autoload is enabled and this variable is non-empty, build a 
+    menu with available plugins.
+    Menus are disabled by default because they are less useful 
+    than one might think with autoload enabled.
+    A good choice for this variable would be, e.g., 
+    'Plugin.T&Plugin.'.
+    NOTE: You have to re-run |:TPluginScan| after setting this 
+    value.
+
+                                                    *tplugin#RegisterFunction()*
+tplugin#RegisterFunction(def)
+
+                                                    *tplugin#Autoload()*
+tplugin#Autoload(type, def, bang, range, args)
+    args: A string it type == 1, a list if type == 2
+
+                                                    *tplugin#Scan()*
+tplugin#Scan(immediate, roots, what)
+    Write autoload information for all known root directories to "ROOT/.tplugin.vim".
+
+                                                    *tplugin#Menu()*
+tplugin#Menu(item, cmd)
 
 
 

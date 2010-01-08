@@ -42,7 +42,9 @@ Suggested setup for java (best set in ~/vimfiles/after/ftplugin/java.vim): >
     " See notes on |tlib#tag#Retrieve()|.
     let b:tlib_tags_extra = $JAVA_HOME .'/tags0'
 
-    let b:ttagcomplete_collect='ttagcomplete#Java'
+    " You can set this variable before calling |:TTagCompleteOn| if you  
+    " don't want to use the default function.
+    let b:ttagcomplete_collect='ttagcomplete#java#Collect'
 
     " Call |ttagcomplete#On()| and set 'omnifunc'.
     TTagCompleteOn
@@ -57,18 +59,15 @@ Suggested setup for java (best set in ~/vimfiles/after/ftplugin/java.vim): >
 ========================================================================
 Contents~
 
-        g:ttagcomplete_constraints ......... |g:ttagcomplete_constraints|
-        g:ttagecho_use_extra ............... |g:ttagecho_use_extra|
-        g:ttagecho_min_chars ............... |g:ttagecho_min_chars|
-        :TTagCompleteOn .................... |:TTagCompleteOn|
-        :TTagCompleteOff ................... |:TTagCompleteOff|
-        ttagcomplete#On .................... |ttagcomplete#On()|
-        ttagcomplete#Off ................... |ttagcomplete#Off()|
-        ttagcomplete#CompleteSkeletons ..... |ttagcomplete#CompleteSkeletons()|
-        ttagcomplete#Complete .............. |ttagcomplete#Complete()|
-        ttagcomplete#Java .................. |ttagcomplete#Java()|
-        ttagcomplete#FindJavaClass ......... |ttagcomplete#FindJavaClass()|
-        ttagcomplete#FindJavaClassInTags ... |ttagcomplete#FindJavaClassInTags()|
+        g:ttagcomplete_constraints ....... |g:ttagcomplete_constraints|
+        g:ttagecho_use_extra ............. |g:ttagecho_use_extra|
+        g:ttagecho_min_chars ............. |g:ttagecho_min_chars|
+        :TTagCompleteOn .................. |:TTagCompleteOn|
+        :TTagCompleteOff ................. |:TTagCompleteOff|
+        ttagcomplete#On .................. |ttagcomplete#On()|
+        ttagcomplete#Off ................. |ttagcomplete#Off()|
+        ttagcomplete#CompleteSkeletons ... |ttagcomplete#CompleteSkeletons()|
+        ttagcomplete#Complete ............ |ttagcomplete#Complete()|
 
 
 ========================================================================
@@ -104,6 +103,9 @@ ttagcomplete#On(...)
     function! ttagcomplete#On(?option="omni")
     If option is "complete", set 'completefunc' instead of 'omnifunc' (the 
     default).
+    This will call ttagcomplete#{&filetype}#Init() if the variable 
+    b:ttagcomplete_collect isn't already set. b:ttagcomplete_collect will 
+    be set to a function that follows the protocol for |complete-functions|.
 
                                                     *ttagcomplete#Off()*
 ttagcomplete#Off(...)
@@ -113,15 +115,6 @@ ttagcomplete#CompleteSkeletons(...)
 
                                                     *ttagcomplete#Complete()*
 ttagcomplete#Complete(findstart, base)
-
-                                                    *ttagcomplete#Java()*
-ttagcomplete#Java(constraints, base, context)
-
-                                                    *ttagcomplete#FindJavaClass()*
-ttagcomplete#FindJavaClass(name)
-
-                                                    *ttagcomplete#FindJavaClassInTags()*
-ttagcomplete#FindJavaClassInTags(name)
 
 
 

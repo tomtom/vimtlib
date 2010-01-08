@@ -41,6 +41,8 @@ You can use :echo keys(ttags#Kinds())<cr> to find out which kinds are defined.
 ========================================================================
 Contents~
 
+        :TTags ................... |:TTags|
+        :TTagselect .............. |:TTagselect|
         g:ttags_kinds ............ |g:ttags_kinds|
         g:ttags_name_rx .......... |g:ttags_name_rx|
         g:ttags_filename_rx ...... |g:ttags_filename_rx|
@@ -50,8 +52,6 @@ Contents~
         g:ttags_match_end ........ |g:ttags_match_end|
         g:ttags_highlighting ..... |g:ttags_highlighting|
         g:ttags_world ............ |g:ttags_world|
-        :TTags ................... |:TTags|
-        :TTagselect .............. |:TTagselect|
         ttags#Kinds .............. |ttags#Kinds()|
         ttags#Highlight .......... |ttags#Highlight()|
         ttags#List ............... |ttags#List()|
@@ -65,6 +65,37 @@ Contents~
 
 ========================================================================
 plugin/ttags.vim~
+
+                                                    *:TTags*
+TTags[!] [KIND] [TAGS_RX] [FILE_RX]
+    See also |ttags#List()| and |ttags#SelectTags()|.
+    
+    Examples:
+    Match tags in the current file: >
+      TTags * * .
+    Show classes [c]: >
+      TTags c
+    Show classes beginning with Foo: >
+      TTags c ^Foo
+<
+
+                                                    *:TTagselect*
+TTagselect[!] kind:KIND FIELD:REGEXP ...
+    For values of field see |taglist()|. These fields depend also on your 
+    tags generator.
+    
+    If you want to automatically restict your searches to the current 
+    namespace, you would have to write a function that determines the 
+    namespace (and maybe e-mail it to me) and then call 
+    |ttags#SelectTags()|.
+    
+    Examples:
+      " Show tags matching "bar" in class "Foo"
+      TTagselect name:bar class:Foo
+
+
+========================================================================
+autoload/ttags.vim~
 
                                                     *g:ttags_kinds*
 g:ttags_kinds                  (default: '')
@@ -102,37 +133,6 @@ g:ttags_highlighting
 
                                                     *g:ttags_world*
 g:ttags_world
-
-                                                    *:TTags*
-TTags[!] [KIND] [TAGS_RX] [FILE_RX]
-    See also |ttags#List()| and |ttags#SelectTags()|.
-    
-    Examples:
-    Match tags in the current file: >
-      TTags * * .
-    Show classes [c]: >
-      TTags c
-    Show classes beginning with Foo: >
-      TTags c ^Foo
-<
-
-                                                    *:TTagselect*
-TTagselect[!] kind:KIND FIELD:REGEXP ...
-    For values of field see |taglist()|. These fields depend also on your 
-    tags generator.
-    
-    If you want to automatically restict your searches to the current 
-    namespace, you would have to write a function that determines the 
-    namespace (and maybe e-mail it to me) and then call 
-    |ttags#SelectTags()|.
-    
-    Examples:
-      " Show tags matching "bar" in class "Foo"
-      TTagselect name:bar class:Foo
-
-
-========================================================================
-autoload/ttags.vim~
 
                                                     *ttags#Kinds()*
 ttags#Kinds(...)

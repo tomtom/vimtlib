@@ -32,15 +32,6 @@ Contents~
         g:cmdlinehelpMapView ..... |g:cmdlinehelpMapView|
         g:cmdlinehelpMapDown ..... |g:cmdlinehelpMapDown|
         g:cmdlinehelpMapUp ....... |g:cmdlinehelpMapUp|
-        g:cmdlinehelpIgnore ...... |g:cmdlinehelpIgnore|
-        g:cmdlinehelpPatterns .... |g:cmdlinehelpPatterns|
-        g:cmdlinehelpTags ........ |g:cmdlinehelpTags|
-        g:cmdlinehelpTable ....... |g:cmdlinehelpTable|
-        g:cmdlinehelpPrefixes .... |g:cmdlinehelpPrefixes|
-        CmdLineHelpView .......... |CmdLineHelpView()|
-        CmdLineHelpBuffer ........ |CmdLineHelpBuffer()|
-        CmdLineHelpDown .......... |CmdLineHelpDown()|
-        CmdLineHelpUp ............ |CmdLineHelpUp()|
         c_<esc> .................. |c_<esc>|
         c_<c-c> .................. |c_<c-c>|
 
@@ -62,54 +53,6 @@ g:cmdlinehelpMapDown           (default: '<c-pagedown>')
 
                                                     *g:cmdlinehelpMapUp*
 g:cmdlinehelpMapUp             (default: '<c-pageup>')
-
-                                                    *g:cmdlinehelpIgnore*
-g:cmdlinehelpIgnore            (default: 'sil\%[ent]\|verb\%[ose]\|debug')
-    Uninteresting stuff that should be ignored when searching for a command.
-
-                                                    *g:cmdlinehelpPatterns*
-g:cmdlinehelpPatterns
-    A dictionary of line patters for extracting the tag from the 
-    command line and format strings for formatting the tag. This is 
-    used for, e.g., the |:set| command to show help on the option but 
-    not on the command.
-
-                                                    *g:cmdlinehelpTags*
-g:cmdlinehelpTags              (default: join(split(globpath(&rtp, 'doc/tags'), '\n'), ','))
-    The tags. Defaults to standard help tags.
-
-                                                    *g:cmdlinehelpTable*
-g:cmdlinehelpTable
-    A table of tags (regexps to be precise) and replacement tags that 
-    should be displayed instead of the default tag.
-    
-    If the replacement starts with an asterisk, it is considered a 
-    function name that will be called with 3 arguments  
-    (commandline, cursor-pos, tag) and should return an array 
-    [new commandline, new cursor-pos].
-
-                                                    *g:cmdlinehelpPrefixes*
-g:cmdlinehelpPrefixes          (default: ['cheat:'])
-    If a tag with one of these prefixes is found, it will be used 
-    instead of the default one. This should make it quite easy to use 
-    nicely formatted cheat sheets without interfering with normal vim 
-    help. Simply save your cheat sheet to ~/vimfiles/doc/, tag the 
-    entries with a prefix (e.g. "cheat::edit" for ":edit") and run 
-    |:helptags|.
-
-                                                    *CmdLineHelpView()*
-CmdLineHelpView()
-    Find help for the first "interesting" command on the current command line.
-
-                                                    *CmdLineHelpBuffer()*
-CmdLineHelpBuffer()
-    Save the current command line.
-
-                                                    *CmdLineHelpDown()*
-CmdLineHelpDown()
-
-                                                    *CmdLineHelpUp()*
-CmdLineHelpUp()
 
                                                     *c_<esc>*
 c_<esc> ... <c-c><c-w>z
