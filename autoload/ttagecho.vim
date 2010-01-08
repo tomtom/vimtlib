@@ -3,10 +3,41 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-10-28.
-" @Last Change: 2010-01-03.
-" @Revision:    0.0.212
+" @Last Change: 2010-01-05.
+" @Revision:    0.0.215
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
+
+
+if !exists('g:ttagecho_char_rx')
+    " Regexps to match keyword characters (in case you don't want to 
+    " change iskeyword.
+    " :read: let g:ttagecho_char_rx = {} "{{{2
+    let g:ttagecho_char_rx = {
+                \ 'vim': '\(\w\|#\)',
+                \ }
+endif
+
+
+if !exists('g:ttagecho_balloon_limit')
+    " The number of items to be displayed in the balloon popup. It will be 
+    " evaluated with |eval()|, which is why it can also be a vim expression.
+    let g:ttagecho_balloon_limit = '&lines * 2 / 3'   "{{{2
+endif
+
+
+if !exists('g:ttagecho_tagwidth')
+    " The width of the tag "column". It will be evaluated with |eval()|, which 
+    " is why it can also be a vim expression.
+    let g:ttagecho_tagwidth = '&co / 3'  "{{{2
+endif
+
+
+if !exists('g:ttagecho_matchbeginning')
+    " If true, match only the beginning of a tag (i.e. don't add '$' to 
+    " the regexp).
+    let g:ttagecho_matchbeginning = 0   "{{{2
+endif
 
 
 let s:echo_constraints = ''

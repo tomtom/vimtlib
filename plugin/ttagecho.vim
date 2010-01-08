@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-10-28.
-" @Last Change: 2009-08-09.
-" @Revision:    0.5.135
+" @Last Change: 2010-01-05.
+" @Revision:    0.5.140
 " GetLatestVimScripts: 2055 0 ttagecho.vim
 
 if &cp || exists("loaded_ttagecho")
@@ -17,7 +17,7 @@ if !exists('g:loaded_tlib') || g:loaded_tlib < 25
         finish
     endif
 endif
-let loaded_ttagecho = 5
+let loaded_ttagecho = 6
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -28,24 +28,8 @@ if !exists('g:ttagecho_parentheses_patterns')
     " information when moving over parantheses for these filetypes.
     " :read: let g:ttagecho_parentheses_patterns = [] "{{{2
     let g:ttagecho_parentheses_patterns = [
-                \ '*.c',
-                \ '*.h',
-                \ '*.java',
-                \ '*.js',
-                \ '*.php',
-                \ '*.rb',
-                \ '*.vim',
+                \ '*.c', '*.h', '*.java', '*.js', '*.php', '*.rb','*.vim',
                 \ ]
-endif
-
-
-if !exists('g:ttagecho_char_rx')
-    " Regexps to match keyword characters (in case you don't want to 
-    " change iskeyword.
-    " :read: let g:ttagecho_char_rx = {} "{{{2
-    let g:ttagecho_char_rx = {
-                \ 'vim': '\(\w\|#\)',
-                \ }
 endif
 
 
@@ -64,27 +48,6 @@ if !exists('g:ttagecho_restore_showmode')
     " case you might need to set 'cmdheight' to something greater than 
     " 1.
     let g:ttagecho_restore_showmode = 0 "{{{2
-endif
-
-
-if !exists('g:ttagecho_balloon_limit')
-    " The number of items to be displayed in the balloon popup. It will be 
-    " evaluated with |eval()|, which is why it can also be a vim expression.
-    let g:ttagecho_balloon_limit = '&lines * 2 / 3'   "{{{2
-endif
-
-
-if !exists('g:ttagecho_tagwidth')
-    " The width of the tag "column". It will be evaluated with |eval()|, which 
-    " is why it can also be a vim expression.
-    let g:ttagecho_tagwidth = '&co / 3'  "{{{2
-endif
-
-
-if !exists('g:ttagecho_matchbeginning')
-    " If true, match only the beginning of a tag (i.e. don't add '$' to 
-    " the regexp).
-    let g:ttagecho_matchbeginning = 0   "{{{2
 endif
 
 
