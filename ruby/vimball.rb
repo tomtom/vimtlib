@@ -3,7 +3,7 @@
 # @Author:      Tom Link (micathom AT gmail com)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2009-02-10.
-# @Last Change: 2010-01-04.
+# @Last Change: 2010-01-05.
 #
 # This script creates and installs vimballs without vim.
 #
@@ -38,7 +38,7 @@ require 'zlib'
 class Vimball
 
     APPNAME = 'vimball'
-    VERSION = '1.0.216'
+    VERSION = '1.0.217'
     HEADER = <<HEADER
 " Vimball Archiver by Charles E. Campbell, Jr., Ph.D.
 UseVimball
@@ -280,7 +280,7 @@ HEADER
             if files.all? {|file|
                 file = file.strip
                 filename = File.join(@config['vimfiles'], file)
-                filename1 = get_file(filename)
+                filename1 = filename_on_disk(filename)
                 unless File.exist?(filename1)
                     $logger.error "File does not exist: #{filename1}"
                     return
@@ -299,7 +299,7 @@ HEADER
             file = file.strip
             unless file.empty?
                 filename = File.join(@config['vimfiles'], file)
-                filename1 = get_file(filename)
+                filename1 = filename_on_disk(filename)
                 if File.readable?(filename1)
                     content = File.readlines(filename1)
                 else
@@ -471,7 +471,7 @@ HEADER
         return filename
     end
 
-    def get_file(filename)
+    def filename_on_disk(filename)
         if File.exist?(filename)
             return filename
         else
