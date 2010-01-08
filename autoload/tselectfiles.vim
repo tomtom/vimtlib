@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-10-15.
-" @Last Change: 2010-01-03.
-" @Revision:    0.0.296
+" @Last Change: 2010-01-06.
+" @Revision:    0.0.300
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
@@ -614,6 +614,7 @@ function! tselectfiles#BaseFilter(...) "{{{3
         call map(parts, 'substitute(v:val, pattern, substitution, "g")')
     endfor
     call filter(parts, '!empty(v:val)')
+    " let b:tselectfiles_filter_rx = '\<'. join(parts, '\|\<')
     let b:tselectfiles_filter_rx = join(parts, '\|')
     return b:tselectfiles_filter_rx
 endf

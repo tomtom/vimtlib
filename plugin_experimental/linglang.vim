@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-07-11.
-" @Last Change: 2009-02-15.
-" @Revision:    68
+" @Last Change: 2010-01-05.
+" @Revision:    69
 " GetLatestVimScripts: 2292 0 linglang.vim
 
 if &cp || exists("loaded_linglang")
