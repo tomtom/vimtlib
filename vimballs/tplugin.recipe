@@ -1,2 +1,3 @@
 doc/tplugin.txt
 macros/tplugin.vim
+autoload/tplugin.vim
