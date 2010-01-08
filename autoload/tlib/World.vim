@@ -3,18 +3,12 @@
 " @Website:     http://members.a1.net/t.link/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-05-01.
-" @Last Change: 2009-10-25.
-" @Revision:    0.1.740
+" @Last Change: 2010-01-05.
+" @Revision:    0.1.742
 
 " :filedoc:
 " A prototype used by |tlib#input#List|.
 " Inherits from |tlib#Object#New|.
-
-
-if &cp || exists("loaded_tlib_world_autoload")
-    finish
-endif
-let loaded_tlib_world_autoload = 1
 
 
 let s:prototype = tlib#Object#New({
