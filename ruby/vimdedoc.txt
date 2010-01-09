@@ -1,0 +1,49 @@
+#TI: vimdedoc
+#AU: Tom Link
+
+In order to use vimdedoc, you need
+
+    1. a template, which actually is a format string (i.e. you have to 
+       escape percent signs (:%s/%/%%/g) and the template has to contain 
+       exactly one ''%s'' marker for the content extracted from the 
+       source files.
+
+    2. vim source files that follow a simple convention:
+
+        1. Commands and functions are defined as either
+            - com
+            - com!
+            - command
+            - command!
+            - fun
+            - fun!
+            - function
+            - function!
+
+        2. Important variables have a vim fold marker attached as in:
+           ''let g:foo = "bar" {{{1''
+
+        3. The documentation is embedded in documents and precedes the 
+           definition of the command, function, variable.
+
+A typical call would look like this:
+''ruby/vimdedoc.rb -o doc/foo.txt -t templates/foo.txt plugin/foo.vim 
+autoload/foo.vim syntax/foo.vim''
+
+vimdedoc also provides a set of tags to modify the generated output.
+
+    :nodoc: :: Ignore the next definition.
+    :enddoc: :: Skip the rest of the file.
+    :filedoc: :: Document block for the file.
+    :doc: :: Include the following comment block in the documentation.
+    :tagprefix PREFIX: :: Prefix tags.
+    :tag: TAG :: Use a non-standard tag.
+    :def: TEXT :: Use a different definition.
+    :display: TEXT :: Use TEXT as defintion in the help file (useful for 
+      commands).
+    :nodefault: :: Hide the default value of variables.
+    :read: TEXT :: Read TEXT instead of the actual definition.
+
+
+% 2010-01-09; @Last Change: 2010-01-09.
+% vi: ft=viki:tw=72:ts=4

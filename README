@@ -64,7 +64,7 @@ Legend:
 * Scripts
 
     ruby/vimball.rb      ... Create vimballs from the command-line (EXPERIMENTAL)
-    ruby/vimdedoc.rb     ... The ill-conceived, undocumented VimL source code documenter
+    ruby/vimdedoc.rb     ... The ill-conceived, casual vimscript source code documenter
     ruby/vimtips2help.rb ... Convert an XML dump of the vimtips wiki to a tagged help file
 
 
