@@ -3,17 +3,18 @@
 
 With the distribution of vim plugins as git repositories, the usual 
 directory layout has become somewhat disadvantagous. This script 
-provides a way to load those plugins in an efficient manner. 
+provides a way to load those plugins in an efficient manner.
 
-Raison d'être: Help users of the vimtlib repository 
-(http://github.com/tomtom/vimtlib/) to pick the plugins they want to 
-use. But it is usable for any plugin that is distributed as git or svn 
-repository etc.
+tplugin also provides an autoload mechanism for commands and functions 
+similar to the AsNeeded plugin. See below for details.
 
-tplugin also provides some sort of autoload mechanism for commands and 
-functions similar to the AsNeeded plugin. See below for details.
+The main purpose of this plugin was to facilitate the use of plugins 
+that are downloaded from a VCS like git, svn etc. But it can also be 
+used to handle plugins distributed as zip or tgz archives. For vimballs, 
+you'll might have to use a non-standard vimball unpacker---like the one 
+that can be found in the vimtlib repository.
 
-It also assumes that your local copies follow a certain directory 
+tplugin also assumes that your local copies follow a certain directory 
 layout:
 
     ROOT/
@@ -29,70 +30,77 @@ layout:
         plugin/
       ...
 
-In order to use this plugin insert the following lines at the top of 
-your |vimrc| file: >
+You can have more than one root directory although it currently (as of 
+version 0.2) could cause problems and is deprecated. 
 
-    source WHEREVER/macros/tplugin.vim
 
-If you have installed this script in your default user |vimfiles| 
-directory, you could also use: >
-    
-    runtime macros/tplugin.vim
+Usage~
+                                                    *tplugin-autoload*
+With autoload:
 
-It is advantageous to source the macro rather at the top of your vimrc 
-file before making any changes to the 'runtimepath'. If you don't change 
-the 'runtimepath', the position is of no importance.
+    By default, tplugin has autoload enabled. With autoload, you can use 
+    tplugin by (1) loading the macro in your |vimrc| file and then (2) 
+    setting non-standard root directories. The standard root-directory 
+    is ~/vimfiles/repos (or ~/.vim/repos) and does not have to be 
+    explicitely declared.
 
-If the ROOT directory is not the subdirectory "repos" of the first 
-directory in your 'runtimepath' (i.e. something like ~/vimfiles/repos), 
-you also have to add the following command: >
+    Example: >
+        
+        runtime macros/tplugin.vim
+        " Only necessary if you use a non-standard root directory
+        TPluginRoot /home/x/src/repos
 
-    TPluginRoot ~/vimfiles/repos
+<   (3) Collect the autoload information by running the |:TPluginScan| 
+    command. (4) Restart vim.
 
-Now, for each plugin repository you want to load, add a |:TPlugin| 
-command. I.e. you have to enable every single repository (a.k.a. 
-opt-in).
+    The plugins will be loaded as soon as one of its functions or 
+    commands is called for the first time.
 
-1.) Load all plugins in repository "repo1":
+Without autoload:
 
-    TPlugin repo1
+    (1) Load the macro and (2) set non-standard root directories. In 
+    addition, (3) load plugins as desired.
 
-2.) Load certain plugins in repository "repo2" (this is relevant for 
-comprehensive repositories like vimtlib although it would be better to 
-split such repositories into specific ones):
+    Example: >
 
-    TPlugin repo2 foo bar
+        runtime macros/tplugin.vim
+        " Only necessary if you use a non-standard root directory
+        TPluginRoot /home/x/src/repos
+        " Load all plugins in repo1
+        TPlugin repo1
+        " Load only specified plugins from repo2
+        TPlugin repo2 foo bar
 
-If you make use of tplugin's autoload mechanism (see |:TPluginScan|), it 
-isn't necessary to list every single plugin. In this case, setting the 
-root directory would suffice.
+<   It is advantageous to source the macro rather at the top of your 
+    vimrc file before making any changes to the 'runtimepath'. If you 
+    don't change the 'runtimepath', the position is of no importance.
 
-Full example as it could be found in a |vimrc| file: >
+    Full example as it could be found in a |vimrc| file: >
 
-    runtime macros/tplugin.vim
-    TPluginRoot F:\repos
-    TPlugin vim-surround
-    let g:snippets_dir = 'F:\repos\snipmate.vim\snippets'
-    TPlugin snipmate.vim
-    TPlugin vimtlib 02tlib viki trag checksyntax
+        runtime macros/tplugin.vim
+        TPluginRoot F:\repos
+        TPlugin vim-surround
+        let g:snippets_dir = 'X:\vimfiles\snippets,F:\repos\snipmate.vim\snippets'
+        TPlugin snipmate.vim
+        TPlugin! vimtlib 02tlib
 
 CAVEAT: If you have a file after/plugin/foo.vim in you user vimfiles 
 directory, this file will be loaded before any "managed" plugin "foo". 
 You thus have to check in your after/plugin/foo.vim file if the plugin 
 was already loaded.
 
-Other than the default plugin behaviour, those managed plugins are 
+Contrary to the default plugin behaviour, those managed plugins are 
 loaded when the |VimEnter| event is triggered, i.e. after all plugins 
 (incl. the after directory) and |gvimrc| was loaded. This approach 
 provides for a better control of which plugins should be loaded. You can 
 load a managed plugin immediately by adding a bang '!' to the |:TPlugin| 
 command.
 
-
+                                                    *tplugin-asneeded*
 AsNeeded Users~
 
 You could make use of tplugin's autoloading mechanism and move the files 
-in the AsNeeded subdirectory to REPOS/AsNeeded/plugin/. |:TPluginScan| 
+in the AsNeeded subdirectory to REPOS/_asneeded/plugin/. |:TPluginScan| 
 would then create dummy definitions for commands and functions. Maps are 
 not supported by tplugin (other than the AsNeeded plugin).
 
@@ -188,12 +196,18 @@ g:tplugin_autoload             (default: 1)
 <
 
                                                     *:TPluginScan*
-:TPluginScan[!] [WHAT...]
+:TPluginScan[!] [WHAT]
     Scan the current root directory for commands and functions. Save 
     autoload information in "ROOT/.tplugin.vim".
     
-    Where WHAT is a subset of: commands functions autoload all.
-    WHAT defaults to: commands functions.
+    Where WHAT is a combination of the following identifiers:
+    
+       c ... commands
+       f ... functions
+       a ... autoload
+       all ... the same as: cfa
+    
+    WHAT defaults to: cf.
     
     With the optional '!', the autocommands are immediatly usable.
     
@@ -233,7 +247,7 @@ tplugin#Autoload(type, def, bang, range, args)
     args: A string it type == 1, a list if type == 2
 
                                                     *tplugin#Scan()*
-tplugin#Scan(immediate, roots, what)
+tplugin#Scan(immediate, roots, args)
     Write autoload information for all known root directories to "ROOT/.tplugin.vim".
 
                                                     *tplugin#Menu()*
