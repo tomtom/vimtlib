@@ -3,8 +3,8 @@
 # @Author:      Tom Link (micathom at gmail com)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2007-07-25.
-# @Last Change: 2010-01-08.
-# @Revision:    462
+# @Last Change: 2010-01-10.
+# @Revision:    465
 
 
 require 'yaml'
@@ -56,7 +56,7 @@ class VimDedoc
             },
             [:vim, '.vim'] => {
                 # :entry_rx => /^\s*(((com|fun|TLet)\w*)\b!?\s*[^"]+).*$/,
-                :entry_rx => /^\s*((com(mand)?|fun(ction)?|TLet)\b!?\s+.+?|let\s+.*?\s"\{\{\{\d|[incv]?(nore)?map\s.*)\s*$/,
+                :entry_rx => /^\s*((com(mand)?|fun(ction)?|TLet)\b!?\s+.+?|let\s+.*?\s"\{\{\{\d|[incvoslx]?(nore)?map\s.*)\s*$/,
                 # :eligible => lambda {|head| head =~ /^\S+\s+s:prototype\./ || head !~ /^\S+\s+(s:|<SID>)/},
                 :eligible => lambda {|head| head =~ /^\S+\s+s:prototype\./ || head !~ /^\S+\s+(s:|<SID>|\w+#__)/},
                 :doc_rx   => /^\s*"\s?(.*)$/,
@@ -74,7 +74,7 @@ class VimDedoc
                         text = "prototype.#$1"
                     elsif text =~ /^\s*fun.+?\s((\S+#)*[[:upper:]].*?\s*\(.*?\))/
                         text = "#$1"
-                    elsif text =~ /^\s*(([incv])?(nore)?map)\s+(<buffer> |<silent> )*\s*(\S+)\s+(.*)\s*$/
+                    elsif text =~ /^\s*(([incvoslx])?(nore)?map)\s+(<buffer> |<silent> )*\s*(\S+)\s+(.*)\s*$/
                         text = %{#{$2 && "#$2_"}#{$5} ... #{$6}}
                     elsif text =~ /^\s*let.+?(\S+)\s*=\s*(.*?)\s"\{\{\{\d\s*$/
                         if nodefault
@@ -110,7 +110,7 @@ class VimDedoc
                             head.match(/^\S+\s+(\S+)/)[1]
                         elsif head =~ /^\s*let\s+(\S+)/
                             $1
-                        elsif head =~ /^\s*(([incv])?(nore)?map)\s+(<buffer> |<silent> )*\s*(\S+)\s+(.*)\s*$/
+                        elsif head =~ /^\s*(([incvoslx])?(nore)?map)\s+(<buffer> |<silent> )*\s*(\S+)\s+(.*)\s*$/
                             "#{$2 && "#$2_"}#$5"
                         else
                             $logger.warn "Unknown entry type: #{head}"
