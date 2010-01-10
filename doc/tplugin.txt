@@ -14,7 +14,7 @@ used to handle plugins distributed as zip or tgz archives. For vimballs,
 you'll might have to use a non-standard vimball unpacker---like the one 
 that can be found in the vimtlib repository.
 
-tplugin also assumes that your local copies follow a certain directory 
+tplugin assumes that your local copies follow a certain directory 
 layout:
 
     ROOT/
@@ -248,7 +248,8 @@ tplugin#Autoload(type, def, bang, range, args)
 
                                                     *tplugin#Scan()*
 tplugin#Scan(immediate, roots, args)
-    Write autoload information for all known root directories to "ROOT/.tplugin.vim".
+    Write autoload information for all known root directories to 
+    "ROOT/.tplugin.vim".
 
                                                     *tplugin#Menu()*
 tplugin#Menu(item, cmd)

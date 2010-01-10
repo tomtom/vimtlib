@@ -1,13 +1,12 @@
 * TODO
 
-    #C3 [vim] [[macros/tplugin.vim]] :TPluginUpdate command (for git and svn based repositories?)
     #C3 [vim] [[macros/tplugin.vim]] Help tags should always be available.
     #C5 [vim] [[macros/tplugin.vim]] :TPlugin in interactive use can only access the current root directory but should be able to use any repository in whatever root directory
-    #C5 [vim] [[macros/tplugin.vim]] Menu item definition in autoload files: Use absolute path for repos in order to support multiple roots (is this still an issue?)
     #C5 [vim] [[macros/tplugin.vim]] Provide an easy way to load a plugin by typing a common map prefix
     #C5 [vim] [[plugin/ttoc.vim#TLet g:ttoc_world]] Sort order
+    #C7 [vim] [[macros/tplugin.vim]] :TPluginUpdate command (for git and svn based repositories?)
     #C7 [vim] [[macros/tplugin.vim]] Support <plug> maps
 
 
-% 2010-01-03; @Last Change: 2010-01-08.
+% 2010-01-03; @Last Change: 2010-01-10.
 % vi: ft=viki:tw=0:ts=4

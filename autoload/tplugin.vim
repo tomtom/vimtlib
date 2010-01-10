@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-05.
-" @Last Change: 2010-01-08.
-" @Revision:    0.0.193
+" @Last Change: 2010-01-10.
+" @Revision:    0.0.204
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -28,15 +28,16 @@ let s:functions = {}
 
 
 function! tplugin#RegisterFunction(def) "{{{3
-    let s:functions[a:def[0]] = a:def
+    let s:functions[a:def[1]] = a:def
 endf
 
 
 " args: A string it type == 1, a list if type == 2
 function! tplugin#Autoload(type, def, bang, range, args) "{{{3
+    " TLogVAR a:type, a:def, a:bang, a:range, a:args
     let [root, cmd; file] = a:def
-    " TLogVAR cmd, file
-    if len(file) >= 1 and len(file) <= 2
+    " TLogVAR root, cmd, file
+    if len(file) >= 1 && len(file) <= 2
         call call('TPlugin', [1, root] + file)
     else
         echoerr 'Malformed autocommand definition: '. join(a:def)
@@ -57,9 +58,12 @@ endf
 
 
 function! s:AutoloadFunction(fn) "{{{3
+    " TLogVAR a:fn
+    " call tlog#Debug(string(keys(s:functions)))
     if has_key(s:functions, a:fn)
         " TLogVAR a:fn
         let def = s:functions[a:fn]
+        " TLogVAR def
         call tplugin#Autoload(2, def, '', [], [])
         " Ignored
         return 1
@@ -103,7 +107,8 @@ function! s:ScanLine(repo, plugin, what, line) "{{{3
 endf
 
 
-" Write autoload information for all known root directories to "ROOT/.tplugin.vim".
+" Write autoload information for all known root directories to 
+" "ROOT/.tplugin.vim".
 function! tplugin#Scan(immediate, roots, args) "{{{3
     let awhat = get(a:args, 0, '')
     if empty(awhat)
