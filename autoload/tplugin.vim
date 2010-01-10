@@ -4,10 +4,17 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-05.
 " @Last Change: 2010-01-10.
-" @Revision:    0.0.204
+" @Revision:    0.0.236
 
 let s:save_cpo = &cpo
 set cpo&vim
+
+
+if !exists('g:tplugin_helptags')
+    " If non-nil, optionally generate helptags for the repository's doc 
+    " subdirectory.
+    let g:tplugin_helptags = 1   "{{{2
+endif
 
 
 if !exists('g:tplugin_menu_prefix')
@@ -54,6 +61,14 @@ function! tplugin#Autoload(type, def, bang, range, args) "{{{3
     else
         echoerr 'Unsupported type: '. a:type
     endif
+endf
+
+
+let s:helptags = []
+
+
+function! tplugin#Help(tags) "{{{3
+    call add(s:helptags, a:tags)
 endf
 
 
@@ -114,7 +129,7 @@ function! tplugin#Scan(immediate, roots, args) "{{{3
     if empty(awhat)
         let what = ['c', 'f']
     elseif awhat == 'all'
-        let what = ['c', 'f', 'a']
+        let what = ['c', 'f', 'a', 'h']
     else
         let what = split(awhat, '\zs')
     endif
@@ -123,8 +138,21 @@ function! tplugin#Scan(immediate, roots, args) "{{{3
     for root in a:roots
 
         let out = []
+
+        if g:tplugin_helptags
+            let helpdirs = split(glob(join([root, '*', 'doc'], '/')), '\n')
+            for doc in helpdirs
+                let tags = join([doc, 'tags'], '/')
+                if index(what, 'h') != -1 || !filereadable(tags)
+                    if isdirectory(doc)
+                        exec 'helptags '. fnameescape(doc)
+                    endif
+                endif
+                " call add(out, 'call tplugin#Help('. string(tags) .')')
+            endfor
+        endif
+
         let files = glob(join([root, '*', 'plugin', '*.vim'], '/'))
-        let plugins = files
         if index(what, 'a') != -1
             let files .= "\n". glob(join([root, '*', 'autoload', '*.vim'], '/'))
             let files .= "\n". glob(join([root, '*', 'autoload', '**', '*.vim'], '/'))
@@ -196,7 +224,9 @@ endf
 if exists('loaded_tplugin')
 
     if g:tplugin_autoload
-        autocmd TPlugin FuncUndefined * call s:AutoloadFunction(expand("<afile>"))
+        augroup TPlugin
+            autocmd FuncUndefined * call s:AutoloadFunction(expand("<afile>"))
+        augroup END
     endif
 
 else

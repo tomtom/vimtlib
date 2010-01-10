@@ -4,23 +4,15 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-04.
 " @Last Change: 2010-01-10.
-" @Revision:    384
-
+" @Revision:    394
 
 if &cp || exists("loaded_tplugin")
     finish
 endif
-let loaded_tplugin = 2
+let loaded_tplugin = 3
 
 let s:save_cpo = &cpo
 set cpo&vim
-
-
-if !exists('g:tplugin_helptags')
-    " If non-nil, optionally generate helptags for the repository's doc 
-    " subdirectory.
-    let g:tplugin_helptags = 1   "{{{2
-endif
 
 
 if !exists('g:tplugin_autoload')
@@ -37,7 +29,6 @@ endf
 
 
 let s:roots = []
-" let s:repos = {}
 let s:rtp = split(&rtp, ',')
 let s:reg = {}
 let s:done = {}
@@ -82,20 +73,11 @@ function! s:AddRepo(repos) "{{{3
     endif
     let repos = filter(copy(a:repos), '!has_key(s:done, v:val)')
     if !empty(repos)
-        " let rtp += map(copy(repos), "join([v:val, 'after'], '/')")
         for repo in repos
             " TLogVAR repo
             call insert(rtp, repo, idx)
             call insert(rtp, join([repo, 'after'], '/'), -1)
             " TLogVAR rtp
-            if g:tplugin_helptags
-                let doc = join([repo, 'doc'], '/')
-                if !filereadable(join([doc, 'tags'], '/'))
-                    if isdirectory(doc)
-                        exec 'helptags '. fnameescape(doc)
-                    endif
-                endif
-            endif
             let s:done[repo] = {}
         endfor
         let &rtp = join(rtp, ',')
@@ -138,17 +120,7 @@ endf
 
 " :nodoc:
 function! TPlugin(immediate, root, repo, ...) "{{{3
-    " for root in s:roots
-    "     let repo = join([root, a:repo], '/')
-    "     if isdirectory(repo)
-    "         break
-    "     endif
-    " endfor
-    " TLogVAR a:repo
-    " call tlog#Debug(string(keys(s:repos)))
-    " if has_key(s:repos, a:repo)
-    "     let repo = s:repos[a:repo]
-    " else
+    " TLogVAR a:immediate, a:root, a:repo, a:000
     let root = empty(a:root) ? s:roots[0] : a:root
     let repo = join([root, a:repo], '/')
     " endif
@@ -192,9 +164,6 @@ function! s:TPluginComplete(ArgLead, CmdLine, CursorPos) "{{{3
         call map(files, 'strpart(v:val, pos0)')
         call filter(files, 'stridx(v:val, a:ArgLead) != -1')
         " TLogVAR files
-        " for repo in files
-        "     let s:repos[repo] = join([root, repo], '/')
-        " endfor
     else
         let pdir = join([repo, 'plugin'], '/')
         let dir = join([root, pdir], '/')
@@ -242,7 +211,6 @@ command! -nargs=+ TPluginFunction
             \ if g:tplugin_autoload && !exists('*'. [<f-args>][0]) |
             \ call tplugin#RegisterFunction([s:roots[0], <f-args>])
             \ | endif
-            " \ let s:repos[[<f-args>][1]] = s:roots[0] |
 
 
 " :display: :TPluginCommand COMMAND REPOSITORY [PLUGIN]
@@ -256,7 +224,6 @@ command! -nargs=+ TPluginCommand
             \ exec 'command! -bang -range -nargs=* '. [<f-args>][0]
             \ .' call tplugin#Autoload(1, ['. string(s:roots[0]) .', <f-args>], "<lt>bang>", ["<lt>line1>", "<lt>line2>"], <lt>q-args>)'
             \ | endif
-            " \ let s:repos[[<f-args>][1]] = s:roots[0] |
 
 
 " :display: :TPluginScan[!] [WHAT]
@@ -268,7 +235,8 @@ command! -nargs=+ TPluginCommand
 "    c ... commands
 "    f ... functions
 "    a ... autoload
-"    all ... the same as: cfa
+"    h ... helptags
+"    all ... the same as: cfah
 "
 " WHAT defaults to: cf.
 "
@@ -305,4 +273,8 @@ finish
 - The after path is inserted at the second to last position
 - When autoload is enabled and g:tplugin_menu_prefix is not empty, build 
 a menu with available plugins (NOTE: this is disabled by default)
+
+0.3
+- Build helptags during :TPluginScan (i.e. support for helptags requires 
+autoload to be enabled)
 
