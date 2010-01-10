@@ -180,7 +180,8 @@ Contents~
         prototype.RespondTo
         prototype.Super
         prototype.Methods
-        tlib#paragraph#Delete ................... |tlib#paragraph#Delete()|
+        tlib#paragraph#GetMetric ................ |tlib#paragraph#GetMetric()|
+        tlib#paragraph#Move ..................... |tlib#paragraph#Move()|
         tlib#progressbar#Init ................... |tlib#progressbar#Init()|
         tlib#progressbar#Display ................ |tlib#progressbar#Display()|
         tlib#progressbar#Restore ................ |tlib#progressbar#Restore()|
@@ -208,6 +209,10 @@ Contents~
         tlib#tag#Retrieve ....................... |tlib#tag#Retrieve()|
         tlib#tag#Collect ........................ |tlib#tag#Collect()|
         tlib#tag#Format ......................... |tlib#tag#Format()|
+        tlib#textobjects#StandardParagraph ...... |standard-paragraph|
+        tlib#textobjects#Init ................... |tlib#textobjects#Init()|
+        v_sp .................................... |v_sp|
+        o_sp .................................... |o_sp|
         tlib#time#MSecs ......................... |tlib#time#MSecs()|
         tlib#time#Now ........................... |tlib#time#Now()|
         tlib#time#Diff .......................... |tlib#time#Diff()|
@@ -1131,14 +1136,12 @@ prototype.Methods
 ========================================================================
 autoload/tlib/paragraph.vim~
 
-                                                    *tlib#paragraph#Delete()*
-tlib#paragraph#Delete(?register="")
-    Almost the same as dap but behaves differently when the cursor is on a 
-    blank line or when the paragraph's last line is the last line in the 
-    file.
-    
-    This function assumes that a paragraph is a block of text followed by 
-    blank lines or the end of file.
+                                                    *tlib#paragraph#GetMetric()*
+tlib#paragraph#GetMetric()
+    Return an object describing an |paragraph|.
+
+                                                    *tlib#paragraph#Move()*
+tlib#paragraph#Move(direction, count)
 
 
 ========================================================================
@@ -1315,6 +1318,33 @@ tlib#tag#Collect(constraints, ?use_extra=1, ?match_front=1)
 
                                                     *tlib#tag#Format()*
 tlib#tag#Format(tag)
+
+
+========================================================================
+autoload/tlib/textobjects.vim~
+
+                                                    *standard-paragraph*
+tlib#textobjects#StandardParagraph()
+    Select a "Standard Paragraph", i.e. a text block followed by blank 
+    lines. Other than |ap|, the last paragraph in a document is handled 
+    just the same.
+    
+    The |text-object| can be accessed as "sp". Example: >
+    
+      vsp ... select the current standard paragraph
+    
+    Return 1, if the paragraph is the last one in the document.
+<
+
+                                                    *tlib#textobjects#Init()*
+tlib#textobjects#Init()
+
+                                                    *v_sp*
+v_sp ... <Esc>:call tlib#textobjects#StandardParagraph()<CR>
+    sp ... Standard paragraph (for use as |text-objects|).
+
+                                                    *o_sp*
+o_sp ... :<C-u>normal Vsp<CR>
 
 
 ========================================================================
