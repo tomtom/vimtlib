@@ -3,7 +3,7 @@
 # @Author:      Tom Link (micathom AT gmail com)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2009-02-10.
-# @Last Change: 2010-01-05.
+# @Last Change: 2010-01-09.
 #
 # This script creates and installs vimballs without vim.
 #
@@ -143,6 +143,10 @@ HEADER
                 opts.on('--print-config', 'Print the configuration and exit') do |bool|
                     puts YAML.dump(config)
                     exit
+                end
+
+                opts.on('-R', '--[no-]recipe', 'On install, save the recipe in DESTDIR/vimballs/recipes') do |bool|
+                    config['save_recipes'] = bool
                 end
 
                 opts.on('-r', '--[no-]record', 'Save record in .VimballRecord') do |bool|
@@ -359,11 +363,13 @@ HEADER
             end
         end
 
-        recipefile = File.join(@config['outdir'], 'vimballs', 'recipes', filebase + '.recipe')
-        $logger.debug "Save recipe file: #{recipefile}"
-        ensure_dir_exists(File.dirname(recipefile))
-        file_write(recipefile) do |io|
-            io.puts recipe.join("\n")
+        if @config['save_recipes']
+            recipefile = File.join(@config['outdir'], 'vimballs', 'recipes', filebase + '.recipe')
+            $logger.debug "Save recipe file: #{recipefile}"
+            ensure_dir_exists(File.dirname(recipefile))
+            file_write(recipefile) do |io|
+                io.puts recipe.join("\n")
+            end
         end
 
         if @config['record']
