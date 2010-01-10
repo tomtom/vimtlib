@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-04.
-" @Last Change: 2010-01-08.
-" @Revision:    366
+" @Last Change: 2010-01-10.
+" @Revision:    384
 
 
 if &cp || exists("loaded_tplugin")
@@ -252,9 +252,9 @@ command! -nargs=+ TPluginFunction
 " Example: >
 "   TPluginCommand TSelectBuffer vimtlib tselectbuffer
 command! -nargs=+ TPluginCommand
-            \ if g:tplugin_autoload && !exists(':'. [<f-args>][0]) |
+            \ if g:tplugin_autoload && exists(':'. [<f-args>][0]) != 2 |
             \ exec 'command! -bang -range -nargs=* '. [<f-args>][0]
-            \ .' call tplugin#Autoload(1, [s:roots[0], <f-args>], "<lt>bang>", ["<lt>line1>", "<lt>line2>"], <lt>q-args>)'
+            \ .' call tplugin#Autoload(1, ['. string(s:roots[0]) .', <f-args>], "<lt>bang>", ["<lt>line1>", "<lt>line2>"], <lt>q-args>)'
             \ | endif
             " \ let s:repos[[<f-args>][1]] = s:roots[0] |
 
