@@ -3,8 +3,8 @@
 " @GIT:         http://github.com/tomtom/vimtlib/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-04.
-" @Last Change: 2010-01-07.
-" @Revision:    18
+" @Last Change: 2010-01-12.
+" @Revision:    22
 " GetLatestVimScripts: 0 0 startup_profile.vim
 
 let s:save_cpo = &cpo
@@ -34,9 +34,9 @@ function! s:LogScript(filename) "{{{3
 endf
 
 function! s:LogEnd() "{{{3
-    let timeF = reltimestr(reltime())
-    let timediffF = s:FloatAsString(str2float(timeF) - str2float(s:time))
-    let timediff0 = s:FloatAsString(str2float(timeF) - str2float(s:time0))
+    let time_all = reltimestr(reltime())
+    let timediff_last = s:FloatAsString(str2float(time_all) - str2float(s:time))
+    let timediff_all = s:FloatAsString(str2float(time_all) - str2float(s:time0))
 
     let output = ['No;Filename;Lines;Bytes;Time;TimeDiff']
     for [filename, time, time0] in s:scripts
@@ -57,11 +57,11 @@ function! s:LogEnd() "{{{3
         call add(output, item)
     endfor
 
-    let output[-1] .= timediffF
-    call add(output, ';Total size;'. s:lines .';'. s:size .';'. timeF .';'. timediff0)
+    let output[-1] .= timediff_last
+    call add(output, ';Total size;'. s:lines .';'. s:size .';'. time_all .';'. timediff_all)
     call writefile(output, g:startup_profile_csv)
     autocmd! StartupLog
-    unlet s:size s:lines
+    unlet s:size s:lines s:time s:time0 s:scripts
 endf
 
 function! s:FloatAsString(num) "{{{3
