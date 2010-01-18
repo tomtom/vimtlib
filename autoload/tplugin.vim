@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-05.
-" @Last Change: 2010-01-10.
-" @Revision:    0.0.236
+" @Last Change: 2010-01-18.
+" @Revision:    0.0.345
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -44,20 +44,24 @@ function! tplugin#Autoload(type, def, bang, range, args) "{{{3
     " TLogVAR a:type, a:def, a:bang, a:range, a:args
     let [root, cmd; file] = a:def
     " TLogVAR root, cmd, file
+    if a:type == 1 " Command
+        exec 'delcommand '. cmd
+    endif
     if len(file) >= 1 && len(file) <= 2
         call call('TPlugin', [1, root] + file)
     else
         echoerr 'Malformed autocommand definition: '. join(a:def)
     endif
-    let range = join(filter(copy(a:range), '!empty(v:val)'), ',')
-    " TLogDBG range . cmd . a:bang .' '. a:args
-    if a:type == 1
+    if a:type == 1 " Command
+        let range = join(filter(copy(a:range), '!empty(v:val)'), ',')
+        " TLogDBG range . cmd . a:bang .' '. a:args
         try
             exec range . cmd . a:bang .' '. a:args
         catch /^Vim\%((\a\+)\)\=:E481/
             exec cmd . a:bang .' '. a:args
         endtry
-    elseif a:type == 2
+    elseif a:type == 2 " Function
+    elseif a:type == 3 " Map
     else
         echoerr 'Unsupported type: '. a:type
     endif
@@ -86,14 +90,38 @@ function! s:AutoloadFunction(fn) "{{{3
 endf
 
 
+function! tplugin#Map(root, def) "{{{3
+    let [m, repo, plugin] = a:def
+    let def = [a:root, repo, plugin]
+    let plug = matchstr(m, '\c<plug>\w\+$')
+    if !empty(plug)
+        exec m .' <C-\><C-G>:call tplugin#Remap('. string(plug) .', '. string(m) .', '. string(def) .')<cr>'
+    endif
+endf
+
+
+function! tplugin#Remap(keys, m, def) "{{{3
+    " TLogVAR a:keys, a:m, a:def
+    let mode = matchstr(a:m, '\<\([incvoslx]\?\)\ze\(nore\)\?map')
+    exec mode .'unmap '. a:keys
+    call call('TPlugin', [1] + a:def)
+    let keys = substitute(a:keys, '<\ze\w\+\(-\w\+\)*>', '\\<', 'g')
+    let keys = eval('"'. escape(keys, '"') .'"')
+    " TLogVAR keys
+    call feedkeys(a:keys)
+endf
+
+
 let s:rx = {
             \ 'c': '^\s*:\?com\%[mand]!\?\s\+\(-\S\+\s\+\)*\zs\w\+',
             \ 'f': '^\s*:\?fu\%[nction]!\?\s\+\zs\(s:\|<SID>\)\@![[:alnum:]#]\+',
+            \ 'p': '\c^\s*:\?\zs[incvoslx]\?\(nore\)\?map\s\+\(<\(silent\|unique\|buffer\|script\)>\s*\)*<plug>\w\+',
             \ }
 
 let s:fmt = {
-            \ 'c': 'TPluginCommand %s %s %s',
-            \ 'f': 'TPluginFunction %s %s %s',
+            \ 'c': {'cargs3': 'TPluginCommand %s %s %s'},
+            \ 'f': {'cargs3': 'TPluginFunction %s %s %s'},
+            \ 'p': {'arr1': 'call tplugin#Map(TPluginGetRoot(), %s)'},
             \ }
 
 
@@ -111,11 +139,16 @@ function! s:ScanLine(repo, plugin, what, line) "{{{3
     for what in a:what
         let rx = get(s:rx, what, '')
         if !empty(rx)
+            " TLogVAR rx
             " let rx = rx[0:2] . substitute(rx[3:-1], '\C\\s', '\\(\\n\\s*\\\\\\s*\\|\\s\\+\\)', 'g')
             let m = matchstr(a:line, rx)
             if !empty(m)
                 let fmt = s:fmt[what]
-                return printf(fmt, m, a:repo, a:plugin)
+                if has_key(fmt, 'arr1')
+                    return printf(fmt.arr1, string([m, a:repo, a:plugin]))
+                else
+                    return printf(fmt.cargs3, m, a:repo, a:plugin)
+                endif
             endif
         endif
     endfor
@@ -123,19 +156,27 @@ endf
 
 
 " Write autoload information for all known root directories to 
-" "ROOT/.tplugin.vim".
+" "ROOT/tplugin.vim".
 function! tplugin#Scan(immediate, roots, args) "{{{3
     let awhat = get(a:args, 0, '')
     if empty(awhat)
-        let what = ['c', 'f']
+        let what = ['c', 'f', 'a', 'p']
     elseif awhat == 'all'
-        let what = ['c', 'f', 'a', 'h']
+        let what = ['c', 'f', 'a', 'p', 'h']
     else
         let what = split(awhat, '\zs')
     endif
+
+    let aroot = get(a:args, 1, '')
+    if empty(aroot)
+        let roots = a:roots
+    else
+        let roots = [fnamemodify(aroot, ':p')]
+    endif
+
     " TLogVAR what, a:roots
 
-    for root in a:roots
+    for root in roots
 
         let out = []
 
@@ -204,7 +245,7 @@ function! tplugin#Scan(immediate, roots, args) "{{{3
         endtry
 
         " TLogVAR out
-        let outfile = join([root, '.tplugin.vim'], '/')
+        let outfile = join([root, 'tplugin.vim'], '/')
         call writefile(out, outfile)
         if a:immediate
             exec 'source '. fnameescape(outfile)
