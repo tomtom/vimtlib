@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2010-01-05.
-" @Revision:    0.588
+" @Last Change: 2010-01-18.
+" @Revision:    0.589
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
@@ -71,7 +71,7 @@ if !exists("g:vikiSpecialFiles") "{{{2
                 \ 'dia',
                 \ 'doc',
                 \ 'dvi',
-                \ 'eps',
+                \ 'eml',
                 \ 'eps',
                 \ 'gif',
                 \ 'htm',

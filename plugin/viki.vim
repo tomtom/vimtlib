@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2010-01-05.
-" @Revision:    2670
+" @Last Change: 2010-01-18.
+" @Revision:    2672
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -40,7 +40,7 @@ if !exists('g:loaded_tlib') || g:loaded_tlib < 32
         finish
     endif
 endif
-let loaded_viki = 314
+let loaded_viki = 315
 
 
 " Configuration {{{1
@@ -700,5 +700,8 @@ autoload/viki.vim
 - Removed g:vikiIndex (the index name has to be made explicit in 
 VikiDefine()) in order to reduce startup time
 - Set g:vikiMenuPrefix = "" in order to reduce startup time
+
+3.15
+- Registered eml as special file
 
 " vim: ff=unix
