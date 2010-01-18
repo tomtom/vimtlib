@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-29.
-" @Last Change: 2010-01-03.
-" @Revision:    0.0.758
+" @Last Change: 2010-01-18.
+" @Revision:    0.0.771
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
@@ -484,10 +484,10 @@ function! trag#Grep(args, ...) "{{{3
     " TLogVAR search_mode
     let scratch = {}
     try
-        if search_mode == 2
-            let ei = &ei
-            set ei=all
-        endif
+        " if search_mode == 2
+        "     let ei = &ei
+        "     set ei=all
+        " endif
         let fidx  = 0
         let strip = 0
         " TLogVAR files
@@ -542,7 +542,7 @@ function! trag#Grep(args, ...) "{{{3
                     " TLogDBG 'vimgrepadd /'. escape(rxpos, '/') .'/j '. tlib#arg#Ex(f)
                     " TLogVAR len(getqflist())
                     " silent! exec 'vimgrepadd /'. escape(rxpos, '/') .'/gj '. tlib#arg#Ex(f)
-                    silent! exec 'vimgrepadd /'. escape(rxpos, '/') .'/j '. tlib#arg#Ex(f)
+                    silent! exec 'noautocmd vimgrepadd /'. escape(rxpos, '/') .'/j '. tlib#arg#Ex(f)
                     let strip = 1
                 endif
             else
@@ -570,9 +570,9 @@ function! trag#Grep(args, ...) "{{{3
         endif
         " TLogDBG 'qfl:'. string(getqflist())
     finally
-        if search_mode == 2
-            let &ei = ei
-        endif
+        " if search_mode == 2
+        "     let &ei = ei
+        " endif
         if !empty(scratch)
             call tlib#scratch#CloseScratch(scratch)
             let &lazyredraw = lazyredraw
@@ -723,14 +723,31 @@ endf
 " Display the |quickfix| list with |tlib#input#ListW()|.
 function! trag#QuickList(...) "{{{3
     TVarArg ['world', {}]
+    call trag#BrowseList(world, getqflist())
+endf
+
+
+function! trag#QuickListMaybe(anyway) "{{{3
+    call trag#BrowseList({}, getqflist(), a:anyway)
+endf
+
+
+function! trag#BrowseList(world_dict, list, ...) "{{{3
+    TVarArg ['anyway', 0]
     " TVarArg ['sign', 'TRag']
     " if !empty(sign) && !empty(g:trag_sign)
     "     " call tlib#signs#ClearAll(sign)
     "     " call tlib#signs#Mark(sign, getqflist())
     " endif
-    let w = extend(copy(g:trag_qfl_world), world)
+    if !anyway && empty(filter(copy(a:list), 'v:val.nr != -1'))
+        return
+    endif
+    let w = copy(g:trag_qfl_world)
+    if !empty(a:world_dict)
+        call extend(w, a:world_dict)
+    endif
     let w = tlib#World#New(w)
-    let w.qfl  = copy(getqflist())
+    let w.qfl  = copy(a:list)
     " TLogVAR w.qfl
     call s:FormatBase(w)
     " TLogVAR w.base
@@ -745,12 +762,7 @@ function! trag#LocList(...) "{{{3
     "     " call tlib#signs#ClearAll(sign)
     "     " call tlib#signs#Mark(sign, getqflist())
     " endif
-    let w = tlib#World#New(copy(g:trag_qfl_world))
-    let w.qfl  = copy(getloclist())
-    " TLogVAR w.qfl
-    call s:FormatBase(w)
-    " TLogVAR w.base
-    call tlib#input#ListW(w)
+    call trag#BrowseList({}, getqflist())
 endf
 
 

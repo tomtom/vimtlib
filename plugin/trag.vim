@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-29.
-" @Last Change: 2010-01-03.
-" @Revision:    599
+" @Last Change: 2010-01-18.
+" @Revision:    603
 " GetLatestVimScripts: 2033 1 trag.vim
 
 if &cp || exists("loaded_trag")
@@ -94,8 +94,8 @@ command! Tragfile call trag#Edit()
 
 " :display: :TRagcw
 " Display a quick fix list using |tlib#input#ListD()|.
-command! -nargs=? TRagcw call trag#QuickList()
-command! -nargs=? Tragcw call trag#QuickList()
+command! -bang -nargs=? TRagcw call trag#QuickListMaybe(!empty("<bang>"))
+command! -bang -nargs=? Tragcw call trag#QuickListMaybe(!empty("<bang>"))
 
 " :display: :Traglw
 " Display a |location-list| using |tlib#input#ListD()|.
@@ -234,4 +234,5 @@ default file list will be used.
 
 0.8
 - Moved the definition of some variables from plugin/trag.vim to autoload/trag.vim
+- :TRagcw! (show :cw even if there are no recognized errors)
 
