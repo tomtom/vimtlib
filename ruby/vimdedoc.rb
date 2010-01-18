@@ -3,8 +3,8 @@
 # @Author:      Tom Link (micathom at gmail com)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2007-07-25.
-# @Last Change: 2010-01-10.
-# @Revision:    465
+# @Last Change: 2010-01-12.
+# @Revision:    468
 
 
 require 'yaml'
@@ -74,7 +74,7 @@ class VimDedoc
                         text = "prototype.#$1"
                     elsif text =~ /^\s*fun.+?\s((\S+#)*[[:upper:]].*?\s*\(.*?\))/
                         text = "#$1"
-                    elsif text =~ /^\s*(([incvoslx])?(nore)?map)\s+(<buffer> |<silent> )*\s*(\S+)\s+(.*)\s*$/
+                    elsif text =~ /^\s*(([incvoslx])?(nore)?map)\s+(<buffer>\s*|<silent>\s*)*(\S+)\s+(.*)\s*$/
                         text = %{#{$2 && "#$2_"}#{$5} ... #{$6}}
                     elsif text =~ /^\s*let.+?(\S+)\s*=\s*(.*?)\s"\{\{\{\d\s*$/
                         if nodefault
@@ -110,7 +110,7 @@ class VimDedoc
                             head.match(/^\S+\s+(\S+)/)[1]
                         elsif head =~ /^\s*let\s+(\S+)/
                             $1
-                        elsif head =~ /^\s*(([incvoslx])?(nore)?map)\s+(<buffer> |<silent> )*\s*(\S+)\s+(.*)\s*$/
+                        elsif head =~ /^\s*(([incvoslx])?(nore)?map)\s+(<buffer>\s*|<silent>\s*)*(\S+)\s+(.*)\s*$/
                             "#{$2 && "#$2_"}#$5"
                         else
                             $logger.warn "Unknown entry type: #{head}"
