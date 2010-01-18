@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-08-23.
-" @Last Change: 2010-01-03.
-" @Revision:    0.0.50
+" @Last Change: 2010-01-17.
+" @Revision:    0.0.54
 " GetLatestVimScripts: <+SCRIPTID+> 1 tmarks.vim
 
 if &cp || exists("loaded_tmarks")
@@ -25,16 +25,19 @@ set cpo&vim
 " Browse all marks.
 command! -bar TMarks call tmarks#List()
 
-" Place the next available a-z mark at the specified line.
-" :display: :{range}TMarksPlace
-command! -range -nargs=? -bar TMarksPlace call tmarks#PlaceNextMarkAtLine(<line1>)
 
-" Delete all a-z marks in range.
-" :display: :{range}TMarksDelete
-command! -range -nargs=? -bar TMarksDelete call tmarks#DeleteInRange(<line1>, <line2>)
-
-" Delete all a-z marks in the current buffer.
-command! -bar TMarksDeleteAll call tmarks#DeleteAllMarks()
+" " Use wokmarks instead:
+" "
+" " Place the next available a-z mark at the specified line.
+" " :display: :{range}TMarksPlace
+" command! -range -nargs=? -bar TMarksPlace call tmarks#PlaceNextMarkAtLine(<line1>)
+" 
+" " Delete all a-z marks in range.
+" " :display: :{range}TMarksDelete
+" command! -range -nargs=? -bar TMarksDelete call tmarks#DeleteInRange(<line1>, <line2>)
+" 
+" " Delete all a-z marks in the current buffer.
+" command! -bar TMarksDeleteAll call tmarks#DeleteAllMarks()
 
 
 let &cpo = s:save_cpo
@@ -49,4 +52,6 @@ Initial release
 0.2
 - Moved the definition of some variables from plugin/tmarks.vim to 
 autoload/tmarks.vim
+- Removed some commands & related functions (there are better plugins for 
+that): TMarksPlace, TMarksDelete, TMarksDeleteAll
 
