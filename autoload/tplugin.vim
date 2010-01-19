@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-05.
 " @Last Change: 2010-01-19.
-" @Revision:    0.0.398
+" @Revision:    0.0.399
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -33,7 +33,7 @@ endif
 
 if !exists('g:tplugin_scan')
     " The default value for |:TPluginScan|.
-    let g:tplugin_scan = 'cfap'   "{{{2
+    let g:tplugin_scan = 'cfapt'   "{{{2
 endif
 
 
