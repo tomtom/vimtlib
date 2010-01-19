@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-04.
-" @Last Change: 2010-01-18.
-" @Revision:    480
+" @Last Change: 2010-01-19.
+" @Revision:    494
 
 if &cp || exists("loaded_tplugin")
     finish
@@ -96,6 +96,9 @@ endf
 
 
 function! s:LoadPlugins(repo, plugins) "{{{3
+    if empty(a:plugins)
+        return
+    endif
     " TLogVAR a:repo, a:plugins
     let done = s:done[a:repo]
     let pos0 = len(a:repo) + 1
@@ -156,9 +159,13 @@ endf
 " :nodoc:
 function! TPlugin(immediate, root, repo, ...) "{{{3
     " TLogVAR a:immediate, a:root, a:repo, a:000
-    let root = empty(a:root) ? s:roots[0] : a:root
-    let repo = join([root, a:repo], '/')
-    " endif
+    if a:repo == '.'
+        let repo = a:root
+    else
+        let root = empty(a:root) ? s:roots[0] : a:root
+        let repo = join([root, a:repo], '/')
+    endif
+    " TLogVAR repo
     if a:repo =~ '[\/]'
         let pdir = repo
     else
@@ -168,6 +175,8 @@ function! TPlugin(immediate, root, repo, ...) "{{{3
     if empty(a:000)
         " TLogDBG join([pdir, '*.vim'], '/')
         let plugins = split(glob(join([pdir, '*.vim'], '/')), '\n')
+    elseif a:1 == '.'
+        let plugins = []
     else
         let plugins = map(copy(a:000), 'join([pdir, v:val .".vim"], "/")')
     endif
@@ -313,10 +322,11 @@ command! -nargs=+ TPluginCommand
 "    f ... functions
 "    p ... <plug> maps
 "    a ... autoload
+"    t ... filetypes
 "    h ... helptags (see also |g:tplugin_helptags|)
-"    all ... the same as: cfaph
+"    all ... all of the above
 "
-" WHAT defaults to: cfap.
+" WHAT defaults to |g:tplugin_scan|.
 "
 " With the optional '!', the autocommands are immediatly usable.
 "
@@ -361,4 +371,5 @@ command
 - The autoload file was renamed to ROOT/tplugin.vim
 - When adding a repository to &rtp, ROOT/tplugin_REPO.vim is loaded
 - TPluginBefore, TPluginAfter commands to define inter-repo dependencies
+- Support for autoloading filetypes
 

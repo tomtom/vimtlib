@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-05.
-" @Last Change: 2010-01-18.
-" @Revision:    0.0.345
+" @Last Change: 2010-01-19.
+" @Revision:    0.0.398
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -31,6 +31,14 @@ if !exists('g:tplugin_menu_prefix')
 endif
 
 
+if !exists('g:tplugin_scan')
+    " The default value for |:TPluginScan|.
+    let g:tplugin_scan = 'cfap'   "{{{2
+endif
+
+
+let s:helptags = []
+let s:ftypes = {}
 let s:functions = {}
 
 
@@ -68,11 +76,26 @@ function! tplugin#Autoload(type, def, bang, range, args) "{{{3
 endf
 
 
-let s:helptags = []
-
-
 function! tplugin#Help(tags) "{{{3
     call add(s:helptags, a:tags)
+endf
+
+
+function! tplugin#Filetype(filetype, repos) "{{{3
+    if !has_key(s:ftypes, a:filetype)
+        let s:ftypes[a:filetype] = []
+    endif
+    call extend(s:ftypes[a:filetype], a:repos)
+endf
+
+
+function! s:Filetype(filetype) "{{{3
+    " TLogVAR a:repos
+    for repo in s:ftypes[a:filetype]
+        call TPlugin(1, repo, '.', '.')
+    endfor
+    call remove(s:ftypes, a:filetype)
+    exec 'setfiletype '. a:filetype
 endf
 
 
@@ -160,9 +183,9 @@ endf
 function! tplugin#Scan(immediate, roots, args) "{{{3
     let awhat = get(a:args, 0, '')
     if empty(awhat)
-        let what = ['c', 'f', 'a', 'p']
+        let what = split(g:tplugin_scan, '\zs')
     elseif awhat == 'all'
-        let what = ['c', 'f', 'a', 'p', 'h']
+        let what = ['c', 'f', 'a', 'p', 'h', 't']
     else
         let what = split(awhat, '\zs')
     endif
@@ -206,6 +229,27 @@ function! tplugin#Scan(immediate, roots, args) "{{{3
             call tlib#progressbar#Init(len(filelist), 'TPluginscan: Scanning '. escape(root, '%') .' %s', 20)
         else
             echo 'TPluginscan: Scanning '. root .' ...'
+        endif
+
+        if index(what, 't') != -1
+            let filetypes  = glob(join([root, '*', 'syntax', '*.vim'], '/'))
+            let filetypes .= glob(join([root, '*', 'indent', '*.vim'], '/'))
+            let filetypes .= glob(join([root, '*', 'ftplugin', '*.vim'], '/'))
+            let ftd = {}
+            for ftfile in filter(split(filetypes, '\n'), '!empty(v:val)')
+                let ft = fnamemodify(ftfile, ':t:r')
+                " TLogVAR ft
+                if !has_key(ftd, ft)
+                    let ftd[ft] = {}
+                endif
+                let repo = matchstr(ftfile, '^.\{-}\%'. (len(root) + 2) .'c[^\/]\+')
+                " TLogVAR ftfile, repo
+                let ftd[ft][repo] = 1
+            endfor
+            for [ft, repos] in items(ftd)
+                " TLogVAR ft, repos
+                call add(out, 'call tplugin#Filetype('. string(ft) .','. string(keys(repos)) .')')
+            endfor
         endif
 
         try
@@ -267,6 +311,7 @@ if exists('loaded_tplugin')
     if g:tplugin_autoload
         augroup TPlugin
             autocmd FuncUndefined * call s:AutoloadFunction(expand("<afile>"))
+            autocmd FileType * if has_key(s:ftypes, &ft) | call s:Filetype(&ft) | endif
         augroup END
     endif
 
