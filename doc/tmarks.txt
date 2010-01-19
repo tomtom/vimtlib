@@ -35,15 +35,9 @@ Also available via git: http://github.com/tomtom/vimtlib/
 ========================================================================
 Contents~
 
-        :TMarks ...................... |:TMarks|
-        :TMarksPlace ................. |:TMarksPlace|
-        :TMarksDelete ................ |:TMarksDelete|
-        :TMarksDeleteAll ............. |:TMarksDeleteAll|
-        tmarks#AgentDeleteMark ....... |tmarks#AgentDeleteMark()|
-        tmarks#DeleteInRange ......... |tmarks#DeleteInRange()|
-        tmarks#DeleteAllMarks ........ |tmarks#DeleteAllMarks()|
-        tmarks#PlaceNextMarkAtLine ... |tmarks#PlaceNextMarkAtLine()|
-        tmarks#List .................. |tmarks#List()|
+        :TMarks .................. |:TMarks|
+        tmarks#AgentDeleteMark ... |tmarks#AgentDeleteMark()|
+        tmarks#List .............. |tmarks#List()|
 
 
 ========================================================================
@@ -53,35 +47,12 @@ plugin/tmarks.vim~
 :TMarks
     Browse all marks.
 
-                                                    *:TMarksPlace*
-:{range}TMarksPlace
-    Place the next available a-z mark at the specified line.
-
-                                                    *:TMarksDelete*
-:{range}TMarksDelete
-    Delete all a-z marks in range.
-
-                                                    *:TMarksDeleteAll*
-:TMarksDeleteAll
-    Delete all a-z marks in the current buffer.
-
 
 ========================================================================
 autoload/tmarks.vim~
 
                                                     *tmarks#AgentDeleteMark()*
 tmarks#AgentDeleteMark(world, selected)
-
-                                                    *tmarks#DeleteInRange()*
-tmarks#DeleteInRange(?line1=line('.'), ?line2=line('.'))
-    Delete all (lower-case) marks at the specified line.
-
-                                                    *tmarks#DeleteAllMarks()*
-tmarks#DeleteAllMarks()
-    Delete all (lower-case) marks for the current buffer.
-
-                                                    *tmarks#PlaceNextMarkAtLine()*
-tmarks#PlaceNextMarkAtLine(...)
 
                                                     *tmarks#List()*
 tmarks#List()

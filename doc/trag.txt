@@ -204,6 +204,8 @@ Contents~
         trag#Grep ................ |trag#Grep()|
         trag#ClearCachedRx ....... |trag#ClearCachedRx()|
         trag#QuickList ........... |trag#QuickList()|
+        trag#QuickListMaybe ...... |trag#QuickListMaybe()|
+        trag#BrowseList .......... |trag#BrowseList()|
         trag#LocList ............. |trag#LocList()|
         trag#AgentEditQFE ........ |trag#AgentEditQFE()|
         trag#AgentPreviewQFE ..... |trag#AgentPreviewQFE()|
@@ -462,6 +464,12 @@ trag#ClearCachedRx()
                                                     *trag#QuickList()*
 trag#QuickList(?world={})
     Display the |quickfix| list with |tlib#input#ListW()|.
+
+                                                    *trag#QuickListMaybe()*
+trag#QuickListMaybe(anyway)
+
+                                                    *trag#BrowseList()*
+trag#BrowseList(world_dict, list, ...)
 
                                                     *trag#LocList()*
 trag#LocList(...)

@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-04.
 " @Last Change: 2010-01-19.
-" @Revision:    494
+" @Revision:    495
 
 if &cp || exists("loaded_tplugin")
     finish
@@ -43,6 +43,7 @@ augroup TPlugin
 augroup END
 
 
+" :nodoc:
 function! TPluginGetRoot() "{{{3
     return s:roots[0]
 endf
