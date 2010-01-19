@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-04.
 " @Last Change: 2010-01-19.
-" @Revision:    495
+" @Revision:    496
 
 if &cp || exists("loaded_tplugin")
     finish
@@ -372,5 +372,6 @@ command
 - The autoload file was renamed to ROOT/tplugin.vim
 - When adding a repository to &rtp, ROOT/tplugin_REPO.vim is loaded
 - TPluginBefore, TPluginAfter commands to define inter-repo dependencies
+- Support for autoloading <plug> maps
 - Support for autoloading filetypes
 

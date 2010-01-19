@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-05.
 " @Last Change: 2010-01-19.
-" @Revision:    0.0.399
+" @Revision:    0.0.401
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -130,8 +130,8 @@ function! tplugin#Remap(keys, m, def) "{{{3
     call call('TPlugin', [1] + a:def)
     let keys = substitute(a:keys, '<\ze\w\+\(-\w\+\)*>', '\\<', 'g')
     let keys = eval('"'. escape(keys, '"') .'"')
-    " TLogVAR keys
-    call feedkeys(a:keys)
+    " TLogVAR keys, a:keys
+    call feedkeys(keys)
 endf
 
 

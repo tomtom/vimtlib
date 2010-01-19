@@ -135,7 +135,6 @@ Also available via git: http://github.com/tomtom/vimtlib/
 Contents~
 
         g:tplugin_autoload ......... |g:tplugin_autoload|
-        TPluginGetRoot ............. |TPluginGetRoot()|
         :TPlugin ................... |:TPlugin|
         :TPluginRoot ............... |:TPluginRoot|
         :TPluginBefore ............. |:TPluginBefore|
@@ -163,9 +162,6 @@ macros/tplugin.vim~
 g:tplugin_autoload             (default: 1)
     Enable autoloading. See |:TPluginScan|, |:TPluginCommand|, and 
     |:TPluginFunction|.
-
-                                                    *TPluginGetRoot()*
-TPluginGetRoot()
 
                                                     *:TPlugin*
 :TPlugin[!] REPOSITORY [PLUGINS ...]
