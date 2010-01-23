@@ -3,7 +3,7 @@
 # @Author:      Tom Link (micathom AT gmail com)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2009-02-10.
-# @Last Change: 2010-01-09.
+# @Last Change: 2010-01-22.
 #
 # This script creates and installs vimballs without vim.
 #
@@ -391,8 +391,10 @@ HEADER
         helptags = @config['helptags']
         if helptags.is_a?(String) and !helptags.empty?
             helptags = helptags % File.join(@config['outdir'], 'doc')
-            $logger.info "Create helptags: #{helptags}"
-            `#{helptags}` unless @config['dry']
+			if File.exist?(helptags)
+				$logger.info "Create helptags: #{helptags}"
+				`#{helptags}` unless @config['dry']
+			end
         end
     end
 
