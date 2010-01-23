@@ -128,31 +128,28 @@ See :help vimball for details. If you have difficulties or use vim 7.0,
 please make sure, you have the current version of vimball
 (vimscript #1502) installed or update your runtime.
 
+Optional: If tlib (vimscript #1863) is available, its progressbar will 
+be used to visualize the scan progress.
+
 Also available via git: http://github.com/tomtom/vimtlib/
 
 
 ========================================================================
 Contents~
 
-        g:tplugin_autoload ......... |g:tplugin_autoload|
-        :TPlugin ................... |:TPlugin|
-        :TPluginRoot ............... |:TPluginRoot|
-        :TPluginBefore ............. |:TPluginBefore|
-        :TPluginAfter .............. |:TPluginAfter|
-        :TPluginFunction ........... |:TPluginFunction|
-        :TPluginCommand ............ |:TPluginCommand|
-        :TPluginScan ............... |:TPluginScan|
-        g:tplugin_helptags ......... |g:tplugin_helptags|
-        g:tplugin_menu_prefix ...... |g:tplugin_menu_prefix|
-        g:tplugin_scan ............. |g:tplugin_scan|
-        tplugin#RegisterFunction ... |tplugin#RegisterFunction()|
-        tplugin#Autoload ........... |tplugin#Autoload()|
-        tplugin#Help ............... |tplugin#Help()|
-        tplugin#Filetype ........... |tplugin#Filetype()|
-        tplugin#Map ................ |tplugin#Map()|
-        tplugin#Remap .............. |tplugin#Remap()|
-        tplugin#Scan ............... |tplugin#Scan()|
-        tplugin#Menu ............... |tplugin#Menu()|
+        g:tplugin_autoload ...... |g:tplugin_autoload|
+        g:tplugin_helptags ...... |g:tplugin_helptags|
+        g:tplugin_menu_prefix ... |g:tplugin_menu_prefix|
+        g:tplugin_scan .......... |g:tplugin_scan|
+        TPluginMap .............. |TPluginMap()|
+        :TPlugin ................ |:TPlugin|
+        :TPluginRoot ............ |:TPluginRoot|
+        :TPluginBefore .......... |:TPluginBefore|
+        :TPluginAfter ........... |:TPluginAfter|
+        :TPluginFunction ........ |:TPluginFunction|
+        :TPluginCommand ......... |:TPluginCommand|
+        :TPluginScan ............ |:TPluginScan|
+        :TPluginDisable ......... |:TPluginDisable|
 
 
 ========================================================================
@@ -162,6 +159,40 @@ macros/tplugin.vim~
 g:tplugin_autoload             (default: 1)
     Enable autoloading. See |:TPluginScan|, |:TPluginCommand|, and 
     |:TPluginFunction|.
+
+                                                    *g:tplugin_helptags*
+g:tplugin_helptags             (default: 1)
+    If non-nil, optionally generate helptags for the repository's doc 
+    subdirectory.
+
+                                                    *g:tplugin_menu_prefix*
+g:tplugin_menu_prefix          (default: '')
+    If autoload is enabled and this variable is non-empty, build a 
+    menu with available plugins.
+    Menus are disabled by default because they are less useful 
+    than one might think with autoload enabled.
+    A good choice for this variable would be, e.g., 
+    'Plugin.T&Plugin.'.
+    NOTE: You have to re-run |:TPluginScan| after setting this 
+    value.
+
+                                                    *g:tplugin_scan*
+g:tplugin_scan                 (default: 'cfapt')
+    The default value for |:TPluginScan|.
+
+                                                    *TPluginMap()*
+TPluginMap(map, repo, plugin, ?remap="")
+    MAP is a map command and the map. REPO and PLUGIN are the same as for 
+    the |:TPlugin| command.
+    
+    Examples: >
+      " Map for <plug>Foo:
+      call TPluginMap('map <plug>Foo', 'mylib', 'myplugin')
+    
+      " Load the plugin when pressing <f3> and remap the key to an appropriate 
+      " command:
+      call TPluginMap('map <f3>', 'mylib', 'myplugin', ':Foo<cr>')
+<
 
                                                     *:TPlugin*
 :TPlugin[!] REPOSITORY [PLUGINS ...]
@@ -262,56 +293,9 @@ g:tplugin_autoload             (default: 1)
       TPluginScan
 <
 
-
-========================================================================
-autoload/tplugin.vim~
-
-                                                    *g:tplugin_helptags*
-g:tplugin_helptags             (default: 1)
-    If non-nil, optionally generate helptags for the repository's doc 
-    subdirectory.
-
-                                                    *g:tplugin_menu_prefix*
-g:tplugin_menu_prefix          (default: '')
-    If autoload is enabled and this variable is non-empty, build a 
-    menu with available plugins.
-    Menus are disabled by default because they are less useful 
-    than one might think with autoload enabled.
-    A good choice for this variable would be, e.g., 
-    'Plugin.T&Plugin.'.
-    NOTE: You have to re-run |:TPluginScan| after setting this 
-    value.
-
-                                                    *g:tplugin_scan*
-g:tplugin_scan                 (default: 'cfapt')
-    The default value for |:TPluginScan|.
-
-                                                    *tplugin#RegisterFunction()*
-tplugin#RegisterFunction(def)
-
-                                                    *tplugin#Autoload()*
-tplugin#Autoload(type, def, bang, range, args)
-    args: A string it type == 1, a list if type == 2
-
-                                                    *tplugin#Help()*
-tplugin#Help(tags)
-
-                                                    *tplugin#Filetype()*
-tplugin#Filetype(filetype, repos)
-
-                                                    *tplugin#Map()*
-tplugin#Map(root, def)
-
-                                                    *tplugin#Remap()*
-tplugin#Remap(keys, m, def)
-
-                                                    *tplugin#Scan()*
-tplugin#Scan(immediate, roots, args)
-    Write autoload information for all known root directories to 
-    "ROOT/tplugin.vim".
-
-                                                    *tplugin#Menu()*
-tplugin#Menu(item, cmd)
+                                                    *:TPluginDisable*
+:TPluginDisable REPO [PLUGIN]
+    Disable all plugins or specified PLUGIN in REPO.
 
 
 

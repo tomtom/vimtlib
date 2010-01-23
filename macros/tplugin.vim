@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-04.
-" @Last Change: 2010-01-20.
-" @Revision:    551
+" @Last Change: 2010-01-22.
+" @Revision:    612
 
 if &cp || exists("loaded_tplugin")
     finish
@@ -139,21 +139,41 @@ function! s:AutoloadFunction(fn) "{{{3
 endf
 
 
-function! s:Map(root, def) "{{{3
-    let [m, repo, plugin] = a:def
-    let def = [a:root, repo, plugin]
-    let plug = matchstr(m, '\c<plug>\w\+$')
-    if !empty(plug)
-        exec m .' <C-\><C-G>:call <SID>Remap('. string(plug) .', '. string(m) .', '. string(def) .')<cr>'
+" :display: TPluginMap(map, repo, plugin, ?remap="")
+" MAP is a map command and the map. REPO and PLUGIN are the same as for 
+" the |:TPlugin| command.
+"
+" Examples: >
+"   " Map for <plug>Foo:
+"   call TPluginMap('map <plug>Foo', 'mylib', 'myplugin')
+"
+"   " Load the plugin when pressing <f3> and remap the key to an appropriate 
+"   " command from the autoloaded plugin:
+"   call TPluginMap('map <f3>', 'mylib', 'myplugin', ':Foo<cr>')
+function! TPluginMap(map, repo, plugin, ...) "{{{3
+    if g:tplugin_autoload
+        let remap = a:0 >= 1 ? substitute(a:1, '<', '<lt>', 'g') : ''
+        let def   = [s:roots[0], a:repo, a:plugin]
+        let keys  = matchstr(a:map, '\c<plug>\w\+$')
+        if empty(keys)
+            let keys = matchstr(a:map, '\S\+$')
+        endif
+        if !empty(keys)
+            exec a:map .' <C-\><C-G>:call <SID>Remap('. join([string(keys), string(a:map), string(remap), string(def)], ',') .')<cr>'
+        endif
     endif
 endf
 
 
-function! s:Remap(keys, m, def) "{{{3
-    " TLogVAR a:keys, a:m, a:def
-    let mode = matchstr(a:m, '\<\([incvoslx]\?\)\ze\(nore\)\?map')
+function! s:Remap(keys, map, remap, def) "{{{3
+    " TLogVAR a:keys, a:map, a:def, a:remap
+    let mode = matchstr(a:map, '\<\([incvoslx]\?\)\ze\(nore\)\?map')
     exec mode .'unmap '. a:keys
     call call('TPlugin', [1] + a:def)
+    if !empty(a:remap)
+        " TLogDBG a:map .' '. a:remap
+        exec a:map .' '. a:remap
+    endif
     let keys = substitute(a:keys, '<\ze\w\+\(-\w\+\)*>', '\\<', 'g')
     let keys = eval('"'. escape(keys, '"') .'"')
     " TLogVAR keys, a:keys
@@ -161,16 +181,19 @@ function! s:Remap(keys, m, def) "{{{3
 endf
 
 
-let s:rx = {
-            \ 'c': '^\s*:\?com\%[mand]!\?\s\+\(-\S\+\s\+\)*\zs\w\+',
-            \ 'f': '^\s*:\?fu\%[nction]!\?\s\+\zs\(s:\|<SID>\)\@![[:alnum:]#]\+',
-            \ 'p': '\c^\s*:\?\zs[incvoslx]\?\(nore\)\?map\s\+\(<\(silent\|unique\|buffer\|script\)>\s*\)*<plug>\w\+',
-            \ }
-
-let s:fmt = {
-            \ 'c': {'cargs3': 'TPluginCommand %s %s %s'},
-            \ 'f': {'cargs3': 'TPluginFunction %s %s %s'},
-            \ 'p': {'arr1': 'TPluginMap %s'},
+let s:scanner = {
+            \ 'c': {
+            \   'rx':  '^\s*:\?com\%[mand]!\?\s\+\(-\S\+\s\+\)*\zs\w\+',
+            \   'fmt': {'cargs3': 'TPluginCommand %s %s %s'}
+            \ },
+            \ 'f': {
+            \   'rx':  '^\s*:\?fu\%[nction]!\?\s\+\zs\(s:\|<SID>\)\@![[:alnum:]#]\+',
+            \   'fmt': {'cargs3': 'TPluginFunction %s %s %s'}
+            \ },
+            \ 'p': {
+            \   'rx':  '\c^\s*:\?\zs[incvoslx]\?\(nore\)\?map\s\+\(<\(silent\|unique\|buffer\|script\)>\s*\)*<plug>\w\+',
+            \   'fmt': {'sargs3': 'call TPluginMap(%s, %s, %s)'}
+            \ },
             \ }
 
 
@@ -186,15 +209,15 @@ endf
 
 function! s:ScanLine(repo, plugin, what, line) "{{{3
     for what in a:what
-        let rx = get(s:rx, what, '')
-        if !empty(rx)
-            " TLogVAR rx
-            " let rx = rx[0:2] . substitute(rx[3:-1], '\C\\s', '\\(\\n\\s*\\\\\\s*\\|\\s\\+\\)', 'g')
-            let m = matchstr(a:line, rx)
+        let scanner = get(s:scanner, what, {})
+        if !empty(scanner)
+            let m = matchstr(a:line, scanner.rx)
             if !empty(m)
-                let fmt = s:fmt[what]
+                let fmt = scanner.fmt
                 if has_key(fmt, 'arr1')
                     return printf(fmt.arr1, string([m, a:repo, a:plugin]))
+                elseif has_key(fmt, 'sargs3')
+                    return printf(fmt.sargs3, string(m), string(a:repo), string(a:plugin))
                 else
                     return printf(fmt.cargs3, escape(m, ' \'), escape(a:repo, ' \'), escape(a:plugin, ' \'))
                 endif
@@ -355,7 +378,14 @@ function! s:SetRoot(dir) "{{{3
     if idx == -1 && g:tplugin_autoload
         let autoload = join([root, 'tplugin.vim'], '/')
         if filereadable(autoload)
-            exec 'source '. fnameescape(autoload)
+            try
+                exec 'source '. fnameescape(autoload)
+            catch
+                echohl Error
+                echom v:exception
+                echom "Maybe the problem can be solved by running :TPluginScan"
+                echohl NONE
+            endtry
         endif
     endif
 endf
@@ -617,17 +647,6 @@ command! -nargs=+ TPluginCommand
             \ | endif
 
 
-" :display: TPluginMap [MAP_COMMAND, REPOSITORY, [PLUGIN]]
-" The argument of the command is an array with at least 2 elements. 
-"
-" Example: >
-"   TPluginMap ['nnoremap <silent> <Plug>Foo', 'bar', 'my_plugin']
-command! -nargs=1 TPluginMap
-            \ if g:tplugin_autoload |
-            \ call s:Map(s:roots[0], <args>)
-            \ | endif
-
-
 " :display: :TPluginScan[!] [WHAT] [ROOT]
 " Scan the current root directory for commands and functions. Save 
 " autoload information in "ROOT/tplugin.vim".
@@ -712,4 +731,5 @@ command
 their repos.
 - Fixed concatenation of filetype-related files
 - :TPluginDisable command
+- Replaced :TPluginMap with a function TPluginMap()
 
