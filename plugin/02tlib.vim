@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-10.
-" @Last Change: 2010-01-09.
-" @Revision:    601
+" @Last Change: 2010-01-24.
+" @Revision:    603
 " GetLatestVimScripts: 1863 1 tlib.vim
 "
 " Please see also ../test/tlib.vim for usage examples.
@@ -29,7 +29,8 @@ if v:version < 700 "{{{2
     echoerr "tlib requires Vim >= 7"
     finish
 endif
-let loaded_tlib = 35
+let loaded_tlib = 36
+
 let s:save_cpo = &cpo
 set cpo&vim
 
@@ -567,4 +568,6 @@ pressing <esc> when browsing an index-list, returns 0 and not "")
 - Display a message when the filter is for whatever reason invalid
 - Removed tlib#paragraph#Delete()
 - New: tlib#paragraph#Define(), tlib#textobjects#StandardParagraph()
+- Try to speed up list display (a rewrite of World.DisplayList() etc. is 
+required)
 

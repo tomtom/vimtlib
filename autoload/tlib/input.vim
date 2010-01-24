@@ -4,8 +4,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-06-30.
-" @Last Change: 2010-01-06.
-" @Revision:    0.0.666
+" @Last Change: 2010-01-24.
+" @Revision:    0.0.684
 
 
 " :filedoc:
@@ -190,11 +190,11 @@ function! tlib#input#ListW(world, ...) "{{{3
                     if world.state =~ '^display'
                         if world.IsValidFilter()
 
-                            call world.BuildTable()
+                            call world.BuildTableList()
                             " TLogDBG 2
                             " TLogDBG len(world.table)
                             " TLogVAR world.table
-                            let world.list  = map(copy(world.table), 'world.GetBaseItem(v:val)')
+                            " let world.list  = map(copy(world.table), 'world.GetBaseItem(v:val)')
                             " TLogDBG 3
                             let world.llen = len(world.list)
                             " TLogVAR world.index_table
@@ -245,8 +245,9 @@ function! tlib#input#ListW(world, ...) "{{{3
                             let dlist = copy(world.list)
                             if !empty(world.display_format)
                                 let display_format = world.display_format
-                                " TLogVAR display_format
-                                call map(dlist, 'world.FormatName(display_format, v:val)')
+                                let cache = world.fmt_display
+                                " TLogVAR display_format, fmt_entries
+                                call map(dlist, 'world.FormatName(cache, display_format, v:val)')
                             endif
                             " TLogVAR world.prefidx
                             " TLogDBG 6

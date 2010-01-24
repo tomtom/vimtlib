@@ -3,8 +3,8 @@
 " @Website:     http://members.a1.net/t.link/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-05-01.
-" @Last Change: 2010-01-05.
-" @Revision:    0.1.742
+" @Last Change: 2010-01-24.
+" @Revision:    0.1.797
 
 " :filedoc:
 " A prototype used by |tlib#input#List|.
@@ -18,6 +18,8 @@ let s:prototype = tlib#Object#New({
             \ 'base': [], 
             \ 'bufnr': -1,
             \ 'display_format': '',
+            \ 'fmt_display': {},
+            \ 'fmt_filter': {},
             \ 'filetype': '',
             \ 'filter': [['']],
             \ 'filter_format': '',
@@ -229,9 +231,21 @@ endf
 
 
 " :nodoc:
-function! s:prototype.FormatName(format, value) dict "{{{3
-    let world = self
-    return eval(call(function("printf"), self.FormatArgs(a:format, a:value)))
+function! s:prototype.FormatName(cache, format, value) dict "{{{3
+    " TLogVAR a:format, a:value
+    " TLogDBG has_key(self.fmt_display, a:value)
+    if has_key(a:cache, a:value)
+        " TLogDBG "cached"
+        return a:cache[a:value]
+    else
+        let world = self
+        let ftpl = self.FormatArgs(a:format, a:value)
+        let fn = call(function("printf"), ftpl)
+        let fmt = eval(fn)
+        " TLogVAR ftpl, fn, fmt
+        let a:cache[a:value] = fmt
+        return fmt
+    endif
 endf
 
 
@@ -423,7 +437,7 @@ endf
 function! s:prototype.MatchBaseIdx(idx) dict "{{{3
     let text = self.GetBaseItem(a:idx)
     if !empty(self.filter_format)
-        let text = self.FormatName(self.filter_format, text)
+        let text = self.FormatName(self.fmt_filter, self.filter_format, text)
     endif
     " TLogVAR text
     " return self.Match(text)
@@ -432,10 +446,16 @@ endf
 
 
 " :nodoc:
-function! s:prototype.BuildTable() dict "{{{3
+function! s:prototype.BuildTableList() dict "{{{3
     call self.SetFilter()
     " TLogVAR self.filter_neg, self.filter_pos
-    let self.table = filter(range(1, len(self.base)), 'self.MatchBaseIdx(v:val)')
+    if empty(self.filter_pos) && empty(self.filter_neg)
+        let self.table = range(1, len(self.base))
+        let self.list = copy(self.base)
+    else
+        let self.table = filter(range(1, len(self.base)), 'self.MatchBaseIdx(v:val)')
+        let self.list  = map(copy(self.table), 'self.GetBaseItem(v:val)')
+    endif
 endf
 
 
@@ -568,6 +588,8 @@ function! s:prototype.Reset(...) dict "{{{3
     let self.idx       = ''
     let self.prefidx   = 0
     let self.initial_display = 1
+    let self.fmt_display = {}
+    let self.fmt_filter = {}
     call self.UseInputListScratch()
     call self.ResetSelected()
     call self.Retrieve(!initial)
