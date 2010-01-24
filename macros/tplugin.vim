@@ -3,13 +3,13 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-04.
-" @Last Change: 2010-01-22.
-" @Revision:    612
+" @Last Change: 2010-01-24.
+" @Revision:    620
 
 if &cp || exists("loaded_tplugin")
     finish
 endif
-let loaded_tplugin = 4
+let loaded_tplugin = 5
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -281,7 +281,13 @@ function! s:Scan(immediate, roots, args) "{{{3
         endif
 
         if index(what, 't') != -1
-            let filetypes  = glob(join([root, '*', 'syntax', '*.vim'], '/')) ."\n"
+            let filetypes = glob(join([root, '*', 'ftdetect', '*.vim'], '/'))
+            for ftdetect in split(filetypes, '\n')
+                call add(out, 'augroup filetypedetect')
+                call extend(out, readfile(ftdetect))
+                call add(out, 'augroup END')
+            endfor
+            let filetypes .= glob(join([root, '*', 'syntax', '*.vim'], '/')) ."\n"
             let filetypes .= glob(join([root, '*', 'indent', '*.vim'], '/')) ."\n"
             let filetypes .= glob(join([root, '*', 'ftplugin', '*.vim'], '/'))
             " TLogVAR filetypes
@@ -732,4 +738,7 @@ their repos.
 - Fixed concatenation of filetype-related files
 - :TPluginDisable command
 - Replaced :TPluginMap with a function TPluginMap()
+
+0.5
+- Support for ftdetect
 
