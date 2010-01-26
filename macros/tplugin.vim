@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-04.
-" @Last Change: 2010-01-24.
-" @Revision:    628
+" @Last Change: 2010-01-26.
+" @Revision:    697
 
 if &cp || exists("loaded_tplugin")
     finish
@@ -68,6 +68,7 @@ let s:functions = {}
 
 
 function! s:RegisterFunction(def) "{{{3
+    " TLogVAR a:def
     let s:functions[a:def[1]] = a:def
 endf
 
@@ -127,6 +128,8 @@ endf
 
 function! s:AutoloadFunction(fn) "{{{3
     " TLogVAR a:fn
+    " call tlog#Debug(has_key(s:functions, a:fn))
+    " call tlog#Debug(string(keys(s:functions)))
     " call tlog#Debug(string(keys(s:functions)))
     if has_key(s:functions, a:fn)
         " TLogVAR a:fn
@@ -187,7 +190,7 @@ let s:scanner = {
             \   'fmt': {'cargs3': 'TPluginCommand %s %s %s'}
             \ },
             \ 'f': {
-            \   'rx':  '^\s*:\?fu\%[nction]!\?\s\+\zs\(s:\|<SID>\)\@![[:alnum:]#]\+',
+            \   'rx':  '^\s*:\?fu\%[nction]!\?\s\+\zs\(s:\|<SID>\)\@![^[:space:].]\{-}\ze\s*(',
             \   'fmt': {'cargs3': 'TPluginFunction %s %s %s'}
             \ },
             \ 'p': {
@@ -197,17 +200,23 @@ let s:scanner = {
             \ }
 
 
-function! s:ScanSource(repo, plugin, what, lines) "{{{3
+function! s:ScanSource(file, repo, plugin, what, lines) "{{{3
     let text = join(a:lines, "\n")
     let text = substitute(text, '\n\s*\\', '', 'g')
     let lines = split(text, '\n')
-    call map(lines, 's:ScanLine(a:repo, a:plugin, a:what, v:val)')
+    call map(lines, 's:ScanLine(a:file, a:repo, a:plugin, a:what, v:val)')
     call filter(lines, '!empty(v:val)')
     return lines
 endf
 
 
-function! s:ScanLine(repo, plugin, what, line) "{{{3
+function! s:ScanLine(file, repo, plugin, what, line) "{{{3
+    " TLogVAR a:file, a:repo, a:plugin, a:what, a:line
+    if a:file =~ '[\/]'. a:repo .'[\/]autoload[\/]'
+        let plugin = '-'
+    else
+        let plugin = a:plugin
+    endif
     for what in a:what
         let scanner = get(s:scanner, what, {})
         if !empty(scanner)
@@ -215,11 +224,11 @@ function! s:ScanLine(repo, plugin, what, line) "{{{3
             if !empty(m)
                 let fmt = scanner.fmt
                 if has_key(fmt, 'arr1')
-                    return printf(fmt.arr1, string([m, a:repo, a:plugin]))
+                    return printf(fmt.arr1, string([m, a:repo, plugin]))
                 elseif has_key(fmt, 'sargs3')
-                    return printf(fmt.sargs3, string(m), string(a:repo), string(a:plugin))
+                    return printf(fmt.sargs3, string(m), string(a:repo), string(plugin))
                 else
-                    return printf(fmt.cargs3, escape(m, ' \'), escape(a:repo, ' \'), escape(a:plugin, ' \'))
+                    return printf(fmt.cargs3, escape(m, ' \'), escape(a:repo, ' \'), escape(plugin, ' \'))
                 endif
             endif
         endif
@@ -272,7 +281,7 @@ function! s:Scan(immediate, roots, args) "{{{3
         endif
         let pos0 = len(root) + 1
 
-        let filelist = split(files, '\n')
+        let filelist = filter(split(files, '\n'), '!empty(v:val)')
         let progressbar = exists('g:loaded_tlib')
         if progressbar
             call tlib#progressbar#Init(len(filelist), 'TPluginscan: Scanning '. escape(root, '%') .' %s', 20)
@@ -287,20 +296,37 @@ function! s:Scan(immediate, roots, args) "{{{3
                 call extend(out, readfile(ftdetect))
                 call add(out, 'augroup END')
             endfor
-            let filetypes .= glob(join([root, '*', 'syntax', '*.vim'], '/')) ."\n"
-            let filetypes .= glob(join([root, '*', 'indent', '*.vim'], '/')) ."\n"
-            let filetypes .= glob(join([root, '*', 'ftplugin', '*.vim'], '/'))
+            let filetypes .= "\n". glob(join([root, '*', 'syntax', '*.vim'], '/')) 
+            let filetypes .= "\n". glob(join([root, '*', 'indent', '*.vim'], '/'))
+            let filetypes .= "\n". glob(join([root, '*', 'ftplugin', '*.vim'], '/'))
             " TLogVAR filetypes
             let ftd = {}
             for ftfile in filter(split(filetypes, '\n'), '!empty(v:val)')
-                let ft = fnamemodify(ftfile, ':t:r')
-                " TLogVAR ft
+                let ft = matchstr(ftfile, '[\/]ftplugin[\/]\zs.\{-}\ze_.\{-}\.vim$')
+                if empty(ft)
+                    let ft = fnamemodify(ftfile, ':t:r')
+                endif
+                " TLogVAR ftfile, ft
                 if !has_key(ftd, ft)
                     let ftd[ft] = {}
                 endif
                 let repo = matchstr(ftfile, '^.\{-}\%'. (len(root) + 2) .'c[^\/]\+')
                 " TLogVAR ftfile, repo
                 let ftd[ft][repo] = 1
+            endfor
+            for ftplugin in split(glob(join([root, '*', 'ftplugin', '*'], '/')), '\n')
+                let ft = fnamemodify(ftplugin, ':t:r')
+                " TLogVAR ftplugin, ft
+                " TLogDBG has_key(ftd, ft)
+                " TLogDBG isdirectory(ftplugin)
+                if isdirectory(ftplugin)
+                    if !has_key(ftd, ft)
+                        let ftd[ft] = {}
+                    endif
+                    let repo = matchstr(ftplugin, '^.\{-}\%'. (len(root) + 2) .'c[^\/]\+')
+                    " TLogVAR repo
+                    let ftd[ft][repo] = 1
+                endif
             endfor
             for [ft, repos] in items(ftd)
                 " TLogVAR ft, repos
@@ -333,7 +359,7 @@ function! s:Scan(immediate, roots, args) "{{{3
                                 \ string(':TPlugin! '. repo .' '. plugin .'<cr>') .')')
                 endif
 
-                let out += s:ScanSource(repo, plugin, what, readfile(file))
+                let out += s:ScanSource(file, repo, plugin, what, readfile(file))
             endfor
         finally
             if progressbar
@@ -440,10 +466,10 @@ function! s:LoadPlugins(repo, plugins) "{{{3
     let pos0 = len(a:repo) + 1
     for plugin in a:plugins
         " TLogVAR plugin
-        if !has_key(done, plugin)
+        if plugin != '-' && !has_key(done, plugin)
             let done[plugin] = 1
-            " TLogVAR plugin
             if filereadable(plugin)
+                " TLogVAR plugin
                 let before = filter(keys(s:before), 'plugin =~ v:val')
                 if !empty(before)
                     call s:Depend(a:repo, before, s:before)
@@ -588,6 +614,9 @@ endf
 " This allows you to deal with repositories with a non-standard 
 " directory layout. Otherwise it is assumed that the source files are 
 " located in the "plugin" subdirectory.
+"
+" IF PLUGIN is "-", the REPOSITORY will be enabled but no plugin will be 
+" loaded.
 command! -bang -nargs=+ -complete=customlist,s:TPluginComplete TPlugin
             \ call TPlugin(!empty("<bang>"), '', <f-args>)
 
@@ -744,4 +773,10 @@ their repos.
 0.5
 - Support for ftdetect
 - Per repo metadata (ROOT/REPO/tplugin.vim)
+- FIX: s:Scan(): Remove empty entries from filelist
+- Support for ftplugins in directories and named {&FT}_{NAME}.vim
+- FIX: Filetype-related problems
+- Relaxed the rx for functions
+- FIX: Don't load any plugins when autoloading an "autoload function"
+- :TPlugin accepts "-" as argument, which means load "NO PLUGIN".
 
