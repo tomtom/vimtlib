@@ -56,6 +56,17 @@ With autoload:
     The plugins will be loaded as soon as one of its functions or 
     commands is called for the first time.
 
+    When using autoload, for every known ROOT (see |:TPluginRoot|), the 
+    file ROOT/tplugin.vim is loaded on startup. This file is created by 
+    the |:TPluginScan| command and should not be edited by the user.
+
+                            *tplugin-dependencies* *tplugin-metadata*
+    When enabling a repository (ROOT/REPO), e.g., by calling |:TPlugin|, 
+    the files ROOT/tplugin_REPO.vim and ROOT/REPO/tplugin.vim are 
+    loaded. These files allows users (or plugin developers) to, e.g., 
+    define dependencies (see |:TPluginBefore| and |:TPluginAfter|).
+
+
 Without autoload:
 
     (1) Load the macro and (2) set non-standard root directories. In 
@@ -83,6 +94,7 @@ Without autoload:
         let g:snippets_dir = 'X:\vimfiles\snippets,F:\repos\snipmate.vim\snippets'
         TPlugin snipmate.vim
         TPlugin! vimtlib 02tlib
+
 
 CAVEAT: If you have a file after/plugin/foo.vim in you user vimfiles 
 directory, this file will be loaded before any "managed" plugin "foo". 
@@ -190,7 +202,7 @@ TPluginMap(map, repo, plugin, ?remap="")
       call TPluginMap('map <plug>Foo', 'mylib', 'myplugin')
     
       " Load the plugin when pressing <f3> and remap the key to an appropriate 
-      " command:
+      " command from the autoloaded plugin:
       call TPluginMap('map <f3>', 'mylib', 'myplugin', ':Foo<cr>')
 <
 
@@ -208,6 +220,9 @@ TPluginMap(map, repo, plugin, ?remap="")
     This allows you to deal with repositories with a non-standard 
     directory layout. Otherwise it is assumed that the source files are 
     located in the "plugin" subdirectory.
+    
+    IF PLUGIN is "-", the REPOSITORY will be enabled but no plugin will be 
+    loaded.
 
                                                     *:TPluginRoot*
 :TPluginRoot DIRECTORY
