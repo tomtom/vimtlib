@@ -3,7 +3,7 @@
 # @Author:      Tom Link (micathom AT gmail com)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2009-02-10.
-# @Last Change: 2010-01-22.
+# @Last Change: 2010-01-28.
 #
 # This script creates and installs vimballs without vim.
 #
@@ -110,8 +110,8 @@ HEADER
                 opts.separator 'the terms of the GNU General Public License version 2 or newer.'
                 opts.separator ' '
                 opts.separator 'Commands:'
+                opts.separator '   install ... Install a vimball (implicit if the only argument ends with ".vba")'
                 opts.separator '   vba     ... Create a vimball'
-                opts.separator '   install ... Install a vimball'
                 opts.separator '   list    ... List files in a vimball'
                 opts.separator ' '
 
@@ -190,8 +190,13 @@ HEADER
 
             config['files'] ||= []
             rest = opts.parse!(args)
-            config['cmd'] = rest.shift
-            config['files'].concat(rest)
+            if rest.size == 1 && rest.last =~ /\.vba$/
+                config['cmd'] = 'install'
+                config['files'] << rest.shift
+            else
+                config['cmd'] = rest.shift
+                config['files'].concat(rest)
+            end
             config['vimoutdir'] ||= config['outdir']
 
             return Vimball.new(config)
