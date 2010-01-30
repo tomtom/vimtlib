@@ -2,10 +2,11 @@
 
     #C5 [vim] [[macros/tplugin.vim]] :TPlugin in interactive use can only access the current root directory but should be able to use any repository in whatever root directory
     #C5 [vim] [[macros/tplugin.vim]] Help tags should always be available.
+    #C5 [vim] [[plugin/vikitasks.vim]] Integration with calendar.vim
     #C5 [vim] [[plugin/ttoc.vim#TLet g:ttoc_world]] Sort order
     #C6 [vim] [[macros/tplugin.vim]] Provide an easy way to load a plugin by typing a common map prefix
     #C7 [vim] [[macros/tplugin.vim]] :TPluginUpdate command (for git and svn based repositories?)
 
 
-% 2010-01-03; @Last Change: 2010-01-18.
+% 2010-01-03; @Last Change: 2010-01-29.
 % vi: ft=viki:tw=0:ts=4
