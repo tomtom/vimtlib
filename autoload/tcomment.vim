@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-17.
-" @Last Change: 2010-01-03.
-" @Revision:    0.0.70
+" @Last Change: 2010-01-29.
+" @Revision:    0.0.71
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
@@ -111,6 +111,9 @@ call TCommentDefineType('c_block',          g:tcommentBlockC   )
 call TCommentDefineType('cfg',              '# %s'             )
 call TCommentDefineType('conf',             '# %s'             )
 call TCommentDefineType('crontab',          '# %s'             )
+call TCommentDefineType('cs',               '// %s'            )
+call TCommentDefineType('cs_inline',        g:tcommentInlineC  )
+call TCommentDefineType('cs_block',         g:tcommentBlockC   )
 call TCommentDefineType('desktop',          '# %s'             )
 call TCommentDefineType('docbk',            '<!-- %s -->'      )
 call TCommentDefineType('docbk_inline',     g:tcommentInlineXML)
