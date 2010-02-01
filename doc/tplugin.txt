@@ -95,6 +95,9 @@ Without autoload:
     vimrc file before making any changes to the 'runtimepath'. If you 
     don't change the 'runtimepath', the position is of no importance.
 
+    Then install your plugins/repos in the root directory. After 
+    restarting vim, type :TPluginScan!
+
     Full example as it could be found in a |vimrc| file: >
 
         runtime macros/tplugin.vim
@@ -183,6 +186,10 @@ macros/tplugin.vim~
 g:tplugin_autoload             (default: 1)
     Enable autoloading. See |:TPluginScan|, |:TPluginCommand|, and 
     |:TPluginFunction|.
+    Values:
+      1 ... Enable autoload (default)
+      2 ... Enable autoload and automatically run |:TPluginScan| 
+            after updating tplugin.
 
                                                     *g:tplugin_autoload_exclude*
 g:tplugin_autoload_exclude     (default: [])

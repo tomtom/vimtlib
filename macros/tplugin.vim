@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-04.
-" @Last Change: 2010-01-30.
-" @Revision:    801
+" @Last Change: 2010-02-01.
+" @Revision:    819
 " GetLatestVimScripts: 2917 1 :AutoInstall: tplugin.vim
 
 if &cp || exists("loaded_tplugin")
@@ -276,7 +276,7 @@ endf
 
 " Write autoload information for all known root directories to 
 " "ROOT/tplugin.vim".
-function! s:Scan(immediate, roots, args) "{{{3
+function! s:ScanRoots(immediate, roots, args) "{{{3
     let awhat = get(a:args, 0, '')
     if empty(awhat)
         let what = split(g:tplugin_scan, '\zs')
@@ -296,6 +296,10 @@ function! s:Scan(immediate, roots, args) "{{{3
     " TLogVAR what, a:roots
 
     for root in roots
+
+        if !isdirectory(root)
+            continue
+        endif
 
         let pos0 = len(root) + 1
         " TLogVAR pos0
@@ -343,9 +347,11 @@ function! s:Scan(immediate, roots, args) "{{{3
                 call extend(out, readfile(ftdetect))
                 call add(out, 'augroup END')
             endfor
-            let ftypes= filter(copy(files0), 'v:val =~ ''^[^\/]\+[\/]\(ftplugin\|ftdetect\|indent\|syntax\)[\/].\{-}\.vim$''')
-            " TLogVAR ftypes
+
             let ftd = {}
+
+            let ftypes= filter(copy(files0), 'strpart(v:val, pos0) =~ ''^[^\/]\+[\/]\(ftplugin\|ftdetect\|indent\|syntax\)[\/].\{-}\.vim$''')
+            " TLogVAR ftypes
             for ftfile in ftypes
                 let ft = matchstr(ftfile, '[\/]ftplugin[\/]\zs.\{-}\ze_.\{-}\.vim$')
                 if empty(ft)
@@ -359,12 +365,15 @@ function! s:Scan(immediate, roots, args) "{{{3
                 " TLogVAR ftfile, repo
                 let ftd[ft][repo] = 1
             endfor
-            for ftplugin in filter(copy(files0), 'strpart(v:val, pos0) =~ ''^[^\/]\+[\/]ftplugin[\/].\{-}\.vim$''')
-                let ft = fnamemodify(ftplugin, ':t:r')
-                " TLogVAR ftplugin, ft
-                " TLogDBG has_key(ftd, ft)
-                " TLogDBG isdirectory(ftplugin)
-                if isdirectory(ftplugin)
+
+            " Add ftplugin subdirectories
+            for ftplugin in filter(copy(files0), 'strpart(v:val, pos0) =~ ''^[^\/]\+[\/]ftplugin[\/][^\/]\+[\/].\{-}\.vim$''')
+                let ftdir = fnamemodify(ftplugin, ':h')
+                let ft    = fnamemodify(ftdir, ':t:r')
+                if isdirectory(ftdir) && ft != 'ftplugin'
+                    " TLogVAR ftplugin, ft, ftdir
+                    " TLogDBG has_key(ftd, ft)
+                    " TLogDBG isdirectory(ftplugin)
                     if !has_key(ftd, ft)
                         let ftd[ft] = {}
                     endif
@@ -373,6 +382,7 @@ function! s:Scan(immediate, roots, args) "{{{3
                     let ftd[ft][repo] = 1
                 endif
             endfor
+
             for [ft, repos] in items(ftd)
                 " TLogVAR ft, repos
                 let repo_names = map(keys(repos), 'strpart(v:val, pos0)')
@@ -462,7 +472,7 @@ function! s:SetRoot(dir) "{{{3
             try
                 exec 'source '. fnameescape(autoload)
             catch /^TPluginScan:Outdated$/
-                silent call s:Scan(1, s:roots, [])
+                silent call s:ScanRoots(1, s:roots, [])
             catch
                 echohl Error
                 echom v:exception
@@ -751,7 +761,10 @@ command! -nargs=+ TPluginCommand
 "   TPluginRoot dir2
 "   TPluginScan
 command! -bang -nargs=* TPluginScan
-            \ call s:Scan(!empty("<bang>"), s:roots, [<f-args>])
+            \ call s:ScanRoots(!empty("<bang>"), s:roots, [<f-args>])
+
+
+call s:SetRoot(s:Join([s:rtp[0], 'repos']))
 
 
 augroup TPlugin
@@ -764,9 +777,6 @@ augroup TPlugin
     endif
 
 augroup END
-
-
-call s:SetRoot(s:Join([s:rtp[0], 'repos']))
 
 
 let &cpo = s:save_cpo
@@ -805,13 +815,13 @@ their repos.
 0.5
 - Support for ftdetect
 - Per repo metadata (ROOT/REPO/tplugin.vim)
-- FIX: s:Scan(): Remove empty entries from filelist
+- FIX: s:ScanRoots(): Remove empty entries from filelist
 - Support for ftplugins in directories and named {&FT}_{NAME}.vim
 - FIX: Filetype-related problems
 - Relaxed the rx for functions
 - FIX: Don't load any plugins when autoloading an "autoload function"
 - :TPlugin accepts "-" as argument, which means load "NO PLUGIN".
-- Speed up :TPluginScan (s:Scan(): run glob() only once, filter file 
+- Speed up :TPluginScan (s:ScanRoots(): run glob() only once, filter file 
 contents before passing it to s:ScanSource())
 - :TPluginScan: don't use full filenames as arguments for 
 TPluginFiletype()
