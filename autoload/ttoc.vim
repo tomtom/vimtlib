@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-11-11.
-" @Last Change: 2010-01-03.
-" @Revision:    0.0.81
+" @Last Change: 2010-02-01.
+" @Revision:    0.0.85
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -59,7 +59,7 @@ TLet g:ttoc_rx_sh     = '^\s*\(\(export\|function\|while\|case\|if\)\>\|\w\+\s*(
 TLet g:ttoc_rx_tcl    = '^\s*\(source\|proc\)\>.*'
 TLet g:ttoc_rx_tex    = '\C\\\(label\|\(sub\)*\(section\|paragraph\|part\)\)\>.*'
 TLet g:ttoc_rx_viki   = '^\(\*\+\|\s*#\l\).*'
-TLet g:ttoc_rx_vim    = '\C^\(fu\%[nction]\|com\%[mand]\|if\|wh\%[ile]\)\>.*'
+TLet g:ttoc_rx_vim    = '\C^\(\s*fu\%[nction]\|\s*com\%[mand]\|if\|wh\%[ile]\)\>.*'
 
 " TLet g:ttoc_rx_vim    = '\C^\(\(fu\|if\|wh\).*\|.\{-}\ze\("\s*\)\?{{{.*\)'
 " TLet g:ttoc_rx_ocaml  = '^\(let\|module\|\s*let .\{-}function\).*'
@@ -275,6 +275,7 @@ function! ttoc#View(rx, ...) "{{{3
             let rx = '^.\{-}'. rx .'.*$'
         end
     endif
+    " TLogVAR rx
 
     if empty(rx)
         echoerr 'TToC: No regexp given'
