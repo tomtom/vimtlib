@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-04.
 " @Last Change: 2010-02-01.
-" @Revision:    819
+" @Revision:    820
 " GetLatestVimScripts: 2917 1 :AutoInstall: tplugin.vim
 
 if &cp || exists("loaded_tplugin")
@@ -500,9 +500,13 @@ function! s:AddRepo(repos) "{{{3
         for repo in repos
             let tplugin_repo = fnamemodify(repo, ':h') .'/tplugin_'. fnamemodify(repo, ':t') .'.vim'
             " TLogVAR repo, tplugin_repo
-            exec 'silent! source '. fnameescape(tplugin_repo)
+            if filereadable(tplugin_repo)
+                exec 'silent! source '. fnameescape(tplugin_repo)
+            endif
             let repo_tplugin = fnamemodify(repo, ':h') .'/'. fnamemodify(repo, ':t') .'/tplugin.vim'
-            exec 'silent! source '. fnameescape(repo_tplugin)
+            if filereadable(repo_tplugin)
+                exec 'silent! source '. fnameescape(repo_tplugin)
+            endif
             " TLogVAR repo
             call insert(rtp, repo, idx)
             call insert(rtp, join([repo, 'after'], '/'), -1)
