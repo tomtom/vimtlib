@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     21-Sep-2004.
-" @Last Change: 2010-01-05.
-" @Revision:    3888
+" @Last Change: 2010-01-31.
+" @Revision:    3890
 "
 " GetLatestVimScripts: 1160 1 tSkeleton.vim
 " http://www.vim.org/scripts/script.php?script_id=1160
@@ -27,7 +27,7 @@ if !exists('loaded_tlib') || loaded_tlib < 29
         finish
     endif
 endif
-let loaded_tskeleton = 408
+let loaded_tskeleton = 409
 
 
 if !exists("g:tskelDir") "{{{2
@@ -533,4 +533,8 @@ autoload/tskeleton.vim
 - If g:tskelDontSetup is defined and g:tskelMenuPrefix == '', 
 autoload/tskeleton.vim won't be loaded on startup.
 - Don't create g:tskelBitsDir if it doesn't exist
+
+4.9
+- "Mini bits": Load all .tskelmini files from the current file's 
+directory upwards
 
