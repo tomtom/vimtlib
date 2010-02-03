@@ -3,8 +3,8 @@
 " @Website:     http://members.a1.net/t.link/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-05-01.
-" @Last Change: 2010-01-24.
-" @Revision:    0.1.797
+" @Last Change: 2010-02-03.
+" @Revision:    0.1.802
 
 " :filedoc:
 " A prototype used by |tlib#input#List|.
@@ -151,17 +151,20 @@ endf
 
 " :nodoc:
 function! s:prototype.GetSelectedItems(current) dict "{{{3
+    " TLogVAR a:current
     if stridx(self.type, 'i') != -1
         let rv = copy(self.sel_idx)
     else
         let rv = map(copy(self.sel_idx), 'self.GetBaseItem(v:val)')
     endif
-    if a:current != ''
-        let ci = index(rv, a:current)
-        if ci != -1
-            call remove(rv, ci)
+    if !empty(a:current)
+        if tlib#type#IsString(a:current)
+            call s:InsertSelectedItems(rv, a:current)
+        elseif tlib#type#IsList(a:current)
+            for item in a:current
+                call s:InsertSelectedItems(rv, item)
+            endfor
         endif
-        call insert(rv, a:current)
     endif
     " TAssert empty(rv) || rv[0] == a:current
     if stridx(self.type, 'i') != -1
@@ -172,6 +175,15 @@ function! s:prototype.GetSelectedItems(current) dict "{{{3
         endif
     endif
     return rv
+endf
+
+
+function! s:InsertSelectedItems(rv, current) "{{{3
+    let ci = index(a:rv, a:current)
+    if ci != -1
+        call remove(a:rv, ci)
+    endif
+    call insert(a:rv, a:current)
 endf
 
 
