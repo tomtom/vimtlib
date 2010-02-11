@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2006-12-12.
-" @Last Change: 2009-12-13.
-" @Revision:    811
+" @Last Change: 2010-02-11.
+" @Revision:    812
 "
 " GetLatestVimScripts: 1730 1 07tAssert.vim
 
@@ -38,7 +38,7 @@ if g:TASSERT
     " Test that an expression doesn't evaluate to something |empty()|. 
     " With [!] failures are logged according to the setting of 
     " |g:tAssertLog|.
-    command! -nargs=1 -bang -bar TAssert 
+    command! -nargs=1 -bang TAssert 
                 \ let s:assertReason = '' |
                 \ try |
                 \   let s:assertFailed = empty(eval(<q-args>)) |
@@ -59,14 +59,14 @@ if g:TASSERT
     " Check if EXPRESSION is of a certain TYPE (see |IsA()|).
     "
     " This command requires macros/tassert.vim to be loaded.
-    command! -nargs=+ -bang -bar TAssertType TAssert<bang> IsItA(<args>)
+    command! -nargs=+ -bang TAssertType TAssert<bang> IsItA(<args>)
 
 else
 
     " :nodoc:
-    command! -nargs=1 -bang -bar TAssert :
+    command! -nargs=1 -bang TAssert :
     " :nodoc:
-    command! -nargs=+ -bang -bar TAssertType :
+    command! -nargs=+ -bang TAssertType :
 
 endif
 
