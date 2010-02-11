@@ -3,8 +3,8 @@
 " @Website:     http://members.a1.net/t.link/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-05-01.
-" @Last Change: 2010-02-03.
-" @Revision:    0.1.802
+" @Last Change: 2010-02-06.
+" @Revision:    0.1.812
 
 " :filedoc:
 " A prototype used by |tlib#input#List|.
@@ -158,10 +158,15 @@ function! s:prototype.GetSelectedItems(current) dict "{{{3
         let rv = map(copy(self.sel_idx), 'self.GetBaseItem(v:val)')
     endif
     if !empty(a:current)
-        if tlib#type#IsString(a:current)
+        " TLogVAR a:current, rv, type(a:current)
+        if tlib#type#IsNumber(a:current) || tlib#type#IsString(a:current)
             call s:InsertSelectedItems(rv, a:current)
         elseif tlib#type#IsList(a:current)
             for item in a:current
+                call s:InsertSelectedItems(rv, item)
+            endfor
+        elseif tlib#type#IsDictionary(a:current)
+            for [inum, item] in items(a:current)
                 call s:InsertSelectedItems(rv, item)
             endfor
         endif
