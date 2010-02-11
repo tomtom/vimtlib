@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-04.
-" @Last Change: 2010-02-01.
-" @Revision:    820
+" @Last Change: 2010-02-06.
+" @Revision:    829
 " GetLatestVimScripts: 2917 1 :AutoInstall: tplugin.vim
 
 if &cp || exists("loaded_tplugin")
@@ -41,6 +41,14 @@ if !exists('g:tplugin_helptags')
 endif
 
 
+" if !exists('g:tplugin_help')
+"     " If non-nil, fully expand the 'runtimepath' when entering the 
+"     " command line, so that all helptags are accessible to the |:help| 
+"     " command.
+"     let g:tplugin_help = 1   "{{{2
+" endif
+
+
 if !exists('g:tplugin_menu_prefix')
     " If autoload is enabled and this variable is non-empty, build a 
     " menu with available plugins.
@@ -74,7 +82,6 @@ let s:done = {}
 let s:immediate = 0
 let s:before = {}
 let s:after = {}
-let s:helptags = []
 let s:ftypes = {}
 let s:functions = {}
 
@@ -112,11 +119,6 @@ function! s:Autoload(type, def, bang, range, args) "{{{3
         echoerr 'Unsupported type: '. a:type
     endif
 endf
-
-
-" function! TPluginHelp(tags) "{{{3
-"     call add(s:helptags, a:tags)
-" endf
 
 
 " :nodoc:
@@ -317,7 +319,6 @@ function! s:ScanRoots(immediate, roots, args) "{{{3
                         exec 'helptags '. fnameescape(doc)
                     endif
                 endif
-                " call add(out, 'call TPluginHelp('. string(tags) .')')
             endfor
         endif
 
@@ -652,6 +653,24 @@ function! s:TPluginComplete(ArgLead, CmdLine, CursorPos) "{{{3
 endf
 
 
+" let s:runtimepath0 = &rtp
+" 
+" function! s:FullRuntimepath() "{{{3
+"     let s:runtimepath0 = &rtp
+"     for root in s:roots
+"         let repos = split(glob(root .'/*'), '\n')
+"         for repo in repos
+"             exec 'set rtp+='. escape(a:repo, '\ ')
+"         endfor
+"     endfor
+" endf
+" 
+" 
+" function! s:ResetRuntimepath() "{{{3
+"     let &rtp = s:runtimepath0
+" endf
+
+
 " :display: :TPlugin[!] REPOSITORY [PLUGINS ...]
 " Register certain plugins for being sourced at |VimEnter| time.
 " See |tplugin.txt| for details.
@@ -779,6 +798,11 @@ augroup TPlugin
         autocmd FuncUndefined * call s:AutoloadFunction(expand("<afile>"))
         autocmd FileType * if has_key(s:ftypes, &ft) | call s:Filetype(&ft) | endif
     endif
+
+    " if g:tplugin_help
+    "     autocmd CmdwinEnter * if expand('<afile>') == ':' | call s:FullRuntimepath() | endif
+    "     autocmd CmdwinLeave * if expand('<afile>') == ':' | call s:ResetRuntimepath() | endif
+    " endif
 
 augroup END
 
