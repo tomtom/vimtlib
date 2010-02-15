@@ -66,12 +66,12 @@ With autoload:
     commands is called for the first time.
 
     When using autoload, for every known ROOT (see |:TPluginRoot|), the 
-    file ROOT/tplugin.vim is loaded on startup. This file is created by 
+    file ROOT/_tplugin.vim is loaded on startup. This file is created by 
     the |:TPluginScan| command and should not be edited by the user.
 
                             *tplugin-dependencies* *tplugin-metadata*
     When enabling a repository (ROOT/REPO), e.g., by calling |:TPlugin|, 
-    the files ROOT/tplugin_REPO.vim and ROOT/REPO/tplugin.vim are 
+    the files ROOT/_tplugin_REPO.vim and ROOT/REPO/_tplugin.vim are 
     loaded. These files allows users (or plugin developers) to, e.g., 
     define dependencies (see |:TPluginBefore| and |:TPluginAfter|).
 
@@ -123,9 +123,16 @@ command.
                                                     *tplugin-asneeded*
 AsNeeded Users~
 
-You could make use of tplugin's autoloading mechanism and move the files 
-in the AsNeeded subdirectory to REPOS/_asneeded/plugin/. |:TPluginScan| 
-would then create dummy definitions for commands and functions.
+tplugin can serve as a drop-in replacement for the AsNeeded plugin. Add 
+the following command to you |vimrc| file: >
+
+    TPluginRoot ~/vimfiles/AsNeeded/*
+
+Alternatively, move the files the AsNeeded subdirectory to 
+REPOS/AsNeeded/plugin/.
+
+Run |:TPluginScan| in order to create autoload definitions for commands 
+and functions.
 
 Contrary to the AsNeeded plugin, tplugin only supports autoload for 
 |<Plug>| type of maps. Other autoload maps have to be defined by the 
@@ -216,6 +223,12 @@ g:tplugin_menu_prefix          (default: '')
 g:tplugin_scan                 (default: 'cfapt')
     The default value for |:TPluginScan|.
 
+
+
+
+
+
+
                                                     *TPluginMap()*
 TPluginMap(map, repo, plugin, ?remap="")
     MAP is a map command and the map. REPO and PLUGIN are the same as for 
@@ -253,6 +266,16 @@ TPluginMap(map, repo, plugin, ?remap="")
     Define the root directory for the following |:TPlugin| commands.
     Read autoload information if available (see |g:tplugin_autoload| and 
     |:TPluginScan|).
+    
+    If DIRECTORY ends with "*", it doesn't refer to a directory hierarchy 
+    à la vimfiles but to a single "flat" directory.
+    
+    Example: >
+      " A collection of git repositories
+      TPluginRoot ~/src/git_repos
+      " A directory with experimental plugins
+      TPluginRoot ~/vimfiles/experimental_plugins/*
+<
 
                                                     *:TPluginBefore*
 :TPluginBefore FILE_RX [FILE_PATTERNS ...]
