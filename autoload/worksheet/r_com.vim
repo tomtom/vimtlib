@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-07-18.
-" @Last Change: 2009-05-24.
-" @Revision:    0.0.100
+" @Last Change: 2010-02-15.
+" @Revision:    0.0.110
 
 if &cp || exists("loaded_worksheet_r_com_autoload")
     finish
@@ -26,7 +26,6 @@ function! s:prototype.Evaluate(lines) dict "{{{3
     " TLogVAR ruby
     ruby <<EOR
     input = VIM.evaluate('ruby')
-    wait  = input =~ /^\s*help\b/
     value = WorksheetRCOM::INTERPRETER.evaluate(input)
     VIM.command(%{let value=#{(value || '').inspect}})
 EOR
@@ -79,15 +78,22 @@ function! worksheet#r_com#InitializeInterpreter(worksheet) "{{{3
         def r_sendw(text)
             @ole_server.Evaluate(text)
         end
-    
+   
+        def escape_help(text)
+            text =~ /^".*?"$/ ? text : text.inspect
+        end
+
         def evaluate(text, save=true)
+            text = text.sub(/^\?([^\?].*)/) {"help(#{escape_help($1)})"}
+            meth = text =~ /^\s*help\b/ ? :r_sendw : :r_send
+            p "DBG", text, meth
             r_send(%{worksheet.out <- textConnection("worksheet.log", "w")})
             r_send(%{sink(worksheet.out)})
             if save
                 # p %{print(tryCatch({#{text}}, error=function(e) e))}
-                r_send(%{print(tryCatch({#{text}}, error=function(e) e))})
+                send(meth, %{print(tryCatch({#{text}}, error=function(e) e))})
             else
-                r_send(%{{#{text}}})
+                send(meth, %{{#{text}}})
             end
             r_send(%{sink()})
             r_send(%{close(worksheet.out)})
