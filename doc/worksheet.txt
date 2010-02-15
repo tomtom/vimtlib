@@ -31,31 +31,37 @@ This script requires hookcursormoved (vimscript #2037) to be installed.
 ========================================================================
 Contents~
 
-        u .......................... |worksheet-map-u|
-        <c-n> ...................... |worksheet-map-<c-n>|
-        <c-p> ...................... |worksheet-map-<c-p>|
-        <c-pagedown> ............... |worksheet-map-<c-pagedown>|
-        i_<c-pagedown> ............. |worksheet-map-i_<c-pagedown>|
-        <c-pageup> ................. |worksheet-map-<c-pageup>|
-        i_<c-pageup> ............... |worksheet-map-i_<c-pageup>|
-        <m-pagedown> ............... |worksheet-map-<m-pagedown>|
-        i_<m-pagedown> ............. |worksheet-map-i_<m-pagedown>|
-        <m-pageup> ................. |worksheet-map-<m-pageup>|
-        i_<m-pageup> ............... |worksheet-map-i_<m-pageup>|
-        <c-cr> ..................... |worksheet-map-<c-cr>|
-        i_<c-cr> ................... |worksheet-map-i_<c-cr>|
-        gi ......................... |worksheet-map-gi|
-        K .......................... |worksheet-map-K|
-        yi ......................... |worksheet-map-yi|
-        yo ......................... |worksheet-map-yo|
-        worksheet#Worksheet ........ |worksheet#Worksheet()|
-        worksheet#Complete ......... |worksheet#Complete()|
-        worksheet#RestoreBuffer .... |worksheet#RestoreBuffer()|
-        worksheet#SetModifiable .... |worksheet#SetModifiable()|
-        worksheet#Restore .......... |worksheet#Restore()|
-        worksheet#SaveAs ........... |worksheet#SaveAs()|
-        worksheet#EvaluateAll ...... |worksheet#EvaluateAll()|
-        worksheet#Prototype ........ |worksheet#Prototype()|
+        g:worksheet_default ........................ |g:worksheet_default|
+        g:worksheet_suffix ......................... |g:worksheet_suffix|
+        :Worksheet ................................. |:Worksheet|
+        :WorksheetRestore .......................... |:WorksheetRestore|
+        :WorksheetSaveAs ........................... |:WorksheetSaveAs|
+        :WorksheetEvaluateAll ...................... |:WorksheetEvaluateAll|
+        u .......................................... |worksheet-map-u|
+        <c-n> ...................................... |worksheet-map-<c-n>|
+        <c-p> ...................................... |worksheet-map-<c-p>|
+        <c-pagedown> ............................... |worksheet-map-<c-pagedown>|
+        i_<c-pagedown> ............................. |worksheet-map-i_<c-pagedown>|
+        <c-pageup> ................................. |worksheet-map-<c-pageup>|
+        i_<c-pageup> ............................... |worksheet-map-i_<c-pageup>|
+        <m-pagedown> ............................... |worksheet-map-<m-pagedown>|
+        i_<m-pagedown> ............................. |worksheet-map-i_<m-pagedown>|
+        <m-pageup> ................................. |worksheet-map-<m-pageup>|
+        i_<m-pageup> ............................... |worksheet-map-i_<m-pageup>|
+        <c-cr> ..................................... |worksheet-map-<c-cr>|
+        i_<c-cr> ................................... |worksheet-map-i_<c-cr>|
+        gi ......................................... |worksheet-map-gi|
+        K .......................................... |worksheet-map-K|
+        yi ......................................... |worksheet-map-yi|
+        yo ......................................... |worksheet-map-yo|
+        worksheet#Worksheet ........................ |worksheet#Worksheet()|
+        worksheet#Complete ......................... |worksheet#Complete()|
+        worksheet#RestoreBuffer .................... |worksheet#RestoreBuffer()|
+        worksheet#SetModifiable .................... |worksheet#SetModifiable()|
+        worksheet#Restore .......................... |worksheet#Restore()|
+        worksheet#SaveAs ........................... |worksheet#SaveAs()|
+        worksheet#EvaluateAll ...................... |worksheet#EvaluateAll()|
+        worksheet#Prototype ........................ |worksheet#Prototype()|
         prototype.BufJoin
         prototype.BufUnload
         prototype.NextEntry
@@ -74,8 +80,56 @@ Contents~
         prototype.SwapEntries
         prototype.SilentInput
         prototype.Submit
-        :HiLink .................... |:HiLink|
-        :HiLink .................... |:HiLink|
+        prototype.Evaluate
+        worksheet#ruby#InitializeInterpreter ....... |worksheet#ruby#InitializeInterpreter()|
+        worksheet#ruby#InitializeBuffer ............ |worksheet#ruby#InitializeBuffer()|
+        prototype.Evaluate
+        worksheet#rubymath#InitializeInterpreter ... |worksheet#rubymath#InitializeInterpreter()|
+        worksheet#rubymath#InitializeBuffer ........ |worksheet#rubymath#InitializeBuffer()|
+        prototype.Evaluate
+        prototype.Keyword
+        prototype.Quit
+        worksheet#r_com#InitializeInterpreter ...... |worksheet#r_com#InitializeInterpreter()|
+        worksheet#r_com#InitializeBuffer ........... |worksheet#r_com#InitializeBuffer()|
+        worksheet#r_com#Complete ................... |worksheet#r_com#Complete()|
+        prototype.Evaluate
+        worksheet#sh#InitializeInterpreter ......... |worksheet#sh#InitializeInterpreter()|
+        worksheet#sh#InitializeBuffer .............. |worksheet#sh#InitializeBuffer()|
+        prototype.Evaluate
+        worksheet#vim#InitializeInterpreter ........ |worksheet#vim#InitializeInterpreter()|
+        worksheet#vim#InitializeBuffer ............. |worksheet#vim#InitializeBuffer()|
+
+
+========================================================================
+plugin/worksheet.vim~
+
+                                                    *g:worksheet_default*
+g:worksheet_default            (default: 'vim')
+    The default worksheet type
+
+                                                    *g:worksheet_suffix*
+g:worksheet_suffix             (default: '.wks')
+    The suffix for saved worksheets.
+    TODO: If non-empty, this will also add a line to the filetypedetect 
+    autogroup.
+
+                                                    *:Worksheet*
+:Worksheet [TYPE]
+    Open a new worksheet.
+
+                                                    *:WorksheetRestore*
+:WorksheetRestore
+    Restore a worksheet to the last know good state.
+
+                                                    *:WorksheetSaveAs*
+:WorksheetSaveAs
+    :WorksheetSaveAs[!] [FILENAME]
+    Save a worksheet to disk.
+    By default worksheets are 'buftype'=nofile and 'noswapfile'.
+
+                                                    *:WorksheetEvaluateAll*
+:WorksheetEvaluateAll
+    Evaluate all cells in the current worksheet.
 
 
 ========================================================================
@@ -234,13 +288,79 @@ prototype.Submit
 
 
 ========================================================================
-syntax/worksheet.vim~
+autoload/worksheet/ruby.vim~
 
-                                                    *:HiLink*
-:HiLink
 
-                                                    *:HiLink*
-:HiLink
+prototype.Evaluate
+
+                                                    *worksheet#ruby#InitializeInterpreter()*
+worksheet#ruby#InitializeInterpreter(worksheet)
+
+                                                    *worksheet#ruby#InitializeBuffer()*
+worksheet#ruby#InitializeBuffer(worksheet)
+
+
+========================================================================
+autoload/worksheet/rubymath.vim~
+
+
+prototype.Evaluate
+
+                                                    *worksheet#rubymath#InitializeInterpreter()*
+worksheet#rubymath#InitializeInterpreter(worksheet)
+
+                                                    *worksheet#rubymath#InitializeBuffer()*
+worksheet#rubymath#InitializeBuffer(worksheet)
+
+
+========================================================================
+autoload/worksheet/r_com.vim~
+
+
+prototype.Evaluate
+
+
+prototype.Keyword
+
+
+prototype.Quit
+
+                                                    *worksheet#r_com#InitializeInterpreter()*
+worksheet#r_com#InitializeInterpreter(worksheet)
+
+                                                    *worksheet#r_com#InitializeBuffer()*
+worksheet#r_com#InitializeBuffer(worksheet)
+
+                                                    *worksheet#r_com#Complete()*
+worksheet#r_com#Complete(findstart, base)
+
+
+========================================================================
+autoload/worksheet/sh.vim~
+
+
+prototype.Evaluate
+
+                                                    *worksheet#sh#InitializeInterpreter()*
+worksheet#sh#InitializeInterpreter(worksheet)
+
+                                                    *worksheet#sh#InitializeBuffer()*
+worksheet#sh#InitializeBuffer(worksheet)
+
+
+========================================================================
+autoload/worksheet/vim.vim~
+
+
+prototype.Evaluate
+    If the first character is "|", the input string will be processed with 
+    |:execute|. Otherwise |eval()| will be used.
+
+                                                    *worksheet#vim#InitializeInterpreter()*
+worksheet#vim#InitializeInterpreter(worksheet)
+
+                                                    *worksheet#vim#InitializeBuffer()*
+worksheet#vim#InitializeBuffer(worksheet)
 
 
 

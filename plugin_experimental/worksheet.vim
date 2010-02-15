@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-07-15.
-" @Last Change: 2009-08-04.
-" @Revision:    59
+" @Last Change: 2010-02-15.
+" @Revision:    67
 " GetLatestVimScripts: 0 0 worksheet.vim
 
 if &cp || exists("loaded_worksheet")
@@ -57,7 +57,7 @@ command! WorksheetRestore call worksheet#Restore()
 " :WorksheetSaveAs[!] [FILENAME]
 " Save a worksheet to disk.
 " By default worksheets are 'buftype'=nofile and 'noswapfile'.
-command! -bang -complete=file WorksheetSaveAs call worksheet#SaveAs("<bang>")
+command! -bang -narg=? -complete=file WorksheetSaveAs call worksheet#SaveAs("<bang>", <q-args>)
 
 " Evaluate all cells in the current worksheet.
 command! WorksheetEvaluateAll call worksheet#EvaluateAll()
