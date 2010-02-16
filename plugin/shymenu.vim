@@ -3,14 +3,14 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-11-12.
-" @Last Change: 2009-08-03.
-" @Revision:    137
+" @Last Change: 2010-02-16.
+" @Revision:    141
 " GetLatestVimScripts: 2437 0 shymenu.vim
 
 if &cp || exists("loaded_shymenu")
     finish
 endif
-let loaded_shymenu = 3
+let loaded_shymenu = 4
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -73,6 +73,12 @@ if !exists('g:shymenu_lines')
     " order to maintain the overall window size.
     let g:shymenu_lines = 1   "{{{2
 endif
+
+if !exists('g:shymenu_options')
+    " A list of options that shall be maintained.
+    let g:shymenu_options = ['&cmdheight']   "{{{2
+endif
+
 
 function! s:ShyMenuCollect() "{{{3
     redir => itemss
@@ -165,6 +171,10 @@ endf
 "    0 ... hide
 "    1 ... show
 function! ShyMenu(mode) "{{{3
+    let options = {}
+    for o in g:shymenu_options
+        exec 'let options[o] = '. o
+    endfor
     if a:mode == -1
         if s:ShowMenu()
             call s:SetMenu(0)
@@ -180,6 +190,10 @@ function! ShyMenu(mode) "{{{3
             call s:SetMenu(0)
         endif
     endif
+    for o in g:shymenu_options
+        " TLogVAR o, options[o]
+        exec 'if '. o .' != options[o] | let '. o .' = '. options[o] .' | endif'
+    endfor
 endf
 
 let s:ttogglemenu = 0
@@ -229,4 +243,7 @@ international characters)
 - Typos (thanks AS Budden)
 - Correct line offset if necessary
 - Set g:shymenu_wildcharm from &wildcharm
+
+0.4
+- g:shymenu_options: A list of options that shall be maintained.
 
