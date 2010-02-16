@@ -441,12 +441,28 @@ endf
 
 
 function! s:prototype.Yank(eid, what) dict "{{{3
+    " TLogVAR a:eid, a:what
     let eid = a:eid > 0 ? a:eid : self.CurrentEntryId()
+    " TLogVAR eid
     let entry = get(self.entries, eid, {})
+    " TLogVAR entry
     if !empty(entry)
         let v = get(entry, a:what, '')
         if !empty(v)
             let @" = v
+        elseif s:IsInputField(self)
+            let pos = getpos('.')
+            try
+                let ebeg = self.HeadOfEntry()
+                let eend = self.EndOfInput()
+                if ebeg < eend
+                    let lines = getline(ebeg + 1, eend)
+                    " TLogVAR ebeg, eend, lines
+                    let @" = join(lines, "\n")
+                endif
+            finally
+                call setpos('.', pos)
+            endtry
         endif
     endif
 endf
