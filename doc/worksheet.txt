@@ -80,19 +80,19 @@ Contents~
         prototype.SwapEntries
         prototype.SilentInput
         prototype.Submit
+        g:worksheet#rcom#help ...................... |g:worksheet#rcom#help|
+        prototype.Evaluate
+        prototype.Keyword
+        prototype.Quit
+        worksheet#rcom#InitializeInterpreter ....... |worksheet#rcom#InitializeInterpreter()|
+        worksheet#rcom#InitializeBuffer ............ |worksheet#rcom#InitializeBuffer()|
+        worksheet#rcom#Complete .................... |worksheet#rcom#Complete()|
         prototype.Evaluate
         worksheet#ruby#InitializeInterpreter ....... |worksheet#ruby#InitializeInterpreter()|
         worksheet#ruby#InitializeBuffer ............ |worksheet#ruby#InitializeBuffer()|
         prototype.Evaluate
         worksheet#rubymath#InitializeInterpreter ... |worksheet#rubymath#InitializeInterpreter()|
         worksheet#rubymath#InitializeBuffer ........ |worksheet#rubymath#InitializeBuffer()|
-        g:worksheet#r_com#help ..................... |g:worksheet#r_com#help|
-        prototype.Evaluate
-        prototype.Keyword
-        prototype.Quit
-        worksheet#r_com#InitializeInterpreter ...... |worksheet#r_com#InitializeInterpreter()|
-        worksheet#r_com#InitializeBuffer ........... |worksheet#r_com#InitializeBuffer()|
-        worksheet#r_com#Complete ................... |worksheet#r_com#Complete()|
         prototype.Evaluate
         worksheet#sh#InitializeInterpreter ......... |worksheet#sh#InitializeInterpreter()|
         worksheet#sh#InitializeBuffer .............. |worksheet#sh#InitializeBuffer()|
@@ -289,6 +289,39 @@ prototype.Submit
 
 
 ========================================================================
+autoload/worksheet/rcom.vim~
+
+                                                    *g:worksheet#rcom#help*
+g:worksheet#rcom#help          (default: 2)
+    Handling of help commands.
+    Sending a help command may make vim hang under certain 
+    circumstances.
+    
+      0 ... disallow
+      1 ... allow
+      2 ... Use RSiteSearch() instead of help() (this option requires 
+            Internet access)
+
+
+prototype.Evaluate
+
+
+prototype.Keyword
+
+
+prototype.Quit
+
+                                                    *worksheet#rcom#InitializeInterpreter()*
+worksheet#rcom#InitializeInterpreter(worksheet)
+
+                                                    *worksheet#rcom#InitializeBuffer()*
+worksheet#rcom#InitializeBuffer(worksheet)
+
+                                                    *worksheet#rcom#Complete()*
+worksheet#rcom#Complete(findstart, base)
+
+
+========================================================================
 autoload/worksheet/ruby.vim~
 
 
@@ -312,39 +345,6 @@ worksheet#rubymath#InitializeInterpreter(worksheet)
 
                                                     *worksheet#rubymath#InitializeBuffer()*
 worksheet#rubymath#InitializeBuffer(worksheet)
-
-
-========================================================================
-autoload/worksheet/r_com.vim~
-
-                                                    *g:worksheet#r_com#help*
-g:worksheet#r_com#help         (default: 2)
-    Handling of help commands.
-    Sending a help command may make vim hang under certain 
-    circumstances.
-    
-      0 ... disallow
-      1 ... allow
-      2 ... Use RSiteSearch() instead of help() (this option requires 
-            Internet access)
-
-
-prototype.Evaluate
-
-
-prototype.Keyword
-
-
-prototype.Quit
-
-                                                    *worksheet#r_com#InitializeInterpreter()*
-worksheet#r_com#InitializeInterpreter(worksheet)
-
-                                                    *worksheet#r_com#InitializeBuffer()*
-worksheet#r_com#InitializeBuffer(worksheet)
-
-                                                    *worksheet#r_com#Complete()*
-worksheet#r_com#Complete(findstart, base)
 
 
 ========================================================================
