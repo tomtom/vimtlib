@@ -1,12 +1,18 @@
 * TODO
 
+    #A5 [vim] [[plugin_experimental/worksheet.vim]] <c-pageup/down> funktioniert nicht, wenn man über Ausgabe ist
+    #A5 [vim] [[plugin_experimental/worksheet.vim]] yi funktioniert nicht bei letztem Feld
+    #C5 [vim] [[autoload/worksheet/r_com.vim]] Textausgabe capturen: Set d = CreateObject("StatConnTools.StringLogDevice"); d.BindToServerOutput r; r.EvaluateNoReturn "x<-10"; r.EvaluateNoReturn "print(x)";
     #C5 [vim] [[macros/tplugin.vim]] :TPlugin in interactive use can only access the current root directory but should be able to use any repository in whatever root directory
+    #C5 [vim] [[macros/tplugin.vim]] Command line completion for commands? Wie bekommt man custom(list)-Funktionen heraus?
     #C5 [vim] [[macros/tplugin.vim]] Help tags should always be available.
-    #C5 [vim] [[plugin/vikitasks.vim]] Integration with calendar.vim
     #C5 [vim] [[plugin/ttoc.vim#TLet g:ttoc_world]] Sort order
+    #C5 [vim] [[plugin/vikitasks.vim]] Integration with calendar.vim
+    #C5 [vim] [[plugin_experimental/worksheet.vim]] ftplugin: commentstring definieren
+    #C5 [vim] [[plugin_experimental/worksheet.vim]] worksheet: ys ... Yank selected input fields (select via tlib#input#List); ya ... Yank all input fields
     #C6 [vim] [[macros/tplugin.vim]] Provide an easy way to load a plugin by typing a common map prefix
     #C7 [vim] [[macros/tplugin.vim]] :TPluginUpdate command (for git and svn based repositories?)
 
 
-% 2010-01-03; @Last Change: 2010-01-29.
+% 2010-01-03; @Last Change: 2010-02-16.
 % vi: ft=viki:tw=0:ts=4

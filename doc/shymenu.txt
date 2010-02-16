@@ -46,6 +46,7 @@ Contents~
         g:shymenu_items ............... |g:shymenu_items|
         g:shymenu_blacklist ........... |g:shymenu_blacklist|
         g:shymenu_lines ............... |g:shymenu_lines|
+        g:shymenu_options ............. |g:shymenu_options|
         ShyMenu ....................... |ShyMenu()|
 
 
@@ -95,6 +96,10 @@ g:shymenu_blacklist            (default: [])
 g:shymenu_lines                (default: 1)
     Increase/decrease 'lines' when hiding/showing the menu bar in 
     order to maintain the overall window size.
+
+                                                    *g:shymenu_options*
+g:shymenu_options              (default: ['&cmdheight'])
+    A list of options that shall be maintained.
 
                                                     *ShyMenu()*
 ShyMenu(mode)
