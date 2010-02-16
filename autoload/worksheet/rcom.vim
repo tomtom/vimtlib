@@ -1,24 +1,24 @@
-" r_com.vim
+" rcom.vim
 " @Author:      Tom Link (mailto:micathom AT gmail com?subject=[vim])
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-07-18.
 " @Last Change: 2010-02-16.
-" @Revision:    0.0.123
+" @Revision:    0.0.124
 
-if &cp || exists("loaded_worksheet_r_com_autoload")
+if &cp || exists("loaded_worksheet_rcom_autoload")
     finish
 endif
 if !has('ruby')
-    echoerr 'Worksheet r_com: +ruby required'
+    echoerr 'Worksheet rcom: +ruby required'
     finish
 endif
-let loaded_worksheet_r_com_autoload = 1
+let loaded_worksheet_rcom_autoload = 1
 let s:save_cpo = &cpo
 set cpo&vim
 
 
-if !exists('g:worksheet#r_com#help')
+if !exists('g:worksheet#rcom#help')
     " Handling of help commands.
     " Sending a help command may make vim hang under certain 
     " circumstances.
@@ -27,7 +27,7 @@ if !exists('g:worksheet#r_com#help')
     "   1 ... allow
     "   2 ... Use RSiteSearch() instead of help() (this option requires 
     "         Internet access)
-    let g:worksheet#r_com#help = 2   "{{{2
+    let g:worksheet#rcom#help = 2   "{{{2
 endif
 
 
@@ -62,7 +62,7 @@ function! s:prototype.Quit() dict "{{{3
 endf
 
 
-function! worksheet#r_com#InitializeInterpreter(worksheet) "{{{3
+function! worksheet#rcom#InitializeInterpreter(worksheet) "{{{3
     ruby <<EOR
     require 'win32ole'
     require 'tmpdir'
@@ -99,9 +99,9 @@ function! worksheet#r_com#InitializeInterpreter(worksheet) "{{{3
         def evaluate(text, save=true)
             text = text.sub(/^\?([^\?].*)/) {"help(#{escape_help($1)})"}
             if text =~ /^\s*help(\.\w+)?\b/m
-                return if VIM::evaluate("g:worksheet#r_com#help") == "0"
+                return if VIM::evaluate("g:worksheet#rcom#help") == "0"
                 meth = :r_send
-                if VIM::evaluate("g:worksheet#r_com#help") == "2"
+                if VIM::evaluate("g:worksheet#rcom#help") == "2"
                     text.sub!(/^\s*help\s*\(/m, 'RSiteSearch(')
                 end
             else
@@ -139,15 +139,15 @@ EOR
 endf
 
 
-function! worksheet#r_com#InitializeBuffer(worksheet) "{{{3
+function! worksheet#rcom#InitializeBuffer(worksheet) "{{{3
     call extend(a:worksheet, s:prototype)
-    setlocal omnifunc=worksheet#r_com#Complete
+    setlocal omnifunc=worksheet#rcom#Complete
     " noremap <silent> <buffer> K :call b:worksheet.Evaluate(['help("'. expand('<cword>') .'")'])<cr>
     setlocal iskeyword+=.
 endf
 
 
-function! worksheet#r_com#Complete(findstart, base) "{{{3
+function! worksheet#rcom#Complete(findstart, base) "{{{3
     if a:findstart
         let line = getline('.')
         let start = col('.') - 1
@@ -169,7 +169,7 @@ function! worksheet#r_com#Complete(findstart, base) "{{{3
             let clist = completions
             call map(clist, 'matchstr(v:val, ''"\zs.\{-}\ze"'')')
         else
-            echorr 'Worksheet r_com: Unexpected type: '. string(completions)
+            echorr 'Worksheet rcom: Unexpected type: '. string(completions)
         endif
         return clist
     endif
