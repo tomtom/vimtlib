@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-07-18.
 " @Last Change: 2010-02-16.
-" @Revision:    0.0.124
+" @Revision:    0.0.125
 
 if &cp || exists("loaded_worksheet_rcom_autoload")
     finish
@@ -102,7 +102,7 @@ function! worksheet#rcom#InitializeInterpreter(worksheet) "{{{3
                 return if VIM::evaluate("g:worksheet#rcom#help") == "0"
                 meth = :r_send
                 if VIM::evaluate("g:worksheet#rcom#help") == "2"
-                    text.sub!(/^\s*help\s*\(/m, 'RSiteSearch(')
+                    text.sub!(/^\s*help(\.\w+)?\s*\(/m, 'RSiteSearch(')
                 end
             else
                 meth = :r_sendw
