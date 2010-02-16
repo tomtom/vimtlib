@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-07-18.
-" @Last Change: 2010-02-15.
-" @Revision:    0.0.110
+" @Last Change: 2010-02-16.
+" @Revision:    0.0.123
 
 if &cp || exists("loaded_worksheet_r_com_autoload")
     finish
@@ -16,6 +16,19 @@ endif
 let loaded_worksheet_r_com_autoload = 1
 let s:save_cpo = &cpo
 set cpo&vim
+
+
+if !exists('g:worksheet#r_com#help')
+    " Handling of help commands.
+    " Sending a help command may make vim hang under certain 
+    " circumstances.
+    "
+    "   0 ... disallow
+    "   1 ... allow
+    "   2 ... Use RSiteSearch() instead of help() (this option requires 
+    "         Internet access)
+    let g:worksheet#r_com#help = 2   "{{{2
+endif
 
 
 let s:prototype = {'syntax': 'r'}
@@ -85,8 +98,15 @@ function! worksheet#r_com#InitializeInterpreter(worksheet) "{{{3
 
         def evaluate(text, save=true)
             text = text.sub(/^\?([^\?].*)/) {"help(#{escape_help($1)})"}
-            meth = text =~ /^\s*help\b/ ? :r_sendw : :r_send
-            p "DBG", text, meth
+            if text =~ /^\s*help(\.\w+)?\b/m
+                return if VIM::evaluate("g:worksheet#r_com#help") == "0"
+                meth = :r_send
+                if VIM::evaluate("g:worksheet#r_com#help") == "2"
+                    text.sub!(/^\s*help\s*\(/m, 'RSiteSearch(')
+                end
+            else
+                meth = :r_sendw
+            end
             r_send(%{worksheet.out <- textConnection("worksheet.log", "w")})
             r_send(%{sink(worksheet.out)})
             if save
