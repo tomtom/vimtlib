@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-04.
-" @Last Change: 2010-02-15.
-" @Revision:    929
+" @Last Change: 2010-02-16.
+" @Revision:    946
 " GetLatestVimScripts: 2917 1 :AutoInstall: tplugin.vim
 
 if &cp || exists("loaded_tplugin")
@@ -323,7 +323,7 @@ function! s:ScanRoots(immediate, roots, args) "{{{3
             let is_tree = 1
             let files0 = split(glob(join([root, '**', '*.vim'], '/')), '\n')
         endif
-        " TLogVAR root, is_tree
+        " TLogVAR root, is_tree, isdirectory(root), len(files0)
 
         if !isdirectory(root)
             continue
@@ -332,8 +332,11 @@ function! s:ScanRoots(immediate, roots, args) "{{{3
         let pos0 = len(root) + 1
         " TLogVAR pos0
         call filter(files0, '!empty(v:val) && v:val !~ ''[\/]\(\.git\|.svn\|CVS\)\([\/]\|$\)''')
-        let exclude_rx = '\V'. join(g:tplugin_autoload_exclude, '\|') .'\|\[\\/]'. s:tplugin_file .'\(_\w\+\)\?\.vim$'
-        call filter(files0, 'v:val !~ exclude_rx')
+        let exclude_rx = '\V'. join(add(g:tplugin_autoload_exclude, '\[\\/]'. s:tplugin_file .'\(_\w\+\)\?\.vim\$'), '\|')
+        " TLogVAR exclude_rx
+        if exclude_rx != '\V'
+            call filter(files0, 'v:val !~ exclude_rx')
+        endif
         " TLogVAR files0
         " TLogDBG len(files0)
         " TLogDBG strpart(files0[0], pos0)
