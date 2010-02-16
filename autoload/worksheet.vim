@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-07-15.
-" @Last Change: 2010-01-03.
-" @Revision:    0.0.667
+" @Last Change: 2010-02-16.
+" @Revision:    0.0.679
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -311,7 +311,7 @@ function! s:prototype.NextInputField(rel_pos, create, wrap) dict "{{{3
     if lno
         " TLogDBG getline('.')
         exec self.EndOfInput(lno + 1)
-        if s:IsInputField(self)
+        if s:IsInputField(self) && &modifiable
             norm! A
         endif
     endif
