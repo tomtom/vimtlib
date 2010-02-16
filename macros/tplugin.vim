@@ -4,13 +4,13 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-04.
 " @Last Change: 2010-02-16.
-" @Revision:    946
+" @Revision:    967
 " GetLatestVimScripts: 2917 1 :AutoInstall: tplugin.vim
 
 if &cp || exists("loaded_tplugin")
     finish
 endif
-let loaded_tplugin = 6
+let loaded_tplugin = 7
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -106,10 +106,15 @@ endf
 
 
 " args: A string it type == 1, a list if type == 2
-function! s:Autoload(type, def, bang, range, args) "{{{3
+function! s:Autoload(type, extended, def, bang, range, args) "{{{3
     " TLogVAR a:type, a:def, a:bang, a:range, a:args
-    let [root, cmd; file] = a:def
-    " TLogVAR root, cmd, file
+    let [root, cmd0; file] = a:def
+    if a:extended
+        let cmd = matchstr(cmd0, '\s\zs\u\w*$')
+    else
+        let cmd = cmd0
+    endif
+    " TLogVAR a:extended, root, cmd0, cmd, file
     if a:type == 1 " Command
         " TLogDBG exists(':'. cmd)
         exec 'delcommand '. cmd
@@ -165,7 +170,7 @@ function! s:AutoloadFunction(fn) "{{{3
         " TLogVAR a:fn
         let def = s:functions[a:fn]
         " TLogVAR def
-        call s:Autoload(2, def, '', [], [])
+        call s:Autoload(2, 0, def, '', [], [])
         " Ignored
         return 1
     endif
@@ -230,8 +235,8 @@ endf
 
 let s:scanner = {
             \ 'c': {
-            \   'rx':  '^\s*:\?com\%[mand]!\?\s\+\(-\S\+\s\+\)*\zs\w\+',
-            \   'fmt': {'cargs3': 'TPluginCommand %s %s %s'}
+            \   'rx':  '^\s*:\?com\%[mand]!\?\s\+\(-\S\+\s\+\)*\w\+',
+            \   'fmt': {'cargs3': 'TPluginCommand! %s %s %s'}
             \ },
             \ 'f': {
             \   'rx':  '^\s*:\?fu\%[nction]!\?\s\+\zs\(s:\|<SID>\)\@![^[:space:].]\{-}\ze\s*(',
@@ -282,7 +287,7 @@ function! s:ScanLine(file, repo, plugin, what, line) "{{{3
                     elseif has_key(fmt, 'sargs3')
                         return printf(fmt.sargs3, string(m), string(a:repo), string(plugin))
                     else
-                        return printf(fmt.cargs3, escape(m, ' \'), escape(a:repo, ' \'), escape(plugin, ' \'))
+                        return printf(fmt.cargs3, escape(m, ' \	'), escape(a:repo, ' \	'), escape(plugin, ' \	'))
                     endif
                 endif
             endif
@@ -805,20 +810,23 @@ command! -nargs=+ TPluginFunction
             \ | endif
 
 
-" :display: :TPluginCommand COMMAND REPOSITORY [PLUGIN]
+" :display: :TPluginCommand[!] COMMAND REPOSITORY [PLUGIN]
 " Load a certain plugin on demand (aka autoload) when COMMAND is called 
 " for the first time. Then call the original command.
 "
 " For most plugins, |:TPluginScan| will generate the appropriate 
 " TPluginCommand commands for you. For some plugins, you'll have to 
 " define autocommands yourself in the |vimrc| file.
+"
+" With the optional '!', COMMAND is a string that defines the command 
+" (not just the command name).
 " 
 " Example: >
 "   TPluginCommand TSelectBuffer vimtlib tselectbuffer
-command! -nargs=+ TPluginCommand
+command! -bang -nargs=+ TPluginCommand
             \ if g:tplugin_autoload && exists(':'. [<f-args>][0]) != 2 |
-            \ exec 'command! -bang -range -nargs=* '. [<f-args>][0]
-            \ .' call s:Autoload(1, ['. string(s:roots[0]) .', <f-args>], "<lt>bang>", ["<lt>line1>", "<lt>line2>"], <lt>q-args>)'
+            \ exec (empty('<bang>') ? 'command! -bang -range -nargs=* '. [<f-args>][0] : [<f-args>][0])
+            \ .' call s:Autoload(1, '. !empty('<bang>') .', ['. string(s:roots[0]) .', <f-args>], "<lt>bang>", ["<lt>line1>", "<lt>line2>"], <lt>q-args>)'
             \ | endif
 
 
@@ -936,4 +944,9 @@ versions of vim.
 - If the root name ends with '*', the root is no directory tree but a 
 single directory (actually a plugin repo)
 - s:TPluginComplete(): Hide tplugin autoload files.
+
+0.7
+- TPluginScan: try to maintain information about command-line completion 
+(this won't work if a custom script-local completion function is used)
+
 
