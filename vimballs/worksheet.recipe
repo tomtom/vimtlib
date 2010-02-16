@@ -1,0 +1,8 @@
+doc/worksheet.txt
+autoload/worksheet.vim
+autoload/worksheet/rcom.vim
+autoload/worksheet/ruby.vim
+autoload/worksheet/rubymath.vim
+autoload/worksheet/sh.vim
+autoload/worksheet/vim.vim
+plugin/worksheet.vim
