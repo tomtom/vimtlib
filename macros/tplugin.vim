@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-04.
 " @Last Change: 2010-02-17.
-" @Revision:    989
+" @Revision:    1026
 " GetLatestVimScripts: 2917 1 :AutoInstall: tplugin.vim
 
 if &cp || exists("loaded_tplugin")
@@ -291,7 +291,7 @@ function! s:ScanLine(file, repo, plugin, what, line) "{{{3
     for what in a:what
         let scanner = get(s:scanner, what, {})
         if !empty(scanner)
-            let m = matchstr(a:line, scanner.rx)
+            let m = s:Strip(matchstr(a:line, scanner.rx))
             if !empty(m)
                 " TLogVAR m
                 if !has_key(s:scan_repo_done, what)
@@ -665,12 +665,19 @@ endf
 " :nodoc:
 function! TPlugin(immediate, root, repo, ...) "{{{3
     " TLogVAR a:immediate, a:root, a:repo, a:000
+    " deprecated
     if a:repo == '.'
         let repo = a:root
+        if !has_key(s:done, repo)
+            let s:done[repo] = {}
+        endif
     else
         let root = s:RootDirOnDisk(empty(a:root) ? s:roots[0] : a:root)
         if a:repo == '-'
             let repo = root
+            if !has_key(s:done, repo)
+                let s:done[repo] = {}
+            endif
         else
             let repo = join([root, a:repo], '/')
         endif
@@ -712,23 +719,34 @@ function! s:TPluginComplete(ArgLead, CmdLine, CursorPos) "{{{3
     let rv = []
     " for root in s:roots
     let root = s:roots[0]
-    " TLogVAR root
+    " TLogVAR root, repo
     if empty(repo)
-        let pos0  = len(root) + 1
-        let files = split(glob(join([root, '*'], '/')), '\n')
-        call map(files, 'strpart(v:val, pos0)')
-        call filter(files, 'v:val !~ ''\V''. s:tplugin_file .''\(_\w\+\)\?\.vim''')
-        call filter(files, 'stridx(v:val, a:ArgLead) != -1')
+        if root =~ '[\\/]\*$'
+            let files = ['- ']
+        else
+            let pos0  = len(root) + 1
+            let files = split(glob(join([root, '*'], '/')), '\n')
+            call map(files, 'strpart(v:val, pos0)')
+            " call tlog#Debug('v:val !~ ''\V'. s:tplugin_file .'\(_\w\+\)\?\.vim\$''')
+            call filter(files, 'stridx(v:val, a:ArgLead) != -1')
+        endif
         " TLogVAR files
     else
-        let pdir  = join([repo, 'plugin'], '/')
+        if root =~ '[\\/]\*$'
+            let root = s:RootDirOnDisk(root)
+            let pdir = ''
+        else
+            let pdir  = join([repo, 'plugin'], '/')
+        endif
         let dir   = join([root, pdir], '/')
+        " TLogVAR pdir, dir
         let pos0  = len(dir) + 1
         let files = split(glob(join([dir, '*.vim'], '/')), '\n')
         call map(files, 'strpart(v:val, pos0, len(v:val) - pos0 - 4)')
         call filter(files, 'stridx(v:val, a:ArgLead) != -1')
         " TLogVAR files
     endif
+    call filter(files, 'v:val !~ ''\V'. s:tplugin_file .'\(_\w\+\)\?\(\.vim\)\?\$''')
     let rv += files
     " endfor
     " TLogVAR rv
