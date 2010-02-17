@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-04.
-" @Last Change: 2010-02-16.
-" @Revision:    967
+" @Last Change: 2010-02-17.
+" @Revision:    989
 " GetLatestVimScripts: 2917 1 :AutoInstall: tplugin.vim
 
 if &cp || exists("loaded_tplugin")
@@ -105,16 +105,36 @@ function! s:RegisterFunction(def) "{{{3
 endf
 
 
+function! s:Strip(string) "{{{3
+    let string = substitute(a:string, '^\s\+', '', '')
+    let string = substitute(string, '\s\+$', '', '')
+    return string
+endf
+
+
+function! s:Command(string) "{{{3
+    let string = s:Strip(a:string)
+    if match(string, '\s') == -1
+        return 'command! -bang -range -nargs=* '. string
+    else
+        " let cmd = matchstr(a:string, '\s\zs\u\w*$')
+        let string = substitute(string, '^com\%[mand]\zs\s', '! ', '')
+        return string
+    endif
+endf
+
+
 " args: A string it type == 1, a list if type == 2
-function! s:Autoload(type, extended, def, bang, range, args) "{{{3
+function! s:Autoload(type, def, bang, range, args) "{{{3
     " TLogVAR a:type, a:def, a:bang, a:range, a:args
     let [root, cmd0; file] = a:def
-    if a:extended
+    let cmd0 = s:Strip(cmd0)
+    if match(cmd0, '\s') != -1
         let cmd = matchstr(cmd0, '\s\zs\u\w*$')
     else
         let cmd = cmd0
     endif
-    " TLogVAR a:extended, root, cmd0, cmd, file
+    " TLogVAR root, cmd0, cmd, file
     if a:type == 1 " Command
         " TLogDBG exists(':'. cmd)
         exec 'delcommand '. cmd
@@ -170,7 +190,7 @@ function! s:AutoloadFunction(fn) "{{{3
         " TLogVAR a:fn
         let def = s:functions[a:fn]
         " TLogVAR def
-        call s:Autoload(2, 0, def, '', [], [])
+        call s:Autoload(2, def, '', [], [])
         " Ignored
         return 1
     endif
@@ -236,7 +256,7 @@ endf
 let s:scanner = {
             \ 'c': {
             \   'rx':  '^\s*:\?com\%[mand]!\?\s\+\(-\S\+\s\+\)*\w\+',
-            \   'fmt': {'cargs3': 'TPluginCommand! %s %s %s'}
+            \   'fmt': {'cargs3': 'TPluginCommand %s %s %s'}
             \ },
             \ 'f': {
             \   'rx':  '^\s*:\?fu\%[nction]!\?\s\+\zs\(s:\|<SID>\)\@![^[:space:].]\{-}\ze\s*(',
@@ -818,15 +838,12 @@ command! -nargs=+ TPluginFunction
 " TPluginCommand commands for you. For some plugins, you'll have to 
 " define autocommands yourself in the |vimrc| file.
 "
-" With the optional '!', COMMAND is a string that defines the command 
-" (not just the command name).
-" 
 " Example: >
 "   TPluginCommand TSelectBuffer vimtlib tselectbuffer
 command! -bang -nargs=+ TPluginCommand
-            \ if g:tplugin_autoload && exists(':'. [<f-args>][0]) != 2 |
-            \ exec (empty('<bang>') ? 'command! -bang -range -nargs=* '. [<f-args>][0] : [<f-args>][0])
-            \ .' call s:Autoload(1, '. !empty('<bang>') .', ['. string(s:roots[0]) .', <f-args>], "<lt>bang>", ["<lt>line1>", "<lt>line2>"], <lt>q-args>)'
+            \ if g:tplugin_autoload && (empty('<bang>') || exists(':'. matchstr([<f-args>][0], '\s\zs\u\w*$')) != 2) |
+            \ exec s:Command([<f-args>][0])
+            \ .' call s:Autoload(1, ['. string(s:roots[0]) .', <f-args>], "<lt>bang>", ["<lt>line1>", "<lt>line2>"], <lt>q-args>)'
             \ | endif
 
 
