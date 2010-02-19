@@ -36,6 +36,7 @@ endf
 
 function! worksheet#vim#InitializeBuffer(worksheet) "{{{3
     call extend(a:worksheet, s:prototype)
+    runtime indent/vim.vim
 endf
 
 

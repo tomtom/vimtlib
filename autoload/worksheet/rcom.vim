@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-07-18.
 " @Last Change: 2010-02-19.
-" @Revision:    0.0.170
+" @Revision:    0.0.179
 
 if &cp || exists("loaded_worksheet_rcom_autoload")
     finish
@@ -145,6 +145,7 @@ endf
 
 function! worksheet#rcom#InitializeBuffer(worksheet) "{{{3
     call extend(a:worksheet, s:prototype)
+    runtime indent/r.vim
     setlocal omnifunc=worksheet#rcom#Complete
     " noremap <silent> <buffer> K :call b:worksheet.Evaluate(['help("'. expand('<cword>') .'")'])<cr>
     setlocal iskeyword+=.
