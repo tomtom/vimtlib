@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-07-18.
-" @Last Change: 2010-02-16.
-" @Revision:    0.0.125
+" @Last Change: 2010-02-19.
+" @Revision:    0.0.170
 
 if &cp || exists("loaded_worksheet_rcom_autoload")
     finish
@@ -20,14 +20,12 @@ set cpo&vim
 
 if !exists('g:worksheet#rcom#help')
     " Handling of help commands.
-    " Sending a help command may make vim hang under certain 
-    " circumstances.
     "
     "   0 ... disallow
     "   1 ... allow
     "   2 ... Use RSiteSearch() instead of help() (this option requires 
     "         Internet access)
-    let g:worksheet#rcom#help = 2   "{{{2
+    let g:worksheet#rcom#help = 1   "{{{2
 endif
 
 
@@ -71,6 +69,8 @@ function! worksheet#rcom#InitializeInterpreter(worksheet) "{{{3
         def initialize
             @ole_server = WIN32OLE.new("StatConnectorSrv.StatConnector")
             @ole_server.Init("R")
+            @ole_printer = WIN32OLE.new("StatConnTools.StringLogDevice")
+            @ole_printer.BindToServerOutput(@ole_server)
             if VIM::evaluate("has('gui')")
                 r_send(%{options(chmhelp=TRUE)})
                 r_send(%{options(show.error.messages=TRUE)})
@@ -97,28 +97,32 @@ function! worksheet#rcom#InitializeInterpreter(worksheet) "{{{3
         end
 
         def evaluate(text, save=true)
-            text = text.sub(/^\?([^\?].*)/) {"help(#{escape_help($1)})"}
-            if text =~ /^\s*help(\.\w+)?\b/m
+            log = ""
+            text = text.sub(/^\s*\?([^\?].*)/) {"help(#{escape_help($1)})"}
+            text = text.sub(/^\s*(help\(.*?\))/) {"print(#$1)"}
+            if text =~ /^\s*(print\()?help(\.\w+)?\b/m
                 return if VIM::evaluate("g:worksheet#rcom#help") == "0"
                 meth = :r_send
                 if VIM::evaluate("g:worksheet#rcom#help") == "2"
-                    text.sub!(/^\s*help(\.\w+)?\s*\(/m, 'RSiteSearch(')
+                    text.sub!(/^\s*(print\()?help(\.\w+)?\s*\(/m, 'RSiteSearch(')
                 end
             else
                 meth = :r_sendw
             end
-            r_send(%{worksheet.out <- textConnection("worksheet.log", "w")})
-            r_send(%{sink(worksheet.out)})
-            if save
-                # p %{print(tryCatch({#{text}}, error=function(e) e))}
-                send(meth, %{print(tryCatch({#{text}}, error=function(e) e))})
+            # log << "DBG #{meth}(#{text})\n"
+            # rv = send(meth, %{{#{text}}})
+            rv = send(meth, %{tryCatch({#{text}}, error = function(e) {e$message})})
+            log << @ole_printer.Text
+            if log.empty?
+                log << rv.to_s
             else
-                send(meth, %{{#{text}}})
+                log.gsub!(/\r\n/, "\n")
+                log.sub!(/^\s+/, "")
+                log.sub!(/\s+$/, "")
+                log.gsub!(/^(\[\d+\])\n /m, "\\1 ")
+                @ole_printer.Text = ""
             end
-            r_send(%{sink()})
-            r_send(%{close(worksheet.out)})
-            r_send(%{rm(worksheet.out)})
-            r_sendw(%{if (is.character(worksheet.log) & length(worksheet.log) == 0) NULL else worksheet.log})
+            log
         end
 
         def quit
