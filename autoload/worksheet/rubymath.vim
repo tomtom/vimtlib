@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-07-15.
-" @Last Change: 2009-02-15.
-" @Revision:    0.0.45
+" @Last Change: 2010-02-19.
+" @Revision:    0.0.47
 
 if &cp || exists("loaded_worksheet_rubymath_autoload")
     finish
@@ -39,6 +39,8 @@ endf
 
 function! worksheet#rubymath#InitializeBuffer(worksheet) "{{{3
     call extend(a:worksheet, s:prototype)
+    runtime indent/ruby.vim
+    runtime ftplugin/ruby.vim
 endf
 
 

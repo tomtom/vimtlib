@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-07-15.
 " @Last Change: 2010-02-19.
-" @Revision:    0.0.42
+" @Revision:    0.0.43
 
 if &cp || exists("loaded_worksheet_ruby_autoload")
     finish
@@ -36,6 +36,7 @@ endf
 function! worksheet#ruby#InitializeBuffer(worksheet) "{{{3
     call extend(a:worksheet, s:prototype)
     runtime indent/ruby.vim
+    runtime ftplugin/ruby.vim
 endf
 
 

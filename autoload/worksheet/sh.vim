@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-07-15.
-" @Last Change: 2009-02-15.
-" @Revision:    0.0.10
+" @Last Change: 2010-02-19.
+" @Revision:    0.0.12
 
 if &cp || exists("loaded_worksheet_sh_autoload")
     finish
@@ -28,6 +28,8 @@ endf
 
 function! worksheet#sh#InitializeBuffer(worksheet) "{{{3
     call extend(a:worksheet, s:prototype)
+    runtime indent/sh.vim
+    runtime ftplugin/sh.vim
 endf
 
 

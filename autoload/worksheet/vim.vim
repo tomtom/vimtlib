@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-07-15.
 " @Last Change: 2010-02-19.
-" @Revision:    0.0.52
+" @Revision:    0.0.53
 
 if &cp || exists("loaded_worksheet_vim_autoload")
     finish
@@ -37,6 +37,7 @@ endf
 function! worksheet#vim#InitializeBuffer(worksheet) "{{{3
     call extend(a:worksheet, s:prototype)
     runtime indent/vim.vim
+    runtime ftplugin/vim.vim
 endf
 
 
