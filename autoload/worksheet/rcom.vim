@@ -160,14 +160,15 @@ function! worksheet#rcom#Complete(findstart, base) "{{{3
         endwhile
         return start
     else
-        let completions = b:worksheet.Evaluate(['apropos("^'. escape(a:base, '^$.*\[]~') .'")'])
+        let completions = b:worksheet.Evaluate(['print(apropos("^'. escape(a:base, '^$.*\[]~') .'"))'])
+        " TLogVAR completions
         if type(completions) == 1
             " TLogVAR completions
             let completions = substitute(completions, '^[^"]*"', '', '')
             " TLogVAR completions
-            let completions = substitute(completions, '"\s*$', '', '')
+            let completions = substitute(completions, '"[^"]*$', '', '')
             " TLogVAR completions
-            let clist = split(completions, '"\s[^"]\{-}"')
+            let clist = split(completions, '"[^"]*"')
             " TLogVAR clist
         elseif type(completions) == 3
             let clist = completions
