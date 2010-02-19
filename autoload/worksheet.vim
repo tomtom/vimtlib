@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-07-15.
-" @Last Change: 2010-02-16.
-" @Revision:    0.0.679
+" @Last Change: 2010-02-19.
+" @Revision:    0.0.690
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -194,6 +194,8 @@ function! worksheet#EvaluateAll() "{{{3
         echoerr 'Worksheet: Not a worksheet'
     endif
 endf
+
+
 
 
 function! s:IsInputField(worksheet, ...) "{{{3
@@ -447,9 +449,10 @@ function! s:prototype.Yank(eid, what) dict "{{{3
     let entry = get(self.entries, eid, {})
     " TLogVAR entry
     if !empty(entry)
+        let reg = v:register
         let v = get(entry, a:what, '')
         if !empty(v)
-            let @" = v
+            call setreg(reg, v)
         elseif s:IsInputField(self)
             let pos = getpos('.')
             try
@@ -458,12 +461,46 @@ function! s:prototype.Yank(eid, what) dict "{{{3
                 if ebeg < eend
                     let lines = getline(ebeg + 1, eend)
                     " TLogVAR ebeg, eend, lines
-                    let @" = join(lines, "\n")
+                    call setreg(reg, join(lines, "\n"))
                 endif
             finally
                 call setpos('.', pos)
             endtry
         endif
+    endif
+endf
+
+
+function! s:prototype.YankAll() "{{{3
+    if exists('b:worksheet')
+        let reg = v:register
+        let rval = getreg(reg)
+        let pos = getpos('.')
+        let out = []
+        try
+            let worksheet = b:worksheet
+            for cid in worksheet.order
+                " TLogVAR cid
+                call setreg(reg, "")
+                call b:worksheet.Yank(cid, 'string')
+                let val = getreg(reg)
+                " TLogVAR val
+                if !empty(val)
+                    call add(out, val)
+                endif
+            endfor
+        finally
+            call setpos('.', pos)
+        endtry
+        let sout = join(out, "\n\n")
+        " TLogVAR sout
+        if empty(sout)
+            call setreg(reg, rval)
+        else
+            call setreg(reg, sout)
+        endif
+    else
+        echoerr 'Worksheet: Not a worksheet'
     endif
 endf
 
