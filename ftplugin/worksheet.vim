@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-07-16.
-" @Last Change: 2010-02-16.
-" @Revision:    0.1.49
+" @Last Change: 2010-02-19.
+" @Revision:    0.1.54
 " GetLatestVimScripts: 0 0 :AutoInstall: worksheet.vim
 
 if exists("b:did_ftplugin")
@@ -54,8 +54,10 @@ noremap <buffer> <silent> gi :call b:worksheet.GotoEntry(v:count1, 1, 0)\|:exec 
 noremap <buffer> <silent> K :call b:worksheet.Keyword()<cr>
 
 " Yank the input of the current or |v:count|'s entry to |quotequote|.
-noremap <buffer> <silent> yi :call b:worksheet.Yank(v:count, 'string')<cr>
+noremap <buffer> <silent> yc :call b:worksheet.Yank(v:count, 'string')<cr>
 " Yank the output of the current or |v:count|'s entry to |quotequote|.
 noremap <buffer> <silent> yo :call b:worksheet.Yank(v:count, 'output')<cr>
+" Yank all input fields.
+noremap <buffer> <silent> yin :call b:worksheet.YankAll()<cr>
 " :tagprefix:
 
