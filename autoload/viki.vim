@@ -4,13 +4,12 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
 " @Last Change: 2010-02-20.
-" @Revision:    0.591
+" @Revision:    0.614
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
 
 """ General {{{1
-
 
 " This is what we consider nil, in the absence of nil in vimscript
 let g:vikiDefNil  = ''
@@ -18,13 +17,9 @@ let g:vikiDefNil  = ''
 " In a previous version this was used as list separator and as nil too
 let g:vikiDefSep  = "\n"
 
-" let s:vikiSelfEsc = '\'
-
 " In extended viki links this is considered as a reference to the current 
 " document. This is likely to go away.
 let g:vikiSelfRef = '.'
-
-" let s:vikiEnabledID = loaded_viki .'_'. strftime('%c')
 
 " A simple viki name is made from a series of upper and lower characters 
 " (i.e. CamelCase-names). These two variables define what is considered as 
@@ -261,6 +256,14 @@ if !exists("g:vikiMapFunctionalityMinor") "{{{2
 endif
 
 
+let s:positions = {}
+let s:InterVikiRx = '^\(['. g:vikiUpperCharacters .']\+\)::\(.*\)$'
+let s:hookcursormoved_oldpos = []
+" let s:vikiSelfEsc = '\'
+" let s:vikiEnabledID = loaded_viki .'_'. strftime('%c')
+
+
+
 """ Commands {{{1
 
 command! -count VikiFindNext call viki#DispatchOnFamily('Find', '', '',  <count>)
@@ -460,20 +463,6 @@ if !exists("*VikiOpenSpecialProtocol") "{{{2
 endif
 
 
-
-" Outdated way to keep cursor information
-function! s:ResetSavedCursorPosition() "{{{3
-    let s:cursorSet  = -1
-    let s:cursorCol  = -1
-    let s:cursorVCol = -1
-    let s:cursorLine = -1
-    let s:cursorWinTLine = -1
-    let s:cursorEol  = 0
-    let s:lazyredraw = &lazyredraw
-endf
-
-call s:ResetSavedCursorPosition()
-
 " Outdated: a cheap implementation of printf
 function! s:sprintf1(string, arg) "{{{3
     if exists('printf')
@@ -484,8 +473,6 @@ function! s:sprintf1(string, arg) "{{{3
         return rv
     end
 endf
-
-let s:InterVikiRx = '^\(['. g:vikiUpperCharacters .']\+\)::\(.*\)$'
 
 
 function! viki#GetInterVikis() "{{{3
@@ -636,16 +623,17 @@ function! s:MarkInexistent(line1, line2, ...) "{{{3
     if !exists('b:vikiMarkInexistent') || !b:vikiMarkInexistent
         return
     endif
-    if s:cursorCol == -1
+    if exists('b:vikiPosition')
+        " let cursorRestore = 0
+        " bufnum, lnum, col, off]
+        let li0 = b:vikiPosition.pos[1]
+        let co0 = b:vikiPosition.pos[2]
+        let co1 = co0 - 2
+    else
         " let cursorRestore = 1
         let li0 = line('.')
         let co0 = col('.')
         let co1 = co0 - 1
-    else
-        " let cursorRestore = 0
-        let li0 = s:cursorLine
-        let co0 = s:cursorCol
-        let co1 = co0 - 2
     end
     if a:0 >= 2 && a:2 > 0 && synIDattr(synID(li0, co1, 1), 'name') !~ '^viki.*Link$'
         return
@@ -786,9 +774,6 @@ function! s:MarkInexistent(line1, line2, ...) "{{{3
         endif
         let b:vikiCheckInexistent = 0
     finally
-        " if cursorRestore && !s:cursorSet
-        "     call viki#RestoreCursorPosition(li0, co0)
-        " endif
         if feedback
             call tlib#progressbar#Restore()
         endif
@@ -1176,7 +1161,6 @@ endf
 
 
 " In case this function gets called repeatedly for the same position, check only once.
-let s:hookcursormoved_oldpos = []
 function! viki#HookCheckPreviousPosition(mode) "{{{3
     " if a:mode == 'n'
     if s:hookcursormoved_oldpos != b:hookcursormoved_oldpos
@@ -1186,26 +1170,27 @@ function! viki#HookCheckPreviousPosition(mode) "{{{3
 endf
 
 
+" Outdated way to keep cursor information
+function! s:ResetSavedCursorPosition() "{{{3
+    let bn = bufnr('%')
+    if has_key(s:positions, bn)
+        call remove(s:positions, bn)
+    endif
+endf
+
+call s:ResetSavedCursorPosition()
+
+
 " Restore the cursor position
 " TODO: adapt for vim7
 " viki#RestoreCursorPosition(?line, ?VCol, ?EOL, ?Winline)
 function! viki#RestoreCursorPosition(...) "{{{3
-    " let li  = a:0 >= 1 && a:1 != '' ? a:1 : s:cursorLine
-    " " let co  = a:0 >= 2 && a:2 != '' ? a:2 : s:cursorVCol
-    " let co  = a:0 >= 2 && a:2 != '' ? a:2 : s:cursorCol
-    " " let eol = a:0 >= 3 && a:3 != '' ? a:3 : s:cursorEol
-    " let wli = a:0 >= 4 && a:4 != '' ? a:4 : s:cursorWinTLine
-    let li  = s:cursorLine
-    let co  = s:cursorCol
-    let wli = s:cursorWinTLine
-    if li >= 0
+    let bn = bufnr('%')
+    if has_key(s:positions, bn)
         let ve = &virtualedit
         set virtualedit=all
-        if wli > 0
-            exe 'keepjumps norm! '. wli .'zt'
-        endif
-        " TLogVAR li, co
-        call cursor(li, co)
+        exe 'keepjumps norm! '. s:positions[bn].w0 .'zt'
+        call setpos('.', s:positions[bn].pos)
         let &virtualedit = ve
     endif
 endf
@@ -1217,17 +1202,17 @@ function! viki#SaveCursorPosition() "{{{3
     set virtualedit=all
     " let s:lazyredraw   = &lazyredraw
     " set nolazyredraw
-    let s:cursorSet     = 1
-    let s:cursorCol     = col('.')
-    let s:cursorEol     = (col('.') == col('$'))
-    let s:cursorVCol    = virtcol('.')
-    if s:cursorEol
-        let s:cursorVCol = s:cursorVCol + 1
-    endif
-    let s:cursorLine    = line('.')
-    keepjumps norm! H
-    let s:cursorWinTLine = line('.')
-    call cursor(s:cursorLine, s:cursorCol)
+    let bn = bufnr('%')
+    let s:positions[bn] = {
+                \ 'pos': getpos('.'),
+                \ 'w0': line('w0'),
+                \ }
+    "             \ 'eol': (col('.') == col('$')),
+    "             \ 'virt': virtcol('.'),
+    " if s:positions[bn].eol
+    "     let s:positions[bn].virt += 1
+    " endif
+
     let &virtualedit    = ve
     " call viki#DebugCursorPosition()
     return ''
@@ -1235,16 +1220,15 @@ endf
 
 " Display a debug message
 function! viki#DebugCursorPosition(...) "{{{3
+    let bn = bufnr('%')
+    if !has_key(s:positions, bn)
+        return
+    endif
     let msg = 'DBG '
     if a:0 >= 1 && a:1 != ''
         let msg = msg . a:1 .' '
     endif
-    let msg = msg . "s:cursorCol=". s:cursorCol
-                \ ." s:cursorEol=". s:cursorEol
-                \ ." ($=". col('$') .')'
-                \ ." s:cursorVCol=". s:cursorVCol
-                \ ." s:cursorLine=". s:cursorLine
-                \ ." s:cursorWinTLine=". s:cursorWinTLine
+    let msg = msg . string(s:positions[bn])
     if a:0 >= 2 && a:2
         echo msg
     else
@@ -1279,9 +1263,11 @@ endf
 
 " Set back references for use with viki#GoBack()
 function! s:SetBackRef(file, li, co) "{{{3
-    let br = s:GetBackRef()
-    call filter(br, 'v:val[0] != a:file')
-    call insert(br, [a:file, a:li, a:co])
+    if !empty(a:file)
+        let br = s:GetBackRef()
+        call filter(br, 'v:val[0] != a:file')
+        call insert(br, [a:file, a:li, a:co])
+    endif
 endf
 
 " Retrieve a certain back reference
