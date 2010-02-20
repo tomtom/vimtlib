@@ -52,8 +52,9 @@ Contents~
         i_<c-cr> ................................... |worksheet-map-i_<c-cr>|
         gi ......................................... |worksheet-map-gi|
         K .......................................... |worksheet-map-K|
-        yi ......................................... |worksheet-map-yi|
+        yc ......................................... |worksheet-map-yc|
         yo ......................................... |worksheet-map-yo|
+        yin ........................................ |worksheet-map-yin|
         worksheet#Worksheet ........................ |worksheet#Worksheet()|
         worksheet#Complete ......................... |worksheet#Complete()|
         worksheet#RestoreBuffer .................... |worksheet#RestoreBuffer()|
@@ -77,9 +78,13 @@ Contents~
         prototype.PrepareInput
         prototype.Keyword
         prototype.Yank
+        prototype.YankAll
         prototype.SwapEntries
         prototype.SilentInput
         prototype.Submit
+        prototype.Evaluate
+        worksheet#python#InitializeInterpreter ..... |worksheet#python#InitializeInterpreter()|
+        worksheet#python#InitializeBuffer .......... |worksheet#python#InitializeBuffer()|
         g:worksheet#rcom#help ...................... |g:worksheet#rcom#help|
         prototype.Evaluate
         prototype.Keyword
@@ -194,13 +199,17 @@ gi ... :call b:worksheet.GotoEntry(v:count1, 1, 0)\|:exec b:worksheet.EndOfInput
                                                     *worksheet-map-K*
 K ... :call b:worksheet.Keyword()<cr>
 
-                                                    *worksheet-map-yi*
-yi ... :call b:worksheet.Yank(v:count, 'string')<cr>
+                                                    *worksheet-map-yc*
+yc ... :call b:worksheet.Yank(v:count, 'string')<cr>
     Yank the input of the current or |v:count|'s entry to |quotequote|.
 
                                                     *worksheet-map-yo*
 yo ... :call b:worksheet.Yank(v:count, 'output')<cr>
     Yank the output of the current or |v:count|'s entry to |quotequote|.
+
+                                                    *worksheet-map-yin*
+yin ... :call b:worksheet.YankAll()<cr>
+    Yank all input fields.
 
 
 ========================================================================
@@ -276,6 +285,9 @@ prototype.Keyword
 prototype.Yank
 
 
+prototype.YankAll
+
+
 prototype.SwapEntries
 
 
@@ -289,13 +301,24 @@ prototype.Submit
 
 
 ========================================================================
+autoload/worksheet/python.vim~
+
+
+prototype.Evaluate
+
+                                                    *worksheet#python#InitializeInterpreter()*
+worksheet#python#InitializeInterpreter(worksheet)
+
+                                                    *worksheet#python#InitializeBuffer()*
+worksheet#python#InitializeBuffer(worksheet)
+
+
+========================================================================
 autoload/worksheet/rcom.vim~
 
                                                     *g:worksheet#rcom#help*
-g:worksheet#rcom#help          (default: 2)
+g:worksheet#rcom#help          (default: 1)
     Handling of help commands.
-    Sending a help command may make vim hang under certain 
-    circumstances.
     
       0 ... disallow
       1 ... allow

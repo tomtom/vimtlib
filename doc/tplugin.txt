@@ -1,6 +1,10 @@
 *tplugin.txt*       A simple plugin loader/runtimepath manager
                     Author: Tom Link, micathom at gmail com
 
+This plugin helps users to avoid loading plugins on startup but only 
+when they are actually needed. It also allows users to maintain their 
+plugins in an alternative directory layout.
+
 Usually, all plugins are installed under one root directory (see 
 |vimfiles|). This makes it potentially cumbersome to install a plugin 
 that is distributed as zip/tgz or is downloaded from a source code 
@@ -311,7 +315,7 @@ TPluginMap(map, repo, plugin, ?remap="")
     for the first time.
 
                                                     *:TPluginCommand*
-:TPluginCommand COMMAND REPOSITORY [PLUGIN]
+:TPluginCommand[!] COMMAND REPOSITORY [PLUGIN]
     Load a certain plugin on demand (aka autoload) when COMMAND is called 
     for the first time. Then call the original command.
     
