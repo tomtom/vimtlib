@@ -20,11 +20,15 @@ let s:prototype = {}
 function! s:prototype.Evaluate(lines) dict "{{{3
     let ruby = join(a:lines, "\n")
     let value = ''
+    redir => out
     ruby <<EOR
     value = eval(VIM.evaluate('ruby'))
     VIM.command(%{let value=#{value.inspect.inspect}})
 EOR
     redir END
+    if !empty(out)
+        let value = join([out, '=> '. value], "\n")
+    endif
     return value
 endf
 
@@ -35,6 +39,7 @@ endf
 
 function! worksheet#ruby#InitializeBuffer(worksheet) "{{{3
     call extend(a:worksheet, s:prototype)
+    ruby require 'stringio'
     runtime indent/ruby.vim
     runtime ftplugin/ruby.vim
 endf
