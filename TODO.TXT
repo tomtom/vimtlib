@@ -9,7 +9,15 @@
     #C5 [vim] [[plugin_experimental/worksheet.vim]] worksheet: ys ... Yank selected input fields (select via tlib#input#List); ya ... Yank all input fields
     #C6 [vim] [[macros/tplugin.vim]] Provide an easy way to load a plugin by typing a common map prefix
     #C7 [vim] [[macros/tplugin.vim]] :TPluginUpdate command (for git and svn based repositories?)
+    #D5 [vim] tlib#agent#SwitchLayout(): switch between horizontal and vertical layout for the list
+    #D5 [vim] tlib#cache#Purge(): delete old cache files (for the moment use find)
+    #D5 [vim] tlib#file#Relative(): currently relies on cwd to be set
+    #D5 [vim] tlib#input#EditList(): Disable selection by index number
+    #D5 [vim] tlib#input#List(): List isn't updated on some occassions (eg tselectfiles + pick file per mouse) when resetting the state from an post-process agent
+    #D5 [vim] tlib#input#List(): RightMouse -> Make commands accessible via popup-menu
+    #D5 [vim] tlib#input#List(): Some kind of command line to edit some preferences (sort etc.) on the fly
 
 
-% 2010-01-03; @Last Change: 2010-02-16.
+
+% 2010-01-03; @Last Change: 2010-02-20.
 % vi: ft=viki:tw=0:ts=4

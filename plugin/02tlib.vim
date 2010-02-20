@@ -3,24 +3,11 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-10.
-" @Last Change: 2010-01-24.
-" @Revision:    603
+" @Last Change: 2010-02-20.
+" @Revision:    605
 " GetLatestVimScripts: 1863 1 tlib.vim
 "
 " Please see also ../test/tlib.vim for usage examples.
-"
-" TODO: tlib#input#List(): RightMouse -> Make commands accessible via 
-" popup-menu
-" TODO: List isn't updated on some occassions (eg tselectfiles + pick 
-" file per mouse) when resetting the state from an post-process agent
-" TODO: tlib#agent#SwitchLayout(): switch between horizontal and 
-" vertical layout for the list
-" TODO: tlib#cache#Purge(): delete old cache files (for the moment use 
-" find)
-" TODO: tlib#file#Relative(): currently relies on cwd to be set
-" TODO: tlib#input#EditList(): Disable selection by index number
-" TODO: tlib#input#List(): Some kind of command line to edit some 
-" preferences (sort etc.) on the fly
 
 if &cp || exists("loaded_tlib")
     finish

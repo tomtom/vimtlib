@@ -37,6 +37,7 @@ See INSTALL.TXT
     #B Eval\Selection   -- evaluate selected vim/ruby/... code
     #B localvariables   -- Set/let per-file-variables à la Emacs
     #B ttagcomplete     -- Context-sensitive tag completion
+    #B worksheet        -- "Mathematica-like" worksheets (sort of) with support for R under Windows, ruby ...
     #C spec             -- Behaviour-driven design: easy on the eye specifications of VIM scripts
     #C tbak             -- Yet another simple backup plugin using diff
     #C vikitasks        -- Search viki files for tasks and display them in a list
@@ -49,7 +50,6 @@ See INSTALL.TXT
     #D tsession         -- An alternativ approach to sessions
     #E pim              -- The vim pim (not really useful yet)
     #E tEchoPair        -- Display matching parenthesis in the echo area
-    #E worksheet        -- Somewhat "Mathematica-like" worksheets (sort of)
 
 
 Legend:
