@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
 " @Last Change: 2010-02-20.
-" @Revision:    0.590
+" @Revision:    0.591
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
@@ -214,9 +214,6 @@ if !exists("g:vikiMapLeader")       | let g:vikiMapLeader = '<LocalLeader>v' | e
 
 " If non-nil, anchors like #mX are turned into vim marks
 if !exists("g:vikiAutoMarks")       | let g:vikiAutoMarks = 1            | endif "{{{2
-
-" If non-nil, cache back-links information
-if !exists("g:vikiSaveHistory")     | let g:vikiSaveHistory = 0          | endif "{{{2
 
 " The variable that keeps back-links information
 if !exists("g:VIKIBACKREFS")        | let g:VIKIBACKREFS = {}            | endif "{{{2

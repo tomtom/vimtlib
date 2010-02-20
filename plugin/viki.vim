@@ -3,7 +3,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
 " @Last Change: 2010-02-20.
-" @Revision:    2673
+" @Revision:    2675
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -103,6 +103,9 @@ if !exists("g:vikiIndex")           | let g:vikiIndex = 'index'          | endif
 if !exists('g:viki_intervikis')
     let g:viki_intervikis = {}   "{{{2
 endif
+
+" If non-nil, cache back-links information
+if !exists("g:vikiSaveHistory")     | let g:vikiSaveHistory = 0          | endif "{{{2
 
 
 if g:vikiMenuPrefix != '' "{{{2
@@ -709,5 +712,9 @@ VikiDefine()) in order to reduce startup time
 
 3.15
 - Registered eml as special file
+
+3.15a
+- Define g:vikiSaveHistory in plugin/viki.vim (reported by Marko Mahnic)
+
 
 " vim: ff=unix
