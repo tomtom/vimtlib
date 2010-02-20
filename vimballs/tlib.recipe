@@ -35,6 +35,7 @@ autoload/tlib/string.vim
 autoload/tlib/syntax.vim
 autoload/tlib/tab.vim
 autoload/tlib/tag.vim
+autoload/tlib/textobjects.vim
 autoload/tlib/time.vim
 autoload/tlib/type.vim
 autoload/tlib/url.vim
