@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-07-15.
-" @Last Change: 2010-02-19.
-" @Revision:    0.0.690
+" @Last Change: 2010-02-20.
+" @Revision:    0.0.701
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -43,7 +43,15 @@ function! worksheet#Worksheet(...) "{{{3
         throw 'Worksheet: "mode" is empty'
     endif
     if !has_key(s:modes, mode)
-        call worksheet#{mode}#InitializeInterpreter(b:worksheet)
+        try
+            call worksheet#{mode}#InitializeInterpreter(b:worksheet)
+        catch
+            if !current_buffer
+                wincmd c
+            endif
+            echoerr 'Worksheet: Failed to initialize '. mode .': '. v:exception
+            return
+        endtry
         let s:modes[mode] = []
     endif
     call b:worksheet.BufJoin()

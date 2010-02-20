@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-07-15.
-" @Last Change: 2010-02-19.
-" @Revision:    0.0.12
+" @Last Change: 2010-02-20.
+" @Revision:    0.0.13
 
 if &cp || exists("loaded_worksheet_sh_autoload")
     finish
@@ -14,7 +14,7 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
-let s:prototype = {}
+let s:prototype = {'syntax': 'sh'}
 
 
 function! s:prototype.Evaluate(lines) dict "{{{3

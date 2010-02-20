@@ -3,30 +3,15 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-07-15.
-" @Last Change: 2010-02-19.
-" @Revision:    0.0.47
+" @Last Change: 2010-02-20.
+" @Revision:    0.0.53
 
-if &cp || exists("loaded_worksheet_rubymath_autoload")
+if &cp || !has('ruby')
+    throw "No +ruby support."
     finish
 endif
-let loaded_worksheet_rubymath_autoload = 1
 let s:save_cpo = &cpo
 set cpo&vim
-
-
-let s:prototype = {'syntax': 'ruby'}
-
-
-function! s:prototype.Evaluate(lines) dict "{{{3
-    let ruby = join(a:lines, "\n")
-    let value = ''
-    ruby <<EOR
-    value = eval(VIM.evaluate('ruby'))
-    VIM.command(%{let value=#{value.inspect.inspect}})
-EOR
-    redir END
-    return value
-endf
 
 
 function! worksheet#rubymath#InitializeInterpreter(worksheet) "{{{3
@@ -38,9 +23,7 @@ endf
 
 
 function! worksheet#rubymath#InitializeBuffer(worksheet) "{{{3
-    call extend(a:worksheet, s:prototype)
-    runtime indent/ruby.vim
-    runtime ftplugin/ruby.vim
+    return worksheet#ruby#InitializeBuffer(a:worksheet)
 endf
 
 

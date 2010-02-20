@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-07-15.
-" @Last Change: 2010-02-19.
-" @Revision:    0.0.53
+" @Last Change: 2010-02-20.
+" @Revision:    0.0.54
 
 if &cp || exists("loaded_worksheet_vim_autoload")
     finish
@@ -14,7 +14,7 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
-let s:prototype = {}
+let s:prototype = {'syntax': 'vim'}
 
 
 " If the first character is "|", the input string will be processed with 

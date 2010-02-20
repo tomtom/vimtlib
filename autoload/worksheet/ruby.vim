@@ -3,18 +3,18 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-07-15.
-" @Last Change: 2010-02-19.
-" @Revision:    0.0.43
+" @Last Change: 2010-02-20.
+" @Revision:    0.0.58
 
-if &cp || exists("loaded_worksheet_ruby_autoload")
+if &cp || !has('ruby')
+    throw "No +ruby support."
     finish
 endif
-let loaded_worksheet_ruby_autoload = 1
 let s:save_cpo = &cpo
 set cpo&vim
 
 
-let s:prototype = {}
+let s:prototype = {'syntax': 'ruby'}
 
 
 function! s:prototype.Evaluate(lines) dict "{{{3
