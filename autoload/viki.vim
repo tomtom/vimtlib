@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2010-01-18.
-" @Revision:    0.589
+" @Last Change: 2010-02-20.
+" @Revision:    0.590
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
@@ -239,11 +239,6 @@ if v:version >= 700 && !exists("g:vikiHyperWordsFiles") "{{{2
                 \ ]
 endif
 
-" Definition of intervikis. (This variable won't be evaluated until 
-" autoload/viki.vim is loaded).
-if !exists('g:viki_intervikis')
-    let g:viki_intervikis = {}   "{{{2
-endif
 
 " Define which keys to map
 if !exists("g:vikiMapFunctionality") "{{{2

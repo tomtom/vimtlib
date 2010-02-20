@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2010-01-18.
-" @Revision:    2672
+" @Last Change: 2010-02-20.
+" @Revision:    2673
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -97,6 +97,12 @@ if !exists("g:vikiNameSuffix")      | let g:vikiNameSuffix = ""          | endif
 
 " The default filename for an interviki's index name
 if !exists("g:vikiIndex")           | let g:vikiIndex = 'index'          | endif "{{{2
+
+" Definition of intervikis. (This variable won't be evaluated until 
+" autoload/viki.vim is loaded).
+if !exists('g:viki_intervikis')
+    let g:viki_intervikis = {}   "{{{2
+endif
 
 
 if g:vikiMenuPrefix != '' "{{{2
