@@ -95,7 +95,6 @@ Contents~
         prototype.Evaluate
         worksheet#ruby#InitializeInterpreter ....... |worksheet#ruby#InitializeInterpreter()|
         worksheet#ruby#InitializeBuffer ............ |worksheet#ruby#InitializeBuffer()|
-        prototype.Evaluate
         worksheet#rubymath#InitializeInterpreter ... |worksheet#rubymath#InitializeInterpreter()|
         worksheet#rubymath#InitializeBuffer ........ |worksheet#rubymath#InitializeBuffer()|
         prototype.Evaluate
@@ -359,9 +358,6 @@ worksheet#ruby#InitializeBuffer(worksheet)
 
 ========================================================================
 autoload/worksheet/rubymath.vim~
-
-
-prototype.Evaluate
 
                                                     *worksheet#rubymath#InitializeInterpreter()*
 worksheet#rubymath#InitializeInterpreter(worksheet)
