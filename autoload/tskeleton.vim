@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-03.
-" @Last Change: 2010-01-06.
-" @Revision:    0.0.1624
+" @Last Change: 2010-02-21.
+" @Revision:    0.0.1627
 
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
@@ -586,6 +586,8 @@ function! s:Select(text) "{{{3
     let args = eval('['. matchstr(a:text, '^(\zs.*\ze)$') .']')
     " TLogVAR args
     let var  = get(args, 0, '')
+    let type = get(args, 2, 's')
+    let join = get(args, 3, ', ')
     let vdef = s:VarName(var)
     if var[-1:-1] == '!'
         call s:DelTo('select(.\{-}', 1)
@@ -599,7 +601,12 @@ function! s:Select(text) "{{{3
     if s:SkipVar(vdef)
         let val = s:GetVar(vdef.name)
     else
-        let val = tlib#input#List('s', 'Select item:', get(args, 1, ['Malformed arguments']))
+        let val0 = tlib#input#List(type, 'Select item:', get(args, 1, ['Malformed arguments']))
+        if type =~# 'm'
+            let val = join(val0, join)
+        else
+            let val = val0
+        endif
         call s:TemporaryLet(var, val)
     endif
     return [reval, val]

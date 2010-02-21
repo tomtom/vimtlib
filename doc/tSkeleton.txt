@@ -219,11 +219,16 @@ Interaction:                                        *tSkeletion-<+input+>*
         this case any whitespace (including one newline) after the tag 
         will be removed. See also the notes on |tSkeletion-<+input+>|.
 
-    <+select(VAR, LIST)+>
+                                                    *tSkeletion-<+select+>*
+    <+select(VAR, LIST, [TYPE='s'], [SEPARATOR=', '])+>
         Let the user select an item from a list.
         VAR is a string.
+        TYPE is either 's' (single selection) or 'm' (multiple selection) -- 
+        see also |tlib#input#List()|.
+        If TYPE is 'm', the results are joined with SEPARATOR.
         Example: >
             before(<+select("s:type", [":all", ":each"])+>)
+            before(<+select("s:type", ["A", "B", "C", "D"], "m", "-")+>)
 < 
 
 Other:                                              *tSkeletion-<+nl+>*
@@ -560,7 +565,7 @@ Utilities~
 The function tskeleton#IncreaseRevisionNumber() provides a way to 
 automatically update a revision number in the form >
 
-    @Revision: 1.0.311
+    @Revision: 1.0.313
 
 In order to use this function, add something like this to your |vimrc| 
 file: >

@@ -1,0 +1,4 @@
+before(<+select("s:type", [":all", ":each"])+>)
+before(<+select("s:type", ["A", "B", "C", "D"], "s")+>)
+before(<+select("s:type", ["A", "B", "C", "D"], "m")+>)
+before(<+select("s:type", ["A", "B", "C", "D"], "m", "-")+>)
