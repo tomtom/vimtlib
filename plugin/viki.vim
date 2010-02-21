@@ -3,7 +3,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
 " @Last Change: 2010-02-20.
-" @Revision:    2675
+" @Revision:    2678
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -40,7 +40,7 @@ if !exists('g:loaded_tlib') || g:loaded_tlib < 32
         finish
     endif
 endif
-let loaded_viki = 315
+let loaded_viki = 316
 
 
 " Configuration {{{1
@@ -715,6 +715,9 @@ VikiDefine()) in order to reduce startup time
 
 3.15a
 - Define g:vikiSaveHistory in plugin/viki.vim (reported by Marko Mahnic)
+
+3.16
+- FIX: Handling of cursor positions (reported by Marko Mahnic)
 
 
 " vim: ff=unix
