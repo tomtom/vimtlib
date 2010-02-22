@@ -4,8 +4,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-06-30.
-" @Last Change: 2010-02-06.
-" @Revision:    0.0.686
+" @Last Change: 2010-02-22.
+" @Revision:    0.0.687
 
 
 " :filedoc:
@@ -513,7 +513,7 @@ function! tlib#input#ListW(world, ...) "{{{3
         "     call getchar(0)
         " endfor
         echo
-        " redraw
+        redraw
     endtry
 endf
 
