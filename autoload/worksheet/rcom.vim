@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-07-18.
-" @Last Change: 2010-02-19.
-" @Revision:    0.0.180
+" @Last Change: 2010-02-22.
+" @Revision:    0.0.211
 
 if &cp || exists("loaded_worksheet_rcom_autoload")
     finish
@@ -26,6 +26,14 @@ if !exists('g:worksheet#rcom#help')
     "   2 ... Use RSiteSearch() instead of help() (this option requires 
     "         Internet access)
     let g:worksheet#rcom#help = 1   "{{{2
+endif
+
+
+if !exists('g:worksheet#rcom#reuse')
+    " If non-null, reuse an already running instance or R GUI.
+    "   0 ... Don't reuse a running instance of R
+    "   1 ... Reuse a running R instance
+    let g:worksheet#rcom#reuse = 0   "{{{2
 endif
 
 
@@ -67,10 +75,24 @@ function! worksheet#rcom#InitializeInterpreter(worksheet) "{{{3
         
     class WorksheetRCOM
         def initialize
-            @ole_server = WIN32OLE.new("StatConnectorSrv.StatConnector")
-            @ole_server.Init("R")
-            @ole_printer = WIN32OLE.new("StatConnTools.StringLogDevice")
-            @ole_printer.BindToServerOutput(@ole_server)
+            reuse = VIM::evaluate("g:worksheet#rcom#reuse").to_i
+            case reuse
+            when 0
+                @ole_server = WIN32OLE.new("StatConnectorSrv.StatConnector")
+                @ole_server.Init("R")
+                @ole_printer = WIN32OLE.new("StatConnTools.StringLogDevice")
+                @ole_printer.BindToServerOutput(@ole_server)
+            when 1
+                begin
+                    @ole_server = WIN32OLE.new("RCOMServerLib.StatConnector")
+                rescue Exception => e
+                    throw "Error when connecting to R. Make sure it is already running. #{e}"
+                end
+                @ole_server.Init("R")
+                @ole_printer = nil
+            else
+                throw "Unsupported R reuse mode, see :help g:worksheet#rcom#reuse"
+            end
             if VIM::evaluate("has('gui')")
                 r_send(%{options(chmhelp=TRUE)})
                 r_send(%{options(show.error.messages=TRUE)})
@@ -112,7 +134,7 @@ function! worksheet#rcom#InitializeInterpreter(worksheet) "{{{3
             # log << "DBG #{meth}(#{text})\n"
             # rv = send(meth, %{{#{text}}})
             rv = send(meth, %{tryCatch({#{text}}, error = function(e) {e$message})})
-            log << @ole_printer.Text
+            log << @ole_printer.Text if @ole_printer
             if log.empty?
                 log << rv.to_s
             else
@@ -120,7 +142,7 @@ function! worksheet#rcom#InitializeInterpreter(worksheet) "{{{3
                 log.sub!(/^\s+/, "")
                 log.sub!(/\s+$/, "")
                 log.gsub!(/^(\[\d+\])\n /m, "\\1 ")
-                @ole_printer.Text = ""
+                @ole_printer.Text = "" if @ole_printer
             end
             log
         end
