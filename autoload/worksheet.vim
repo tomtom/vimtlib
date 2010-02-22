@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-07-15.
-" @Last Change: 2010-02-20.
-" @Revision:    0.0.701
+" @Last Change: 2010-02-22.
+" @Revision:    0.0.713
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -144,6 +144,37 @@ function! worksheet#SaveAs(bang, ...) "{{{3
             call s:InstallSaveHooks()
             exec 'saveas'. a:bang .' '. fnameescape(fname)
         endif
+    else
+        echoerr 'Worksheet: Not a worksheet'
+    endif
+endf
+
+
+function! worksheet#Export(filename) "{{{3
+    if exists('b:worksheet')
+        let reg = v:register
+        let rval = getreg(reg)
+        try
+            call b:worksheet.YankAll()
+            let contents = split(getreg(reg), '\n')
+            let filename = a:filename
+            if empty(filename)
+                call inputsave()
+                let filename = input("Export to file: ", "", "file")
+                call inputrestore()
+            endif
+            let filename = fnamemodify(filename, ':p')
+            if filereadable(filename)
+                let overwrite = input("Overwrite file? (Y/n) ")
+                if overwrite == "n"
+                    echo "Cancel export."
+                    return
+                endif
+            endif
+            call writefile(contents, filename)
+        finally
+            call setreg(reg, rval)
+        endtry
     else
         echoerr 'Worksheet: Not a worksheet'
     endif
@@ -480,35 +511,30 @@ endf
 
 
 function! s:prototype.YankAll() "{{{3
-    if exists('b:worksheet')
-        let reg = v:register
-        let rval = getreg(reg)
-        let pos = getpos('.')
-        let out = []
-        try
-            let worksheet = b:worksheet
-            for cid in worksheet.order
-                " TLogVAR cid
-                call setreg(reg, "")
-                call b:worksheet.Yank(cid, 'string')
-                let val = getreg(reg)
-                " TLogVAR val
-                if !empty(val)
-                    call add(out, val)
-                endif
-            endfor
-        finally
-            call setpos('.', pos)
-        endtry
-        let sout = join(out, "\n\n")
-        " TLogVAR sout
-        if empty(sout)
-            call setreg(reg, rval)
-        else
-            call setreg(reg, sout)
-        endif
+    let reg = v:register
+    let rval = getreg(reg)
+    let pos = getpos('.')
+    let out = []
+    try
+        for cid in self.order
+            " TLogVAR cid
+            call setreg(reg, "")
+            call self.Yank(cid, 'string')
+            let val = getreg(reg)
+            " TLogVAR val
+            if !empty(val)
+                call add(out, val)
+            endif
+        endfor
+    finally
+        call setpos('.', pos)
+    endtry
+    let sout = join(out, "\n\n")
+    " TLogVAR sout
+    if empty(sout)
+        call setreg(reg, rval)
     else
-        echoerr 'Worksheet: Not a worksheet'
+        call setreg(reg, sout)
     endif
 endf
 

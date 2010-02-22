@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-07-15.
-" @Last Change: 2010-02-15.
-" @Revision:    67
+" @Last Change: 2010-02-22.
+" @Revision:    68
 " GetLatestVimScripts: 0 0 worksheet.vim
 
 if &cp || exists("loaded_worksheet")
@@ -62,6 +62,8 @@ command! -bang -narg=? -complete=file WorksheetSaveAs call worksheet#SaveAs("<ba
 " Evaluate all cells in the current worksheet.
 command! WorksheetEvaluateAll call worksheet#EvaluateAll()
 
+" Export the input fields to a file.
+command! -narg=? -complete=file WorksheetExport call worksheet#Export(<q-args>)
 
 let &cpo = s:save_cpo
 unlet s:save_cpo
