@@ -37,6 +37,22 @@ to arrange the windows in a way, so that you can see VIM, R console and
 R graphic device at the same time.
 
 
+Two modes~
+
+#1 Run as headless StatConnectorSrv
+    This is only useful when used from another library as you won't see 
+    any output. If there is a .Rdata image in the same directory as the 
+    current buffer, it is loaded.
+
+#2 Re-use a running instance of R
+    If there is a .Rhistory file in the same directory as the current
+    buffer, it is loaded. This is the default mode when enabling an R 
+    buffer via |rcom#EvaluateInBuffer()|.
+
+You can only connect to one instance of R at a time. If there are
+several instances of R running ... well, good luck then. :-)
+
+
 -----------------------------------------------------------------------
 Install~
 

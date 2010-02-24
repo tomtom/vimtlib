@@ -37,6 +37,7 @@ Contents~
         :WorksheetRestore .......................... |:WorksheetRestore|
         :WorksheetSaveAs ........................... |:WorksheetSaveAs|
         :WorksheetEvaluateAll ...................... |:WorksheetEvaluateAll|
+        :WorksheetExport ........................... |:WorksheetExport|
         u .......................................... |worksheet-map-u|
         <c-n> ...................................... |worksheet-map-<c-n>|
         <c-p> ...................................... |worksheet-map-<c-p>|
@@ -61,6 +62,7 @@ Contents~
         worksheet#SetModifiable .................... |worksheet#SetModifiable()|
         worksheet#Restore .......................... |worksheet#Restore()|
         worksheet#SaveAs ........................... |worksheet#SaveAs()|
+        worksheet#Export ........................... |worksheet#Export()|
         worksheet#EvaluateAll ...................... |worksheet#EvaluateAll()|
         worksheet#Prototype ........................ |worksheet#Prototype()|
         prototype.BufJoin
@@ -85,13 +87,12 @@ Contents~
         prototype.Evaluate
         worksheet#python#InitializeInterpreter ..... |worksheet#python#InitializeInterpreter()|
         worksheet#python#InitializeBuffer .......... |worksheet#python#InitializeBuffer()|
-        g:worksheet#rcom#help ...................... |g:worksheet#rcom#help|
+        g:worksheet#rcom#reuse ..................... |g:worksheet#rcom#reuse|
         prototype.Evaluate
         prototype.Keyword
         prototype.Quit
         worksheet#rcom#InitializeInterpreter ....... |worksheet#rcom#InitializeInterpreter()|
         worksheet#rcom#InitializeBuffer ............ |worksheet#rcom#InitializeBuffer()|
-        worksheet#rcom#Complete .................... |worksheet#rcom#Complete()|
         prototype.Evaluate
         worksheet#ruby#InitializeInterpreter ....... |worksheet#ruby#InitializeInterpreter()|
         worksheet#ruby#InitializeBuffer ............ |worksheet#ruby#InitializeBuffer()|
@@ -135,6 +136,10 @@ g:worksheet_suffix             (default: '.wks')
                                                     *:WorksheetEvaluateAll*
 :WorksheetEvaluateAll
     Evaluate all cells in the current worksheet.
+
+                                                    *:WorksheetExport*
+:WorksheetExport
+    Export the input fields to a file.
 
 
 ========================================================================
@@ -232,6 +237,9 @@ worksheet#Restore()
                                                     *worksheet#SaveAs()*
 worksheet#SaveAs(bang, ...)
 
+                                                    *worksheet#Export()*
+worksheet#Export(filename)
+
                                                     *worksheet#EvaluateAll()*
 worksheet#EvaluateAll()
 
@@ -315,14 +323,11 @@ worksheet#python#InitializeBuffer(worksheet)
 ========================================================================
 autoload/worksheet/rcom.vim~
 
-                                                    *g:worksheet#rcom#help*
-g:worksheet#rcom#help          (default: 1)
-    Handling of help commands.
-    
-      0 ... disallow
-      1 ... allow
-      2 ... Use RSiteSearch() instead of help() (this option requires 
-            Internet access)
+                                                    *g:worksheet#rcom#reuse*
+g:worksheet#rcom#reuse         (default: 0)
+    If non-null, reuse an already running instance or R GUI.
+      0 ... Don't reuse a running instance of R
+      1 ... Reuse a running R instance
 
 
 prototype.Evaluate
@@ -338,9 +343,6 @@ worksheet#rcom#InitializeInterpreter(worksheet)
 
                                                     *worksheet#rcom#InitializeBuffer()*
 worksheet#rcom#InitializeBuffer(worksheet)
-
-                                                    *worksheet#rcom#Complete()*
-worksheet#rcom#Complete(findstart, base)
 
 
 ========================================================================
