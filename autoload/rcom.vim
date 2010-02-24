@@ -3,7 +3,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-02-23.
 " @Last Change: 2010-02-24.
-" @Revision:    0.0.241
+" @Revision:    0.0.251
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -33,6 +33,8 @@ let s:log  = {}
 
 
 " :display: rcom#Initialize(?reuse=0)
+" Connect to the R interpreter for the current buffer.
+" Usually not called by the user.
 function! rcom#Initialize(...) "{{{3
     " TLogVAR a:000
 
@@ -210,6 +212,10 @@ CODE
 endf
 
 
+" :display: rcom#EvaluateInBuffer(rcode, ?mode='')
+" Initialize the current buffer if necessary and evaluate some R code in 
+" a running instance of R GUI.
+" See also |rcom#Evaluate()|.
 function! rcom#EvaluateInBuffer(...) range "{{{3
     " TLogVAR a:000
     let bn = bufnr('%')
@@ -225,7 +231,8 @@ endf
 
 
 " :display: rcom#Evaluate(rcode, ?mode='')
-" Mode can be one of
+" rcode can be a string or an array of strings.
+" mode can be one of
 "   p ... Print the result
 "   r ... Always return a result
 "   . ... Behaviour depends on the context
@@ -271,6 +278,9 @@ function! s:LogID() "{{{3
 endf
 
 
+" :display: rcom#Quit(?bufnr=bufnr('%'))
+" Disconnect from the R GUI.
+" Usually not called by the user.
 function! rcom#Quit(...) "{{{3
     " TLogVAR a:000
     if a:0 >= 1
@@ -292,6 +302,8 @@ function! rcom#Quit(...) "{{{3
 endf
 
 
+" Omnicompletion for R.
+" See also 'omnifunc'.
 function! rcom#Complete(findstart, base) "{{{3
     let bufnr = bufnr('%')
     if !has_key(s:rcom, bufnr)
@@ -313,6 +325,7 @@ function! rcom#Complete(findstart, base) "{{{3
 endf
 
 
+" Display help on the word under the cursor.
 function! rcom#Keyword(...) "{{{3
     let bufnr = bufnr('%')
     if !has_key(s:rcom, bufnr)
@@ -327,7 +340,7 @@ endf
 
 
 " :display: rcom#GetSelection(?mbeg="'<", ?mend="'>", ?mode='selection')
-" Mode can be one of: selection, lines, block
+" mode can be one of: selection, lines, block
 function! rcom#GetSelection(...) "{{{3
     if a:0 >= 2
         let mbeg = a:1
@@ -358,6 +371,7 @@ function! rcom#GetSelection(...) "{{{3
 endf
 
 
+" For use as an operator. See 'opfunc'.
 function! rcom#Operator(type, ...) range "{{{3
     " TLogVAR a:type, a:000
     let sel_save = &selection
@@ -383,7 +397,7 @@ function! rcom#Operator(type, ...) range "{{{3
 endf
 
 
-function! rcom#Log() "{{{3
+function! s:LogBuffer() "{{{3
     split __RCom_Log__
     setlocal buftype=nofile
     setlocal bufhidden=hide
@@ -400,7 +414,10 @@ function! rcom#Log() "{{{3
 endf
 
 
-command! RComlog call rcom#Log()
+" Display the log.
+command! RComlog call s:LogBuffer()
+
+" Reset the log.
 command! RComlogreset let s:log = {}
 
 

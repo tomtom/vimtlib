@@ -1,0 +1,175 @@
+*rcom.txt*          Evaluate R code via rcom
+                    Author: Tom Link, micathom at gmail com
+
+The rcom ftplugin uses the RCom interface (http://rcom.univie.ac.at)
+to R for sending code to a running instance of R. This way any R
+snippet can be easily evaluated in that instance of R.
+
+After installation, interaction with R via rcom is enabled for all
+buffers with filetype r. For other filetypes, you can use the
+functions |rcom#EvaluateInBuffer()|.
+
+
+Features:
+
+    - Evaluate R code
+    - Omnicompletion for R
+    - Keyword map
+
+
+Maps~
+
+The ftplugin provides several maps (see also |g:rcom_map|, 
+|g:rcom_mapp|) to evaluate R code and optionally print the result in 
+normal, insert, and visual mode. There is also an operator (see 
+|g:rcom_mapop|).
+
+
+Normal usage~
+
+    1. Start an instance of R GUI and load the image you want.
+    2. Open an R source file in VIM.
+    3. Type <c-cr> to evaluate the current line/visual area in R.
+    4. Type [count]r or r{motion} to evaluate some text in R.
+
+By default, the results get printed in the R GUI window. You might want 
+to arrange the windows in a way, so that you can see VIM, R console and 
+R graphic device at the same time.
+
+
+-----------------------------------------------------------------------
+Install~
+
+Requirements:
+
+    - Windows only (I suppose because of rcom)
+    - A ruby-enabled version of vim -- :echo has('ruby') must print 1
+    - R
+    - A suitable version of rcom (http://rcom.univie.ac.at)
+
+Edit the vba file and type: >
+
+    :so %
+
+See :help vimball for details. If you have difficulties or use vim 7.0,
+please make sure, you have the current version of vimball
+(vimscript #1502) installed or update your runtime.
+
+Also available via git: http://github.com/tomtom/vimtlib/
+
+
+========================================================================
+Contents~
+
+        g:rcom#help ............. |g:rcom#help|
+        rcom#Initialize ......... |rcom#Initialize()|
+        rcom#EvaluateInBuffer ... |rcom#EvaluateInBuffer()|
+        rcom#Evaluate ........... |rcom#Evaluate()|
+        rcom#Quit ............... |rcom#Quit()|
+        rcom#Complete ........... |rcom#Complete()|
+        rcom#Keyword ............ |rcom#Keyword()|
+        rcom#GetSelection ....... |rcom#GetSelection()|
+        rcom#Operator ........... |rcom#Operator()|
+        :RComlog ................ |:RComlog|
+        :RComlogreset ........... |:RComlogreset|
+        g:rcom_map .............. |g:rcom_map|
+        g:rcom_mapp ............. |g:rcom_mapp|
+        g:rcom_mapop ............ |g:rcom_mapop|
+        n_K ..................... |n_K|
+
+
+========================================================================
+autoload/rcom.vim~
+
+                                                    *g:rcom#help*
+g:rcom#help                    (default: 1)
+    Handling of help commands.
+    
+      0 ... disallow
+      1 ... allow
+      2 ... Use RSiteSearch() instead of help() (this option requires 
+            Internet access)
+
+                                                    *rcom#Initialize()*
+rcom#Initialize(?reuse=0)
+    Connect to the R interpreter for the current buffer.
+    Usually not called by the user.
+
+                                                    *rcom#EvaluateInBuffer()*
+rcom#EvaluateInBuffer(rcode, ?mode='')
+    Initialize the current buffer if necessary and evaluate some R code in 
+    a running instance of R GUI.
+    See also |rcom#Evaluate()|.
+
+                                                    *rcom#Evaluate()*
+rcom#Evaluate(rcode, ?mode='')
+    rcode can be a string or an array of strings.
+    mode can be one of
+      p ... Print the result
+      r ... Always return a result
+      . ... Behaviour depends on the context
+
+                                                    *rcom#Quit()*
+rcom#Quit(?bufnr=bufnr('%'))
+    Disconnect from the R GUI.
+    Usually not called by the user.
+
+                                                    *rcom#Complete()*
+rcom#Complete(findstart, base)
+    Omnicompletion for R.
+    See also 'omnifunc'.
+
+                                                    *rcom#Keyword()*
+rcom#Keyword(...)
+    Display help on the word under the cursor.
+
+                                                    *rcom#GetSelection()*
+rcom#GetSelection(?mbeg="'<", ?mend="'>", ?mode='selection')
+    mode can be one of: selection, lines, block
+
+                                                    *rcom#Operator()*
+rcom#Operator(type, ...)
+    For use as an operator. See 'opfunc'.
+
+                                                    *:RComlog*
+:RComlog
+    Display the log.
+
+                                                    *:RComlogreset*
+:RComlogreset
+    Reset the log.
+
+
+========================================================================
+ftplugin/r/rcom.vim~
+
+                                                    *g:rcom_map*
+g:rcom_map                     (default: "<c-cr>")
+    The map for rcom-related maps in normal, insert, and visual mode.
+    Set this to "", to prevent rcom from defining maps.
+
+                                                    *g:rcom_mapp*
+g:rcom_mapp                    (default: "<c-s-cr>")
+    The map for rcom-related maps that print the result.
+    Set this to "", to prevent rcom from defining maps.
+
+                                                    *g:rcom_mapop*
+g:rcom_mapop                   (default: "r")
+    The rcom operator map.
+    Set this to "", to prevent rcom from defining maps.
+    
+    This defines the following maps (where # represents the value of 
+    g:rcom_mapop):
+    
+        #{motion} ... Operator
+        #r        ... Evaluate the current line (normal mode)
+        [visual]# ... Evaluate the visual area
+        #+        ... Toggle printing for the above maps
+
+                                                    *n_K*
+n_K ... :call rcom#Keyword()<cr>
+    See |rcom#Keyword()|.
+
+
+
+vim:tw=78:fo=tcq2:isk=!-~,^*,^|,^":ts=8:ft=help:norl:

@@ -3,7 +3,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-02-23.
 " @Last Change: 2010-02-24.
-" @Revision:    0.1.74
+" @Revision:    0.1.77
 " GetLatestVimScripts: 0 0 :AutoInstall: rcom.vim
 
 let s:save_cpo = &cpo
@@ -11,7 +11,7 @@ set cpo&vim
 
 
 if !exists('g:rcom_map')
-    " The map for rcom-related maps.
+    " The map for rcom-related maps in normal, insert, and visual mode.
     " Set this to "", to prevent rcom from defining maps.
     let g:rcom_map = "<c-cr>"   "{{{2
 endif
@@ -44,9 +44,8 @@ if empty(&omnifunc)
     setlocal omnifunc=rcom#Complete
 endif
 
+" See |rcom#Keyword()|.
 nnoremap <buffer> K :call rcom#Keyword()<cr>
-" if &keywordprg == ':help'
-" endif
 
 
 " if !hasmapto(':call rcom#EvaluateInBuffer(', 'n')
