@@ -20,13 +20,14 @@ let s:prototype = {'syntax': 'ruby'}
 function! s:prototype.Evaluate(lines) dict "{{{3
     let ruby = join(a:lines, "\n")
     let value = ''
+    let out = ''
     redir => out
-    ruby <<EOR
+    silent ruby <<EOR
     value = eval(VIM.evaluate('ruby'))
     VIM.command(%{let value=#{value.inspect.inspect}})
 EOR
     redir END
-    if exists('out') && !empty(out)
+    if !empty(out)
         let value = join([out, '=> '. value], "\n")
     endif
     return value
