@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-03.
-" @Last Change: 2010-02-21.
-" @Revision:    0.0.1627
+" @Last Change: 2010-02-25.
+" @Revision:    0.0.1636
 
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
@@ -2107,11 +2107,11 @@ function! s:RetrieveBit(agent, bit, ...) "{{{3
                 " TLogDBG string(getline(1, '$'))
                 let setCursor = tskeleton#SetCursor('%', '', '', 1)
                 " TLogDBG string(getline(1, '$'))
-                " TLogVAR setCursor
             else
                 echoerr "Internal error"
             endif
         endif
+        " TLogVAR setCursor
         " TLogExec sleep 3 | redraw
         let bot = line('$')
         let rv = join(getline(1, bot), "\n")
@@ -2681,13 +2681,21 @@ function! s:InsertDefault(mode, bit, default) "{{{3
         " TLogVAR success, default_string
         if success
             call winrestview(view)
+            let pos = getpos('.')
             call s:InsertBitText(a:mode, default_string)
-            let left = len(default_string)
             " TLogDBG col('.')
-            if col('.') == 1
-                let left -= 1
+            if default_string =~ '<+CURSOR+>'
+                call setpos('.', pos)
+                if search('<+CURSOR+>', 'W')
+                    norm! cf>
+                endif
+            else
+                let left = len(default_string)
+                if col('.') == 1
+                    let left -= 1
+                endif
+                exec 'norm! '. left .'l'
             endif
-            exec 'norm! '. left .'l'
             if s:IsInsertMode(a:mode)
                 call cursor(line('.'), col('.') + 1)
             endif

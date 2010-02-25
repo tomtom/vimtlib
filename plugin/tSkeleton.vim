@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     21-Sep-2004.
-" @Last Change: 2010-01-31.
-" @Revision:    3890
+" @Last Change: 2010-02-25.
+" @Revision:    3892
 "
 " GetLatestVimScripts: 1160 1 tSkeleton.vim
 " http://www.vim.org/scripts/script.php?script_id=1160
@@ -537,4 +537,4 @@ autoload/tskeleton.vim won't be loaded on startup.
 4.9
 - "Mini bits": Load all .tskelmini files from the current file's 
 directory upwards
-
+- s:InsertDefault handles <+CURSOR+> tags
