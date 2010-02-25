@@ -14,7 +14,9 @@ Features:
 
     - Evaluate R code
     - Omnicompletion for R
-    - Keyword map
+    - Maps for normal, visual, and insert mode
+    - Keyword map (|K|)
+    - Operator
 
 
 Maps~
@@ -30,7 +32,8 @@ Normal usage~
     1. Start an instance of R GUI and load the image you want.
     2. Open an R source file in VIM.
     3. Type <c-cr> to evaluate the current line/visual area in R.
-    4. Type [count]r or r{motion} to evaluate some text in R.
+    4. Type [count]+ or +{motion} to evaluate some text in R. (You can 
+       type ++ to invoke |+|.)
 
 By default, the results get printed in the R GUI window. You might want 
 to arrange the windows in a way, so that you can see VIM, R console and 
@@ -39,12 +42,13 @@ R graphic device at the same time.
 
 Two modes~
 
-#1 Run as headless StatConnectorSrv
+#1 Run as headless StatConnectorSrv:
     This is only useful when used from another library as you won't see 
-    any output. If there is a .Rdata image in the same directory as the 
+    any output. Any output from a print command is inserted in the 
+    result. If there is a .Rdata image in the same directory as the 
     current buffer, it is loaded.
 
-#2 Re-use a running instance of R
+#2 Re-use a running instance of R:
     If there is a .Rhistory file in the same directory as the current
     buffer, it is loaded. This is the default mode when enabling an R 
     buffer via |rcom#EvaluateInBuffer()|.
@@ -58,10 +62,12 @@ Install~
 
 Requirements:
 
-    - Windows only (I suppose because of rcom)
+    - Windows only (because of rcom)
     - A ruby-enabled version of vim -- :echo has('ruby') must print 1
     - R
-    - A suitable version of rcom (http://rcom.univie.ac.at)
+    - A suitable version of rcom (http://rcom.univie.ac.at). The rcom 
+      library has to be loaded in vim, which should be the default 
+      behaviour after installing rcom.
 
 Edit the vba file and type: >
 
@@ -86,12 +92,13 @@ Contents~
         rcom#Keyword ............ |rcom#Keyword()|
         rcom#GetSelection ....... |rcom#GetSelection()|
         rcom#Operator ........... |rcom#Operator()|
+        rcom#LogBuffer .......... |rcom#LogBuffer()|
         :RComlog ................ |:RComlog|
         :RComlogreset ........... |:RComlogreset|
         g:rcom_map .............. |g:rcom_map|
         g:rcom_mapp ............. |g:rcom_mapp|
         g:rcom_mapop ............ |g:rcom_mapop|
-        n_K ..................... |n_K|
+        n_K ..................... |rcom-map-n_K|
 
 
 ========================================================================
@@ -147,6 +154,9 @@ rcom#GetSelection(?mbeg="'<", ?mend="'>", ?mode='selection')
 rcom#Operator(type, ...)
     For use as an operator. See 'opfunc'.
 
+                                                    *rcom#LogBuffer()*
+rcom#LogBuffer()
+
                                                     *:RComlog*
 :RComlog
     Display the log.
@@ -170,7 +180,7 @@ g:rcom_mapp                    (default: "<c-s-cr>")
     Set this to "", to prevent rcom from defining maps.
 
                                                     *g:rcom_mapop*
-g:rcom_mapop                   (default: "r")
+g:rcom_mapop                   (default: "+")
     The rcom operator map.
     Set this to "", to prevent rcom from defining maps.
     
@@ -178,13 +188,15 @@ g:rcom_mapop                   (default: "r")
     g:rcom_mapop):
     
         #{motion} ... Operator
-        #r        ... Evaluate the current line (normal mode)
+        #.        ... Evaluate the current line (normal mode)
         [visual]# ... Evaluate the visual area
-        #+        ... Toggle printing for the above maps
+        #p        ... Toggle printing for the above maps
+        #l        ... Open the log window
+        ##        ... Evaluate the |maparg| previously mapped to #
 
-                                                    *n_K*
+                                                    *rcom-map-n_K*
 n_K ... :call rcom#Keyword()<cr>
-    See |rcom#Keyword()|.
+    See |rcom#Keyword()| and |K|.
 
 
 

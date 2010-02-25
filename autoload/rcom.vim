@@ -2,11 +2,15 @@
 " @Author:      Thomas Link (mailto:micathom AT gmail com?subject=[vim])
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-02-23.
-" @Last Change: 2010-02-24.
-" @Revision:    0.0.251
+" @Last Change: 2010-02-25.
+" @Revision:    0.0.280
 
 let s:save_cpo = &cpo
 set cpo&vim
+
+if !exists('loaded_rcom')
+    let loaded_rcom = 1
+endif
 
 
 if !exists('g:rcom#help')
@@ -177,7 +181,7 @@ function! rcom#Initialize(...) "{{{3
             end
 
             def log(text)
-                VIM.command(%{let s:log[s:LogID()] = #{text.inspect}})
+                VIM.command(%{call s:Log(#{text.inspect})})
             end
 
             def quit
@@ -218,14 +222,13 @@ endf
 " See also |rcom#Evaluate()|.
 function! rcom#EvaluateInBuffer(...) range "{{{3
     " TLogVAR a:000
+    " redraw
+    echo
     let bn = bufnr('%')
     if !has_key(s:rcom, bn)
         call rcom#Initialize(1)
     endif
-    " echo "Evaluate ..."
     let rv = call('rcom#Evaluate', a:000)
-    " redraw
-    " echo "Done"
     return rv
 endf
 
@@ -244,7 +247,6 @@ function! rcom#Evaluate(rcode, ...) "{{{3
         let rcode = a:rcode
     endif
     " TLogVAR ruby
-    let logn = s:LogN()
     let value = ''
     redir => log
     silent ruby <<CODE
@@ -255,13 +257,7 @@ function! rcom#Evaluate(rcode, ...) "{{{3
 CODE
     redir END
     if exists('log') && !empty(log)
-        let s:log[s:LogID()] = log
-    endif
-    if logn != s:LogN()
-        redraw
-        echohl WarningMsg
-        echo 'RCom: '. len(keys(s:log)) .' messages in the log'
-        echohl NONE
+        call s:Log(log)
     endif
     " TLogVAR value
     return value
@@ -275,6 +271,17 @@ endf
 
 function! s:LogID() "{{{3
     return printf('%05d %s', s:LogN(), strftime('%Y-%m-%d %H:%M:%S'))
+endf
+
+
+function! s:Log(text) "{{{3
+    if a:text !~ 'RCom: \d\+ messages in the log$'
+        let s:log[s:LogID()] = a:text
+    endif
+    redraw
+    echohl WarningMsg
+    echo 'RCom: '. len(keys(s:log)) .' messages in the log'
+    echohl NONE
 endf
 
 
@@ -293,11 +300,15 @@ function! rcom#Quit(...) "{{{3
     endif
     " TLogVAR bufnr
     if has_key(s:rcom, bufnr)
-        ruby RCom.disconnect
-        call remove(s:rcom, bufnr)
+        try
+            ruby RCom.disconnect
+            call remove(s:rcom, bufnr)
+        catch
+            call s:Log(v:exception)
+        endtry
     else
         " echom "DBG ". string(keys(s:rcom))
-        throw "RCOm: Not an R buffer. Call rcom#Initialize() first."
+        call s:Log("RCOm: Not an R buffer. Call rcom#Initialize() first.")
     endif
 endf
 
@@ -318,7 +329,11 @@ function! rcom#Complete(findstart, base) "{{{3
         endwhile
         return start
     else
-        let completions = rcom#Evaluate(['paste(apropos("^'. escape(a:base, '^$.*\[]~') .'"), collapse="\n")'], 'r')
+        if exists('g:loaded_tskeleton')
+            let completions = rcom#Evaluate(['paste(sapply(apropos("^'. escape(a:base, '^$.*\[]~"') .'"), function(t) {if (try(is.function(eval.parent(parse(text = t))), silent = TRUE) == TRUE) sprintf("%s(<+CURSOR+>)<++>", t) else t}), collapse="\n")'], 'r')
+        else
+            let completions = rcom#Evaluate(['paste(apropos("^'. escape(a:base, '^$.*\[]~"') .'"), collapse="\n")'], 'r')
+        endif
         let clist = split(completions, '\n')
         return clist
     endif
@@ -335,8 +350,6 @@ function! rcom#Keyword(...) "{{{3
     " TLogVAR word
     ruby RCom.interpreter.evaluate(%{help(#{VIM.evaluate('word')})}, 'r')
 endf
-
-" command! -nargs=1 RComKeyword call rcom#Keyword(<q-args>)
 
 
 " :display: rcom#GetSelection(?mbeg="'<", ?mend="'>", ?mode='selection')
@@ -397,7 +410,7 @@ function! rcom#Operator(type, ...) range "{{{3
 endf
 
 
-function! s:LogBuffer() "{{{3
+function! rcom#LogBuffer() "{{{3
     split __RCom_Log__
     setlocal buftype=nofile
     setlocal bufhidden=hide
@@ -415,7 +428,7 @@ endf
 
 
 " Display the log.
-command! RComlog call s:LogBuffer()
+command! RComlog call rcom#LogBuffer()
 
 " Reset the log.
 command! RComlogreset let s:log = {}
@@ -424,3 +437,12 @@ command! RComlogreset let s:log = {}
 
 let &cpo = s:save_cpo
 unlet s:save_cpo
+
+finish
+
+-------------------------------------------------------------------
+CHANGES:
+
+0.1
+- Initial release
+

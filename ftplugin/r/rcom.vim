@@ -2,8 +2,8 @@
 " @Author:      Thomas Link (mailto:micathom AT gmail com?subject=[vim])
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-02-23.
-" @Last Change: 2010-02-24.
-" @Revision:    0.1.77
+" @Last Change: 2010-02-25.
+" @Revision:    0.1.108
 " GetLatestVimScripts: 0 0 :AutoInstall: rcom.vim
 
 let s:save_cpo = &cpo
@@ -30,21 +30,29 @@ if !exists('g:rcom_mapop')
     " g:rcom_mapop):
     "
     "     #{motion} ... Operator
-    "     #r        ... Evaluate the current line (normal mode)
+    "     #.        ... Evaluate the current line (normal mode)
     "     [visual]# ... Evaluate the visual area
-    "     #+        ... Toggle printing for the above maps
-    let g:rcom_mapop = "r"   "{{{2
+    "     #p        ... Toggle printing for the above maps
+    "     #l        ... Open the log window
+    "     ##        ... Evaluate the |maparg| previously mapped to #
+    let g:rcom_mapop = "+"   "{{{2
 endif
 
 
 let b:rcom_mode = ''
+
+if !exists('b:tskelHyperComplete')
+    let b:tskelHyperComplete = {'use_omnifunc': 1, 'use_completefunc': 1, 'scan_words': 1, 'scan_tags': 1}
+endif
 
 
 if empty(&omnifunc)
     setlocal omnifunc=rcom#Complete
 endif
 
-" See |rcom#Keyword()|.
+" :tagprefix rcom-map-:
+
+" See |rcom#Keyword()| and |K|.
 nnoremap <buffer> K :call rcom#Keyword()<cr>
 
 
@@ -77,10 +85,16 @@ endif
 
 
 if !empty(g:rcom_mapop)
-    exec 'nnoremap <silent> <buffer> '. g:rcom_mapop .' :set opfunc=rcom#Operator<cr>g@'
-    exec 'nnoremap <buffer> '. g:rcom_mapop .'r :call rcom#EvaluateInBuffer(getline(''.''), b:rcom_mode)<cr>'
+    if empty(maparg(g:rcom_mapop))
+        exec 'nnoremap <buffer> '. g:rcom_mapop . g:rcom_mapop .' '. g:rcom_mapop
+    else
+        exec 'nnoremap <buffer> '. g:rcom_mapop . g:rcom_mapop .' '. maparg(g:rcom_mapop)
+    endif
+    exec 'nnoremap <buffer> '. g:rcom_mapop .' :set opfunc=rcom#Operator<cr>g@'
+    exec 'nnoremap <buffer> '. g:rcom_mapop .'. :call rcom#EvaluateInBuffer(getline(''.''), b:rcom_mode)<cr>'
     exec 'xnoremap <buffer> '. g:rcom_mapop .' :call rcom#EvaluateInBuffer(rcom#GetSelection(), b:rcom_mode)<cr>'
-    exec 'nnoremap <buffer> '. g:rcom_mapop .'+ :let b:rcom_mode = b:rcom_mode == "p" ? "" : "p" \| redraw \| echom "RCom: Printing turned ". (b:rcom_mode == "p" ? "on" : "off")<cr>'
+    exec 'nnoremap <buffer> '. g:rcom_mapop .'p :let b:rcom_mode = b:rcom_mode == "p" ? "" : "p" \| redraw \| echom "RCom: Printing turned ". (b:rcom_mode == "p" ? "on" : "off")<cr>'
+    exec 'nnoremap <buffer> '. g:rcom_mapop .'l :call rcom#LogBuffer()<cr>'
 endif
 
 
