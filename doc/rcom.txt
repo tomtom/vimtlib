@@ -1,6 +1,9 @@
 *rcom.txt*          Evaluate R code via rcom
                     Author: Tom Link, micathom at gmail com
 
+This plugin is still experimental. During development it made vim hang 
+from time to time. Please report any problem to the author. Thanks.
+
 The rcom ftplugin uses the RCom interface (http://rcom.univie.ac.at)
 to R for sending code to a running instance of R. This way any R
 snippet can be easily evaluated in that instance of R.
@@ -67,7 +70,10 @@ Requirements:
     - R
     - A suitable version of rcom (http://rcom.univie.ac.at). The rcom 
       library has to be loaded in vim, which should be the default 
-      behaviour after installing rcom.
+      behaviour after installing rcom. The following code snippet must 
+      not throw an error: >
+
+      :ruby require 'win32ole'; r = WIN32OLE.new("StatConnectorSrv.StatConnector"); r.Init("R"); r.Close
 
 Edit the vba file and type: >
 

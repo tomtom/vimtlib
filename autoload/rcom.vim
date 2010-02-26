@@ -2,8 +2,9 @@
 " @Author:      Thomas Link (mailto:micathom AT gmail com?subject=[vim])
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-02-23.
-" @Last Change: 2010-02-25.
-" @Revision:    0.0.280
+" @Last Change: 2010-02-26.
+" @Revision:    285
+" GetLatestVimScripts: 2991 1 :AutoInstall: rcom.vim
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -313,6 +314,11 @@ function! rcom#Quit(...) "{{{3
 endf
 
 
+function! s:Escape2(text, chars) "{{{3
+    return escape(escape(a:text, a:chars), '\')
+endf
+
+
 " Omnicompletion for R.
 " See also 'omnifunc'.
 function! rcom#Complete(findstart, base) "{{{3
@@ -329,12 +335,13 @@ function! rcom#Complete(findstart, base) "{{{3
         endwhile
         return start
     else
-        if exists('g:loaded_tskeleton')
-            let completions = rcom#Evaluate(['paste(sapply(apropos("^'. escape(a:base, '^$.*\[]~"') .'"), function(t) {if (try(is.function(eval.parent(parse(text = t))), silent = TRUE) == TRUE) sprintf("%s(<+CURSOR+>)<++>", t) else t}), collapse="\n")'], 'r')
+        if exists('w:tskeleton_hypercomplete')
+            let completions = rcom#Evaluate(['paste(sapply(apropos("^'. s:Escape2(a:base, '^$.*\[]~"') .'"), function(t) {if (try(is.function(eval.parent(parse(text = t))), silent = TRUE) == TRUE) sprintf("%s(<+CURSOR+>)", t) else t}), collapse="\n")'], 'r')
         else
-            let completions = rcom#Evaluate(['paste(apropos("^'. escape(a:base, '^$.*\[]~"') .'"), collapse="\n")'], 'r')
+            let completions = rcom#Evaluate(['paste(apropos("^'. s:Escape2(a:base, '^$.*\[]~"') .'"), collapse="\n")'], 'r')
         endif
         let clist = split(completions, '\n')
+        " TLogVAR clist
         return clist
     endif
 endf
@@ -445,4 +452,7 @@ CHANGES:
 
 0.1
 - Initial release
+
+0.2
+- Add cursor markers only if w:tskeleton_hypercomplete exists
 
