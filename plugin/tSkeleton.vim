@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     21-Sep-2004.
-" @Last Change: 2010-02-25.
-" @Revision:    3892
+" @Last Change: 2010-02-26.
+" @Revision:    3897
 "
 " GetLatestVimScripts: 1160 1 tSkeleton.vim
 " http://www.vim.org/scripts/script.php?script_id=1160
@@ -69,6 +69,8 @@ if !exists('g:tskelHyperType')
     " Either query or pum.
     " If you set the variable to "pum", you have to accept completions 
     " with <c-y>.
+    " This variable must be set in your |vimrc| file before loading the 
+    " tskeleton plugin.
     let g:tskelHyperType = 'query'   "{{{2
     " let g:tskelHyperType = 'pum'   "{{{2
 endif
@@ -91,9 +93,9 @@ endf
 function! TSkeletonMapHyperComplete(key, ...) "{{{3
     let default = a:0 >= 1 ? a:1 : '=='
     if g:tskelHyperType == 'pum'
-        exec 'inoremap '. a:key .' <C-R>=tskeleton#HyperComplete_{g:tskelHyperType}("i", '. string(default) .')<cr>'
+        exec 'inoremap '. a:key .' <C-R>=tskeleton#HyperComplete_'. g:tskelHyperType .'("i", '. string(default) .')<cr>'
     elseif g:tskelHyperType == 'query'
-        exec 'inoremap '. a:key .' <c-\><c-o>:call tskeleton#HyperComplete_{g:tskelHyperType}("i", '. string(default) .')<cr>'
+        exec 'inoremap '. a:key .' <c-\><c-o>:call tskeleton#HyperComplete_'. g:tskelHyperType .'("i", '. string(default) .')<cr>'
     else
         echoerr "tSkeleton: Unknown type for g:tskelHyperType: "+ g:tskelHyperType
     endif
@@ -538,3 +540,6 @@ autoload/tskeleton.vim won't be loaded on startup.
 - "Mini bits": Load all .tskelmini files from the current file's 
 directory upwards
 - s:InsertDefault handles <+CURSOR+> tags
+- tskeleton#HyperComplete_query(): Set w:tskeleton_hypercomplete
+- FIX: g:tskelHyperType = "pum" didn't work properly.
+
