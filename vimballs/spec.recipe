@@ -1,3 +1,6 @@
+doc/spec.txt
+macros/spec.vim
+plugin/spec.vim
 autoload/should.vim
 autoload/should/be.vim
 autoload/should/finish.vim
@@ -7,9 +10,6 @@ autoload/should/throw.vim
 autoload/should/yield.vim
 autoload/spec.vim
 autoload/spec/speckiller.vim
-doc/spec.txt
-macros/spec.vim
-plugin/spec.vim
 spec/spec/_dont_include.vim
 spec/spec/_include.vim
 spec/spec/_included.vim
