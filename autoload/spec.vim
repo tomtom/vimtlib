@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-22.
-" @Last Change: 2010-01-03.
-" @Revision:    0.0.362
+" @Last Change: 2010-02-27.
+" @Revision:    0.0.371
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -305,10 +305,17 @@ function! spec#__Run(path, file, bang) "{{{3
         call spec#Include(file, 1)
         " TLogVAR len(getqflist())
     endfor
-    unlet! s:spec_verbose s:spec_files s:spec_file s:should_counts g:spec_run
 
     echo " "
     redraw
+    let nfiles = len(keys(s:should_counts))
+    let nshoulds = 0
+    for cnt in values(s:should_counts)
+        let nshoulds += cnt
+    endfor
+    echom 'Spec: Checked '. nshoulds .' specs in '. nfiles .' file(s)'
+    unlet! s:spec_verbose s:spec_files s:spec_file s:should_counts g:spec_run
+
     if len(getqflist()) > 0
         try
             exec g:spec_cwindow
