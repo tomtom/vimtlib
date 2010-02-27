@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-21.
-" @Last Change: 2009-03-01.
-" @Revision:    0.0.16
+" @Last Change: 2010-02-27.
+" @Revision:    0.0.20
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -29,16 +29,25 @@ endf
 fun! should#throw#Exception(expr, expected)
     try
         call should#__Eval(a:expr)
-        let rv = ''
+        let msg = ''
     catch
-        let rv = v:exception
+        let msg = v:exception .': '. v:throwpoint
     endtry
-    if rv =~ a:expected
-        return 1
+    if empty(msg)
+        call should#__Explain('Expected exception '. string(a:expected) .'but none was thrown')
+        let rv = 0
+    elseif msg =~ a:expected
+        let rv = 1
     else
-        call should#__Explain('Expected exception '. string(a:expected) .' but got '. string(rv))
-        return 0
+        call should#__Explain('Expected exception '. string(a:expected) .' but got '. string(msg))
+        let rv = 0
     endif
+    if rv == 0
+        echohl Error
+        echom msg
+        echohl NONE
+    endif
+    return rv
 endf
 
 

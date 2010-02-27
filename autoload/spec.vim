@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-22.
 " @Last Change: 2010-02-27.
-" @Revision:    0.0.371
+" @Revision:    0.0.379
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -145,6 +145,9 @@ endf
 
 " :nodoc:
 function! spec#__Begin(args, sfile) "{{{3
+    if !exists('g:spec_run')
+        throw 'Spec: Run the spec with the :Spec command'
+    endif
     let s:spec_args = s:ParseArgs(a:args, a:sfile)
     let s:spec_vars = keys(g:)
     call spec#__Comment('')
@@ -350,7 +353,11 @@ function! spec#Include(filename, top_spec) "{{{3
                 " TLogVAR options
             endif
         catch
-            call spec#__AddQFL(source, v:exception)
+            let msg = v:exception .': '. v:throwpoint
+            call spec#__AddQFL(source, msg)
+            echohl Error
+            echom msg
+            echohl NONE
             break
         finally
             if a:top_spec

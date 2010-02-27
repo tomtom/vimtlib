@@ -3,14 +3,14 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-22.
-" @Last Change: 2009-08-04.
-" @Revision:    63
-" GetLatestVimScripts: 0 0 :AutoInstall: spec.vim
+" @Last Change: 2010-02-27.
+" @Revision:    68
+" GetLatestVimScripts: 2580 0 :AutoInstall: spec.vim
 
 if &cp || exists("loaded_spec")
     finish
 endif
-let loaded_spec = 1
+let loaded_spec = 2
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -62,6 +62,40 @@ command! -nargs=? -complete=file -bang Spec
             \ | call spec#__Run(<q-args>, expand('%:p'), !empty("<bang>"))
 
 
+" :display: SpecBegin [ARGUMENTS AS INNER DICTIONNARY]
+" Establish the environment for the current specification.
+" This command also serves as a saveguard that should prevent users from 
+" running specs with the |:source| command.
+"
+" Known keys for ARGUMENTS:
+"
+"   title   ... The test's title.
+"   file    ... The script context.
+"   before  ... Code to be run before each test (only effective when run 
+"               via |:SpecRun|.
+"   after   ... Code to be run after each test (only effective when run 
+"               via |:SpecRun|.
+"   scratch ... Run spec in scratch buffer. If the value is "", use an 
+"               empty buffer. If it is "%", read the spec file itself 
+"               into the scratch buffer. Otherwise read the file of the 
+"               given name.
+"   cleanup ... A list of function names that will be removed
+"   options ... Run the spec against these options (a list of 
+"               dictionnaries or 'vim' for the default option set).
+"               NOTE: If you test your specs against vim default 
+"               settings, it's possible that you have to restart vim in 
+"               order to get the usual environment.
+" 
+" NOTES:
+" Any global variables that were not defined at the time of the last 
+" invocation of |:SpecBegin| are considered temporary variables and will 
+" be removed.
+"
+" A specification file *should* ;-) include exactly one :SpecBegin 
+" command.
+command! -nargs=* SpecBegin call spec#__Begin({<args>}, expand("<sfile>:p"))
+
+
 " Include the line "exec SpecInit()" in your script in order to install 
 " the function s:SpecVal(), which can be used to evaluate expressions in 
 " script context. This initializations is necessary only if you call the 
@@ -89,4 +123,9 @@ sufficient for most interactive tests)
 CHANGES:
 0.1
 - Initial release
+
+0.2
+- Display a message after having run all specs
+- Raise an error when :SpecBegin is not called in a spec context (i.e. 
+via the :Spec command)
 

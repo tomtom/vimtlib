@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-22.
-" @Last Change: 2009-03-14.
-" @Revision:    61
+" @Last Change: 2010-02-27.
+" @Revision:    63
 
 if &cp || exists("loaded_macros_spec")
     finish
@@ -13,38 +13,6 @@ let loaded_macros_spec = 1
 
 let s:save_cpo = &cpo
 set cpo&vim
-
-
-" :display: SpecBegin [ARGUMENTS AS INNER DICTIONNARY]
-" Establish the environment for the current specification.
-"
-" Known keys for ARGUMENTS:
-"
-"   title   ... The test's title.
-"   file    ... The script context.
-"   before  ... Code to be run before each test (only effective when run 
-"               via |:SpecRun|.
-"   after   ... Code to be run after each test (only effective when run 
-"               via |:SpecRun|.
-"   scratch ... Run spec in scratch buffer. If the value is "", use an 
-"               empty buffer. If it is "%", read the spec file itself 
-"               into the scratch buffer. Otherwise read the file of the 
-"               given name.
-"   cleanup ... A list of function names that will be removed
-"   options ... Run the spec against these options (a list of 
-"               dictionnaries or 'vim' for the default option set).
-"               NOTE: If you test your specs against vim default 
-"               settings, it's possible that you have to restart vim in 
-"               order to get the usual environment.
-" 
-" NOTES:
-" Any global variables that were not defined at the time of the last 
-" invocation of |:SpecBegin| are considered temporary variables and will 
-" be removed.
-"
-" A specification file *should* ;-) include exactly one :SpecBegin 
-" command.
-command! -nargs=* SpecBegin call spec#__Begin({<args>}, expand("<sfile>:p"))
 
 
 " :display: SpecInclude _FILENAME

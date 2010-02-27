@@ -63,8 +63,8 @@ Contents~
         g:spec_cwindow ........................... |g:spec_cwindow|
         g:spec_option_sets ....................... |g:spec_option_sets|
         :Spec .................................... |:Spec|
-        SpecInit ................................. |SpecInit()|
         :SpecBegin ............................... |:SpecBegin|
+        SpecInit ................................. |SpecInit()|
         :SpecInclude ............................. |:SpecInclude|
         :It ...................................... |:It|
         :Should .................................. |:Should|
@@ -145,20 +145,11 @@ Spec[!] [PATH]
     between to identical tests in different contexts, which is why you 
     should only use one |:SpecBegin| command per file.
 
-                                                    *SpecInit()*
-SpecInit()
-    Include the line "exec SpecInit()" in your script in order to install 
-    the function s:SpecVal(), which can be used to evaluate expressions in 
-    script context. This initializations is necessary only if you call the 
-    function |spec#Val()| in your tests.
-
-
-========================================================================
-macros/spec.vim~
-
                                                     *:SpecBegin*
 SpecBegin [ARGUMENTS AS INNER DICTIONNARY]
     Establish the environment for the current specification.
+    This command also serves as a saveguard that should prevent users from 
+    running specs with the |:source| command.
     
     Known keys for ARGUMENTS:
     
@@ -186,6 +177,17 @@ SpecBegin [ARGUMENTS AS INNER DICTIONNARY]
     
     A specification file *should* ;-) include exactly one :SpecBegin 
     command.
+
+                                                    *SpecInit()*
+SpecInit()
+    Include the line "exec SpecInit()" in your script in order to install 
+    the function s:SpecVal(), which can be used to evaluate expressions in 
+    script context. This initializations is necessary only if you call the 
+    function |spec#Val()| in your tests.
+
+
+========================================================================
+macros/spec.vim~
 
                                                     *:SpecInclude*
 SpecInclude _FILENAME
