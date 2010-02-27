@@ -1,0 +1,88 @@
+*prototype.txt*  JavaScript-like prototype-based programming in vimscript
+                 Author: Tom Link, micathom at gmail com
+
+prototype leverages vimscript's |dictionary-function|s to enable 
+JavaScript-like prototype-based programming.
+
+Example: >
+
+    " Define a prototype
+    let x1 = prototype#New({'a': 2, 'b': 3})
+    function! x1.Foo(a) dict "{{{3
+        return "x1-". (self.a * a:a)
+    endf
+    echo x1.Foo(10)
+    => x1-20
+
+    " Inherit from a prototype
+    let x2 = prototype#New({'a': 33}, x1)
+    echo x2.Foo(10)
+    => x1-330
+
+    echo x2.b
+    => 3
+
+    " Change the prototype
+    let x1a = prototype#New({'a': 20, 'b': 30, 'c': 50})
+    function! x1a.Foo(a) dict "{{{3
+        return "x1a-". (self.c * a:a)
+    endf
+    call x2.__Prototype(x1a)
+    echo x2.Foo(10)
+    => x1a-500
+
+See ../spec/prototype/prototype.vim for more examples.
+
+
+-----------------------------------------------------------------------
+Install~
+
+Edit the vba file and type: >
+
+    :so %
+
+See :help vimball for details. If you have difficulties or use vim 7.0, 
+please make sure, you have the current version of vimball
+(vimscript #1502) installed or update your runtime.
+
+Also available via git: http://github.com/tomtom/vimtlib/
+
+
+========================================================================
+Contents~
+
+        prototype#New ............ |prototype#New()|
+
+
+========================================================================
+autoload/prototype.vim~
+
+                                                    *prototype#New()*
+prototype#New(self, ?prototype={})
+    Define a new "object". Optionally inherit methods and attributes from 
+    a prototype, which can be an "object" or a vimscript |Dictionary|.
+    
+    Example: >
+    
+        let o = prototype#New({'a': 1, 'b': 2})
+        function! o.Foo(x) dict
+            return self.a * a:x
+        endf
+    
+<     The new object has the following additional fields and method(s):
+    
+        o.__Prototype(prototype) ... Set the prototype
+        o.__prototype            ... Access the prototype
+    
+    For internal use:
+    
+        o.__abstract             ... The fields that define the object
+    
+    You should not overwrite the values of these fields.
+
+
+
+
+
+
+vim:tw=78:fo=tcq2:isk=!-~,^*,^|,^":ts=8:ft=help:norl:
