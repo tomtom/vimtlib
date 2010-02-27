@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-21.
-" @Last Change: 2010-01-03.
-" @Revision:    0.0.14
+" @Last Change: 2010-02-27.
+" @Revision:    0.0.19
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -48,6 +48,17 @@ fun! tlog#Style(style, text)
     echohl NONE
     return rv
 endf
+
+
+function! tlog#Fun(fn) "{{{3
+    let fn = ''
+    redir => fn
+    exec 'silent fun '. a:fn
+    redir END
+    call substitute(fn, '\s*\n\s*', ' | ', 'g')
+    return tlog#Log(a:fn .': '. fn)
+endf
+
 
 fun! tlog#Var(caller, var, ...)
     let msg = ['VAR']
