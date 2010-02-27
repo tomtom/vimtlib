@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-02-26.
 " @Last Change: 2010-02-27.
-" @Revision:    181
+" @Revision:    267
 " GetLatestVimScripts: 0 0 prototype.vim
 
 let s:save_cpo = &cpo
@@ -29,7 +29,8 @@ set cpo&vim
 "
 " For internal use:
 "
-"     o.__abstract             ... The fields that define the object
+"     o.__abstract             ... The fields that define the assured 
+"                                  interface of the object
 " 
 " You should not overwrite the values of these fields.
 function! prototype#New(self, ...) "{{{3
@@ -44,7 +45,7 @@ function! prototype#New(self, ...) "{{{3
         if has_key(self, '__abstract')
             let keys = keys(self)
             call filter(keys, 'strpart(v:val, 0, 2) != "__"')
-            call filter(keys, 'index(self.__abstract, v:val) == -1')
+            call filter(keys, '!has_key(self.__abstract, v:val)')
             let this = self
             while has_key(this, '__prototype')
                 let prec = this.__prototype
@@ -55,8 +56,15 @@ function! prototype#New(self, ...) "{{{3
                 endfor
                 let this = prec
             endwh
+        else
+            let self.__abstract = {}
         endif
-        let self.__abstract = keys(self)
+
+        for nv in items(self)
+            if strpart(nv[0], 0, 2) != "__" && !has_key(self.__abstract, nv[0])
+                let self.__abstract[nv[0]] = {'type': type(nv[1])}
+            endif
+        endfor
 
         call extend(self, a:prototype, 'keep')
         let self.__prototype = a:prototype
