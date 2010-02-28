@@ -720,5 +720,6 @@ VikiDefine()) in order to reduce startup time
 - FIX: Handling of cursor positions (reported by Marko Mahnic)
 
 - FIX: g:vikiOpenUrlWith_ANY for Windows
+- viki_viki: Anchors in URLs can start with an upper case character
 
 " vim: ff=unix
