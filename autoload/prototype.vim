@@ -4,14 +4,14 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-02-26.
 " @Last Change: 2010-02-28.
-" @Revision:    277
+" @Revision:    291
 " GetLatestVimScripts: 0 0 prototype.vim
 
 let s:save_cpo = &cpo
 set cpo&vim
 
 
-" :display: prototype#New(self, ?prototype={})
+" :display: prototype#New(?self={}, ?prototype={})
 " Define a new "object". Optionally inherit methods and attributes from 
 " a prototype, which can be an "object" or a vimscript |Dictionary|.
 "
@@ -28,6 +28,8 @@ set cpo&vim
 "     o.__prototype            ... Access the prototype
 "     o.__Keys()               ... Return the object's fields (without 
 "                                  those prefixed with '__')
+"     o.__Get(key, [default])  ... Get key's value, call 
+"                                  o.__Missing(key) if defined.
 "
 " For internal use:
 "
@@ -36,47 +38,64 @@ set cpo&vim
 "                                  fields not inherited from prototypes)
 " 
 " You should not overwrite the values of these fields.
-function! prototype#New(self, ...) "{{{3
-    let prototype = a:0 >= 1 ? a:1 : {}
-    let self = copy(a:self)
-
-    function! self.__Keys() dict "{{{3
-        let keys = keys(self)
-        call filter(keys, 'strpart(v:val, 0, 2) != "__"')
-        return keys
-    endf
-
-    function! self.__Prototype(prototype) dict "{{{3
-        if a:prototype == self
-            throw 'Prototype: Circular reference: '. string(a:prototype)
-        endif
-
-        if has_key(self, '__abstract')
-            let keys = self.__Keys()
-            call filter(keys, '!has_key(self.__abstract, v:val)')
-            let this = self
-            while has_key(this, '__prototype')
-                let prec = this.__prototype
-                for k in keys
-                    if has_key(self, k) && has_key(prec, k) && self[k] == prec[k]
-                        call remove(self, k)
-                    endif
-                endfor
-                let this = prec
-            endwh
-        else
-            let self.__abstract = {}
-        endif
-
-        call prototype#SetAbstract(self.__abstract, self)
-
-        call extend(self, a:prototype, 'keep')
-        let self.__prototype = a:prototype
-
-        return self
-    endf
-
+function! prototype#New(...) "{{{3
+    let self      = a:0 >= 1 ? copy(a:1) : {}
+    let prototype = a:0 >= 2 ? a:2 : {}
+    let self.__Keys = function(s:SNR().'Keys')
+    let self.__Get = function(s:SNR().'Get')
+    let self.__Prototype = function(s:SNR().'Prototype')
     return self.__Prototype(prototype)
+endf
+
+
+fun! s:SNR()
+    return matchstr(expand('<sfile>'), '<SNR>\d\+_\zeSNR$')
+endf
+
+    
+function! s:Keys() dict "{{{3
+    let keys = keys(self)
+    call filter(keys, 'strpart(v:val, 0, 2) != "__"')
+    return keys
+endf
+
+
+function! s:Get(key, ...) dict
+    if !has_key(self, a:key) && has_key(self, '__Default')
+        call self.__Default(a:key)
+    endif
+    return call('get', [self, a:key] + a:000)
+endf
+
+
+function! s:Prototype(prototype) dict "{{{3
+    if a:prototype == self
+        throw 'Prototype: Circular reference: '. string(a:prototype)
+    endif
+
+    if has_key(self, '__abstract')
+        let keys = self.__Keys()
+        call filter(keys, '!has_key(self.__abstract, v:val)')
+        let this = self
+        while has_key(this, '__prototype')
+            let prec = this.__prototype
+            for k in keys
+                if has_key(self, k) && has_key(prec, k) && self[k] == prec[k]
+                    call remove(self, k)
+                endif
+            endfor
+            let this = prec
+        endwh
+    else
+        let self.__abstract = {}
+    endif
+
+    call prototype#SetAbstract(self.__abstract, self)
+
+    call extend(self, a:prototype, 'keep')
+    let self.__prototype = a:prototype
+
+    return self
 endf
 
 

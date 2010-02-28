@@ -2,8 +2,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-02-26.
-" @Last Change: 2010-02-27.
-" @Revision:    202
+" @Last Change: 2010-02-28.
+" @Revision:    224
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -175,6 +175,26 @@ endf
 call x2.__Prototype(x1a)
 
 Should be equal x2.Foo(10), "x1a-500"
+
+
+
+It should fill in default values when using the getter.
+
+let x = prototype#New()
+let ncalls = 0
+function! x.__Default(n) dict
+    let g:ncalls += 1
+    if a:n <= 1
+        let self[a:n] = a:n
+    else
+        let self[a:n] = self.__Get(a:n - 2) + self.__Get(a:n - 1)
+    endif
+endfunction
+Should be equal map(range(0, 10), 'x.__Get(v:val)'),
+            \ [0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55]
+Should be equal ncalls, 11
+Should be equal map(sort(map(x.__Keys(), 'printf("%02d", x[v:val])')), 'v:val + 0'),
+            \ [0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55]
 
 
 
