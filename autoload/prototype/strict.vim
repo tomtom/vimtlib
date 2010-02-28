@@ -4,20 +4,27 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-02-26.
 " @Last Change: 2010-02-28.
-" @Revision:    273
+" @Revision:    294
 " GetLatestVimScripts: 0 0 prototypestrict.vim
 
 let s:save_cpo = &cpo
 set cpo&vim
 
 
+let s:types = ['Number', 'String', 'Funcref', 'List', 'Dictionary', 'Float']
+
 " :display: prototype#strict#New(self, ?prototype={})
-" Define a new "object" similar to |prototype#New()| but add some 
-" additional methods:
+" Define a new "object" similar to |prototype#New()| but checks type 
+" consistency when setting the prototype and adds a few additional 
+" methods:
 "
-"     o.__Validate()           ... Check the object's invariants (type 
-"                                  consistency)
-"     o.__Clone()              ... Return a validated copy of self
+"     o.__Validate()     ... Check the object's invariants (type
+"                            consistency)
+"     o.__Clone()        ... Return a validated copy of self
+"     o.__(field, value) ... Set an attribute and validate
+"
+" Unfortunately, it is not possible to reinforce consistency when 
+" changing the value of an attribute.
 function! prototype#strict#New(self, ...) "{{{3
     let prototype = a:0 >= 1 ? a:1 : {}
     let self = prototype#New(a:self, prototype)
@@ -25,12 +32,22 @@ function! prototype#strict#New(self, ...) "{{{3
 
     function! self.__Prototype(prototype) dict "{{{3
         let ans = self.__Prototype__(a:prototype)
-        call s:Validate(self, self, [])
+        call s:Validate(self, self)
         return self
     endf
 
+    function! self.__Set(field, value) dict "{{{3
+        if has_key(self, a:field)
+            let etype = type(self[a:field])
+            if etype != type(a:value)
+                throw 'Prototype: Expected '. string(a:field) .' to be a '. s:types[etype] .': '. string(a:value)
+            endif
+        endif
+        let self[a:field] = a:value
+    endf
+
     function! self.__Validate() dict "{{{3
-        return s:Validate(self, self, [])
+        return s:Validate(self, self)
     endf
 
     function! self.__Clone() dict "{{{3
@@ -43,7 +60,7 @@ function! prototype#strict#New(self, ...) "{{{3
 endf
 
     
-function! s:Validate(self, this, checked) "{{{3
+function! s:Validate(self, this) "{{{3
     " TLogVAR a:self
     " TLogVAR a:this
     if has_key(a:this, '__abstract')
@@ -55,19 +72,15 @@ function! s:Validate(self, this, checked) "{{{3
     " TLogVAR abstract
     for [field, fdef] in items(abstract)
         " TLogVAR field
-        if index(a:checked, field) == -1
-            let otype = type(a:self[field])
-            let etype = abstract[field].type
-            " TLogVAR field, otype, etype
-            if otype != etype
-                " TLogDBG 'Prototype: Expected '. field .' to by of type '. otype .': '. string(a:self)
-                throw 'Prototype: Expected '. field .' to by of type '. otype .': '. string(a:self)
-            endif
-            call add(a:checked, field)
+        let otype = type(a:self[field])
+        let etype = abstract[field].type
+        " TLogVAR field, otype, etype
+        if otype != etype
+            throw 'Prototype: Expected '. string(field) .' to be a '. s:types[etype] .': '. string(a:self[field])
         endif
     endfor
     if has_key(a:this, '__prototype')
-        call s:Validate(a:self, a:this.__prototype, a:checked)
+        call s:Validate(a:self, a:this.__prototype)
     endif
 endf
 

@@ -3,7 +3,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-02-26.
 " @Last Change: 2010-02-28.
-" @Revision:    204
+" @Revision:    213
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -209,6 +209,20 @@ let t3 = prototype#strict#New({"x": 1}, x1)
 Should not throw Exception 'g:t3.__Clone()', '^Prototype: Expected '
 let t3.x = [1]
 Should throw Exception 'g:t3.__Clone()', '^Prototype: Expected '
+
+
+
+It should throw an expected on type mismatch with the prototype.
+
+Should be a x1.a, 'Number'
+Should throw Exception 'prototype#strict#New({"a": [1]}, g:x1)', '^Prototype: Expected '
+
+
+
+It should throw an expected on type mismatch when setting an attribute.
+
+Should be a x1.a, 'Number'
+Should throw Exception 'g:x1.__Set("a", [1])', '^Prototype: Expected '
 
 
 
