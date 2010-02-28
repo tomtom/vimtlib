@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-02-26.
 " @Last Change: 2010-02-28.
-" @Revision:    294
+" @Revision:    308
 " GetLatestVimScripts: 0 0 prototypestrict.vim
 
 let s:save_cpo = &cpo
@@ -32,22 +32,18 @@ function! prototype#strict#New(self, ...) "{{{3
 
     function! self.__Prototype(prototype) dict "{{{3
         let ans = self.__Prototype__(a:prototype)
-        call s:Validate(self, self)
+        call s:Validate(self, self, [])
         return self
     endf
 
     function! self.__Set(field, value) dict "{{{3
-        if has_key(self, a:field)
-            let etype = type(self[a:field])
-            if etype != type(a:value)
-                throw 'Prototype: Expected '. string(a:field) .' to be a '. s:types[etype] .': '. string(a:value)
-            endif
-        endif
         let self[a:field] = a:value
+        call s:Validate(self, self, [a:field])
+        return self
     endf
 
     function! self.__Validate() dict "{{{3
-        return s:Validate(self, self)
+        return s:Validate(self, self, [])
     endf
 
     function! self.__Clone() dict "{{{3
@@ -60,27 +56,34 @@ function! prototype#strict#New(self, ...) "{{{3
 endf
 
     
-function! s:Validate(self, this) "{{{3
+function! s:Validate(self, this, fields) "{{{3
     " TLogVAR a:self
     " TLogVAR a:this
+    " TLogVAR has_key(a:this, '__abstract')
     if has_key(a:this, '__abstract')
         let abstract = a:this.__abstract
     else
         let abstract = {}
         call prototype#SetAbstract(abstract, a:this)
     endif
+    if !empty(a:fields)
+        let abstract = filter(copy(abstract), 'index(a:fields, v:key) != -1')
+    endif
     " TLogVAR abstract
     for [field, fdef] in items(abstract)
-        " TLogVAR field
+        " TLogVAR field, fdef
+        if has_key(fdef, 'Validate')
+            let a:self[field] = call(fdef.Validate, [a:self[field]], a:self)
+        endif
         let otype = type(a:self[field])
-        let etype = abstract[field].type
+        let etype = fdef.type
         " TLogVAR field, otype, etype
         if otype != etype
             throw 'Prototype: Expected '. string(field) .' to be a '. s:types[etype] .': '. string(a:self[field])
         endif
     endfor
     if has_key(a:this, '__prototype')
-        call s:Validate(a:self, a:this.__prototype)
+        call s:Validate(a:self, a:this.__prototype, a:fields)
     endif
 endf
 

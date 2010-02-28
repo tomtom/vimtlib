@@ -3,7 +3,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-02-26.
 " @Last Change: 2010-02-28.
-" @Revision:    213
+" @Revision:    237
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -12,6 +12,8 @@ set cpo&vim
 
 SpecBegin 'title': 'Prototype'
 
+if 0
+endif
 
 
 It should define a simple prototype.
@@ -223,6 +225,49 @@ It should throw an expected on type mismatch when setting an attribute.
 
 Should be a x1.a, 'Number'
 Should throw Exception 'g:x1.__Set("a", [1])', '^Prototype: Expected '
+
+
+
+It should validate fields.
+
+let t4 = prototype#strict#New({"x": 1, "y": 2})
+Should be equal keys(t4.__abstract), ['x', 'y']
+
+function! t4.__abstract.x.Validate(value) dict
+    if a:value >= 10
+        throw "Oops!"
+    endif
+    return a:value
+endfun
+
+Should not throw Exception 'g:t4.__Set("x", 5)', '^Oops!'
+Should throw Exception 'g:t4.__Set("x", 20)', '^Oops!'
+Should be equal keys(t4.__abstract), ['x', 'y']
+
+
+
+It should reinforce the fields' validity.
+
+function! t4.__abstract.y.Validate(value) dict
+    if a:value <= 0
+        return 0
+    elseif a:value >= 10
+        return 10
+    else
+        return a:value
+    endif
+endfun
+
+Should be equal t4.y, 2
+
+call t4.__Set("y", 5)
+Should be equal t4.y, 5
+
+call t4.__Set("y", -10)
+Should be equal t4.y, 0
+
+call t4.__Set("y", 20)
+Should be equal t4.y, 10
 
 
 
