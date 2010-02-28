@@ -51,15 +51,15 @@ Also available via git: http://github.com/tomtom/vimtlib/
 ========================================================================
 Contents~
 
-        prototype#New .................. |prototype#New()|
-        prototypestrict#New ............ |prototypestrict#New()|
+        prototype#New ............ |prototype#New()|
+        prototype#SetAbstract .... |prototype#SetAbstract()|
 
 
 ========================================================================
 autoload/prototype.vim~
 
                                                     *prototype#New()*
-prototype#New(self, ?prototype={})
+prototype#New(?self={}, ?prototype={})
     Define a new "object". Optionally inherit methods and attributes from 
     a prototype, which can be an "object" or a vimscript |Dictionary|.
     
@@ -74,38 +74,21 @@ prototype#New(self, ?prototype={})
     
         o.__Prototype(prototype) ... Set the prototype
         o.__prototype            ... Access the prototype
+        o.__Keys()               ... Return the object's fields (without 
+                                     those prefixed with '__')
+        o.__Get(key, [default])  ... Get key's value, call 
+                                     o.__Missing(key) if defined.
     
     For internal use:
     
         o.__abstract             ... The fields that define the assured 
-                                     interface of the object
+                                     interface of the object (those 
+                                     fields not inherited from prototypes)
     
     You should not overwrite the values of these fields.
 
-
-
-
-
-========================================================================
-autoload/prototypestrict.vim~
-
-                                                    *prototypestrict#New()*
-prototypestrict#New(self, ?prototype={})
-    Define a new "object" similar to |prototype#New()| but add some 
-    additional methods:
-    
-        o.__Validate()           ... Check the object's invariants (type 
-                                     consistency)
-        o.__Clone()              ... Return a validated copy of self
-
-
-
-
-
-
-
-
-
+                                                    *prototype#SetAbstract()*
+prototype#SetAbstract(dict, self)
 
 
 
