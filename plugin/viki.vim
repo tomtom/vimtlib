@@ -719,5 +719,6 @@ VikiDefine()) in order to reduce startup time
 3.16
 - FIX: Handling of cursor positions (reported by Marko Mahnic)
 
+- FIX: g:vikiOpenUrlWith_ANY for Windows
 
 " vim: ff=unix
