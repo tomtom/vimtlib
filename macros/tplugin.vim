@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-04.
-" @Last Change: 2010-02-17.
-" @Revision:    1026
+" @Last Change: 2010-02-28.
+" @Revision:    1032
 " GetLatestVimScripts: 2917 1 :AutoInstall: tplugin.vim
 
 if &cp || exists("loaded_tplugin")
@@ -809,9 +809,9 @@ command! -nargs=+ -complete=dir TPluginRoot
             \ call s:SetRoot(<q-args>)
 
 
-" :display: :TPluginBefore FILE_RX [FILE_PATTERNS ...]
-" Load DEPENDENCIES before loading a file matching the regexp pattern 
-" FILE_RX.
+" :display: :TPluginBefore FILE_RX [GLOB_PATTERNS ...]
+" Load dependencies given as GLOB_PATTERNS (see |wildcards|) before 
+" loading a file matching the |regexp| pattern FILE_RX.
 "
 " The files matching FILE_PATTERNS are loaded after the repo's path is 
 " added to the 'runtimepath'. You can thus use partial filenames as you 
@@ -822,19 +822,19 @@ command! -nargs=+ -complete=dir TPluginRoot
 "
 " Example: >
 "   " Load master.vim before loading any plugin in a repo
-"   TPluginBefore plugin/*.vim plugin/master.vim
+"   TPluginBefore plugin/.\{-}\.vim plugin/master.vim
 command! -nargs=+ TPluginBefore
             \ let s:before[[<f-args>][0]] = [<f-args>][1:-1]
 
 
-" :display: :TPluginAfter FILE_RX [OTHER_PLUGINS ...]
-" Load OTHER_PLUGINS after loading a file matching the regexp pattern 
-" FILE_RX.
+" :display: :TPluginAfter FILE_RX [GLOB_PATTERNS ...]
+" Load other plugins matching GLOB_PATTERNS (see |wildcards|) after 
+" loading a file matching the |regexp| pattern FILE_RX.
 " See also |:TPluginBefore|.
 "
 " Example: >
 "   " Load auxiliary plugins after loading master.vim
-"   TPluginAfter plugin/master.vim plugin/sub_*.vim
+"   TPluginAfter plugin/master\.vim plugin/sub_*.vim
 command! -nargs=+ TPluginAfter
             \ let s:after[[<f-args>][0]] = [<f-args>][1:-1]
 
