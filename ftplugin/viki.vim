@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     12-Jän-2004.
-" @Last Change: 2009-12-26.
-" @Revision: 416
+" @Last Change: 2010-02-28.
+" @Revision: 418
 
 " if !g:vikiEnabled
 "     finish
@@ -21,8 +21,27 @@ let b:did_ftplugin = 1
 let b:vikiCommentStart = "%"
 let b:vikiCommentEnd   = ""
 let b:vikiHeadingMaxLevel = -1
+
+
 if !exists("b:vikiMaxFoldLevel") | let b:vikiMaxFoldLevel = 5 | endif "{{{2
 if !exists("b:vikiInverseFold")  | let b:vikiInverseFold  = 0 | endif "{{{2
+" Consider fold levels bigger that this as text body, levels smaller 
+" than this as headings
+" This variable is only used if g:vikiFoldMethodVersion is 1.
+if !exists("g:vikiFoldBodyLevel")   | let g:vikiFoldBodyLevel = 6        | endif "{{{2
+
+" Choose folding method version
+if !exists("g:vikiFoldMethodVersion") | let g:vikiFoldMethodVersion = 4  | endif "{{{2
+
+" What is considered for folding.
+" This variable is only used if g:vikiFoldMethodVersion is 1.
+if !exists("g:vikiFolds")           | let g:vikiFolds = 'hf'             | endif "{{{2
+
+" Context lines for folds
+if !exists("g:vikiFoldsContext") "{{{2
+    let g:vikiFoldsContext = [2, 2, 2, 2]
+endif
+
 
 exec "setlocal commentstring=". substitute(b:vikiCommentStart, "%", "%%", "g") 
             \ ."%s". substitute(b:vikiCommentEnd, "%", "%%", "g")
