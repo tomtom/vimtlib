@@ -1,5 +1,5 @@
 doc/prototype.txt
 autoload/prototype.vim
-autoload/prototypestrict.vim
+autoload/prototype/strict.vim
 spec/prototype/prototype.vim
 spec/prototype/prototypestrict.vim
