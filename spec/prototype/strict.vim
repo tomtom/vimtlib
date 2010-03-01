@@ -2,8 +2,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-02-26.
-" @Last Change: 2010-02-28.
-" @Revision:    237
+" @Last Change: 2010-03-01.
+" @Revision:    239
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -188,7 +188,7 @@ Should be equal t1.x, 1
 Should be equal keys(t1.__abstract), ['x']
 
 let t1.x = [1, 2]
-Should throw Exception 'g:t1.__Validate()', '^Prototype: Expected '
+Should throw Exception 'prototype#strict#Validate(g:t1)', '^Prototype: Expected '
 
 
 
@@ -200,7 +200,7 @@ Should be equal t2.a, 2
 Should be equal keys(t2.__abstract), ['x']
 
 let t2.a = [1]
-Should throw Exception 'g:t2.__Validate()', '^Prototype: Expected '
+Should throw Exception 'prototype#strict#Validate(g:t2)', '^Prototype: Expected '
 
 
 
@@ -208,9 +208,9 @@ It should throw an exception on type mismatch when cloning.
 
 let t3 = prototype#strict#New({"x": 1}, x1)
 
-Should not throw Exception 'g:t3.__Clone()', '^Prototype: Expected '
+Should not throw Exception 'prototype#strict#Clone(g:t3)', '^Prototype: Expected '
 let t3.x = [1]
-Should throw Exception 'g:t3.__Clone()', '^Prototype: Expected '
+Should throw Exception 'prototype#strict#Clone(g:t3)', '^Prototype: Expected '
 
 
 

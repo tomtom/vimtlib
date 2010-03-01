@@ -3,8 +3,8 @@
 " @GIT:         http://github.com/tomtom/vimtlib/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-02-26.
-" @Last Change: 2010-02-28.
-" @Revision:    321
+" @Last Change: 2010-03-01.
+" @Revision:    332
 " GetLatestVimScripts: 0 0 prototypestrict.vim
 
 let s:save_cpo = &cpo
@@ -16,13 +16,8 @@ let s:types = ['Number', 'String', 'Funcref', 'List', 'Dictionary', 'Float']
 
 " :display: prototype#strict#New(self, ?prototype={})
 " Define a new "object" similar to |prototype#New()| but checks type 
-" consistency when setting the prototype and adds a few additional 
-" methods:
-"
-"     o.__Validate()        ... Check the object's invariants (type
-"                               consistency)
-"     o.__Clone()           ... Return a validated copy of self
-"     o.__Set(field, value) ... Set an attribute and validate
+" consistency when setting the prototype or a field value using the 
+" __Set method.
 "
 " The o.__abstract.FIELD dictionary has an optional field:
 "
@@ -30,42 +25,43 @@ let s:types = ['Number', 'String', 'Funcref', 'List', 'Dictionary', 'Float']
 function! prototype#strict#New(...) "{{{3
     let self = call(function('prototype#New'), a:000)
     let self.__Prototype__ = self.__Prototype
-    let self.__Prototype = function(s:SNR().'Prototype')
-    let self.__Set = function(s:SNR().'Set')
-    let self.__Validate = function(s:SNR().'Validate')
-    let self.__Clone = function(s:SNR().'Clone')
+    let self.__Prototype = function('prototype#strict#Prototype')
+    let self.__Set = function('prototype#strict#Set')
     call s:ValidateDict(self, self, [])
     return self
 endf
 
 
-fun! s:SNR()
-    return matchstr(expand('<sfile>'), '<SNR>\d\+_\zeSNR$')
-endf
-
-
-function! s:Prototype(prototype) dict "{{{3
+" :nodoc:
+function! prototype#strict#Prototype(prototype) dict "{{{3
     let ans = self.__Prototype__(a:prototype)
     call s:ValidateDict(self, self, [])
     return self
 endf
 
 
-function! s:Set(field, value) dict "{{{3
+" :nodoc:
+function! prototype#strict#Set(field, value) dict "{{{3
     let self[a:field] = a:value
     call s:ValidateDict(self, self, [a:field])
     return self
 endf
 
 
-function! s:Validate() dict "{{{3
-    return s:ValidateDict(self, self, [])
+" Check the object's invariants (type consistency)
+function! prototype#strict#Validate(self) "{{{3
+    if has_key(a:self, '__prototype')
+        return s:ValidateDict(a:self, a:self, [])
+    else
+        return a:self
+    endif
 endf
 
 
-function! s:Clone() dict "{{{3
-    let that = copy(self)
-    call that.__Validate()
+" Return a validated copy of an object.
+function! prototype#strict#Clone(object) "{{{3
+    let that = copy(a:object)
+    call prototype#strict#Validate(that)
     return that
 endf
 
@@ -99,6 +95,7 @@ function! s:ValidateDict(self, this, fields) "{{{3
     if has_key(a:this, '__prototype')
         call s:ValidateDict(a:self, a:this.__prototype, a:fields)
     endif
+    return a:self
 endf
 
 

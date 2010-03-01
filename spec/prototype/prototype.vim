@@ -2,8 +2,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-02-26.
-" @Last Change: 2010-02-28.
-" @Revision:    224
+" @Last Change: 2010-03-01.
+" @Revision:    241
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -57,7 +57,7 @@ Should be equal p1.Bar(10), 13
 
 
 
-It should delegate to a (super) prototype.
+It should call methods in a (super) object.
 
 let o2 = prototype#New({'x': 'B'}, o1)
 function! o2.Bar(b) dict "{{{3
@@ -193,9 +193,33 @@ endfunction
 Should be equal map(range(0, 10), 'x.__Get(v:val)'),
             \ [0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55]
 Should be equal ncalls, 11
-Should be equal map(sort(map(x.__Keys(), 'printf("%02d", x[v:val])')), 'v:val + 0'),
+Should be equal map(prototype#Keys(x, 1), 'x.__Get(v:val)'),
             \ [0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55]
 
+
+
+It should export objects as list.
+
+Should be equal prototype#AsList(x, -1),
+            \ [0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55]
+
+Should be equal ncalls, 11
+
+Should be equal prototype#AsList({2: "a", 4: "b", -1: "c"}),
+            \ ["", "", "a", "", "b"]
+
+Should be equal prototype#AsList({2: "a", 4: "b", -1: "c"}, -1),
+            \ [-1, -1, "a", -1, "b"]
+
+
+
+It should export objects as dictionaries.
+
+let x3 = prototype#New({'a': 33}, x1)
+let d3 = prototype#AsDictionary(x3)
+
+Should be equal sort(keys(d3)),
+            \ ['Foo', 'a', 'b']
 
 
 let &cpo = s:save_cpo

@@ -3,8 +3,8 @@
 " @GIT:         http://github.com/tomtom/vimtlib/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-02-26.
-" @Last Change: 2010-02-28.
-" @Revision:    291
+" @Last Change: 2010-03-01.
+" @Revision:    337
 " GetLatestVimScripts: 0 0 prototype.vim
 
 let s:save_cpo = &cpo
@@ -14,53 +14,38 @@ set cpo&vim
 " :display: prototype#New(?self={}, ?prototype={})
 " Define a new "object". Optionally inherit methods and attributes from 
 " a prototype, which can be an "object" or a vimscript |Dictionary|.
-"
-" Example: >
-"
-"     let o = prototype#New({'a': 1, 'b': 2})
-"     function! o.Foo(x) dict
-"         return self.a * a:x
-"     endf
-"
-" < The new object has the following additional fields and method(s):
-"
-"     o.__Prototype(prototype) ... Set the prototype
-"     o.__prototype            ... Access the prototype
-"     o.__Keys()               ... Return the object's fields (without 
-"                                  those prefixed with '__')
-"     o.__Get(key, [default])  ... Get key's value, call 
-"                                  o.__Missing(key) if defined.
-"
-" For internal use:
-"
-"     o.__abstract             ... The fields that define the assured 
-"                                  interface of the object (those 
-"                                  fields not inherited from prototypes)
-" 
-" You should not overwrite the values of these fields.
 function! prototype#New(...) "{{{3
     let self      = a:0 >= 1 ? copy(a:1) : {}
     let prototype = a:0 >= 2 ? a:2 : {}
-    let self.__Keys = function(s:SNR().'Keys')
-    let self.__Get = function(s:SNR().'Get')
-    let self.__Prototype = function(s:SNR().'Prototype')
+    let self.__Get = function('prototype#Get')
+    let self.__Set = function('prototype#Set')
+    let self.__Prototype = function('prototype#Prototype')
     return self.__Prototype(prototype)
 endf
 
-
-fun! s:SNR()
-    return matchstr(expand('<sfile>'), '<SNR>\d\+_\zeSNR$')
-endf
-
-    
-function! s:Keys() dict "{{{3
-    let keys = keys(self)
-    call filter(keys, 'strpart(v:val, 0, 2) != "__"')
+   
+" :display: prototype#Keys(self, ?numeric_only=0)
+function! prototype#Keys(self, ...) "{{{3
+    let numeric_only = a:0 >= 1 ? a:1 : 0
+    let keys = keys(a:self)
+    call filter(keys, 'type(v:val) != 1 || v:val[0] != "_"')
+    if numeric_only
+        let keys = filter(keys, 'v:val =~ ''^\d\+\(\.\d\+\)\?\(e\d\+\)\?''')
+        let keys = map(sort(map(keys, 'printf("%02d", v:val)')), 'v:val + 0')
+    endif
     return keys
 endf
 
 
-function! s:Get(key, ...) dict
+" :nodoc:
+function! prototype#Set(field, value) dict "{{{3
+    let self[a:field] = a:value
+    return self
+endf
+
+
+" :nodoc:
+function! prototype#Get(key, ...) dict
     if !has_key(self, a:key) && has_key(self, '__Default')
         call self.__Default(a:key)
     endif
@@ -68,13 +53,14 @@ function! s:Get(key, ...) dict
 endf
 
 
-function! s:Prototype(prototype) dict "{{{3
+" :nodoc:
+function! prototype#Prototype(prototype) dict "{{{3
     if a:prototype == self
         throw 'Prototype: Circular reference: '. string(a:prototype)
     endif
 
     if has_key(self, '__abstract')
-        let keys = self.__Keys()
+        let keys = prototype#Keys(self)
         call filter(keys, '!has_key(self.__abstract, v:val)')
         let this = self
         while has_key(this, '__prototype')
@@ -99,14 +85,39 @@ function! s:Prototype(prototype) dict "{{{3
 endf
 
 
+" :nodoc:
 function! prototype#SetAbstract(dict, self) "{{{3
     " TLogVAR a:self, a:dict
-    let keys = has_key(a:self, '__Keys') ? a:self.__Keys() : keys(a:self)
+    let keys = prototype#Keys(a:self)
     for field in keys
         if !has_key(a:dict, field)
             let a:dict[field] = {'type': type(a:self[field])}
         endif
     endfor
+endf
+
+
+" Export the object as plain |Dictionary| that has no dependency on 
+" prototype.
+function! prototype#AsDictionary(obj) "{{{3
+    if has_key(a:obj, '__prototype')
+        let d = copy(a:obj)
+        call filter(d, 'type(v:key) != 1 || v:key[0] != "_"')
+        return d
+    else
+        return copy(a:obj)
+    endif
+endf
+
+
+" Export the object's numeric fields as |List|.
+" Exported fields start with 0. Values with negative or non-numeric keys 
+" are dropped.
+" Missing fields are filled with a default value, which defaults to "".
+function! prototype#AsList(obj, ...) "{{{3
+    let default = a:0 >= 1 ? a:1 : ""
+    return map(range(0, max(prototype#Keys(a:obj, 1))), 
+                \ 'has_key(a:obj, v:val) ? a:obj[v:val] : default')
 endf
 
 

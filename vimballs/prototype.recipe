@@ -2,4 +2,4 @@ doc/prototype.txt
 autoload/prototype.vim
 autoload/prototype/strict.vim
 spec/prototype/prototype.vim
-spec/prototype/prototypestrict.vim
+spec/prototype/strict.vim
