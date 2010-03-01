@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-02-26.
 " @Last Change: 2010-03-01.
-" @Revision:    345
+" @Revision:    350
 " GetLatestVimScripts: 0 0 prototype.vim
 
 let s:save_cpo = &cpo
@@ -42,18 +42,22 @@ function! prototype#New(...) "{{{3
 endf
 
    
-" :display: prototype#Keys(self, ?numeric_only=0)
+" :display: prototype#Keys(self, ?type=0)
 " Return the object's keys as list -- exclude methods/attributes 
 " prefixed with an underscore.
-" If numeric_only evaluates to true, return only numeric fields in 
-" ascending order.
+" type is one of:
+"     0 ... any
+"     1 ... numeric only
+"     2 ... non-numeric keys only
 function! prototype#Keys(self, ...) "{{{3
-    let numeric_only = a:0 >= 1 ? a:1 : 0
+    let type = a:0 >= 1 ? a:1 : 0
     let keys = keys(a:self)
     call filter(keys, 'type(v:val) != 1 || v:val[0] != "_"')
-    if numeric_only
+    if type == 1
         let keys = filter(keys, 'v:val =~ ''^\d\+\(\.\d\+\)\?\(e\d\+\)\?''')
         let keys = map(sort(map(keys, 'printf("%02d", v:val)')), 'v:val + 0')
+    elseif type == 2
+        let keys = filter(keys, 'type(v:val) != 0')
     endif
     return keys
 endf
@@ -140,6 +144,13 @@ function! prototype#AsList(obj, ...) "{{{3
     let default = a:0 >= 1 ? a:1 : ""
     return map(range(0, max(prototype#Keys(a:obj, 1))), 
                 \ 'has_key(a:obj, v:val) ? a:obj[v:val] : default')
+endf
+
+
+" Return an executable string that represents the dictionary as 
+" vimscript code.
+function! prototype#AsVim(obj) "{{{3
+    return join(map(prototype#Keys(a:obj, 2), '"let ". v:val ."=". string(a:obj[v:val])'), '|')
 endf
 
 

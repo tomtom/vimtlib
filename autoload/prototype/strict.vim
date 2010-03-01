@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-02-26.
 " @Last Change: 2010-03-01.
-" @Revision:    332
+" @Revision:    333
 " GetLatestVimScripts: 0 0 prototypestrict.vim
 
 let s:save_cpo = &cpo
@@ -24,7 +24,7 @@ let s:types = ['Number', 'String', 'Funcref', 'List', 'Dictionary', 'Float']
 "     Validate(value)       ... Return a validated value for FIELD
 function! prototype#strict#New(...) "{{{3
     let self = call(function('prototype#New'), a:000)
-    let self.__Prototype__ = self.__Prototype
+    let self.__Prototype0 = self.__Prototype
     let self.__Prototype = function('prototype#strict#Prototype')
     let self.__Set = function('prototype#strict#Set')
     call s:ValidateDict(self, self, [])
@@ -34,7 +34,7 @@ endf
 
 " :nodoc:
 function! prototype#strict#Prototype(prototype) dict "{{{3
-    let ans = self.__Prototype__(a:prototype)
+    let ans = self.__Prototype0(a:prototype)
     call s:ValidateDict(self, self, [])
     return self
 endf
