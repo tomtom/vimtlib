@@ -3,7 +3,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-02-26.
 " @Last Change: 2010-03-01.
-" @Revision:    241
+" @Revision:    244
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -220,6 +220,17 @@ let d3 = prototype#AsDictionary(x3)
 
 Should be equal sort(keys(d3)),
             \ ['Foo', 'a', 'b']
+
+
+
+It should create an object from a list.
+
+let l4 = ["foo", "bar"]
+let x4 = prototype#New(l4)
+
+Should be equal prototype#Keys(x4), ["0", "1"]
+Should be equal prototype#AsList(x4), l4
+
 
 
 let &cpo = s:save_cpo

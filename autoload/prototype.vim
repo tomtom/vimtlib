@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-02-26.
 " @Last Change: 2010-03-01.
-" @Revision:    337
+" @Revision:    345
 " GetLatestVimScripts: 0 0 prototype.vim
 
 let s:save_cpo = &cpo
@@ -12,10 +12,28 @@ set cpo&vim
 
 
 " :display: prototype#New(?self={}, ?prototype={})
-" Define a new "object". Optionally inherit methods and attributes from 
-" a prototype, which can be an "object" or a vimscript |Dictionary|.
+" Define a new "object".
+" The first arguments holds the object's attributes. It can be either a 
+" dictionary or a list, which will be converted into a dictionary.
+" Optionally inherit methods and attributes from a prototype, which can 
+" be an "object" or a vimscript |Dictionary|.
 function! prototype#New(...) "{{{3
-    let self      = a:0 >= 1 ? copy(a:1) : {}
+    if a:0 >= 1
+        if type(a:1) == 3
+            let self = {}
+            let i = 0
+            for v in a:1
+                let self[i] = v
+                let i += 1
+            endfor
+        elseif type(a:1) == 4
+            let self = copy(a:1)
+        else
+            throw 'Prototype: self must be either a dictionary or a list: '. string(a:1)
+        endif
+    else
+        let self = {}
+    endif
     let prototype = a:0 >= 2 ? a:2 : {}
     let self.__Get = function('prototype#Get')
     let self.__Set = function('prototype#Set')
@@ -25,6 +43,10 @@ endf
 
    
 " :display: prototype#Keys(self, ?numeric_only=0)
+" Return the object's keys as list -- exclude methods/attributes 
+" prefixed with an underscore.
+" If numeric_only evaluates to true, return only numeric fields in 
+" ascending order.
 function! prototype#Keys(self, ...) "{{{3
     let numeric_only = a:0 >= 1 ? a:1 : 0
     let keys = keys(a:self)

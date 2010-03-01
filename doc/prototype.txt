@@ -38,7 +38,7 @@ See ../spec/prototype/prototype.vim for more examples.
 Objects~
 
 Objects are created created with the |prototype#New()| function. Strict 
-objects whose validity is checked at certain operations can be created 
+objects whose validity is checked on certain operations can be created 
 with |prototype#strict#New()|.
 
 Example: >
@@ -64,8 +64,8 @@ For internal use:
 
 You should not overwrite the values of these fields. As a rule, the 
 names of prototype-specific methods/attributes are prefixed with two 
-underscores. Private methods/attributes that are not inherited from 
-child object are prefixed with a single underscore.
+underscores. Any method/attribute that is prefixed with an underscore 
+won't inherited by child objects.
 
 
 -----------------------------------------------------------------------
@@ -99,11 +99,18 @@ autoload/prototype.vim~
 
                                                     *prototype#New()*
 prototype#New(?self={}, ?prototype={})
-    Define a new "object". Optionally inherit methods and attributes from 
-    a prototype, which can be an "object" or a vimscript |Dictionary|.
+    Define a new "object".
+    The first arguments holds the object's attributes. It can be either a 
+    dictionary or a list, which will be converted into a dictionary.
+    Optionally inherit methods and attributes from a prototype, which can 
+    be an "object" or a vimscript |Dictionary|.
 
                                                     *prototype#Keys()*
 prototype#Keys(self, ?numeric_only=0)
+    Return the object's keys as list -- exclude methods/attributes 
+    prefixed with an underscore.
+    If numeric_only evaluates to true, return only numeric fields in 
+    ascending order.
 
                                                     *prototype#AsDictionary()*
 prototype#AsDictionary(obj)
