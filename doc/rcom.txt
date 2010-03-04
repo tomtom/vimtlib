@@ -90,6 +90,9 @@ Also available via git: http://github.com/tomtom/vimtlib/
 Contents~
 
         g:rcom#help ............. |g:rcom#help|
+        g:rcom#reuse ............ |g:rcom#reuse|
+        g:rcom#transcript_cmd ... |g:rcom#transcript_cmd|
+        g:rcom#log_cmd .......... |g:rcom#log_cmd|
         rcom#Initialize ......... |rcom#Initialize()|
         rcom#EvaluateInBuffer ... |rcom#EvaluateInBuffer()|
         rcom#Evaluate ........... |rcom#Evaluate()|
@@ -101,6 +104,9 @@ Contents~
         rcom#LogBuffer .......... |rcom#LogBuffer()|
         :RComlog ................ |:RComlog|
         :RComlogreset ........... |:RComlogreset|
+        rcom#TranscriptBuffer ... |rcom#TranscriptBuffer()|
+        :RComtranscript ......... |:RComtranscript|
+        rcom#Transcribe ......... |rcom#Transcribe()|
         g:rcom_map .............. |g:rcom_map|
         g:rcom_mapp ............. |g:rcom_mapp|
         g:rcom_mapop ............ |g:rcom_mapop|
@@ -119,8 +125,23 @@ g:rcom#help                    (default: 1)
       2 ... Use RSiteSearch() instead of help() (this option requires 
             Internet access)
 
+                                                    *g:rcom#reuse*
+g:rcom#reuse                   (default: 1)
+    How to interact with R.
+       0 ... Start a headless instance of R and transcribe the 
+             interaction in VIM
+       1 ... Re-use a running instance of R GUI (default)
+
+                                                    *g:rcom#transcript_cmd*
+g:rcom#transcript_cmd          (default: 'vert split')
+    Command used to display the transcript buffers.
+
+                                                    *g:rcom#log_cmd*
+g:rcom#log_cmd                 (default: 'split')
+    Command used to display the transcript buffers.
+
                                                     *rcom#Initialize()*
-rcom#Initialize(?reuse=0)
+rcom#Initialize(?reuse=g:rcom#reuse)
     Connect to the R interpreter for the current buffer.
     Usually not called by the user.
 
@@ -128,6 +149,11 @@ rcom#Initialize(?reuse=0)
 rcom#EvaluateInBuffer(rcode, ?mode='')
     Initialize the current buffer if necessary and evaluate some R code in 
     a running instance of R GUI.
+    
+    If there is a remote gvim server named RCOM running (see 
+    |--servername|), evaluate R code remotely. This won't block the 
+    current instance of gvim.
+    
     See also |rcom#Evaluate()|.
 
                                                     *rcom#Evaluate()*
@@ -170,6 +196,15 @@ rcom#LogBuffer()
                                                     *:RComlogreset*
 :RComlogreset
     Reset the log.
+
+                                                    *rcom#TranscriptBuffer()*
+rcom#TranscriptBuffer()
+
+                                                    *:RComtranscript*
+:RComtranscript
+
+                                                    *rcom#Transcribe()*
+rcom#Transcribe(input, output)
 
 
 ========================================================================

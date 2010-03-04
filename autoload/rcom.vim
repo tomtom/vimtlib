@@ -2,8 +2,8 @@
 " @Author:      Thomas Link (mailto:micathom AT gmail com?subject=[vim])
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-02-23.
-" @Last Change: 2010-02-26.
-" @Revision:    285
+" @Last Change: 2010-03-04.
+" @Revision:    382
 " GetLatestVimScripts: 2991 1 :AutoInstall: rcom.vim
 
 let s:save_cpo = &cpo
@@ -25,6 +25,27 @@ if !exists('g:rcom#help')
 endif
 
 
+if !exists('g:rcom#reuse')
+    " How to interact with R.
+    "    0 ... Start a headless instance of R and transcribe the 
+    "          interaction in VIM
+    "    1 ... Re-use a running instance of R GUI (default)
+    let g:rcom#reuse = 1   "{{{2
+endif
+
+
+if !exists('g:rcom#transcript_cmd')
+    " Command used to display the transcript buffers.
+    let g:rcom#transcript_cmd = 'vert split'   "{{{2
+endif
+
+
+if !exists('g:rcom#log_cmd')
+    " Command used to display the transcript buffers.
+    let g:rcom#log_cmd = 'split'   "{{{2
+endif
+
+
 if !exists('#RCom')
     augroup RCom
         autocmd!
@@ -37,14 +58,15 @@ let s:rcom = {}
 let s:log  = {}
 
 
-" :display: rcom#Initialize(?reuse=0)
+" :display: rcom#Initialize(?reuse=g:rcom#reuse)
 " Connect to the R interpreter for the current buffer.
 " Usually not called by the user.
 function! rcom#Initialize(...) "{{{3
     " TLogVAR a:000
 
     if !s:init
-        let reuse = a:0 >= 1 ? a:1 : 0
+        let reuse = a:0 >= 1 ? a:1 : g:rcom#reuse
+        " TLogVAR reuse
 
         ruby <<CODE
 
@@ -98,9 +120,9 @@ function! rcom#Initialize(...) "{{{3
                 end
                 if VIM::evaluate("has('gui')")
                     r_send(%{options(chmhelp=TRUE)})
-                    r_send(%{options(show.error.messages=TRUE)})
+                    # r_send(%{options(show.error.messages=TRUE)})
                 end
-                r_send(%{options(error=function(e) {cat(e$message)})})
+                # r_send(%{options(error=function(e) {cat(e$message)})})
                 d = VIM::evaluate(%{expand("%:p:h")})
                 d.gsub!(/\\/, '/')
                 r_send(%{setwd("#{d}")})
@@ -131,7 +153,7 @@ function! rcom#Initialize(...) "{{{3
             end
 
             def evaluate(text, mode=0)
-                log = ""
+                out = ""
                 text = text.sub(/^\s*\?([^\?].*)/) {"help(#{escape_help($1)})"}
                 text = text.sub(/^\(/) {"print("}
                 text = text.sub(/^\s*(help\(.*?\))/) {"print(#$1)"}
@@ -150,7 +172,7 @@ function! rcom#Initialize(...) "{{{3
                     # VIM.command(%{call inputdialog('text = #{text}')})
                 end
                 case mode
-                when 'r'
+                    when 'r'
                     meth = :r_sendw
                 else
                     if @reuse != 0
@@ -159,26 +181,26 @@ function! rcom#Initialize(...) "{{{3
                 end
                 # VIM.command(%{call inputdialog('mode = #{mode}; text = #{text}; meth = #{meth}; reuse = #@reuse')})
                 begin
-                    if mode == 'p'
-                        # rv = send(meth, %{do.call(cat, c(as.list(parse(text=#{text.inspect})), sep="\n"))})
-                        rv = send(meth, %{print(#{text})})
-                    else
-                        rv = send(meth, text)
-                    end
+                if mode == 'p'
+                    # rv = send(meth, %{do.call(cat, c(as.list(parse(text=#{text.inspect})), sep="\n"))})
+                    rv = send(meth, %{print(#{text})})
+                else
+                    rv = send(meth, text)
+                end
                 rescue Exception => e
                     log(e.to_s)
                 end
-                log << @ole_printer.Text if @ole_printer
-                if log.empty?
-                    log << rv.to_s if rv
+                out << @ole_printer.Text if @ole_printer
+                if out.empty?
+                    out << rv.to_s if rv
                 else
-                    log.gsub!(/\r\n/, "\n")
-                    log.sub!(/^\s+/, "")
-                    log.sub!(/\s+$/, "")
-                    log.gsub!(/^(\[\d+\])\n /m, "\\1 ")
+                    out.gsub!(/\r\n/, "\n")
+                    out.sub!(/^\s+/, "")
+                    out.sub!(/\s+$/, "")
+                    out.gsub!(/^(\[\d+\])\n /m, "\\1 ")
                     @ole_printer.Text = "" if @ole_printer
                 end
-                log
+                out
             end
 
             def log(text)
@@ -220,16 +242,36 @@ endf
 " :display: rcom#EvaluateInBuffer(rcode, ?mode='')
 " Initialize the current buffer if necessary and evaluate some R code in 
 " a running instance of R GUI.
+"
+" If there is a remote gvim server named RCOM running (see 
+" |--servername|), evaluate R code remotely. This won't block the 
+" current instance of gvim.
+"
 " See also |rcom#Evaluate()|.
 function! rcom#EvaluateInBuffer(...) range "{{{3
-    " TLogVAR a:000
-    " redraw
-    echo
-    let bn = bufnr('%')
-    if !has_key(s:rcom, bn)
-        call rcom#Initialize(1)
+    let len = type(a:1) == 3 ? len(a:1) : 1
+    redraw
+    " echo
+    if v:servername == 'RCOM' || index(split(serverlist(), '\n'), 'RCOM') == -1
+        " TLogVAR a:000
+        " echo printf("Evaluating %d lines of R code ...", len(a:1))
+        echo "Evaluating R code ..."
+        let bn = bufnr('%')
+        if !has_key(s:rcom, bn)
+            call rcom#Initialize(g:rcom#reuse)
+        endif
+        let rv = call('rcom#Evaluate', a:000)
+        if !g:rcom#reuse
+            call rcom#Transcribe(a:1, rv)
+        endif
+        redraw
+        " echo " "
+        echo printf("Evaluated %d lines", len)
+    else
+        call remote_send('RCOM', ':call call("rcom#EvaluateInBuffer", '. string(a:000) .')<cr>')
+        echo printf("Sent %d lines to GVim/RCOM", len)
+        let rv = ''
     endif
-    let rv = call('rcom#Evaluate', a:000)
     return rv
 endf
 
@@ -324,7 +366,7 @@ endf
 function! rcom#Complete(findstart, base) "{{{3
     let bufnr = bufnr('%')
     if !has_key(s:rcom, bufnr)
-        call rcom#Initialize(1)
+        call rcom#Initialize(g:rcom#reuse)
         " throw "RCOm: Not an R buffer. Call rcom#Initialize() first."
     endif
     if a:findstart
@@ -351,7 +393,7 @@ endf
 function! rcom#Keyword(...) "{{{3
     let bufnr = bufnr('%')
     if !has_key(s:rcom, bufnr)
-        call rcom#Initialize(1)
+        call rcom#Initialize(g:rcom#reuse)
     endif
     let word = a:0 >= 1 && !empty(a:1) ? a:1 : expand("<cword>")
     " TLogVAR word
@@ -417,8 +459,7 @@ function! rcom#Operator(type, ...) range "{{{3
 endf
 
 
-function! rcom#LogBuffer() "{{{3
-    split __RCom_Log__
+function! s:Scratch() "{{{3
     setlocal buftype=nofile
     setlocal bufhidden=hide
     setlocal noswapfile
@@ -427,10 +468,38 @@ function! rcom#LogBuffer() "{{{3
     setlocal foldcolumn=0
     setlocal modifiable
     setlocal nospell
-    1,$delete
-    let items = sort(keys(s:log))
-    call map(items, 'v:val .": ". substitute(s:log[v:val], ''\s*\n\s*'', ". ", "g")')
-    call append(0, items)
+endf
+
+
+function! s:ScratchBuffer(type, name) "{{{3
+    let bufnr = bufnr(a:name)
+    if bufnr != -1 && bufwinnr(bufnr)
+        exec 'drop '. a:name
+        return 0
+    else
+        exec g:rcom#{a:type}_cmd .' '. a:name
+        if bufnr == -1
+            call s:Scratch()
+            return 1
+        else
+            return 0
+        endif
+    endif
+endf
+
+
+function! rcom#LogBuffer() "{{{3
+    let bufname = bufname('%')
+    try
+        call s:ScratchBuffer('log', '__RCom_Log__')
+        1,$delete
+        let items = sort(keys(s:log))
+        call map(items, 'v:val .": ". substitute(s:log[v:val], ''\s*\n\s*'', ". ", "g")')
+        call append(0, items)
+        norm! Gzb
+    finally
+        exec 'drop '. bufname
+    endtry
 endf
 
 
@@ -440,6 +509,45 @@ command! RComlog call rcom#LogBuffer()
 " Reset the log.
 command! RComlogreset let s:log = {}
 
+
+function! rcom#TranscriptBuffer() "{{{3
+    if s:ScratchBuffer('transcript', '__RCom_Transcript__')
+        set ft=r
+    endif
+endf
+
+command! RComtranscript call rcom#TranscriptBuffer()
+
+
+function! rcom#Transcribe(input, output) "{{{3
+    let bufname = bufname('%')
+    try
+        call rcom#TranscriptBuffer()
+        call append(line('$'), strftime('# %c'))
+        if !empty(a:input)
+            if type(a:input) == 1
+                let input = split(a:input, '\n')
+            else
+                let input = a:input
+            endif
+            for i in range(len(input))
+                let input[i] = (i == 0 ? '# > ' : '# + ') . input[i]
+            endfor
+            call append(line('$'), input)
+        endif
+        if !empty(a:output)
+            TLogVAR a:output
+            let output = split(a:output, '\n\+')
+            call append(line('$'), output)
+        endif
+        call append(line('$'), '')
+        norm! Gzb
+    finally
+        if !empty(bufname)
+            exec 'drop '. bufname
+        endif
+    endtry
+endf
 
 
 let &cpo = s:save_cpo
@@ -455,4 +563,8 @@ CHANGES:
 
 0.2
 - Add cursor markers only if w:tskeleton_hypercomplete exists
+- g:rcom#reuse: If 0, don't use a running instance of R GUI (transcribe 
+the results in VIM; be aware that some problems could cause problems)
+- If there is a vim server named RCOM running, evaluate R code remotely 
+(this won't block the current instance of gvim)
 

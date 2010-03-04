@@ -2,8 +2,8 @@
 " @Author:      Thomas Link (mailto:micathom AT gmail com?subject=[vim])
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-02-23.
-" @Last Change: 2010-02-26.
-" @Revision:    0.1.110
+" @Last Change: 2010-03-03.
+" @Revision:    0.1.111
 " GetLatestVimScripts: 0 0 :AutoInstall: rcom.vim
 
 let s:save_cpo = &cpo
@@ -95,6 +95,7 @@ if !empty(g:rcom_mapop)
     exec 'xnoremap <buffer> '. g:rcom_mapop .' :call rcom#EvaluateInBuffer(rcom#GetSelection(), b:rcom_mode)<cr>'
     exec 'nnoremap <buffer> '. g:rcom_mapop .'p :let b:rcom_mode = b:rcom_mode == "p" ? "" : "p" \| redraw \| echom "RCom: Printing turned ". (b:rcom_mode == "p" ? "on" : "off")<cr>'
     exec 'nnoremap <buffer> '. g:rcom_mapop .'l :call rcom#LogBuffer()<cr>'
+    exec 'nnoremap <buffer> '. g:rcom_mapop .'t :call rcom#TranscriptBuffer()<cr>'
 endif
 
 
