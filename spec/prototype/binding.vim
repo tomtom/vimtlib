@@ -2,8 +2,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-03-01.
-" @Last Change: 2010-03-01.
-" @Revision:    24
+" @Last Change: 2010-03-02.
+" @Revision:    26
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -19,7 +19,7 @@ It should define a simple binding.
 let x = 2
 let y = "foo"
 let z = {"bar": 10}
-Binding foo x y z
+Binding foo = x y z
 function! foo._(a) dict
     return a:a * self.x
 endf

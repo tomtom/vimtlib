@@ -3,8 +3,8 @@
 " @GIT:         http://github.com/tomtom/vimtlib/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-02-26.
-" @Last Change: 2010-03-01.
-" @Revision:    350
+" @Last Change: 2010-03-02.
+" @Revision:    354
 " GetLatestVimScripts: 0 0 prototype.vim
 
 let s:save_cpo = &cpo
@@ -136,6 +136,7 @@ function! prototype#AsDictionary(obj) "{{{3
 endf
 
 
+" :display: prototype#AsList(obj, ?default="")
 " Export the object's numeric fields as |List|.
 " Exported fields start with 0. Values with negative or non-numeric keys 
 " are dropped.

@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-03-01.
-" @Last Change: 2010-03-01.
-" @Revision:    53
+" @Last Change: 2010-03-02.
+" @Revision:    60
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -31,13 +31,13 @@ function! prototype#binding#Eval(...) dict "{{{3
 endf
 
 
-" :display: Binding NAME VARS...
+" :display: Binding NAME = VARS...
 " Define a binding object.
-" Restrictions: NAME cannot be script-local.
+" RESTRICTIONS: NAME cannot be script-local.
 " 
 " Example:
 "     let x = 2
-"     Binding foo x
+"     Binding foo = x
 "     function! foo._(a) dict
 "          return a:a * self.x
 "     endf
@@ -49,9 +49,9 @@ endf
 "     endf
 "     echom Bar(foo)
 "     => 20
-command! -nargs=+ Binding let s:args = [<f-args>] | 
-            \ exec 'let '. remove(s:args, 0) .' = prototype#binding#New({'.
-            \ join(map(s:args, 'string(v:val) .":". string(eval(v:val))'), ', ')
+command! -nargs=+ Binding let s:args = matchlist(<q-args>, '^\s*\(\S\+\)\s*=\s*\(.\{-}\)\s*$') | 
+            \ exec 'let '. s:args[1] .' = prototype#binding#New({'.
+            \ join(map(split(s:args[2], ',\?\s\+'), 'string(v:val) .":". string(eval(v:val))'), ', ')
             \ .'})' |
             \ unlet s:args
 
