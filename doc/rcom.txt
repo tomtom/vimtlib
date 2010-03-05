@@ -93,6 +93,8 @@ Contents~
         g:rcom#reuse ............ |g:rcom#reuse|
         g:rcom#transcript_cmd ... |g:rcom#transcript_cmd|
         g:rcom#log_cmd .......... |g:rcom#log_cmd|
+        g:rcom#server ........... |g:rcom#server|
+        g:rcom#server_wait ...... |g:rcom#server_wait|
         rcom#Initialize ......... |rcom#Initialize()|
         rcom#EvaluateInBuffer ... |rcom#EvaluateInBuffer()|
         rcom#Evaluate ........... |rcom#Evaluate()|
@@ -133,12 +135,29 @@ g:rcom#reuse                   (default: 1)
        1 ... Re-use a running instance of R GUI (default)
 
                                                     *g:rcom#transcript_cmd*
-g:rcom#transcript_cmd          (default: 'vert split')
+g:rcom#transcript_cmd          (default: s:IsRemoteServer() ? 'edit' : 'vert split')
     Command used to display the transcript buffers.
 
                                                     *g:rcom#log_cmd*
 g:rcom#log_cmd                 (default: 'split')
     Command used to display the transcript buffers.
+
+                                                    *g:rcom#server*
+g:rcom#server                  (default: "")
+    If non-empty, use this ex command to start an instance of GVIM 
+    that acts as a server for remotely evaluating R code. The string 
+    will be evaluated via |:execute|.
+    The string may contain %s where rcom-specific options should be 
+    included.
+    
+    Example: >
+      let g:rcom#server = 'silent ! start "" gvim.exe "+set lines=18" "+winpos 1 700" %s'
+      let g:rcom#server = 'silent ! gvim.exe %s &'
+<
+
+                                                    *g:rcom#server_wait*
+g:rcom#server_wait             (default: 3)
+    Seconds to wait after starting |rcom#server|.
 
                                                     *rcom#Initialize()*
 rcom#Initialize(?reuse=g:rcom#reuse)
@@ -179,7 +198,7 @@ rcom#Keyword(...)
     Display help on the word under the cursor.
 
                                                     *rcom#GetSelection()*
-rcom#GetSelection(?mbeg="'<", ?mend="'>", ?mode='selection')
+rcom#GetSelection(mode, ?mbeg="'<", ?mend="'>", ?opmode='selection')
     mode can be one of: selection, lines, block
 
                                                     *rcom#Operator()*
