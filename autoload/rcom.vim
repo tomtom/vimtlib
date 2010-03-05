@@ -2,8 +2,8 @@
 " @Author:      Thomas Link (mailto:micathom AT gmail com?subject=[vim])
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-02-23.
-" @Last Change: 2010-03-04.
-" @Revision:    382
+" @Last Change: 2010-03-05.
+" @Revision:    383
 " GetLatestVimScripts: 2991 1 :AutoInstall: rcom.vim
 
 let s:save_cpo = &cpo
@@ -252,7 +252,7 @@ function! rcom#EvaluateInBuffer(...) range "{{{3
     let len = type(a:1) == 3 ? len(a:1) : 1
     redraw
     " echo
-    if v:servername == 'RCOM' || index(split(serverlist(), '\n'), 'RCOM') == -1
+    if !has('clientserver') || v:servername == 'RCOM' || index(split(serverlist(), '\n'), 'RCOM') == -1
         " TLogVAR a:000
         " echo printf("Evaluating %d lines of R code ...", len(a:1))
         echo "Evaluating R code ..."
