@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-04.
-" @Last Change: 2010-02-28.
-" @Revision:    1032
+" @Last Change: 2010-03-05.
+" @Revision:    1078
 " GetLatestVimScripts: 2917 1 :AutoInstall: tplugin.vim
 
 if &cp || exists("loaded_tplugin")
@@ -84,6 +84,7 @@ let s:before = {}
 let s:after = {}
 let s:ftypes = {}
 let s:functions = {}
+let s:command_nobang = {}
 let s:tplugin_file = '_tplugin'
 
 
@@ -112,33 +113,63 @@ function! s:Strip(string) "{{{3
 endf
 
 
-function! s:Command(string) "{{{3
-    let string = s:Strip(a:string)
+function! s:CommandKey(...) "{{{3
+    let key = join(a:000, '/')
+    return key
+endf
+
+
+function! s:Command(def1) "{{{3
+    let [cmd0; file] = a:def1
+    let string = s:Strip(cmd0)
     if match(string, '\s') == -1
         return 'command! -bang -range -nargs=* '. string
     else
         " let cmd = matchstr(a:string, '\s\zs\u\w*$')
-        let string = substitute(string, '^com\%[mand]\zs\s', '! ', '')
+        if string =~ '^com\%[mand]\zs\s'
+            let key = call('s:CommandKey', insert(copy(file), s:roots[0]))
+            if !has_key(s:command_nobang, key)
+                let s:command_nobang[key] = {}
+            endif
+            let cmd = s:ExtractCommand(cmd0)
+            if !has_key(s:command_nobang[key], cmd)
+                let s:command_nobang[key][cmd] = 1
+            endif
+            let string = substitute(string, '^com\%[mand]\zs\s', '! ', '')
+        endif
         return string
     endif
 endf
 
 
-" args: A string it type == 1, a list if type == 2
+function! s:ExtractCommand(cmd0) "{{{3
+    return matchstr(a:cmd0, '\s\zs\u\w*$')
+endf
+
+
+" args: A string if type == 1, a list if type == 2
 function! s:Autoload(type, def, bang, range, args) "{{{3
     " TLogVAR a:type, a:def, a:bang, a:range, a:args
     let [root, cmd0; file] = a:def
     let cmd0 = s:Strip(cmd0)
     if match(cmd0, '\s') != -1
-        let cmd = matchstr(cmd0, '\s\zs\u\w*$')
+        let cmd = s:ExtractCommand(cmd0)
     else
         let cmd = cmd0
     endif
     " TLogVAR root, cmd0, cmd, file
-    if a:type == 1 " Command
+    " if a:type == 1 " Command
         " TLogDBG exists(':'. cmd)
-        exec 'delcommand '. cmd
-    endif
+        " let key = call('s:CommandKey', insert(copy(file), root))
+        " TLogVAR key
+        " if has_key(s:command_nobang, key)
+        "     for c in keys(s:command_nobang[key])
+        "         " TLogVAR c
+        "         exec 'delcommand '. c
+        "     endfor
+        "     unlet s:command_nobang[key]
+        " endif
+    " endif
     if len(file) >= 1 && len(file) <= 2
         call call('TPlugin', [1, root] + file)
     else
@@ -293,6 +324,7 @@ function! s:ScanLine(file, repo, plugin, what, line) "{{{3
         if !empty(scanner)
             let m = s:Strip(matchstr(a:line, scanner.rx))
             if !empty(m)
+                let m = substitute(m, '\s\+', ' ', 'g')
                 " TLogVAR m
                 if !has_key(s:scan_repo_done, what)
                     let s:scan_repo_done[what] = {}
@@ -516,14 +548,16 @@ endf
 
 
 function! s:CanonicFilename(filename) "{{{3
-    let filename = substitute(a:filename, '[\/]\+$', '', '')
+    let filename = substitute(a:filename, '[\\/]\+$', '', '')
     let filename = substitute(filename, '\\', '/', 'g')
     return filename
 endf
 
 
+" Remove any "/*" suffix.
 function! s:RootDirOnDisk(dir) "{{{3
-    let dir = substitute(a:dir, '[\\/]\*$', '', '')
+    let dir = s:CanonicFilename(a:dir)
+    let dir = substitute(dir, '[\\/]\*$', '', '')
     let dir = substitute(dir, '[\\/]\+$', '', '')
     return dir
 endf
@@ -531,7 +565,7 @@ endf
 
 function! s:SetRoot(dir) "{{{3
     " echom "DBG ". a:dir
-    let root = s:CanonicFilename(fnamemodify(a:dir, ':p'))
+    let root = s:RootDirOnDisk(fnamemodify(a:dir, ':p'))
     " echom "DBG ". root
     let idx = index(s:roots, root)
     if idx > 0
@@ -544,7 +578,7 @@ function! s:SetRoot(dir) "{{{3
     " Don't reload the file. Old autoload definitions won't be 
     " overwritten anyway.
     if idx == -1 && g:tplugin_autoload
-        let autoload = join([s:RootDirOnDisk(root), s:tplugin_file .'.vim'], '/')
+        let autoload = join([root, s:tplugin_file .'.vim'], '/')
         if filereadable(autoload)
             try
                 exec 'source '. s:FnameEscape(autoload)
@@ -696,6 +730,17 @@ function! TPlugin(immediate, root, repo, ...) "{{{3
     elseif a:1 == '.'
         let plugins = []
     else
+        for plugin in a:000
+            let key = s:CommandKey(repo, plugin)
+            " TLogVAR key
+            if has_key(s:command_nobang, key)
+                for c in keys(s:command_nobang[key])
+                    " TLogVAR c
+                    exec 'delcommand '. c
+                endfor
+                unlet s:command_nobang[key]
+            endif
+        endfor
         let plugins = map(copy(a:000), 'join([pdir, v:val .".vim"], "/")')
     endif
     " TLogVAR plugins
@@ -860,7 +905,7 @@ command! -nargs=+ TPluginFunction
 "   TPluginCommand TSelectBuffer vimtlib tselectbuffer
 command! -bang -nargs=+ TPluginCommand
             \ if g:tplugin_autoload && (empty('<bang>') || exists(':'. matchstr([<f-args>][0], '\s\zs\u\w*$')) != 2) |
-            \ exec s:Command([<f-args>][0])
+            \ exec s:Command([<f-args>])
             \ .' call s:Autoload(1, ['. string(s:roots[0]) .', <f-args>], "<lt>bang>", ["<lt>line1>", "<lt>line2>"], <lt>q-args>)'
             \ | endif
 
@@ -984,4 +1029,7 @@ single directory (actually a plugin repo)
 - TPluginScan: try to maintain information about command-line completion 
 (this won't work if a custom script-local completion function is used)
 
+0.8
+- Delete commands only when they were defined without a bang; make sure 
+all commands in a file defined without a bang are deleted
 
