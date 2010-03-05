@@ -3,8 +3,8 @@
 # @Author:      Tom Link (micathom at gmail com)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2007-07-25.
-# @Last Change: 2010-01-12.
-# @Revision:    468
+# @Last Change: 2010-03-05.
+# @Revision:    500
 
 
 require 'yaml'
@@ -316,12 +316,14 @@ class VimDedoc
                         no_doc_default = false
                     end
                     doc = compile_doc(current_doc, process_doc)
-                    @toc << [head, tag] unless tag.nil? || head.nil?
-                    if use_name
-                        head = use_name
-                        use_name = nil
+                    unless tag.nil? and head.nil? and doc.empty?
+                        @toc << [head, tag] unless tag.nil? || head.nil?
+                        if use_name
+                            head = use_name
+                            use_name = nil
+                        end
+                        @docs[filename] << {:type => :entry, :head => head, :line => index, :doc => doc, :tag => tag}
                     end
-                    @docs[filename] << {:type => :entry, :head => head, :line => index, :doc => doc, :tag => tag}
                 end
                 current_doc = []
             end
@@ -349,12 +351,12 @@ class VimDedoc
         idc = false
         doc = lines.map do |l|
             if l
-                if l =~ /^<\s/
+                if idc and (l =~ /^(<\s+)(.*)$/ or l =~ /^()(\S.*)$/)
                     idc = false
-                    prefix  = '<'
-                    # prefix += ' ' * (indent - 1) if indent > 0
-                    prefix += ' ' * (indent) if indent > 0
-                    l = l[1..-1]
+                    prefix  = $1.empty? ? '< ' : $1
+                    prefix += ' ' * (indent - 2) if indent > 0
+                    # prefix += ' ' * (indent) if indent > 0
+                    l = $2
                 else
                     prefix = indent > 0 ? ' ' * indent : ''
                 end

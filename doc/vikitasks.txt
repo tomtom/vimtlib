@@ -119,11 +119,11 @@ VikiTasks[!] [SELECT] [PATTERN] [FILE_PATTERNS]
     Examples:
         Show all tasks with a date: >
             VikiTasks
-<       Show all tasks: >
+<     Show all tasks: >
             VikiTasks!
-<       Show all tasks for today: >
+<     Show all tasks for today: >
             VikiTasks today
-<       Show all current tasks (today or with a deadline in the past) in a 
+<     Show all current tasks (today or with a deadline in the past) in a 
         specified list of files: >
             VikiTasks current Notes*.txt
 <

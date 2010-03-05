@@ -227,12 +227,6 @@ g:tplugin_menu_prefix          (default: '')
 g:tplugin_scan                 (default: 'cfapt')
     The default value for |:TPluginScan|.
 
-
-
-
-
-
-
                                                     *TPluginMap()*
 TPluginMap(map, repo, plugin, ?remap="")
     MAP is a map command and the map. REPO and PLUGIN are the same as for 

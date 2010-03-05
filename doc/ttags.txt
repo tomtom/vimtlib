@@ -73,9 +73,9 @@ TTags[!] [KIND] [TAGS_RX] [FILE_RX]
     Examples:
     Match tags in the current file: >
       TTags * * .
-    Show classes [c]: >
+<   Show classes [c]: >
       TTags c
-    Show classes beginning with Foo: >
+<   Show classes beginning with Foo: >
       TTags c ^Foo
 <
 

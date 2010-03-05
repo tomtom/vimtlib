@@ -452,7 +452,7 @@ trag#Grep(args, ?replace=1, ?files=[])
     variable definition in many programming languages. I.e. it will find 
     lines like: >
       foo = 1
-<     but not: >
+<   but not: >
       def foo(bar)
       call foo(bar)
       if foo == 1

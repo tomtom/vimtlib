@@ -229,13 +229,13 @@ spec#RewriteRule(rx, subst)
     
       \(\d\+\) be equal to \(\d\+\).* => \1 == \2
     
-    because it doesn't match from the beginning of the string and because 
+<   because it doesn't match from the beginning of the string and because 
     the substiution breaks other rules like "not => !". The following is 
     preferable: >
     
       ^!\?\zs\(\d\+\) be equal to \(\d\+\).* => (\1 == \2)
     
-    This pattern expands the pattern only when found in the right position 
+<   This pattern expands the pattern only when found in the right position 
     and the substiution can be prefixed with !.
     
     You could then write: >
