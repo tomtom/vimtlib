@@ -89,6 +89,7 @@ Contents~
         prototype#Keys .................. |prototype#Keys()|
         prototype#AsDictionary .......... |prototype#AsDictionary()|
         prototype#AsList ................ |prototype#AsList()|
+        prototype#AsVim ................. |prototype#AsVim()|
         prototype#strict#New ............ |prototype#strict#New()|
         prototype#strict#Validate ....... |prototype#strict#Validate()|
         prototype#strict#Clone .......... |prototype#strict#Clone()|
@@ -106,11 +107,13 @@ prototype#New(?self={}, ?prototype={})
     be an "object" or a vimscript |Dictionary|.
 
                                                     *prototype#Keys()*
-prototype#Keys(self, ?numeric_only=0)
+prototype#Keys(self, ?type=0)
     Return the object's keys as list -- exclude methods/attributes 
     prefixed with an underscore.
-    If numeric_only evaluates to true, return only numeric fields in 
-    ascending order.
+    type is one of:
+        0 ... any
+        1 ... numeric only
+        2 ... non-numeric keys only
 
                                                     *prototype#AsDictionary()*
 prototype#AsDictionary(obj)
@@ -118,11 +121,16 @@ prototype#AsDictionary(obj)
     prototype.
 
                                                     *prototype#AsList()*
-prototype#AsList(obj, ...)
+prototype#AsList(obj, ?default="")
     Export the object's numeric fields as |List|.
     Exported fields start with 0. Values with negative or non-numeric keys 
     are dropped.
     Missing fields are filled with a default value, which defaults to "".
+
+                                                    *prototype#AsVim()*
+prototype#AsVim(obj)
+    Return an executable string that represents the dictionary as 
+    vimscript code.
 
 
 ========================================================================
