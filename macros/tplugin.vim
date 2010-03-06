@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-04.
-" @Last Change: 2010-03-05.
-" @Revision:    1078
+" @Last Change: 2010-03-06.
+" @Revision:    1097
 " GetLatestVimScripts: 2917 1 :AutoInstall: tplugin.vim
 
 if &cp || exists("loaded_tplugin")
@@ -35,8 +35,10 @@ endif
 
 
 if !exists('g:tplugin_helptags')
-    " If non-nil, optionally generate helptags for the repository's doc 
-    " subdirectory.
+    " If non-nil and a repo contains no helptags file, generate helptags 
+    " for the repository's doc subdirectory.
+    "
+    " See also |g:tplugin_scan|.
     let g:tplugin_helptags = 1   "{{{2
 endif
 
@@ -64,8 +66,16 @@ endif
 
 
 if !exists('g:tplugin_scan')
-    " The default value for |:TPluginScan|.
-    let g:tplugin_scan = 'cfapt'   "{{{2
+    " The default value for |:TPluginScan|. A set of identifiers 
+    " determining the information being collected:
+    "    c ... commands
+    "    f ... functions
+    "    p ... <plug> maps
+    "    t ... filetypes
+    "    h ... helptags (always regenerate helptags, see also |g:tplugin_helptags|)
+    "    a ... autoload
+    "    all ... all of the above
+    let g:tplugin_scan = 'cfpt'   "{{{2
 endif
 
 
@@ -353,8 +363,9 @@ endf
 function! s:ScanRoots(immediate, roots, args) "{{{3
     let awhat = get(a:args, 0, '')
     if empty(awhat)
-        let what = split(g:tplugin_scan, '\zs')
-    elseif awhat == 'all'
+        let awhat = g:tplugin_scan
+    endif
+    if awhat == 'all'
         let what = ['c', 'f', 'a', 'p', 'h', 't']
     else
         let what = split(awhat, '\zs')
@@ -413,12 +424,12 @@ function! s:ScanRoots(immediate, roots, args) "{{{3
                     \ 'if g:tplugin_autoload == 2 && g:loaded_tplugin != '. g:loaded_tplugin .' | throw "TPluginScan:Outdated" | endif'
                     \ ]
 
-        if g:tplugin_helptags && is_tree
+        if (g:tplugin_helptags || index(what, 'h') != -1) && is_tree
             let helpdirs = split(glob(join([root, '*', 'doc'], '/')), '\n')
             for doc in helpdirs
-                let tags = join([doc, 'tags'], '/')
-                if index(what, 'h') != -1 || !filereadable(tags)
-                    if isdirectory(doc)
+                if isdirectory(doc)
+                    let tags = join([doc, 'tags'], '/')
+                    if index(what, 'h') != -1 || !filereadable(tags)
                         exec 'helptags '. s:FnameEscape(doc)
                     endif
                 endif
@@ -914,17 +925,8 @@ command! -bang -nargs=+ TPluginCommand
 " Scan the current root directory for commands and functions. Save 
 " autoload information in "ROOT/tplugin.vim".
 "
-" Where WHAT is a combination of the following identifiers:
-"
-"    c ... commands
-"    f ... functions
-"    p ... <plug> maps
-"    a ... autoload
-"    t ... filetypes
-"    h ... helptags (see also |g:tplugin_helptags|)
-"    all ... all of the above
-"
-" WHAT defaults to |g:tplugin_scan|.
+" Where WHAT is a set of letters determining the information being 
+" collected. See |g:tplugin_scan| for details.
 "
 " With the optional '!', the autocommands are immediatly usable.
 "
@@ -1032,4 +1034,5 @@ single directory (actually a plugin repo)
 0.8
 - Delete commands only when they were defined without a bang; make sure 
 all commands in a file defined without a bang are deleted
+- g:tplugin_scan defaults to 'cfpt'
 
