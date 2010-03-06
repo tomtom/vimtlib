@@ -2,8 +2,8 @@
 " @Author:      Thomas Link (mailto:micathom AT gmail com?subject=[vim])
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-02-23.
-" @Last Change: 2010-03-05.
-" @Revision:    422
+" @Last Change: 2010-03-06.
+" @Revision:    423
 " GetLatestVimScripts: 2991 1 :AutoInstall: rcom.vim
 
 let s:save_cpo = &cpo
@@ -67,7 +67,7 @@ endif
 
 if !exists('g:rcom#server_wait')
     " Seconds to wait after starting |rcom#server|.
-    let g:rcom#server_wait = 3   "{{{2
+    let g:rcom#server_wait = 10   "{{{2
 endif
 
 
@@ -277,7 +277,7 @@ function! s:ShouldRemoteSend() "{{{3
             redraw
             echo "RCom: Waiting for GVIM to start"
             let i = 0
-            while i < 10
+            while i < g:rcom#server_wait
                 sleep 1
                 if serverlist() =~ '\<RCOM\>'
                     redraw
