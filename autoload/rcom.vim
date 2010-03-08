@@ -2,8 +2,8 @@
 " @Author:      Thomas Link (mailto:micathom AT gmail com?subject=[vim])
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-02-23.
-" @Last Change: 2010-03-06.
-" @Revision:    423
+" @Last Change: 2010-03-08.
+" @Revision:    434
 " GetLatestVimScripts: 2991 1 :AutoInstall: rcom.vim
 
 let s:save_cpo = &cpo
@@ -60,7 +60,7 @@ if !exists('g:rcom#server')
     "
     " Example: >
     "   let g:rcom#server = 'silent ! start "" gvim.exe "+set lines=18" "+winpos 1 700" %s'
-    "   let g:rcom#server = 'silent ! gvim.exe %s &'
+    "   let g:rcom#server = 'silent ! gvim %s &'
     let g:rcom#server = ""   "{{{2
 endif
 
@@ -317,7 +317,9 @@ function! rcom#EvaluateInBuffer(...) range "{{{3
     else
         " TLogVAR a:000
         " echo printf("Evaluating %d lines of R code ...", len(a:1))
+        echohl WarningMsg
         echo "Evaluating R code ..."
+        echohl NONE
         let bn = bufnr('%')
         if !has_key(s:rcom, bn)
             call rcom#Initialize(g:rcom#reuse)
@@ -600,14 +602,17 @@ function! rcom#Transcribe(input, output) "{{{3
             else
                 let input = a:input
             endif
-            for i in range(len(input))
-                let input[i] = (i == 0 ? '# > ' : '# + ') . input[i]
-            endfor
+            " for i in range(len(input))
+            "     let input[i] = (i == 0 ? '> ' : '+ ') . input[i]
+            " endfor
             call append(line('$'), input)
         endif
         if !empty(a:output)
-            TLogVAR a:output
+            " TLogVAR a:output
             let output = split(a:output, '\n\+')
+            for i in range(len(output))
+                let output[i] = (i == 0 ? '=> ' : '   ') . output[i]
+            endfor
             call append(line('$'), output)
         endif
         call append(line('$'), '')

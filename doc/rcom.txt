@@ -22,6 +22,12 @@ Features:
     - Operator
 
 
+Caveats:
+
+Setting |rcom#reuse| = 1 is more stable. Depending on your version of 
+ruby & R & rcom, rcom#reuse = 0 could make your gvim crash.
+
+
 Maps~
 
 The ftplugin provides several maps (see also |g:rcom_map|, 
@@ -82,6 +88,12 @@ Edit the vba file and type: >
 See :help vimball for details. If you have difficulties or use vim 7.0,
 please make sure, you have the current version of vimball
 (vimscript #1502) installed or update your runtime.
+
+After installation, you might want to check the value of
+|g:rcom#server| and maybe set it in your |vimrc| file. When this 
+variable is set, an instance of gvim will be started that acts as a 
+proxy so that the instance used for editing the R file won't be 
+blocked.
 
 Also available via git: http://github.com/tomtom/vimtlib/
 
@@ -152,11 +164,11 @@ g:rcom#server                  (default: "")
     
     Example: >
       let g:rcom#server = 'silent ! start "" gvim.exe "+set lines=18" "+winpos 1 700" %s'
-      let g:rcom#server = 'silent ! gvim.exe %s &'
+      let g:rcom#server = 'silent ! gvim %s &'
 <
 
                                                     *g:rcom#server_wait*
-g:rcom#server_wait             (default: 3)
+g:rcom#server_wait             (default: 10)
     Seconds to wait after starting |rcom#server|.
 
                                                     *rcom#Initialize()*

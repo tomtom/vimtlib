@@ -2,8 +2,8 @@
 " @Author:      Thomas Link (mailto:micathom AT gmail com?subject=[vim])
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-02-23.
-" @Last Change: 2010-03-05.
-" @Revision:    0.1.112
+" @Last Change: 2010-03-08.
+" @Revision:    0.1.113
 " GetLatestVimScripts: 0 0 :AutoInstall: rcom.vim
 
 let s:save_cpo = &cpo
@@ -59,11 +59,11 @@ nnoremap <buffer> K :call rcom#Keyword()<cr>
 " if !hasmapto(':call rcom#EvaluateInBuffer(', 'n')
 if !empty(g:rcom_map)
     " exec 'nnoremap <buffer> '. g:rcom_map .' vip:call rcom#EvaluateInBuffer(getline(''.''), "")<cr>}'
-    exec 'nnoremap <buffer> '. g:rcom_map .' :call rcom#EvaluateInBuffer(getline(''.''), "")<cr>gj'
+    exec 'nnoremap <buffer> '. g:rcom_map .' :call rcom#EvaluateInBuffer(getline(''.''), "")<cr>j'
 endif
 if !empty(g:rcom_mapp)
     " exec 'nnoremap <buffer> '. g:rcom_mapp .' vip:call rcom#EvaluateInBuffer(getline(''.''), "p")<cr>}'
-    exec 'nnoremap <buffer> '. g:rcom_mapp .' :call rcom#EvaluateInBuffer(getline(''.''), "p")<cr>gj'
+    exec 'nnoremap <buffer> '. g:rcom_mapp .' :call rcom#EvaluateInBuffer(getline(''.''), "p")<cr>j'
 endif
 " endif
 " if !hasmapto(':call rcom#EvaluateInBuffer(', 'i')
@@ -100,8 +100,8 @@ endif
 
 
 " if !hasmapto(':call rcom#EvaluateInBuffer(', 'n')
-"     nnoremap <buffer> <LocalLeader>r :call rcom#EvaluateInBuffer(getline('.'), "")<cr>gj
-"     nnoremap <buffer> <LocalLeader>R :call rcom#EvaluateInBuffer(getline('.'), "p")<cr>gj
+"     nnoremap <buffer> <LocalLeader>r :call rcom#EvaluateInBuffer(getline('.'), "")<cr>j
+"     nnoremap <buffer> <LocalLeader>R :call rcom#EvaluateInBuffer(getline('.'), "p")<cr>j
 " endif
 " if !hasmapto(':call rcom#EvaluateInBuffer(', 'i')
 "     inoremap <buffer> <LocalLeader>r <c-\><c-o>:call rcom#EvaluateInBuffer(getline('.'), "")<cr>
