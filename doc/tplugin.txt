@@ -209,8 +209,10 @@ g:tplugin_autoload_exclude     (default: [])
 
                                                     *g:tplugin_helptags*
 g:tplugin_helptags             (default: 1)
-    If non-nil, optionally generate helptags for the repository's doc 
-    subdirectory.
+    If non-nil and a repo contains no helptags file, generate helptags 
+    for the repository's doc subdirectory.
+    
+    See also |g:tplugin_scan|.
 
                                                     *g:tplugin_menu_prefix*
 g:tplugin_menu_prefix          (default: '')
@@ -224,8 +226,16 @@ g:tplugin_menu_prefix          (default: '')
     value.
 
                                                     *g:tplugin_scan*
-g:tplugin_scan                 (default: 'cfapt')
-    The default value for |:TPluginScan|.
+g:tplugin_scan                 (default: 'cfpt')
+    The default value for |:TPluginScan|. A set of identifiers 
+    determining the information being collected:
+       c ... commands
+       f ... functions
+       p ... <plug> maps
+       t ... filetypes
+       h ... helptags (always regenerate helptags, see also |g:tplugin_helptags|)
+       a ... autoload
+       all ... all of the above
 
                                                     *TPluginMap()*
 TPluginMap(map, repo, plugin, ?remap="")
@@ -326,17 +336,8 @@ TPluginMap(map, repo, plugin, ?remap="")
     Scan the current root directory for commands and functions. Save 
     autoload information in "ROOT/tplugin.vim".
     
-    Where WHAT is a combination of the following identifiers:
-    
-       c ... commands
-       f ... functions
-       p ... <plug> maps
-       a ... autoload
-       t ... filetypes
-       h ... helptags (see also |g:tplugin_helptags|)
-       all ... all of the above
-    
-    WHAT defaults to |g:tplugin_scan|.
+    Where WHAT is a set of letters determining the information being 
+    collected. See |g:tplugin_scan| for details.
     
     With the optional '!', the autocommands are immediatly usable.
     
