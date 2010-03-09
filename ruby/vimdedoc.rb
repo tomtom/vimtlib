@@ -3,8 +3,8 @@
 # @Author:      Tom Link (micathom at gmail com)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2007-07-25.
-# @Last Change: 2010-03-05.
-# @Revision:    500
+# @Last Change: 2010-03-09.
+# @Revision:    501
 
 
 require 'yaml'
@@ -209,7 +209,7 @@ class VimDedoc
                 $logger.debug "MTIME: #{filename}: #{mtime} => #{older}"
                 older
             }
-                $logger.warn "Help is up to date: #{@outfile}"
+                $logger.info "Help is up to date: #{@outfile}"
                 return
             end
         end
