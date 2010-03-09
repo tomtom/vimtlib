@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2010-02-28.
-" @Revision:    0.615
+" @Last Change: 2010-03-09.
+" @Revision:    0.621
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
@@ -1190,8 +1190,9 @@ function! viki#RestoreCursorPosition(...) "{{{3
     if has_key(s:positions, bn)
         let ve = &virtualedit
         set virtualedit=all
-        exe 'keepjumps norm! '. s:positions[bn].w0 .'zt'
-        call setpos('.', s:positions[bn].pos)
+        " exe 'keepjumps norm! '. s:positions[bn].w0 .'zt'
+        " call setpos('.', s:positions[bn].pos)
+        call winrestview(s:positions[bn].view)
         let &virtualedit = ve
     endif
 endf
@@ -1206,6 +1207,7 @@ function! viki#SaveCursorPosition() "{{{3
     let bn = bufnr('%')
     let s:positions[bn] = {
                 \ 'pos': getpos('.'),
+                \ 'view': winsaveview(),
                 \ 'w0': line('w0'),
                 \ }
     "             \ 'eol': (col('.') == col('$')),
