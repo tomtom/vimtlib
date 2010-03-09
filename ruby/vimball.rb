@@ -3,7 +3,7 @@
 # @Author:      Tom Link (micathom AT gmail com)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2009-02-10.
-# @Last Change: 2010-01-28.
+# @Last Change: 2010-03-09.
 #
 # This script creates and installs vimballs without vim.
 #
@@ -59,9 +59,9 @@ HEADER
             if $DEBUG
                 $logger.level = Logger::DEBUG
             elsif $VERBOSE
-                $logger.level = Logger::WARN
-            else
                 $logger.level = Logger::INFO
+            else
+                $logger.level = Logger::WARN
             end
         end
     end
@@ -338,14 +338,14 @@ HEADER
         vimball = vimball.join
 
         if @config['compress']
-            $logger.info "Save as: #{vbafile}"
+            $logger.warn "Save as: #{vbafile}"
             unless @config['dry']
                 Zlib::GzipWriter.open(vbafile) do |gz|
                     gz.write(vimball)
                 end
             end
         else
-            $logger.info "Save as: #{vbafile}"
+            $logger.warn "Save as: #{vbafile}"
             file_write(vbafile, 'w') do |io|
                 io.puts(vimball)
             end
