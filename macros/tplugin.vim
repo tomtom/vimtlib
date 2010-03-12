@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-04.
-" @Last Change: 2010-03-06.
-" @Revision:    1097
+" @Last Change: 2010-03-12.
+" @Revision:    1108
 " GetLatestVimScripts: 2917 1 :AutoInstall: tplugin.vim
 
 if &cp || exists("loaded_tplugin")
@@ -576,7 +576,7 @@ endf
 
 function! s:SetRoot(dir) "{{{3
     " echom "DBG ". a:dir
-    let root = s:RootDirOnDisk(fnamemodify(a:dir, ':p'))
+    let root = s:CanonicFilename(fnamemodify(a:dir, ':p'))
     " echom "DBG ". root
     let idx = index(s:roots, root)
     if idx > 0
@@ -589,7 +589,9 @@ function! s:SetRoot(dir) "{{{3
     " Don't reload the file. Old autoload definitions won't be 
     " overwritten anyway.
     if idx == -1 && g:tplugin_autoload
-        let autoload = join([root, s:tplugin_file .'.vim'], '/')
+        let rootdir = s:RootDirOnDisk(root)
+        let autoload = join([rootdir, s:tplugin_file .'.vim'], '/')
+        " echom "DBG ". autoload
         if filereadable(autoload)
             try
                 exec 'source '. s:FnameEscape(autoload)
