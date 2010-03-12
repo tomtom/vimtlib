@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2010-03-09.
-" @Revision:    2686
+" @Last Change: 2010-03-12.
+" @Revision:    2687
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -707,6 +707,10 @@ VikiDefine()) in order to reduce startup time
 - Moved definition of fold related variables to ftplugin/viki.vim
 - viki_viki: Anchors in URLs can start with an upper case character
 - viki#RestoreCursorPosition(): use winrestview() (reported by Marko Mahnic)
+
+3.18
+- g:vikiFoldMethodVersion defaults to 7 (a simpler method that relies on
+"=" though)
 
 
 " vim: ff=unix
