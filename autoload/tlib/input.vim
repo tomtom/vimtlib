@@ -4,8 +4,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-06-30.
-" @Last Change: 2010-02-22.
-" @Revision:    0.0.687
+" @Last Change: 2010-03-12.
+" @Revision:    0.0.688
 
 
 " :filedoc:
@@ -93,8 +93,9 @@ function! tlib#input#List(type, ...) "{{{3
         let filter                 = tlib#list#Find(handlers, 'has_key(v:val, "filter")', '', 'v:val.filter')
         if !empty(filter)
             " let world.initial_filter = [[''], [filter]]
-            let world.initial_filter = [[filter]]
+            " let world.initial_filter = [[filter]]
             " TLogVAR world.initial_filter
+            call world.SetInitialFilter(filter)
         endif
     endif
     return tlib#input#ListW(world)
