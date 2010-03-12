@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-21.
-" @Last Change: 2010-02-27.
-" @Revision:    0.0.19
+" @Last Change: 2010-03-12.
+" @Revision:    0.0.21
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -14,7 +14,7 @@ function! tlog#Comment(line1, line2) "{{{3
     " TLogVAR a:line1, a:line2
     let tlogCP = getpos('.')
     let tlogSR = @/
-    exec 'silent '. a:line1 .','. a:line2 .'s/\C^\(\s*\)\(\(call *\|exe\%[cute] *[''"]\)\?\(TLog\|tlog#\)\)/\1" \2/ge'
+    exec 'silent '. a:line1 .','. a:line2 .'s/\C^\(\s*\)\(echom "DBG \|\(call *\|exe\%[cute] *[''"]\)\?\(TLog\|tlog#\)\)/\1" \2/ge'
     let @/ = tlogSR
     call setpos('.', tlogCP)
 endf
@@ -23,7 +23,7 @@ endf
 function! tlog#Uncomment(line1, line2) "{{{3
     let tlogCP = getpos('.')
     let tlogSR = @/
-    exec 'silent '. a:line1 .','. a:line2 .'s/\C^\(\s*\)"\s*\(\(call *\|exe\%[cute] *[''"]\)\?\(TLog\|tlog#\)\)/\1\2/ge'
+    exec 'silent '. a:line1 .','. a:line2 .'s/\C^\(\s*\)"\s*\(echom "DBG \|\(call *\|exe\%[cute] *[''"]\)\?\(TLog\|tlog#\)\)/\1\2/ge'
     let @/ = tlogSR
     call setpos('.', tlogCP)
 endf
