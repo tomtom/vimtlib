@@ -1,0 +1,56 @@
+*tcommand.txt*      Select and execute a command or menu item from a list
+                    Author: Tom Link, micathom at gmail com
+
+VIM plugins are cool but with time you forget about even useful 
+commands. This plugin lets you select a command from a list (you can 
+optionally display help on the currently hightlighted command) and then 
+run it from the command line.
+
+
+-----------------------------------------------------------------------
+Install~
+
+Edit the vba file and type: >
+
+    :so %
+
+See :help vimball for details. If you have difficulties or use vim 7.0, 
+please make sure, you have the current version of vimball
+(vimscript #1502) installed or update your runtime.
+
+This script requires tlib (vimscript #1863) to be installed.
+
+Also available via git: http://github.com/tomtom/vimtlib/
+
+
+========================================================================
+Contents~
+
+        :TCommand ............... |:TCommand|
+        g:tcommand#world ........ |g:tcommand#world|
+        tcommand#Select ......... |tcommand#Select()|
+        tcommand#Info ........... |tcommand#Info()|
+
+
+========================================================================
+plugin/tcommand.vim~
+
+                                                    *:TCommand*
+:TCommand
+
+
+========================================================================
+autoload/tcommand.vim~
+
+                                                    *g:tcommand#world*
+g:tcommand#world               (default: {)
+
+                                                    *tcommand#Select()*
+tcommand#Select(reset, filter)
+
+                                                    *tcommand#Info()*
+tcommand#Info(world, selected)
+
+
+
+vim:tw=78:fo=tcq2:isk=!-~,^*,^|,^":ts=8:ft=help:norl:
