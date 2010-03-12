@@ -3,7 +3,7 @@
 # @Author:      Tom Link (micathom AT gmail com)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2009-02-10.
-# @Last Change: 2010-03-09.
+# @Last Change: 2010-03-12.
 #
 # This script creates and installs vimballs without vim.
 #
@@ -102,6 +102,8 @@ HEADER
             config['vimoutdir'] ||= nil
             config['dry']      ||= false
             config['record']   ||= true
+            config['repo']     ||= false
+            config['repodir']  ||= 'repos'
 
             opts = OptionParser.new do |opts|
                 opts.banner =  'Usage: vimball.rb [OPTIONS] COMMAND FILES ...'
@@ -151,6 +153,10 @@ HEADER
 
                 opts.on('-r', '--[no-]record', 'Save record in .VimballRecord') do |bool|
                     config['record'] = bool
+                end
+
+                opts.on('--[no-]repo', 'Install as single directory in a code repository') do |bool|
+                    config['repo'] = true
                 end
 
                 opts.on('-u', '--[no-]update', 'Create VBA only if it is outdated') do |bool|
@@ -356,11 +362,11 @@ HEADER
 
     def do_install(file)
         filebase, vimball = read_vimball(file)
-
-        $logger.info "Install #{file}"
+        outdir = install_out_dir(filebase)
+        $logger.warn "Install #{file} in #{outdir}"
 
         recipe = with_vimball(vimball) do |basename, content|
-            filename = File.join(@config['outdir'], basename)
+            filename = File.join(outdir, basename)
             ensure_dir_exists(File.dirname(filename))
             $logger.info "Write #{filename}"
             file_write(filename) do |io|
@@ -455,6 +461,14 @@ HEADER
         return recipe
     end
 
+
+    def install_out_dir(vimball)
+        outdir = @config['outdir']
+        if @config['repo']
+            outdir = File.join(outdir, @config['repodir'], File.basename(vimball, '.*'))
+        end
+        outdir
+    end
 
     def ensure_dir_exists(dir)
         unless @config['dry'] or File.exist?(dir) or dir.empty? or dir == '.'
