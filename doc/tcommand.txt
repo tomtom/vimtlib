@@ -5,6 +5,7 @@ VIM plugins are cool but with time you forget about even useful
 commands. This plugin provides a command (|:TCommand|) that lets you 
 select a command from a list (you can optionally display help on the 
 currently hightlighted command) and then run it from the command line.
+It thus provides an alternative to the built-in command-line completion.
 
 
 -----------------------------------------------------------------------
@@ -34,11 +35,11 @@ Suggested maps (to be set in your |vimrc| file): >
 Contents~
 
         :TCommand ............... |:TCommand|
-        g:tcommand#world ........ |g:tcommand#world|
         g:tcommand#hide_rx ...... |g:tcommand#hide_rx|
         g:tcommand#what ......... |g:tcommand#what|
         tcommand#Select ......... |tcommand#Select()|
         tcommand#Info ........... |tcommand#Info()|
+        tcommand#WhereFrom ...... |tcommand#WhereFrom()|
 
 
 ========================================================================
@@ -51,9 +52,6 @@ TCommand[!] [INITIAL_FILTER]
 
 ========================================================================
 autoload/tcommand.vim~
-
-                                                    *g:tcommand#world*
-g:tcommand#world
 
                                                     *g:tcommand#hide_rx*
 g:tcommand#hide_rx             (default: '\(^\(Toolbar\|Popup\|Hilfe\|Help\)\>\)')
@@ -68,6 +66,9 @@ tcommand#Select(reset, filter)
 
                                                     *tcommand#Info()*
 tcommand#Info(world, selected)
+
+                                                    *tcommand#WhereFrom()*
+tcommand#WhereFrom(world, selected)
 
 
 

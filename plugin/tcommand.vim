@@ -4,8 +4,8 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-03-12.
 " @Last Change: 2010-03-13.
-" @Revision:    7
-" GetLatestVimScripts: 0 0 :AutoInstall: tcommand.vim
+" @Revision:    12
+" GetLatestVimScripts: 3013 0 :AutoInstall: tcommand.vim
 " Select and execute a command or menu item from a list
 
 if &cp || exists("loaded_tcommand")
@@ -18,10 +18,7 @@ if !exists('g:loaded_tlib') || g:loaded_tlib < 36
         finish
     endif
 endif
-let loaded_tcommand = 1
-
-let s:save_cpo = &cpo
-set cpo&vim
+let loaded_tcommand = 2
 
 
 " :display: TCommand[!] [INITIAL_FILTER]
@@ -29,11 +26,13 @@ set cpo&vim
 command! -bang -nargs=? TCommand call tcommand#Select(!empty("<bang>"), <q-args>)
 
 
-let &cpo = s:save_cpo
-unlet s:save_cpo
 finish
 
 CHANGES:
 0.1
 - Initial release
+
+0.2
+- Default to horizontal split
+- Optional integration with WhereFrom
 

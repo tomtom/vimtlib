@@ -4,24 +4,29 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-03-12.
 " @Last Change: 2010-03-13.
-" @Revision:    140
+" @Revision:    166
 
 let s:save_cpo = &cpo
 set cpo&vim
 
 
-" :nodefault:
-TLet g:tcommand#world = {
-            \ 'type': 's',
-            \ 'query': 'Select command',
-            \ 'pick_last_item': 1,
-            \ 'scratch_pos': 'leftabove',
-            \ 'scratch_vertical': -1,
-            \ 'resize_vertical': 34,
-            \ 'key_handlers': [
+if !exists('g:tcommand#world')
+    let g:tcommand#world = {
+                \ 'type': 's',
+                \ 'query': 'Select command',
+                \ 'pick_last_item': 1,
+                \ 'key_handlers': [
                 \ {'key':  15, 'agent': 'tcommand#Info', 'key_name': '<c-o>', 'help': 'Show info'},
                 \ ]
-            \ }
+                \ }
+    " \ 'scratch_pos': 'leftabove',
+    " \ 'scratch_vertical': -1,
+    " \ 'resize_vertical': 34,
+    if exists(':WhereFrom')
+        call add(g:tcommand#world.key_handlers,
+                    \ {'key':  23, 'agent': 'tcommand#WhereFrom', 'key_name': '<c-w>', 'help': 'Where is the command defined'})
+    endif
+endif
 
 
 " Hide entries matching this rx.
@@ -70,7 +75,7 @@ function! tcommand#Select(reset, filter) "{{{3
     if !empty(item)
         let [item, type, modifier, nargs] = split(item, '\t')
         let item = substitute(item, '\s\+$', '', '')
-        if type == 'C'
+        if type ==# 'C'
             let feed = ':'. item
             if nargs == '0'
                 let feed .= "\<cr>"
@@ -80,7 +85,7 @@ function! tcommand#Select(reset, filter) "{{{3
                 endif
             endif
             call feedkeys(feed)
-        elseif type == 'M'
+        elseif type ==# 'M'
             exec 'emenu '. item
         else
             echoerr 'TCommand: Internal error: '. item
@@ -94,7 +99,7 @@ function! tcommand#Info(world, selected) "{{{3
     let bufnr = bufnr('%')
     try
         let [item, type, modifier, nargs] = split(a:selected[0], '\t')
-        if !empty(item)
+        if type ==# 'C' && !empty(item)
             exec 'help '. item
         endif
     finally
@@ -121,7 +126,13 @@ endf
 
 function! s:FormatCommand(cmd0) "{{{3
     let match = s:MatchCommand(a:cmd0)
-    return printf("%-30s\tC\t%s\t%s", match[2], match[1], match[3])
+    return s:FormatItem(match[2], 'C', match[1], match[3])
+endf
+
+
+function! s:FormatItem(item, type, modifier, nargs) "{{{3
+    let width = get(g:tcommand#world, 'scratch_vertical', 0) ? 30 : (winwidth(0) - 4)
+    return printf("%-". width ."s\t%s\t%s\t%s", a:item, a:type, a:modifier, a:nargs)
 endf
 
 
@@ -151,7 +162,7 @@ function! s:CollectMenuItems(acc) "{{{3
                 let menuitem = [cleanitem]
             endif
             let menu[level] = menuitem
-            let formattedmenuitem = printf("%-30s\tM\t \t0", join(map(copy(menuitem), 'escape(v:val, ''\.'')'), '.'))
+            let formattedmenuitem = s:FormatItem(join(map(copy(menuitem), 'escape(v:val, ''\.'')'), '.'), 'M', ' ', 0)
         elseif !empty(formattedmenuitem)
             if match(item, '^\s\+\l\*\s') != -1
                 " TLogVAR formattedmenuitem
@@ -160,6 +171,21 @@ function! s:CollectMenuItems(acc) "{{{3
             let formattedmenuitem = ''
         endif
     endfor
+endf
+
+
+function! tcommand#WhereFrom(world, selected) "{{{3
+    let [item, type, modifier, nargs] = split(a:selected[0], '\t')
+    if type ==# 'C'
+        exec 'WhereFrom! '. item
+        echohl MoreMsg
+        echo "PRESS KEY TO CONTINUE"
+        echohl NONE
+        call getchar()
+        redraw
+    endif
+    let a:world.state = 'redisplay'
+    return a:world
 endf
 
 
