@@ -3,8 +3,8 @@
 " @GIT:         http://github.com/tomtom/vimtlib/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-03-12.
-" @Last Change: 2010-03-12.
-" @Revision:    6
+" @Last Change: 2010-03-13.
+" @Revision:    7
 " GetLatestVimScripts: 0 0 :AutoInstall: tcommand.vim
 " Select and execute a command or menu item from a list
 
@@ -24,6 +24,8 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
+" :display: TCommand[!] [INITIAL_FILTER]
+" With a '!', reset the list of known commands and menu items.
 command! -bang -nargs=? TCommand call tcommand#Select(!empty("<bang>"), <q-args>)
 
 
