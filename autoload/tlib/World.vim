@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-05-01.
 " @Last Change: 2010-03-13.
-" @Revision:    0.1.818
+" @Revision:    0.1.821
 
 " :filedoc:
 " A prototype used by |tlib#input#List|.
@@ -695,11 +695,11 @@ function! s:prototype.Resize(hsize, vsize) dict "{{{3
     " TLogVAR self.scratch_vertical, a:hsize, a:vsize
     if self.scratch_vertical
         if a:vsize
-            exec 'vert resize '. eval(a:vsize)
+            exec 'vert resize '. a:vsize
         endif
     else
         if a:hsize
-            exec 'resize '. eval(a:hsize)
+            exec 'resize '. a:hsize
         endif
     endif
 endf
@@ -727,12 +727,12 @@ function! s:prototype.DisplayList(query, ...) dict "{{{3
         let x  = self.index_width + 1
         " TLogVAR ll
         if self.state =~ '\<display\>'
-            let resize = get(self, 'resize', 0)
+            let resize = eval(get(self, 'resize', 0))
             " TLogVAR resize
             let resize = resize == 0 ? ll : min([ll, resize])
             let resize = min([resize, (&lines * g:tlib_inputlist_pct / 100)])
             " TLogVAR resize, ll, &lines
-            call self.Resize(resize, get(self, 'resize_vertical', 0))
+            call self.Resize(resize, eval(get(self, 'resize_vertical', 0)))
             call tlib#normal#WithRegister('gg"tdG', 't')
             let w = winwidth(0) - &fdc
             " let w = winwidth(0) - &fdc - 1
