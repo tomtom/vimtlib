@@ -3,13 +3,14 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-03-12.
-" @Last Change: 2010-03-12.
-" @Revision:    127
+" @Last Change: 2010-03-13.
+" @Revision:    140
 
 let s:save_cpo = &cpo
 set cpo&vim
 
 
+" :nodefault:
 TLet g:tcommand#world = {
             \ 'type': 's',
             \ 'query': 'Select command',
@@ -21,6 +22,14 @@ TLet g:tcommand#world = {
                 \ {'key':  15, 'agent': 'tcommand#Info', 'key_name': '<c-o>', 'help': 'Show info'},
                 \ ]
             \ }
+
+
+" Hide entries matching this rx.
+TLet g:tcommand#hide_rx = '\(^\(Toolbar\|Popup\|Hilfe\|Help\)\>\)'
+
+
+" The items that should be displayed.
+TLet g:tcommand#what = {'command': 's:CollectCommands', 'menu': 's:CollectMenuItems'}
 
 
 function! g:tcommand#world.SetStatusline(query) dict "{{{3
@@ -39,8 +48,12 @@ function! tcommand#Select(reset, filter) "{{{3
     endif
     if empty(s:commands) || a:reset
         let s:commands = []
-        call s:CollectCommands(s:commands)
-        call s:CollectMenuItems(s:commands)
+        for [what, fn] in items(g:tcommand#what)
+            call call(fn, [s:commands])
+        endfor
+        if !empty(g:tcommand#hide_rx)
+            call filter(s:commands, 'v:val !~ g:tcommand#hide_rx')
+        endif
     endif
     let w.base = s:commands
     let v = winsaveview()
@@ -130,18 +143,18 @@ function! s:CollectMenuItems(acc) "{{{3
                 endif
             endfor
             let cleanitem = substitute(match[3], '&', '', 'g')
+            " let cleanitem = substitute(cleanitem, '\\\+\.', '.', 'g')
             if parentlevel >= 0
                 let parent = menu[parentlevel]
                 let menuitem = parent + [cleanitem]
             else
                 let menuitem = [cleanitem]
             endif
-            call map(menuitem, 'escape(v:val, ''\.'')')
-            let menu[level] = copy(menuitem)
-            let formattedmenuitem = printf("%-30s\tM\t \t0", join(menuitem, '.'))
+            let menu[level] = menuitem
+            let formattedmenuitem = printf("%-30s\tM\t \t0", join(map(copy(menuitem), 'escape(v:val, ''\.'')'), '.'))
         elseif !empty(formattedmenuitem)
             if match(item, '^\s\+\l\*\s') != -1
-                " TLogVAR item, formattedmenuitem
+                " TLogVAR formattedmenuitem
                 call add(a:acc, formattedmenuitem)
             endif
             let formattedmenuitem = ''
