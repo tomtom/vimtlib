@@ -38,8 +38,6 @@ Contents~
         g:tcommand#hide_rx ...... |g:tcommand#hide_rx|
         g:tcommand#what ......... |g:tcommand#what|
         tcommand#Select ......... |tcommand#Select()|
-        tcommand#Info ........... |tcommand#Info()|
-        tcommand#WhereFrom ...... |tcommand#WhereFrom()|
 
 
 ========================================================================
@@ -63,12 +61,6 @@ g:tcommand#what                (default: {'command': 's:CollectCommands', 'menu'
 
                                                     *tcommand#Select()*
 tcommand#Select(reset, filter)
-
-                                                    *tcommand#Info()*
-tcommand#Info(world, selected)
-
-                                                    *tcommand#WhereFrom()*
-tcommand#WhereFrom(world, selected)
 
 
 

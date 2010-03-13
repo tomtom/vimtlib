@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-03-12.
 " @Last Change: 2010-03-13.
-" @Revision:    166
+" @Revision:    179
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -17,15 +17,17 @@ if !exists('g:tcommand#world')
                 \ 'pick_last_item': 1,
                 \ 'key_handlers': [
                 \ {'key':  15, 'agent': 'tcommand#Info', 'key_name': '<c-o>', 'help': 'Show info'},
+                \ {'key':  23, 'agent': 'tcommand#WhereFrom', 'key_name': '<c-w>', 'help': 'Where is the command defined'}
                 \ ]
                 \ }
     " \ 'scratch_pos': 'leftabove',
     " \ 'scratch_vertical': -1,
     " \ 'resize_vertical': 34,
-    if exists(':WhereFrom')
-        call add(g:tcommand#world.key_handlers,
-                    \ {'key':  23, 'agent': 'tcommand#WhereFrom', 'key_name': '<c-w>', 'help': 'Where is the command defined'})
-    endif
+
+    function! g:tcommand#world.SetStatusline(query) dict "{{{3
+        echo
+        echo self.DisplayFilter() .': '. matchstr(self.CurrentItem(), '^\S\+')
+    endf
 endif
 
 
@@ -35,12 +37,6 @@ TLet g:tcommand#hide_rx = '\(^\(Toolbar\|Popup\|Hilfe\|Help\)\>\)'
 
 " The items that should be displayed.
 TLet g:tcommand#what = {'command': 's:CollectCommands', 'menu': 's:CollectMenuItems'}
-
-
-function! g:tcommand#world.SetStatusline(query) dict "{{{3
-    echo
-    echo self.DisplayFilter() .': '. matchstr(self.CurrentItem(), '^\S\+')
-endf
 
 
 let s:commands = []
@@ -71,6 +67,7 @@ function! tcommand#Select(reset, filter) "{{{3
             silent! windo if &ft == 'help' | exec 'wincmd c' | endif
         endif
         call winrestview(v)
+        redraw
     endtry
     if !empty(item)
         let [item, type, modifier, nargs] = split(item, '\t')
@@ -94,13 +91,15 @@ function! tcommand#Select(reset, filter) "{{{3
 endf
 
 
+" :nodoc:
 function! tcommand#Info(world, selected) "{{{3
     " TLogVAR a:selected
     let bufnr = bufnr('%')
     try
         let [item, type, modifier, nargs] = split(a:selected[0], '\t')
         if type ==# 'C' && !empty(item)
-            exec 'help '. item
+            let vert = get(g:tcommand#world, 'scratch_vertical', 0) ? '' : 'vert '
+            exec vert .'help '. item
         endif
     finally
         exec bufwinnr(bufnr) .'wincmd w'
@@ -141,7 +140,7 @@ function! s:CollectMenuItems(acc) "{{{3
     let menu = {0: ['']}
     let formattedmenuitem = ''
     for item in items
-        let match = matchlist(item, '^\(\s*\)\(\d\+\)\s\+\([^-].\{-}\)\ze\(\^I\|$\)')
+        let match = matchlist(item, '^\(\s*\)\(\d\+\)\s\+\([^-].\{-}\)\(\^I\(.*\)\)\?$')
         if !empty(match)
             " TLogVAR item, match
             let level = len(match[1])
@@ -174,12 +173,17 @@ function! s:CollectMenuItems(acc) "{{{3
 endf
 
 
+" :nodoc:
 function! tcommand#WhereFrom(world, selected) "{{{3
     let [item, type, modifier, nargs] = split(a:selected[0], '\t')
     if type ==# 'C'
-        exec 'WhereFrom! '. item
+        " if exists(':WhereFrom')
+        "     exec 'WhereFrom! '. item
+        " else
+            exec 'verbose command '. item
+        " endif
         echohl MoreMsg
-        echo "PRESS KEY TO CONTINUE"
+        echo "-- PRESS KEY TO CONTINUE --"
         echohl NONE
         call getchar()
         redraw
