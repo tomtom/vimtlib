@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 # tcalc.rb
-# @Last Change: 2009-02-11.
+# @Last Change: 2010-03-13.
 # Author::      Tom Link (micathom AT gmail com)
 # License::     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # Created::     2007-10-23.
@@ -14,7 +14,7 @@ require 'matrix'
 require 'mathn'
 require 'optparse'
 # require 'pp'
-
+require 'continuation' if RUBY_VERSION >= '1.9.0'
 
 module TCalc
     CONFIG_DIR = ENV['TCALC_HOME'] || File.join(ENV['HOME'], '.tcalc')
@@ -65,7 +65,7 @@ class TCalc::Base
             '#',
             '!=', 'and', 'or',
         ]
-        @ymarks = ['+', '*', 'x', '.', '#', ':', '°', '^', '@', '$', 'o', '"']
+        @ymarks = ['+', '*', 'x', '.', '#', ':', '~', '^', '@', '$', 'o', '"']
         reset_words true
         reset
         @format  = '%p'
@@ -266,7 +266,6 @@ class TCalc::Base
                         end
 
                         cmdm = /^(#?[^@#,[:digit:]]*)(#|\d+)?(@(\d+))?(,(.+))?$/.match(cmd)
-                        # p "DBG", cmdm
                         cmd_name   = cmdm[1]
                         cmd_count  = cmdm[2]
                         cmd_arrity = cmdm[4] ? cmdm[4].to_i : nil
@@ -650,14 +649,19 @@ class TCalc::Base
 
                             else
                                 # p "DBG t4"
+                                if RUBY_VERSION >= '1.9.0'
+                                    cmd_method = cmd_name.intern
+                                else
+                                    cmd_method = cmd_name
+                                end
                                 catch(:continue) do
                                     @numclasses.each do |c|
-                                        if c.instance_methods.include?(cmd_name)
+                                        if c.instance_methods.include?(cmd_method)
                                             # p "DBG #{c}"
-                                            argn = cmd_arrity || c.instance_method(cmd_name).arity
+                                            argn = cmd_arrity || c.instance_method(cmd_method).arity
                                             args = get_args(0, argn)
-                                            # p "DBG", cmd_name, argn, args
-                                            val = [args[0].send(cmd_name, *args[1 .. -1])].flatten
+                                            # p "DBG", cmd_method, argn, args
+                                            val = [args[0].send(cmd_method, *args[1 .. -1])].flatten
                                             # p "DBG", val
                                             (stack).concat(val)
                                             throw :continue
@@ -665,20 +669,20 @@ class TCalc::Base
                                     end
 
                                     [Math, *@numclasses].each do |c|
-                                        if c.constants.include?(cmd_name)
+                                        if c.constants.include?(cmd_method)
                                             # p "DBG #{c} constant"
-                                             stack_push c.const_get(cmd_name)
+                                             stack_push c.const_get(cmd_method)
                                              throw :continue
                                         end
                                     end
 
                                     [Math, *@numclasses].each do |c|
-                                        if c.methods.include?(cmd_name)
-                                            # p "DBG t3", cmd_name
+                                        if c.methods.include?(cmd_method)
+                                            # p "DBG t3", cmd_method
                                             # p "DBG math"
-                                            argn = cmd_arrity || c.method(cmd_name).arity
+                                            argn = cmd_arrity || c.method(cmd_method).arity
                                             args = get_args(1, argn)
-                                            (stack).concat([c.send(cmd_name, *args)].flatten)
+                                            (stack).concat([c.send(cmd_method, *args)].flatten)
                                             throw :continue
                                         end
                                     end
@@ -713,6 +717,7 @@ class TCalc::Base
                     else
                         echo_error e.to_s.inspect
                     end
+
                 end
             end
         end
@@ -1040,8 +1045,14 @@ class TCalc::Base
             if level > 1
                 '[%s]' % elt.join(', ')
             else
-                elt
+                beg = 0
+                while elt[beg].nil? and beg < elt.size
+                    beg += 1
+                end
+                elt[beg..-1]
             end
+        when nil
+            nil
         else
             sprintf(@format, elt)
         end
@@ -1137,8 +1148,8 @@ class TCalc::Base
     end
 
 
-    def complete_command(cmd_name, cmd_count, cmd_ext, return_many=false)
-        eligible = completion(cmd_name)
+    def complete_command(cmd_name, cmd_count, cmd_ext, return_many = false)
+        eligible = completion(cmd_name, return_many)
         if eligible.size == 1
             return eligible[0]
         elsif return_many
@@ -1149,14 +1160,27 @@ class TCalc::Base
     end
 
 
-    def completion(alt)
+    def completion(alt, return_many = false)
         alx = Regexp.new("^#{Regexp.escape(alt)}.*")
-        ids = @numclasses.map {|klass|klass.instance_methods | klass.constants}
+        ids = @numclasses.map {|klass| klass.instance_methods | klass.constants}
         ids += Numeric.constants | Numeric.instance_methods | Math.methods | Math.constants | words.keys | @cmds
         ids.flatten!
         ids.uniq!
-        ids.sort!
-        ids.delete_if {|e| e !~ alx}
+        ids = catch(:exit) do
+            if return_many
+                ids.map! {|a| a.to_s}
+            else
+                ids.map! do |a|
+                    as = a.to_s
+                    throw :exit, [as] if as == alt
+                    as
+                end
+            end
+            ids.sort! {|a,b| a <=> b}
+            ids.delete_if {|e| e !~ alx}
+            ids
+        end 
+        ids
     end
 end
 
@@ -1466,6 +1490,7 @@ class TCalc::Curses < TCalc::CommandLine
                 if m
                     c0 = m[0]
                     cc = complete_command(c0, nil, nil, true)
+                    p "DBG", cc
                     case cc
                     when Array
                         print_array(cc.sort)

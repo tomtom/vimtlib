@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-10-07.
-" @Last Change: 2010-01-03.
-" @Revision:    0.0.542
+" @Last Change: 2010-03-13.
+" @Revision:    0.0.544
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
