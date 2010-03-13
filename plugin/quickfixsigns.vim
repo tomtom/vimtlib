@@ -4,8 +4,8 @@
 " @GIT:         http://github.com/tomtom/vimtlib/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-03-14.
-" @Last Change: 2009-12-26.
-" @Revision:    310
+" @Last Change: 2010-03-13.
+" @Revision:    321
 " GetLatestVimScripts: 2584 1 :AutoInstall: quickfixsigns.vim
 
 if &cp || exists("loaded_quickfixsigns") || !has('signs')
@@ -38,6 +38,7 @@ if !exists('g:quickfixsigns_lists')
                 \ {'sign': 'QFS_QFL', 'get': 'getqflist()', 'event': ['BufEnter']},
                 \ {'sign': 'QFS_LOC', 'get': 'getloclist(winnr())', 'event': ['BufEnter']},
                 \ ]
+                " \ {'sign': 'QFS_CURSOR', 'get': 's:GetCursor()', 'event': ['BufEnter', 'CursorHold', 'CursorHoldI', 'InsertLeave', 'InsertEnter', 'InsertChange']},
 endif
 
 if !exists('g:quickfixsigns_marks')
@@ -108,6 +109,9 @@ if index(s:signs, 'QFS_QFL') == -1
 endif
 if index(s:signs, 'QFS_LOC') == -1
     sign define QFS_LOC text=> texthl=Special
+endif
+if index(s:signs, 'QFS_CURSOR') == -1
+    sign define QFS_CURSOR text=c texthl=Question
 endif
 sign define QFS_DUMMY text=. texthl=SignColumn
 
@@ -186,6 +190,15 @@ function! QuickfixsignsBalloon() "{{{3
     else
         return ''
     endif
+endf
+
+
+let s:cursor_last_line = 0
+
+function! s:GetCursor() "{{{3
+    let pos = getpos('.')
+    let s:cursor_last_line = pos[1]
+    return [{'bufnr': bufnr('%'), 'lnum': pos[1], 'col': pos[2], 'text': 'CURSOR'}]
 endf
 
 
