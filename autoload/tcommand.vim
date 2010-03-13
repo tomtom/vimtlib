@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-03-12.
 " @Last Change: 2010-03-13.
-" @Revision:    179
+" @Revision:    186
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -15,6 +15,7 @@ if !exists('g:tcommand#world')
                 \ 'type': 's',
                 \ 'query': 'Select command',
                 \ 'pick_last_item': 1,
+                \ 'resize': '&lines / 3',
                 \ 'key_handlers': [
                 \ {'key':  15, 'agent': 'tcommand#Info', 'key_name': '<c-o>', 'help': 'Show info'},
                 \ {'key':  23, 'agent': 'tcommand#WhereFrom', 'key_name': '<c-w>', 'help': 'Where is the command defined'}
@@ -98,9 +99,13 @@ function! tcommand#Info(world, selected) "{{{3
     try
         let [item, type, modifier, nargs] = split(a:selected[0], '\t')
         if type ==# 'C' && !empty(item)
-            let vert = get(g:tcommand#world, 'scratch_vertical', 0) ? '' : 'vert '
-            exec vert .'help '. item
+            let vert = get(g:tcommand#world, 'scratch_vertical', 0) || winwidth(0) < 140 ? 'above' : 'vert'
+            exec vert .' help '. item
         endif
+    catch
+        echohl Error
+        echom "TCommand: ". v:exception
+        echohl NONE
     finally
         exec bufwinnr(bufnr) .'wincmd w'
     endtry
