@@ -2,9 +2,9 @@
                     Author: Tom Link, micathom at gmail com
 
 VIM plugins are cool but with time you forget about even useful 
-commands. This plugin lets you select a command from a list (you can 
-optionally display help on the currently hightlighted command) and then 
-run it from the command line.
+commands. This plugin provides a command (|:TCommand|) that lets you 
+select a command from a list (you can optionally display help on the 
+currently hightlighted command) and then run it from the command line.
 
 
 -----------------------------------------------------------------------
@@ -23,11 +23,20 @@ This script requires tlib (vimscript #1863) to be installed.
 Also available via git: http://github.com/tomtom/vimtlib/
 
 
+Post-Install~
+
+Suggested maps (to be set in your |vimrc| file): >
+
+    noremap <Leader>: :TCommand<cr>
+
+
 ========================================================================
 Contents~
 
         :TCommand ............... |:TCommand|
         g:tcommand#world ........ |g:tcommand#world|
+        g:tcommand#hide_rx ...... |g:tcommand#hide_rx|
+        g:tcommand#what ......... |g:tcommand#what|
         tcommand#Select ......... |tcommand#Select()|
         tcommand#Info ........... |tcommand#Info()|
 
@@ -36,14 +45,23 @@ Contents~
 plugin/tcommand.vim~
 
                                                     *:TCommand*
-:TCommand
+TCommand[!] [INITIAL_FILTER]
+    With a '!', reset the list of known commands and menu items.
 
 
 ========================================================================
 autoload/tcommand.vim~
 
                                                     *g:tcommand#world*
-g:tcommand#world               (default: {)
+g:tcommand#world
+
+                                                    *g:tcommand#hide_rx*
+g:tcommand#hide_rx             (default: '\(^\(Toolbar\|Popup\|Hilfe\|Help\)\>\)')
+    Hide entries matching this rx.
+
+                                                    *g:tcommand#what*
+g:tcommand#what                (default: {'command': 's:CollectCommands', 'menu': 's:CollectMenuItems'})
+    The items that should be displayed.
 
                                                     *tcommand#Select()*
 tcommand#Select(reset, filter)

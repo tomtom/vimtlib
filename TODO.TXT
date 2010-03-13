@@ -1,23 +1,27 @@
 * TODO
 
-    #C3 [vim] [[macros/tplugin.vim]] Command line completion for commands? Wie bekommt man custom(list)-Funktionen heraus?
-    #C5 [vim] [[autoload/worksheet/rcom.vim]] Textausgabe capturen: Set d = CreateObject("StatConnTools.StringLogDevice"); d.BindToServerOutput r; r.EvaluateNoReturn "x<-10"; r.EvaluateNoReturn "print(x)";
+    #A5 [vim] [[plugin/viki.vim]] Cause for https://sourceforge.net/tracker/?func=detail&aid=2960771&group_id=108085&atid=649488
+    #C5 [vim] [[autoload/prototype/strict.vim]] #GetAbstract: ''__abstract'' should be first set when it is queried
     #C5 [vim] [[macros/tplugin.vim]] :TPlugin in interactive use can only access the current root directory but should be able to use any repository in whatever root directory
     #C5 [vim] [[macros/tplugin.vim]] Help tags should always be available.
     #C5 [vim] [[plugin/ttoc.vim#TLet g:ttoc_world]] Sort order
+    #C5 [vim] [[plugin/viki.vim]] Intervikis: [!] ... always open in vim
     #C5 [vim] [[plugin/vikitasks.vim]] Integration with calendar.vim
-    #C5 [vim] [[plugin_experimental/worksheet.vim]] worksheet: ys ... Yank selected input fields (select via tlib#input#List); ya ... Yank all input fields
-    #C6 [vim] [[macros/tplugin.vim]] Provide an easy way to load a plugin by typing a common map prefix
-    #C7 [vim] [[macros/tplugin.vim]] :TPluginUpdate command (for git and svn based repositories?)
+    #C5 [vim] [[plugin_experimental/worksheet.vim]] cut/copy/paste item
+    #C5 [vim] [[plugin_experimental/worksheet.vim]] Delete item
+    #D5 [vim] [[autoload/prototype.vim]] prototype#Add(), prototype#Insert(): for objects with numeric fields à la |add()| and |insert()|
+    #D5 [vim] [[autoload/prototype/strict.vim]] :PInterface NAME = PROTOTYPE
+    #D5 [vim] [[autoload/prototype/strict.vim]] :PLet TYPE NAME = VALUE
+    #D5 [vim] [[macros/tplugin.vim]] :TPluginUpdate command (for git and svn based repositories?)
+    #D5 [vim] [[plugin_experimental/worksheet.vim]] worksheet: ys ... Yank selected input fields (select via tlib#input#List)
     #D5 [vim] tlib#agent#SwitchLayout(): switch between horizontal and vertical layout for the list
     #D5 [vim] tlib#cache#Purge(): delete old cache files (for the moment use find)
     #D5 [vim] tlib#file#Relative(): currently relies on cwd to be set
     #D5 [vim] tlib#input#EditList(): Disable selection by index number
     #D5 [vim] tlib#input#List(): List isn't updated on some occassions (eg tselectfiles + pick file per mouse) when resetting the state from an post-process agent
-    #D5 [vim] tlib#input#List(): RightMouse -> Make commands accessible via popup-menu
+    #D5 [vim] tlib#input#List(): Right Mouse -> Make commands accessible via popup-menu
     #D5 [vim] tlib#input#List(): Some kind of command line to edit some preferences (sort etc.) on the fly
 
 
-
-% 2010-01-03; @Last Change: 2010-02-20.
+% 2010-01-03; @Last Change: 2010-03-09.
 % vi: ft=viki:tw=0:ts=4

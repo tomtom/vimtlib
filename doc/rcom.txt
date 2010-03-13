@@ -1,4 +1,4 @@
-*rcom.txt*          Evaluate R code via rcom
+*rcom.txt*          Evaluate R (www.r-project.org) code via rcom (windows only)
                     Author: Tom Link, micathom at gmail com
 
 This plugin is still experimental. During development it made vim hang 

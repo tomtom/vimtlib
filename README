@@ -12,12 +12,14 @@ See INSTALL.TXT
     #A livetimestamp    -- Change a time stamp when saving a file
     #A loremipsum       -- A dummy text generator
     #A quickfixsigns    -- Mark quickfix & location list items with signs
+    #A rcom             -- Evaluate R (www.r-project.org) code via rcom (windows only)
     #A scalefont        -- Switch between your favourite font/gui settings
     #A shymenu          -- Show the menu bar only when pressing an accelerator key
     #A startup_profile  -- Profile vim startup
     #A tAssert          -- Simple Assertions
     #A tbibtools        -- bibtex related tools (sort, filter ...)
     #A tcalc            -- A simple ruby-based RPN calculator with a vim frontend
+    #A tcommand         -- Select and execute a command or menu item from a list
     #A tComment         -- An easily extensible & universal comment plugin
     #A tgpg             -- Yet another plugin for encrypting files with gpg
     #A tlib             -- A library of vim functions
@@ -38,6 +40,7 @@ See INSTALL.TXT
     #B localvariables   -- Set/let per-file-variables à la Emacs
     #B ttagcomplete     -- Context-sensitive tag completion
     #B worksheet        -- "Mathematica-like" worksheets (sort of) with support for R under Windows, ruby ...
+    #C prototype        -- \JavaScript-like prototype-based programming in vimscript
     #C spec             -- Behaviour-driven design: easy on the eye specifications of VIM scripts
     #C tbak             -- Yet another simple backup plugin using diff
     #C vikitasks        -- Search viki files for tasks and display them in a list
