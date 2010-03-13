@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-10.
-" @Last Change: 2010-02-20.
-" @Revision:    605
+" @Last Change: 2010-03-13.
+" @Revision:    608
 " GetLatestVimScripts: 1863 1 tlib.vim
 "
 " Please see also ../test/tlib.vim for usage examples.
@@ -16,7 +16,7 @@ if v:version < 700 "{{{2
     echoerr "tlib requires Vim >= 7"
     finish
 endif
-let loaded_tlib = 36
+let loaded_tlib = 37
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -128,7 +128,7 @@ TLet g:tlib_inputlist_higroup = 'IncSearch'
 " If a list contains more items, don't do an incremental "live search", 
 " but use |input()| the quere the user for a filter. This is useful on 
 " slower machines or with very long lists.
-TLet g:tlib_inputlist_livesearch_threshold = 500
+TLet g:tlib_inputlist_livesearch_threshold = 1000
 
 " If true, show some indicators about the status of a filename (eg 
 " buflisted(), bufloaded() etc.).
@@ -557,4 +557,8 @@ pressing <esc> when browsing an index-list, returns 0 and not "")
 - New: tlib#paragraph#Define(), tlib#textobjects#StandardParagraph()
 - Try to speed up list display (a rewrite of World.DisplayList() etc. is 
 required)
+
+0.37
+- g:tlib_inputlist_livesearch_threshold defaults to 1000
+- tlib#World: optional scratch_pos field
 

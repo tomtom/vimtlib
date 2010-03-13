@@ -3,8 +3,8 @@
 " @Website:     http://members.a1.net/t.link/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-05-01.
-" @Last Change: 2010-02-06.
-" @Revision:    0.1.812
+" @Last Change: 2010-03-13.
+" @Revision:    0.1.818
 
 " :filedoc:
 " A prototype used by |tlib#input#List|.
@@ -716,7 +716,7 @@ function! s:prototype.DisplayList(query, ...) dict "{{{3
     " TLogVAR self.scratch
     " TAssert IsNotEmpty(self.scratch)
     if self.state == 'scroll'
-        exec 'norm! '. self.offset .'zt'
+        call self.ScrollToOffset()
     elseif self.state == 'help'
         call self.DisplayHelp()
     else
@@ -759,17 +759,7 @@ function! s:prototype.DisplayList(query, ...) dict "{{{3
         call self.SetOffset()
         call self.SetStatusline(a:query)
         " TLogVAR self.offset
-        " TLogDBG winheight('.')
-        " if self.prefidx > winheight(0)
-        " let lt = len(list) - winheight('.') + 1
-        " if self.offset > lt
-        "     exec 'norm! '. lt .'zt'
-        " else
-        exec 'norm! '. self.offset .'zt'
-        " endif
-        " else
-        "     norm! 1zt
-        " endif
+        call self.ScrollToOffset()
         let rx0 = self.GetRx0()
         " TLogVAR rx0
         if !empty(g:tlib_inputlist_higroup)
@@ -800,6 +790,13 @@ function! s:prototype.SetStatusline(query) dict "{{{3
     " let &l:statusline = query
     echo
     echo echo
+endf
+
+
+" :nodoc:
+function! s:prototype.ScrollToOffset() dict "{{{3
+    " TLogVAR self.scratch_vertical, self.llen, winheight(0)
+    exec 'norm! '. self.offset .'zt'
 endf
 
 

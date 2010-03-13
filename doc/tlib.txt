@@ -335,7 +335,7 @@ g:tlib_inputlist_higroup       (default: 'IncSearch')
     The highlight group to use for showing matches in the input list window.
 
                                                     *g:tlib_inputlist_livesearch_threshold*
-g:tlib_inputlist_livesearch_threshold (default: 500)
+g:tlib_inputlist_livesearch_threshold (default: 1000)
     If a list contains more items, don't do an incremental "live search", 
     but use |input()| the quere the user for a filter. This is useful on 
     slower machines or with very long lists.
