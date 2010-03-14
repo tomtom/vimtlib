@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-04.
-" @Last Change: 2010-03-12.
-" @Revision:    1108
+" @Last Change: 2010-03-14.
+" @Revision:    1109
 " GetLatestVimScripts: 2917 1 :AutoInstall: tplugin.vim
 
 if &cp || exists("loaded_tplugin")
@@ -518,7 +518,7 @@ function! s:ScanRoots(immediate, roots, args) "{{{3
                     endif
                     let mplugin = escape(plugin, '\.')
                     if !has_key(menu_done, repo)
-                        call add(out, 'call TPluginMenu('. string(mrepo .'.Repository') .', '.
+                        call add(out, 'call TPluginMenu('. string(mrepo .'.Add\ Repository') .', '.
                                     \ string(':TPlugin! '. repo .'<cr>') .')')
                         call add(out, 'call TPluginMenu('. string(mrepo .'.-'. mrepo .'-') .', ":")')
                         let menu_done[repo] = 1
