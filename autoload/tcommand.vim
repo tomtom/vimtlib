@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-03-12.
 " @Last Change: 2010-03-14.
-" @Revision:    189
+" @Revision:    227
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -27,7 +27,8 @@ if !exists('g:tcommand#world')
 
     function! g:tcommand#world.SetStatusline(query) dict "{{{3
         echo
-        echo self.DisplayFilter() .': '. matchstr(self.CurrentItem(), '^\S\+')
+        echo self.DisplayFilter() .': '. substitute(self.CurrentItem(), '\s\+\t.*$', '', '')
+        " echo self.DisplayFilter() .': '. matchstr(self.CurrentItem(), '^\S\+')
     endf
 endif
 
@@ -37,7 +38,20 @@ TLet g:tcommand#hide_rx = '\C\(^\(ToolBar\|Popup\|Hilfe\|Help\)\>\)'
 
 
 " The items that should be displayed.
-TLet g:tcommand#what = {'command': 's:CollectCommands', 'menu': 's:CollectMenuItems'}
+" By default, tcommand includes:
+"    - Commands
+"    - Menu items
+"    - Faviourite commands (see |g:tcommand#favourites|)
+" :nodefault:
+TLet g:tcommand#what = {
+            \ 'C': {'collect': 's:CollectCommands', 'exec': 's:ExecCommand'},
+            \ 'M': {'collect': 's:CollectMenuItems', 'exec': 's:ExecMenu'},
+            \ 'F': {'collect': 's:CollectFavourites', 'exec': 's:ExecFavourites'}
+            \ }
+
+
+" A collection of favourite commands (pairs of DISPLAY_NAME => EX_COMMAND).
+TLet g:tcommand#favourites = {}
 
 
 let s:commands = []
@@ -50,8 +64,8 @@ function! tcommand#Select(reset, filter) "{{{3
     endif
     if empty(s:commands) || a:reset
         let s:commands = []
-        for [what, fn] in items(g:tcommand#what)
-            call call(fn, [s:commands])
+        for [what, def] in items(g:tcommand#what)
+            call call(def.collect, [what, def, s:commands])
         endfor
         if !empty(g:tcommand#hide_rx)
             call filter(s:commands, 'v:val !~ g:tcommand#hide_rx')
@@ -73,20 +87,11 @@ function! tcommand#Select(reset, filter) "{{{3
     if !empty(item)
         let [item, type, modifier, nargs] = split(item, '\t')
         let item = substitute(item, '\s\+$', '', '')
-        if type ==# 'C'
-            let feed = ':'. item
-            if nargs == '0'
-                let feed .= "\<cr>"
-            else
-                if modifier != '!'
-                    let feed .= ' '
-                endif
-            endif
-            call feedkeys(feed)
-        elseif type ==# 'M'
-            exec 'emenu '. item
+        if has_key(g:tcommand#what, type)
+            let fn = g:tcommand#what[type].exec
+            call call(fn, [item, modifier, nargs])
         else
-            echoerr 'TCommand: Internal error: '. item
+            echoerr 'TCommand: Internal error: Unknown type: '. item
         endif
     endif
 endf
@@ -114,11 +119,24 @@ function! tcommand#Info(world, selected) "{{{3
 endf
 
 
-function! s:CollectCommands(acc) "{{{3
+function! s:CollectCommands(type, def, acc) "{{{3
     let commands = tlib#cmd#OutputAsList('command')
     call remove(commands, 0)
-    call map(commands, 's:FormatCommand(v:val)')
+    call map(commands, 's:FormatCommand(a:type, v:val)')
     call extend(a:acc, commands)
+endf
+
+
+function! s:ExecCommand(item, modifier, nargs) "{{{3
+    let feed = ':'. a:item
+    if a:nargs == '0'
+        let feed .= "\<cr>"
+    else
+        if a:modifier != '!'
+            let feed .= ' '
+        endif
+    endif
+    call feedkeys(feed)
 endf
 
 
@@ -128,9 +146,9 @@ function! s:MatchCommand(string) "{{{3
 endf
 
 
-function! s:FormatCommand(cmd0) "{{{3
+function! s:FormatCommand(type, cmd0) "{{{3
     let match = s:MatchCommand(a:cmd0)
-    return s:FormatItem(match[2], 'C', match[1], match[3])
+    return s:FormatItem(match[2], a:type, match[1], match[3])
 endf
 
 
@@ -140,7 +158,7 @@ function! s:FormatItem(item, type, modifier, nargs) "{{{3
 endf
 
 
-function! s:CollectMenuItems(acc) "{{{3
+function! s:CollectMenuItems(type, def, acc) "{{{3
     let items = tlib#cmd#OutputAsList('menu')
     let menu = {0: ['']}
     let formattedmenuitem = ''
@@ -167,7 +185,7 @@ function! s:CollectMenuItems(acc) "{{{3
                 let menuitem = [cleanitem]
             endif
             let menu[level] = menuitem
-            let formattedmenuitem = s:FormatItem(join(map(copy(menuitem), 'escape(v:val, ''\.'')'), '.'), 'M', ' ', 0)
+            let formattedmenuitem = s:FormatItem(join(map(copy(menuitem), 'escape(v:val, ''\.'')'), '.'), a:type, ' ', 0)
         elseif !empty(formattedmenuitem)
             if match(item, '^\s\+\l[*& -]\?\s') != -1
                 " TLogVAR formattedmenuitem
@@ -176,6 +194,23 @@ function! s:CollectMenuItems(acc) "{{{3
             let formattedmenuitem = ''
         endif
     endfor
+endf
+
+
+function! s:ExecMenu(item, modifier, nargs) "{{{3
+    exec 'emenu '. a:item
+endf
+
+
+function! s:CollectFavourites(type, def, acc) "{{{3
+    for [name, file] in items(g:tcommand#favourites)
+        call add(a:acc, s:FormatItem(name, a:type, ' ', 0))
+    endfor
+endf
+
+
+function! s:ExecFavourites(item, modifier, nargs) "{{{3
+    exec get(g:tcommand#favourites, a:item, '')
 endf
 
 

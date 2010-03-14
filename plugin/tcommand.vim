@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-03-12.
 " @Last Change: 2010-03-14.
-" @Revision:    16
+" @Revision:    17
 " GetLatestVimScripts: 3013 0 :AutoInstall: tcommand.vim
 " Select and execute a command or menu item from a list
 
@@ -38,4 +38,5 @@ CHANGES:
 - Missed nore menus items
 - Display help on pressing f1 (not <c-o>)
 - Don't automatically select the only item matching the filter
+- Favourites
 
