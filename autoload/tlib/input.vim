@@ -4,8 +4,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-06-30.
-" @Last Change: 2010-03-12.
-" @Revision:    0.0.688
+" @Last Change: 2010-03-14.
+" @Revision:    0.0.690
 
 
 " :filedoc:

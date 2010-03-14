@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-10.
-" @Last Change: 2010-03-13.
-" @Revision:    608
+" @Last Change: 2010-03-14.
+" @Revision:    610
 " GetLatestVimScripts: 1863 1 tlib.vim
 "
 " Please see also ../test/tlib.vim for usage examples.
@@ -196,16 +196,6 @@ TLet g:tlib_inputlist_not = '-'
 " Format: [KEY] = BASE ... the number is calculated as KEY - BASE.
 " :nodefault:
 TLet g:tlib_numeric_chars = {
-            \ 48: 48,
-            \ 49: 48,
-            \ 50: 48,
-            \ 51: 48,
-            \ 52: 48,
-            \ 53: 48,
-            \ 54: 48,
-            \ 55: 48,
-            \ 56: 48,
-            \ 57: 48,
             \ 176: 176,
             \ 177: 176,
             \ 178: 176,
@@ -217,6 +207,16 @@ TLet g:tlib_numeric_chars = {
             \ 184: 176,
             \ 185: 176,
             \}
+            " \ 48: 48,
+            " \ 49: 48,
+            " \ 50: 48,
+            " \ 51: 48,
+            " \ 52: 48,
+            " \ 53: 48,
+            " \ 54: 48,
+            " \ 55: 48,
+            " \ 56: 48,
+            " \ 57: 48,
 
 " :nodefault:
 TLet g:tlib_keyagents_InputList_s = {
@@ -561,4 +561,5 @@ required)
 0.37
 - g:tlib_inputlist_livesearch_threshold defaults to 1000
 - tlib#World: optional scratch_pos field
-
+- tlib#input#List: By default <m-NUMBER> selects by number but NUMBER is 
+interpreted as string
