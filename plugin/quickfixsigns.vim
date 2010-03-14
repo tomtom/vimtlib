@@ -4,8 +4,8 @@
 " @GIT:         http://github.com/tomtom/vimtlib/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-03-14.
-" @Last Change: 2010-03-13.
-" @Revision:    321
+" @Last Change: 2010-03-14.
+" @Revision:    329
 " GetLatestVimScripts: 2584 1 :AutoInstall: quickfixsigns.vim
 
 if &cp || exists("loaded_quickfixsigns") || !has('signs')
@@ -113,7 +113,7 @@ endif
 if index(s:signs, 'QFS_CURSOR') == -1
     sign define QFS_CURSOR text=c texthl=Question
 endif
-sign define QFS_DUMMY text=. texthl=SignColumn
+sign define QFS_DUMMY text=. texthl=NonText
 
 let s:last_run = {}
 
@@ -370,6 +370,7 @@ augroup QuickFixSigns
         endfor
     endfor
     unlet s:ev_set s:ev s:def
+    autocmd BufRead,BufNewFile * exec 'sign place '. (s:base - 1) .' name=QFS_DUMMY line=1 buffer='. bufnr('%')
 augroup END
 
 
