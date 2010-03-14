@@ -52,7 +52,7 @@ TCommand[!] [INITIAL_FILTER]
 autoload/tcommand.vim~
 
                                                     *g:tcommand#hide_rx*
-g:tcommand#hide_rx             (default: '\(^\(Toolbar\|Popup\|Hilfe\|Help\)\>\)')
+g:tcommand#hide_rx             (default: '\C\(^\(ToolBar\|Popup\|Hilfe\|Help\)\>\)')
     Hide entries matching this rx.
 
                                                     *g:tcommand#what*

@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-03-12.
-" @Last Change: 2010-03-13.
-" @Revision:    186
+" @Last Change: 2010-03-14.
+" @Revision:    189
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -14,10 +14,10 @@ if !exists('g:tcommand#world')
     let g:tcommand#world = {
                 \ 'type': 's',
                 \ 'query': 'Select command',
-                \ 'pick_last_item': 1,
+                \ 'pick_last_item': 0,
                 \ 'resize': '&lines / 3',
                 \ 'key_handlers': [
-                \ {'key':  15, 'agent': 'tcommand#Info', 'key_name': '<c-o>', 'help': 'Show info'},
+                \ {'key':  "\<f1>", 'agent': 'tcommand#Info', 'key_name': '<c-o>', 'help': 'Show info'},
                 \ {'key':  23, 'agent': 'tcommand#WhereFrom', 'key_name': '<c-w>', 'help': 'Where is the command defined'}
                 \ ]
                 \ }
@@ -33,7 +33,7 @@ endif
 
 
 " Hide entries matching this rx.
-TLet g:tcommand#hide_rx = '\(^\(Toolbar\|Popup\|Hilfe\|Help\)\>\)'
+TLet g:tcommand#hide_rx = '\C\(^\(ToolBar\|Popup\|Hilfe\|Help\)\>\)'
 
 
 " The items that should be displayed.
@@ -146,6 +146,7 @@ function! s:CollectMenuItems(acc) "{{{3
     let formattedmenuitem = ''
     for item in items
         let match = matchlist(item, '^\(\s*\)\(\d\+\)\s\+\([^-].\{-}\)\(\^I\(.*\)\)\?$')
+        " TLogVAR item, match
         if !empty(match)
             " TLogVAR item, match
             let level = len(match[1])
@@ -168,7 +169,7 @@ function! s:CollectMenuItems(acc) "{{{3
             let menu[level] = menuitem
             let formattedmenuitem = s:FormatItem(join(map(copy(menuitem), 'escape(v:val, ''\.'')'), '.'), 'M', ' ', 0)
         elseif !empty(formattedmenuitem)
-            if match(item, '^\s\+\l\*\s') != -1
+            if match(item, '^\s\+\l[*& -]\?\s') != -1
                 " TLogVAR formattedmenuitem
                 call add(a:acc, formattedmenuitem)
             endif
