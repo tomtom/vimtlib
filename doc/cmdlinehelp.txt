@@ -45,7 +45,7 @@ NOTE:
   this doesn't interfere with anything else.
 
                                                     *g:cmdlinehelpMapView*
-g:cmdlinehelpMapView           (default: '<c-o>')
+g:cmdlinehelpMapView           (default: '<f1>')
     Default map.
 
                                                     *g:cmdlinehelpMapDown*

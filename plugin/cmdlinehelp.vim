@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-07-01.
-" @Last Change: 2010-01-03.
-" @Revision:    349
+" @Last Change: 2010-03-14.
+" @Revision:    350
 " GetLatestVimScripts: 2279 0 cmdlinehelp.vim
 
 " :doc:
@@ -23,7 +23,8 @@ set cpo&vim
 
 if !exists('g:cmdlinehelpMapView')
     " Default map.
-    let g:cmdlinehelpMapView = '<c-o>'  "{{{2
+    let g:cmdlinehelpMapView = '<f1>'  "{{{2
+    " let g:cmdlinehelpMapView = '<c-o>'  "{{{2
     " let g:cmdlinehelpMapView = '<c-]>'  "{{{2
 endif
 
@@ -85,4 +86,5 @@ CHANGES:
 0.6
 - Moved the definition of some variables from plugin/cmdlinehelp.vim to 
 autoload/cmdlinehelp.vim
+- g:cmdlinehelpMapView defaults to f1
 
