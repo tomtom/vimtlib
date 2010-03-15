@@ -2,15 +2,15 @@
 " @Author:      Thomas Link (mailto:micathom AT gmail com?subject=[vim])
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-02-23.
-" @Last Change: 2010-03-08.
-" @Revision:    434
+" @Last Change: 2010-03-15.
+" @Revision:    437
 " GetLatestVimScripts: 2991 1 :AutoInstall: rcom.vim
 
 let s:save_cpo = &cpo
 set cpo&vim
 
 if !exists('loaded_rcom')
-    let loaded_rcom = 1
+    let loaded_rcom = 3
 endif
 
 
@@ -457,7 +457,21 @@ function! rcom#Keyword(...) "{{{3
     endif
     let word = a:0 >= 1 && !empty(a:1) ? a:1 : expand("<cword>")
     " TLogVAR word
-    ruby RCom.interpreter.evaluate(%{help(#{VIM.evaluate('word')})}, 'r')
+    " call rcom#EvaluateInBuffer(printf('help(%s)', word))
+    call rcom#EvaluateInBuffer(printf('if (mode(%s) == "function") {print(help(%s))} else {str(%s)}', word, word, word))
+endf
+
+
+" Display help on the word under the cursor.
+function! rcom#Info(...) "{{{3
+    let bufnr = bufnr('%')
+    if !has_key(s:rcom, bufnr)
+        call rcom#Initialize(g:rcom#reuse)
+    endif
+    let word = a:0 >= 1 && !empty(a:1) ? a:1 : expand("<cword>")
+    " TLogVAR word
+    call rcom#EvaluateInBuffer(printf('str(%s)', word))
+    call rcom#EvaluateInBuffer(printf('if (class(%s) == "data.frame") print(head(%s))', word, word))
 endf
 
 
@@ -644,4 +658,7 @@ the results in VIM; be aware that some problems could cause problems)
 (this won't block the current instance of gvim)
 - Use g:rcom#server to start an instance of gvim that acts as server/proxy
 - Transcript, log
-- 
+
+0.3
+- K on non-functions uses str()
+

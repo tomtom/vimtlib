@@ -2,8 +2,8 @@
 " @Author:      Thomas Link (mailto:micathom AT gmail com?subject=[vim])
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-02-23.
-" @Last Change: 2010-03-08.
-" @Revision:    0.1.113
+" @Last Change: 2010-03-15.
+" @Revision:    0.1.118
 " GetLatestVimScripts: 0 0 :AutoInstall: rcom.vim
 
 let s:save_cpo = &cpo
@@ -54,6 +54,7 @@ endif
 
 " See |rcom#Keyword()| and |K|.
 nnoremap <buffer> K :call rcom#Keyword()<cr>
+" nnoremap <buffer> <LocalLeader>K :call rcom#Info()<cr>
 
 
 " if !hasmapto(':call rcom#EvaluateInBuffer(', 'n')
