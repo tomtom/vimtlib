@@ -3,11 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-03-01.
-" @Last Change: 2010-03-02.
-" @Revision:    60
-
-let s:save_cpo = &cpo
-set cpo&vim
+" @Last Change: 2010-03-15.
+" @Revision:    61
 
 
 function! prototype#binding#New(bindings) "{{{3
@@ -56,5 +53,3 @@ command! -nargs=+ Binding let s:args = matchlist(<q-args>, '^\s*\(\S\+\)\s*=\s*\
             \ unlet s:args
 
 
-let &cpo = s:save_cpo
-unlet s:save_cpo

@@ -2,12 +2,10 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-03-01.
-" @Last Change: 2010-03-02.
-" @Revision:    26
+" @Last Change: 2010-03-15.
+" @Revision:    29
 
-let s:save_cpo = &cpo
-set cpo&vim
-
+runtime autoload/prototype/binding.vim
 
 
 SpecBegin 'title': 'Bindings'
@@ -41,6 +39,3 @@ endf
 Should be equal Bar(foo), [2, "foo", {"bar": 10}]
 
 
-
-let &cpo = s:save_cpo
-unlet s:save_cpo
