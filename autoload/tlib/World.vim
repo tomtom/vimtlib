@@ -3,8 +3,8 @@
 " @Website:     http://members.a1.net/t.link/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-05-01.
-" @Last Change: 2010-03-13.
-" @Revision:    0.1.821
+" @Last Change: 2010-03-15.
+" @Revision:    0.1.825
 
 " :filedoc:
 " A prototype used by |tlib#input#List|.
@@ -727,8 +727,9 @@ function! s:prototype.DisplayList(query, ...) dict "{{{3
         let x  = self.index_width + 1
         " TLogVAR ll
         if self.state =~ '\<display\>'
-            let resize = eval(get(self, 'resize', 0))
-            " TLogVAR resize
+            let resize0 = get(self, 'resize', 0)
+            let resize = empty(resize0) ? 0 : eval(resize0)
+            " TLogVAR resize0, resize
             let resize = resize == 0 ? ll : min([ll, resize])
             let resize = min([resize, (&lines * g:tlib_inputlist_pct / 100)])
             " TLogVAR resize, ll, &lines
