@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-04.
-" @Last Change: 2010-03-14.
-" @Revision:    1109
+" @Last Change: 2010-03-18.
+" @Revision:    1126
 " GetLatestVimScripts: 2917 1 :AutoInstall: tplugin.vim
 
 if &cp || exists("loaded_tplugin")
@@ -168,7 +168,10 @@ function! s:Autoload(type, def, bang, range, args) "{{{3
         let cmd = cmd0
     endif
     " TLogVAR root, cmd0, cmd, file
-    " if a:type == 1 " Command
+    if a:type == 1 " Command
+        let repo = join([root, file[0]], '/')
+        let plugin = file[1]
+        call s:DelCommand(repo, plugin, [cmd])
         " TLogDBG exists(':'. cmd)
         " let key = call('s:CommandKey', insert(copy(file), root))
         " TLogVAR key
@@ -179,7 +182,7 @@ function! s:Autoload(type, def, bang, range, args) "{{{3
         "     endfor
         "     unlet s:command_nobang[key]
         " endif
-    " endif
+    endif
     if len(file) >= 1 && len(file) <= 2
         call call('TPlugin', [1, root] + file)
     else
@@ -681,6 +684,7 @@ endf
 
 function! s:Depend(repo, filename_rxs, dict) "{{{3
     " TLogVAR a:filename_rxs
+    " call s:AddRepo([a:repo])
     for filename_rx in a:filename_rxs
         let others = a:dict[filename_rx]
         " TLogVAR others
@@ -715,16 +719,10 @@ function! TPlugin(immediate, root, repo, ...) "{{{3
     " deprecated
     if a:repo == '.'
         let repo = a:root
-        if !has_key(s:done, repo)
-            let s:done[repo] = {}
-        endif
     else
         let root = s:RootDirOnDisk(empty(a:root) ? s:roots[0] : a:root)
         if a:repo == '-'
             let repo = root
-            if !has_key(s:done, repo)
-                let s:done[repo] = {}
-            endif
         else
             let repo = join([root, a:repo], '/')
         endif
@@ -744,15 +742,7 @@ function! TPlugin(immediate, root, repo, ...) "{{{3
         let plugins = []
     else
         for plugin in a:000
-            let key = s:CommandKey(repo, plugin)
-            " TLogVAR key
-            if has_key(s:command_nobang, key)
-                for c in keys(s:command_nobang[key])
-                    " TLogVAR c
-                    exec 'delcommand '. c
-                endfor
-                unlet s:command_nobang[key]
-            endif
+            call s:DelCommand(repo, plugin, '*')
         endfor
         let plugins = map(copy(a:000), 'join([pdir, v:val .".vim"], "/")')
     endif
@@ -767,6 +757,34 @@ function! TPlugin(immediate, root, repo, ...) "{{{3
         endif
         let s:reg[repo] += plugins
     end
+endf
+
+
+function! s:DelCommand(repo, plugin, commands) "{{{3
+    " TLogVAR a:repo, a:plugin, a:commands
+    let key = s:CommandKey(a:repo, a:plugin)
+    " TLogVAR key
+    " call tlog#Debug(string(keys(s:command_nobang)))
+    if a:commands == '*'
+        if has_key(s:command_nobang, key)
+            let cmds = s:command_nobang[key]
+        else
+            return
+        endif
+    else
+        let cmds = a:commands
+    endif
+    for c in cmds
+        if exists(':'. a:command) == 2
+            exec 'delcommand '. c
+        endif
+        if a:commands != '*' && has_key(s:command_nobang[key])
+            call remove(s:command_nobang[key], a:command)
+        endif
+    endfor
+    if empty(s:command_nobang[key])
+        call remove(s:command_nobang, key)
+    endif
 endf
 
 
