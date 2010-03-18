@@ -4,8 +4,8 @@
 " @GIT:         http://github.com/tomtom/vimtlib/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-03-14.
-" @Last Change: 2010-03-14.
-" @Revision:    329
+" @Last Change: 2010-03-18.
+" @Revision:    394
 " GetLatestVimScripts: 2584 1 :AutoInstall: quickfixsigns.vim
 
 if &cp || exists("loaded_quickfixsigns") || !has('signs')
@@ -17,11 +17,21 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
-if !exists('g:quickfixsigns_lists')
-    " A list of list definitions whose items should be marked with signs.
-    " By default, the following lists are included: |quickfix|, 
-    " |location-list|, marks |'a|-zA-Z (see also 
-    " |g:quickfixsigns_marks|).
+" Reset the signs in the current buffer.
+command! QuickfixsignsSet call QuickfixsignsSet("")
+
+
+if !exists('g:quickfixsigns_classes')
+    " A list of sign classes that should be displayed.
+    " Can be one of:
+    "
+    "   rel    ... relative line numbers
+    "   cursor ... current line
+    "   qfl    ... |quickfix| list
+    "   loc    ... |location| list
+    "   marks  ... marks |'a|-zA-Z (see also " |g:quickfixsigns_marks|)
+    "
+    " The sign classes are defined in g:quickfixsigns_class_{NAME}.
     "
     " A list definition is a |Dictionary| with the following fields:
     "
@@ -33,13 +43,10 @@ if !exists('g:quickfixsigns_lists')
     "          compatible with |getqflist()|.
     "   event: The event on which signs of this type should be set. 
     "          Possible values: BufEnter, any
-    " :read: let g:quickfixsigns_lists = [...] "{{{2
-    let g:quickfixsigns_lists = [
-                \ {'sign': 'QFS_QFL', 'get': 'getqflist()', 'event': ['BufEnter']},
-                \ {'sign': 'QFS_LOC', 'get': 'getloclist(winnr())', 'event': ['BufEnter']},
-                \ ]
-                " \ {'sign': 'QFS_CURSOR', 'get': 's:GetCursor()', 'event': ['BufEnter', 'CursorHold', 'CursorHoldI', 'InsertLeave', 'InsertEnter', 'InsertChange']},
+    let g:quickfixsigns_classes = ['cursor', 'qfl', 'loc', 'marks']   "{{{2
+    " let g:quickfixsigns_classes = ['rel', 'qfl', 'loc', 'marks']   "{{{2
 endif
+
 
 if !exists('g:quickfixsigns_marks')
     " A list of marks that should be displayed as signs. If empty, 
@@ -49,36 +56,67 @@ if !exists('g:quickfixsigns_marks')
     " let g:quickfixsigns_marks = split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ<>.''`^', '\zs') "{{{2
 endif
 
-if !exists('g:quickfixsigns_marks_def')
-    " The definition of the |g:quickfixsigns_lists| item for marks. Must 
-    " have a field "type" with value "marks".
-    " :read: let g:quickfixsigns_marks_def = {...} "{{{2
-    let g:quickfixsigns_marks_def = {
-                \ 'type': 'marks',
+
+if !exists('g:quickfixsigns_events1')
+    " List of events for signs that should be frequently updated.
+    let g:quickfixsigns_events1 = ['BufEnter', 'CursorHold', 'CursorHoldI', 'InsertLeave', 'InsertEnter', 'InsertChange']   "{{{2
+endif
+
+
+if !exists('g:quickfixsigns_class_marks')
+    " The definition of signs for marks.
+    " :read: let g:quickfixsigns_class_marks = {...} "{{{2
+    let g:quickfixsigns_class_marks = {
                 \ 'sign': '*s:MarkSign',
                 \ 'get': 's:Marks()',
                 \ 'id': 's:MarkId',
-                \ 'event': ['BufEnter', 'CursorHold', 'CursorHoldI', 'CursorMoved', 'CursorMovedI'],
+                \ 'event': g:quickfixsigns_events1,
                 \ 'timeout': 2
                 \ }
-    " \ 'event': ['BufEnter', 'CursorHold', 'CursorHoldI'],
+                " \ 'event': ['BufEnter', 'CursorHold', 'CursorHoldI', 'CursorMoved', 'CursorMovedI'],
+                " \ 'event': ['BufEnter', 'CursorHold', 'CursorHoldI'],
 endif
-if !&lazyredraw && !empty(g:quickfixsigns_marks_def)
-    let s:cmn = index(g:quickfixsigns_marks_def.event, 'CursorMoved')
-    let s:cmi = index(g:quickfixsigns_marks_def.event, 'CursorMovedI')
+if !&lazyredraw && !empty(g:quickfixsigns_class_marks)
+    let s:cmn = index(g:quickfixsigns_class_marks.event, 'CursorMoved')
+    let s:cmi = index(g:quickfixsigns_class_marks.event, 'CursorMovedI')
     if s:cmn >= 0 || s:cmi >= 0
         echohl Error
         echom "quickfixsigns: Support for CursorMoved(I) events requires 'lazyredraw' to be set"
         echohl NONE
         if s:cmn >= 0
-            call remove(g:quickfixsigns_marks_def.event, s:cmn)
+            call remove(g:quickfixsigns_class_marks.event, s:cmn)
         endif
         if s:cmi >= 0
-            call remove(g:quickfixsigns_marks_def.event, s:cmi)
+            call remove(g:quickfixsigns_class_marks.event, s:cmi)
         endif
     endif
     unlet s:cmn s:cmi
 endif
+
+
+if !exists('g:quickfixsigns_class_rel')
+    " Signs for number of lines relative to the current line.
+    let g:quickfixsigns_class_rel = {'sign': '*s:RelSign', 'get': 's:GetRelList()', 'event': g:quickfixsigns_events1, 'max': 5}  "{{{2
+endif
+
+
+if !exists('g:quickfixsigns_class_qfl')
+    " Signs for |quickfix| lists.
+    let g:quickfixsigns_class_qfl = {'sign': 'QFS_QFL', 'get': 'getqflist()', 'event': ['BufEnter']}   "{{{2
+endif
+
+
+if !exists('g:quickfixsigns_class_loc')
+    " Signs for |location| lists.
+    let g:quickfixsigns_class_loc = {'sign': 'QFS_LOC', 'get': 'getloclist(winnr())', 'event': ['BufEnter']}   "{{{2
+endif
+
+
+if !exists('g:quickfixsigns_class_cursor')
+    " Sign for the current cursor position
+    let g:quickfixsigns_class_cursor = {'sign': 'QFS_CURSOR', 'get': 's:GetCursor()', 'event': g:quickfixsigns_events1}   "{{{2
+endif
+
 
 if !exists('g:quickfixsigns_balloon')
     " If non-null, display a balloon when hovering with the mouse over 
@@ -86,6 +124,7 @@ if !exists('g:quickfixsigns_balloon')
     " buffer-local or global
     let g:quickfixsigns_balloon = 1   "{{{2
 endif
+
 
 if !exists('g:quickfixsigns_max')
     " Don't display signs if the list is longer than n items.
@@ -95,7 +134,6 @@ endif
 
 
 " ----------------------------------------------------------------------
-
 
 redir => s:signss
 silent sign list
@@ -107,15 +145,47 @@ call map(s:signs, 'matchstr(v:val, ''^sign \zsQFS_\w\+'')')
 if index(s:signs, 'QFS_QFL') == -1
     sign define QFS_QFL text=* texthl=WarningMsg
 endif
+
 if index(s:signs, 'QFS_LOC') == -1
     sign define QFS_LOC text=> texthl=Special
 endif
+
 if index(s:signs, 'QFS_CURSOR') == -1
-    sign define QFS_CURSOR text=c texthl=Question
+    sign define QFS_CURSOR text=. texthl=Question
 endif
+
 sign define QFS_DUMMY text=. texthl=NonText
 
+for s:i in g:quickfixsigns_marks
+	if index(s:signs, 'QFS_Mark_'. s:i) == -1
+		exec 'sign define QFS_Mark_'. s:i .' text='. s:i .' texthl=Identifier'
+	endif
+endfor
+unlet s:i
+
+let s:relmax = -1
+function! s:GenRel(num) "{{{3
+    " TLogVAR a:num
+    " echom "DBG ". s:relmax
+    if a:num > s:relmax && a:num < 100
+        for n in range(s:relmax + 1, a:num)
+            exec 'sign define QFS_REL_'. n .' text='. n .' texthl=LineNr'
+        endfor
+        let s:relmax = a:num
+    endif
+endf
+
 let s:last_run = {}
+
+
+function! QuickfixsignsSelect(list) "{{{3
+	" FIXME: unset first
+    let s:quickfixsigns_lists = {}
+	for what in a:list
+		let s:quickfixsigns_lists[what] = g:quickfixsigns_class_{what}
+	endfor
+endf
+call QuickfixsignsSelect(g:quickfixsigns_classes)
 
 
 " (Re-)Set the signs that should be updated at a certain event. If event 
@@ -131,7 +201,7 @@ function! QuickfixsignsSet(event) "{{{3
     " try
         let bn = bufnr('%')
         let anyway = empty(a:event)
-        for def in g:quickfixsigns_lists
+        for def in values(s:quickfixsigns_lists)
             " if exists("b:noquickfixsigns") && b:noquickfixsigns
             "     call s:ClearBuffer(def.sign, bn, [])
             " elseif anyway || index(get(def, 'event', ['BufEnter']), a:event) != -1
@@ -175,7 +245,7 @@ function! QuickfixsignsBalloon() "{{{3
         let lnum = v:beval_lnum
         let bn = bufnr('%')
         let acc = []
-        for def in g:quickfixsigns_lists
+        for def in values(s:quickfixsigns_lists)
             let list = eval(def.get)
             call filter(list, 'v:val.bufnr == bn && v:val.lnum == lnum')
             if !empty(list)
@@ -230,6 +300,26 @@ function! s:MarkId(item) "{{{3
         " TLogVAR item
         return item[0].idx
     endif
+endf
+
+
+function! s:RelSign(item) "{{{3
+    return 'QFS_'. a:item.text
+endf
+
+
+function! s:GetRelList() "{{{3
+	let lnum = line('.')
+	let col = col('.')
+	let bn = bufnr('%')
+    let top = line('w0') - lnum
+    let bot = line('w$') - lnum
+    if g:quickfixsigns_class_rel.max >= 0
+        let top = max([top, -g:quickfixsigns_class_rel.max])
+        let bot = min([bot, g:quickfixsigns_class_rel.max])
+    endif
+    call s:GenRel(max([abs(top), abs(bot)]))
+    return map(range(top, bot), '{"bufnr": bn, "lnum": lnum + v:val, "col": col, "text": "REL_". abs(v:val)}')
 endf
 
 
@@ -332,36 +422,13 @@ function! s:PlaceSign(sign, list, ...) "{{{3
 endf
 
 
-" Enable (state=1) or disable (state=0) the display of marks.
-function! QuickfixsignsMarks(state) "{{{3
-    " TLogVAR a:state
-    call filter(g:quickfixsigns_lists, 'get(v:val, "type", "") != "marks"')
-    if a:state
-        call add(g:quickfixsigns_lists, g:quickfixsigns_marks_def)
-    else
-        call QuickfixsignsClear(g:quickfixsigns_marks_def.sign)
-    endif
-endf
-
-
-if !empty(g:quickfixsigns_marks)
-    call QuickfixsignsMarks(1)
-    
-    for s:i in g:quickfixsigns_marks
-        if index(s:signs, 'QFS_Mark_'. s:i) == -1
-            exec 'sign define QFS_Mark_'. s:i .' text='. s:i .' texthl=Identifier'
-        endif
-    endfor
-    unlet s:i
-endif
-
 unlet s:signs s:signss
 
 
 augroup QuickFixSigns
     autocmd!
     let s:ev_set = []
-    for s:def in g:quickfixsigns_lists
+    for s:def in values(s:quickfixsigns_lists)
         for s:ev in get(s:def, 'event', ['BufEnter'])
             if index(s:ev_set, s:ev) == -1
                 exec 'autocmd '. s:ev .' * call QuickfixsignsSet("'. s:ev .'")'
@@ -370,7 +437,7 @@ augroup QuickFixSigns
         endfor
     endfor
     unlet s:ev_set s:ev s:def
-    autocmd BufRead,BufNewFile * exec 'sign place '. (s:base - 1) .' name=QFS_DUMMY line=1 buffer='. bufnr('%')
+    " autocmd BufRead,BufNewFile * exec 'sign place '. (s:base - 1) .' name=QFS_DUMMY line=1 buffer='. bufnr('%')
 augroup END
 
 
@@ -411,4 +478,8 @@ Incompatible changes:
 - b:noquickfixsigns: If true, disable quickfixsigns for the current 
 buffer (patch by Sergey Khorev; must be set before entering a buffer)
 - b:quickfixsigns_ignore_marks: A list of ignored marks (per buffer)
+
+0.8
+- Support for relative line numbers
+- QuickfixsignsSet command
 

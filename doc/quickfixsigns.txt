@@ -32,26 +32,42 @@ please make sure, you have the current version of vimball
 ========================================================================
 Contents~
 
-        g:quickfixsigns_lists ....... |g:quickfixsigns_lists|
-        g:quickfixsigns_marks ....... |g:quickfixsigns_marks|
-        g:quickfixsigns_marks_def ... |g:quickfixsigns_marks_def|
-        g:quickfixsigns_balloon ..... |g:quickfixsigns_balloon|
-        g:quickfixsigns_max ......... |g:quickfixsigns_max|
-        QuickfixsignsSet ............ |QuickfixsignsSet()|
-        QuickfixsignsBalloon ........ |QuickfixsignsBalloon()|
-        QuickfixsignsClear .......... |QuickfixsignsClear()|
-        QuickfixsignsMarks .......... |QuickfixsignsMarks()|
+        :QuickfixsignsSet .............. |:QuickfixsignsSet|
+        g:quickfixsigns_classes ........ |g:quickfixsigns_classes|
+        g:quickfixsigns_marks .......... |g:quickfixsigns_marks|
+        g:quickfixsigns_events1 ........ |g:quickfixsigns_events1|
+        g:quickfixsigns_class_marks .... |g:quickfixsigns_class_marks|
+        g:quickfixsigns_class_rel ...... |g:quickfixsigns_class_rel|
+        g:quickfixsigns_class_qfl ...... |g:quickfixsigns_class_qfl|
+        g:quickfixsigns_class_loc ...... |g:quickfixsigns_class_loc|
+        g:quickfixsigns_class_cursor ... |g:quickfixsigns_class_cursor|
+        g:quickfixsigns_balloon ........ |g:quickfixsigns_balloon|
+        g:quickfixsigns_max ............ |g:quickfixsigns_max|
+        QuickfixsignsSelect ............ |QuickfixsignsSelect()|
+        QuickfixsignsSet ............... |QuickfixsignsSet()|
+        QuickfixsignsBalloon ........... |QuickfixsignsBalloon()|
+        QuickfixsignsClear ............. |QuickfixsignsClear()|
 
 
 ========================================================================
 plugin/quickfixsigns.vim~
 
-                                                    *g:quickfixsigns_lists*
-g:quickfixsigns_lists          (default: [...])
-    A list of list definitions whose items should be marked with signs.
-    By default, the following lists are included: |quickfix|, 
-    |location-list|, marks |'a|-zA-Z (see also 
-    |g:quickfixsigns_marks|).
+                                                    *:QuickfixsignsSet*
+:QuickfixsignsSet
+    Reset the signs in the current buffer.
+
+                                                    *g:quickfixsigns_classes*
+g:quickfixsigns_classes        (default: ['cursor', 'qfl', 'loc', 'marks'])
+    A list of sign classes that should be displayed.
+    Can be one of:
+    
+      rel    ... relative line numbers
+      cursor ... current line
+      qfl    ... |quickfix| list
+      loc    ... |location| list
+      marks  ... marks |'a|-zA-Z (see also " |g:quickfixsigns_marks|)
+    
+    The sign classes are defined in g:quickfixsigns_class_{NAME}.
     
     A list definition is a |Dictionary| with the following fields:
     
@@ -69,10 +85,29 @@ g:quickfixsigns_marks          (default: split('abcdefghijklmnopqrstuvwxyzABCDEF
     A list of marks that should be displayed as signs. If empty, 
     disable the display of marks.
 
-                                                    *g:quickfixsigns_marks_def*
-g:quickfixsigns_marks_def      (default: {...})
-    The definition of the |g:quickfixsigns_lists| item for marks. Must 
-    have a field "type" with value "marks".
+                                                    *g:quickfixsigns_events1*
+g:quickfixsigns_events1        (default: ['BufEnter', 'CursorHold', 'CursorHoldI', 'InsertLeave', 'InsertEnter', 'InsertChange'])
+    List of events for signs that should be frequently updated.
+
+                                                    *g:quickfixsigns_class_marks*
+g:quickfixsigns_class_marks    (default: {...})
+    The definition of signs for marks.
+
+                                                    *g:quickfixsigns_class_rel*
+g:quickfixsigns_class_rel      (default: {'sign': '*s:RelSign', 'get': 's:GetRelList()', 'event': g:quickfixsigns_events1, 'max': 5})
+    Signs for number of lines relative to the current line.
+
+                                                    *g:quickfixsigns_class_qfl*
+g:quickfixsigns_class_qfl      (default: {'sign': 'QFS_QFL', 'get': 'getqflist()', 'event': ['BufEnter']})
+    Signs for |quickfix| lists.
+
+                                                    *g:quickfixsigns_class_loc*
+g:quickfixsigns_class_loc      (default: {'sign': 'QFS_LOC', 'get': 'getloclist(winnr())', 'event': ['BufEnter']})
+    Signs for |location| lists.
+
+                                                    *g:quickfixsigns_class_cursor*
+g:quickfixsigns_class_cursor   (default: {'sign': 'QFS_CURSOR', 'get': 's:GetCursor()', 'event': g:quickfixsigns_events1})
+    Sign for the current cursor position
 
                                                     *g:quickfixsigns_balloon*
 g:quickfixsigns_balloon        (default: 1)
@@ -83,6 +118,9 @@ g:quickfixsigns_balloon        (default: 1)
                                                     *g:quickfixsigns_max*
 g:quickfixsigns_max            (default: 100)
     Don't display signs if the list is longer than n items.
+
+                                                    *QuickfixsignsSelect()*
+QuickfixsignsSelect(list)
 
                                                     *QuickfixsignsSet()*
 QuickfixsignsSet(event)
@@ -97,10 +135,6 @@ QuickfixsignsBalloon()
                                                     *QuickfixsignsClear()*
 QuickfixsignsClear(sign)
     Clear all signs with name SIGN.
-
-                                                    *QuickfixsignsMarks()*
-QuickfixsignsMarks(state)
-    Enable (state=1) or disable (state=0) the display of marks.
 
 
 
