@@ -113,6 +113,7 @@ Contents~
         rcom#Quit ............... |rcom#Quit()|
         rcom#Complete ........... |rcom#Complete()|
         rcom#Keyword ............ |rcom#Keyword()|
+        rcom#Info ............... |rcom#Info()|
         rcom#GetSelection ....... |rcom#GetSelection()|
         rcom#Operator ........... |rcom#Operator()|
         rcom#LogBuffer .......... |rcom#LogBuffer()|
@@ -207,6 +208,10 @@ rcom#Complete(findstart, base)
 
                                                     *rcom#Keyword()*
 rcom#Keyword(...)
+    Display help on the word under the cursor.
+
+                                                    *rcom#Info()*
+rcom#Info(...)
     Display help on the word under the cursor.
 
                                                     *rcom#GetSelection()*
