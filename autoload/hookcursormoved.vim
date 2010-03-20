@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-10-04.
-" @Last Change: 2010-01-03.
-" @Revision:    0.3.230
+" @Last Change: 2010-03-20.
+" @Revision:    0.3.245
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
@@ -172,18 +172,16 @@ endf
 
 function! hookcursormoved#Test_syntaxleave_oneline(mode) "{{{3
     if exists('b:hookcursormoved_oldpos')
+        let rv = b:hookcursormoved_currpos[1] != b:hookcursormoved_oldpos[1]
         let syntax = s:SynId(a:mode, b:hookcursormoved_oldpos)
-        " TLogVAR syntax
-        if exists('b:hookcursormoved_syntax') && !empty(syntax)
-            " TLogVAR b:hookcursormoved_syntax, syntax
-            let rv = b:hookcursormoved_currpos[1] != b:hookcursormoved_oldpos[1]
-            " TLogVAR rv, b:hookcursormoved_currpos[1], b:hookcursormoved_oldpos[1]
-            if !rv && b:hookcursormoved_syntax != syntax
-                let rv = index(b:hookcursormoved_syntaxleave, syntax) != -1
+        if !rv && exists('b:hookcursormoved_syntax')
+            " TLogVAR syntax
+            if !empty(syntax) && (!exists('b:hookcursormoved_syntaxleave') || index(b:hookcursormoved_syntaxleave, syntax) != -1)
+                " TLogVAR b:hookcursormoved_syntax, syntax
+                let rv = b:hookcursormoved_syntax != syntax
+                " TLogVAR rv, b:hookcursormoved_currpos[1], b:hookcursormoved_oldpos[1]
             endif
             " TLogVAR rv
-        else
-            let rv = 1
         endif
         let b:hookcursormoved_syntax = syntax
         " TLogVAR rv
