@@ -1,2 +1,3 @@
 doc/quickfixsigns.txt
 plugin/quickfixsigns.vim
+autoload/quickfixsigns.vim
