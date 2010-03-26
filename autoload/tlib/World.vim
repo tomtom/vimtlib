@@ -3,8 +3,8 @@
 " @Website:     http://members.a1.net/t.link/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-05-01.
-" @Last Change: 2010-03-15.
-" @Revision:    0.1.825
+" @Last Change: 2010-03-25.
+" @Revision:    0.1.826
 
 " :filedoc:
 " A prototype used by |tlib#input#List|.
@@ -589,6 +589,7 @@ function! s:prototype.UseInputListScratch() dict "{{{3
     " hi def link InputlListIndex Special
     " let b:tlibDisplayListMarks = {}
     let b:tlibDisplayListMarks = []
+    let b:tlibDisplayListWorld = self
     call tlib#hook#Run('tlib_UseInputListScratch', self)
     return scratch
 endf
