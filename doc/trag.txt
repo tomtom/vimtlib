@@ -193,6 +193,7 @@ Contents~
         g:trag_project_ruby ...... |g:trag_project_ruby|
         g:trag_project ........... |g:trag_project|
         g:trag_git ............... |g:trag_git|
+        trag#SetSyntax ........... |trag#SetSyntax()|
         trag#ClearFiles .......... |trag#ClearFiles()|
         trag#AddFiles ............ |trag#AddFiles()|
         trag#GetProjectFiles ..... |trag#GetProjectFiles()|
@@ -409,6 +410,9 @@ g:trag_git                     (default: '')
     If the value is "finddir", use |finddir()| to find a .git directory.
     Can be buffer local.
 
+                                                    *trag#SetSyntax()*
+trag#SetSyntax()
+
                                                     *trag#ClearFiles()*
 trag#ClearFiles()
 
@@ -462,7 +466,7 @@ trag#Grep(args, ?replace=1, ?files=[])
 trag#ClearCachedRx()
 
                                                     *trag#QuickList()*
-trag#QuickList(?world={})
+trag#QuickList(?world={}, ?suspended=0)
     Display the |quickfix| list with |tlib#input#ListW()|.
 
                                                     *trag#QuickListMaybe()*

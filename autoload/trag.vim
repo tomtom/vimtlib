@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-29.
-" @Last Change: 2010-02-06.
-" @Revision:    0.0.780
+" @Last Change: 2010-03-25.
+" @Revision:    0.0.814
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
@@ -508,6 +508,7 @@ function! trag#Grep(args, ...) "{{{3
         let fidx  = 0
         let strip = 0
         " TLogVAR files
+        let qfl_top = len(getqflist())
         for f in files
             " TLogVAR f
             call tlib#progressbar#Display(fidx, ' '. pathshorten(f))
@@ -582,10 +583,31 @@ function! trag#Grep(args, ...) "{{{3
                 call setqflist(qfl, 'a')
             endif
         endfor
-        if strip
-            call setqflist(map(getqflist(), 's:StripText(v:val)'), 'r')
+
+        let qfl = getqflist()
+        let qfl_set = 0
+        let qfl_top1 = len(getqflist())
+        if qfl_top1 > qfl_top
+            let qfl_set = 1
+            for i in range(qfl_top, qfl_top1 - 1)
+                let item = qfl[i]
+                if !has_key(item, 'filename') && has_key(item, 'bufnr') && bufexists(item.bufnr)
+                    let qfl[i].filename = fnamemodify(bufname(item.bufnr), ':p')
+                endif
+            endfor
+            call setqflist(qfl)
         endif
+        if strip
+            let qfl_set = 1
+            call map(qfl, 's:StripText(v:val)')
+        endif
+        if qfl_set
+            " TLogVAR qfl
+            call setqflist(qfl, 'r')
+        endif
+
         " TLogDBG 'qfl:'. string(getqflist())
+        return qfl
     finally
         " if search_mode == 2
         "     let &ei = ei
@@ -730,17 +752,20 @@ endf
 
 function! s:FormatQFLE(qfe) "{{{3
     let filename = s:GetFilename(a:qfe)
+    if get(s:world, 'trag_short_filename', '')
+        let filename = pathshorten(filename)
+    endif
     " let err = get(v:val, "type") . get(v:val, "nr")
     " return printf("%20s|%d|%s: %s", filename, v:val.lnum, err, get(v:val, "text"))
     return printf("%s|%d| %s", filename, a:qfe.lnum, get(a:qfe, "text"))
 endf
 
 
-" :display: trag#QuickList(?world={})
+" :display: trag#QuickList(?world={}, ?suspended=0)
 " Display the |quickfix| list with |tlib#input#ListW()|.
 function! trag#QuickList(...) "{{{3
-    TVarArg ['world', {}]
-    call trag#BrowseList(world, getqflist())
+    TVarArg ['world', {}], ['suspended', 0]
+    call trag#BrowseList(world, getqflist(), 0, suspended)
 endf
 
 
@@ -750,7 +775,7 @@ endf
 
 
 function! trag#BrowseList(world_dict, list, ...) "{{{3
-    TVarArg ['anyway', 0]
+    TVarArg ['anyway', 0], ['suspended', 0]
     " TVarArg ['sign', 'TRag']
     " if !empty(sign) && !empty(g:trag_sign)
     "     " call tlib#signs#ClearAll(sign)
@@ -759,16 +784,16 @@ function! trag#BrowseList(world_dict, list, ...) "{{{3
     if !anyway && empty(filter(copy(a:list), 'v:val.nr != -1'))
         return
     endif
-    let w = copy(g:trag_qfl_world)
+    let s:world = copy(g:trag_qfl_world)
     if !empty(a:world_dict)
-        call extend(w, a:world_dict)
+        call extend(s:world, a:world_dict)
     endif
-    let w = tlib#World#New(w)
-    let w.qfl  = copy(a:list)
-    " TLogVAR w.qfl
-    call s:FormatBase(w)
-    " TLogVAR w.base
-    call tlib#input#ListW(w)
+    let s:world = tlib#World#New(s:world)
+    let s:world.qfl  = copy(a:list)
+    " TLogVAR s:world.qfl
+    call s:FormatBase(s:world)
+    " TLogVAR s:world.base
+    call tlib#input#ListW(s:world, suspended ? 'hibernate' : '')
 endf
 
 
@@ -785,6 +810,7 @@ endf
 
 function! s:FormatBase(world) "{{{3
     let a:world.base = map(copy(a:world.qfl), 's:FormatQFLE(v:val)')
+    unlet! g:trag_short_filename
 endf
 
 function! trag#AgentEditQFE(world, selected, ...) "{{{3
