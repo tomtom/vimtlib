@@ -4,8 +4,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-06-30.
-" @Last Change: 2010-03-14.
-" @Revision:    0.0.690
+" @Last Change: 2010-03-26.
+" @Revision:    0.0.701
 
 
 " :filedoc:
@@ -293,7 +293,11 @@ function! tlib#input#ListW(world, ...) "{{{3
                         let world.initial_display = 0
                         " TLogDBG 9
                     endif
-                    let world.state = ''
+                    if world.state =~ '\<hibernate\>'
+                        let world.state = 'suspend'
+                    else
+                        let world.state = ''
+                    endif
                 else
                     " if world.state == 'scroll'
                     "     let world.prefidx = world.offset
@@ -491,6 +495,7 @@ function! tlib#input#ListW(world, ...) "{{{3
         " TLogVAR world.state
         " TLogDBG string(tlib#win#List())
         if world.state !~ '\<suspend\>'
+            " redraw
             " TLogVAR world.sticky
             if world.sticky
                 " TLogDBG "sticky"
@@ -538,6 +543,9 @@ function! s:Init(world, cmd) "{{{3
         let a:world.initialized = 1
         call a:world.SetOrigin(1)
         call a:world.Reset(1)
+        if !empty(a:cmd)
+            let a:world.state .= ' '. a:cmd
+        endif
     endif
     " TLogVAR a:world.state, a:world.sticky
 endf
