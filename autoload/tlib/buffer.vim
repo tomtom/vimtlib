@@ -135,11 +135,11 @@ function! tlib#buffer#GetList(...)
         endif
     endif
     let buffer_nr = map(copy(buffer_list), 'matchstr(v:val, ''\s*\zs\d\+\ze'')')
-    " TLogVAR buffer_list
+    " TLogVAR buffer_list, buffer_nr
     if show_number
-        call map(buffer_list, 'matchstr(v:val, ''\s*\d\+.\{-}\ze\s\+line \d\+\s*$'')')
+        call map(buffer_list, 'matchstr(v:val, ''^\s*\d\+.\{-}\ze\s\+\w\+ \d\+\s*$'')')
     else
-        call map(buffer_list, 'matchstr(v:val, ''\s*\d\+\zs.\{-}\ze\s\+line \d\+\s*$'')')
+        call map(buffer_list, 'matchstr(v:val, ''^\s*\d\+\zs.\{-}\ze\s\+\w\+ \d\+\s*$'')')
     endif
     " TLogVAR buffer_list
     " call map(buffer_list, 'matchstr(v:val, ''^.\{-}\ze\s\+line \d\+\s*$'')')
