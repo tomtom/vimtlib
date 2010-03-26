@@ -209,7 +209,7 @@ TLet g:trag_qfl_world = {
             \ 'resize_vertical': 0,
             \ 'resize': 20,
             \ 'scratch': '__TRagQFL__',
-            \ 'tlib_UseInputListScratch': 'syn match TTagedFilesFilename / \zs.\{-}\ze|\d\+| / | syn match TTagedFilesLNum /|\d\+|/ | hi def link TTagedFilesFilename Directory | hi def link TTagedFilesLNum LineNr',
+            \ 'tlib_UseInputListScratch': 'call trag#SetSyntax()',
             \ 'key_handlers': [
                 \ {'key':  5, 'agent': 'trag#AgentWithSelected', 'key_name': '<c-e>', 'help': 'Run a command on selected lines'},
                 \ {'key':  6, 'agent': 'trag#AgentRefactor',     'key_name': '<c-f>', 'help': 'Run a refactor command'},
@@ -231,6 +231,23 @@ TLet g:trag_qfl_world = {
 """ Functions {{{1
     
 let s:grep_rx = ''
+
+
+function! trag#SetSyntax() "{{{3
+    let syntax = get(s:world, 'trag_list_syntax', '')
+    let nextgroup = get(s:world, 'trag_list_syntax_nextgroup', '')
+    if !empty(syntax)
+        exec printf('runtime syntax/%s.vim', syntax)
+    endif
+    syn match TTagedFilesFilename / \zs.\{-}\ze|\d\+| / nextgroup=TTagedFilesLNum
+    if !empty(nextgroup)
+        exec 'syn match TTagedFilesLNum /|\d\+|\s\+/ nextgroup='. nextgroup
+    else
+        syn match TTagedFilesLNum /|\d\+|/
+    endif
+    hi def link TTagedFilesFilename Directory
+    hi def link TTagedFilesLNum LineNr
+endf
 
 
 function! s:GetFiles() "{{{3
