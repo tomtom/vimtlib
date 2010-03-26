@@ -4,8 +4,8 @@
 " @GIT:         http://github.com/tomtom/vimtlib/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-03-14.
-" @Last Change: 2010-03-21.
-" @Revision:    436
+" @Last Change: 2010-03-24.
+" @Revision:    440
 " GetLatestVimScripts: 2584 1 :AutoInstall: quickfixsigns.vim
 
 if &cp || exists("loaded_quickfixsigns") || !has('signs')
@@ -137,8 +137,6 @@ if !exists('g:quickfixsigns_blacklist_buffer')
     let g:quickfixsigns_blacklist_buffer = '^__.*__$'   "{{{2
 endif
 
-
-let g:wokmarks_toggle_hook = 'call QuickfixsignsUpdate("marks")'
 
 
 " ----------------------------------------------------------------------
@@ -468,6 +466,7 @@ augroup QuickFixSigns
     endfor
     unlet s:ev_set s:ev s:key s:def
     " autocmd BufRead,BufNewFile * exec 'sign place '. (s:base - 1) .' name=QFS_DUMMY line=1 buffer='. bufnr('%')
+    autocmd User WokmarksChange call QuickfixsignsUpdate("marks")
 augroup END
 
 
