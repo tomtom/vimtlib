@@ -3,8 +3,8 @@
 " @GIT:         http://github.com/tomtom/vimtlib/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
-" @Last Change: 2010-01-05.
-" @Revision:    124
+" @Last Change: 2010-03-26.
+" @Revision:    140
 " GetLatestVimScripts: 0 0 :AutoInstall: vikitasks.vim
 " Search for task lists and display them in a list
 
@@ -19,7 +19,7 @@ endif
 if !exists('g:loaded_trag') || g:loaded_trag < 7
     runtime plugin/trag.vim
     if !exists('g:loaded_trag') || g:loaded_trag < 7
-        echoerr 'trag >= 0.7 is required'
+        echoerr 'trag >= 0.8 is required'
         finish
     endif
 endif
@@ -30,6 +30,13 @@ let loaded_vikitasks = 2
 
 let s:save_cpo = &cpo
 set cpo&vim
+
+
+" Show alarms on pending tasks.
+" If 0, don't display alarms for pending tasks.
+" If n > 0, display alarms for pending tasks or tasks with a deadline in n 
+" days.
+TLet g:vikitasks_alarms = !has('clientserver') || len(split(serverlist(), '\n')) == 1
 
 
 " :display: VikiTasks[!] [SELECT] [PATTERN] [FILE_PATTERNS]
@@ -72,14 +79,24 @@ cabbr vikitasks VikiTasks
 
 
 " :display: :VikiTasksAdd
-" Add the current buffer to |g:vikitasks_files|.
+" Add the current buffer to |g:vikitasks#files|.
 command! VikiTasksAdd call vikitasks#AddBuffer(expand('%:p'))
 
 
 " :display: :VikiTasksFiles
-" Edit |g:vikitasks_files|. This allows you to remove buffers from the 
+" Edit |g:vikitasks#files|. This allows you to remove buffers from the 
 " list.
 command! VikiTasksFiles call vikitasks#EditFiles()
+
+
+command! -count VikiTasksAlarms call vikitasks#Alarm(<count>)
+
+
+augroup VikiTasks
+    autocmd!
+    autocmd VimEnter * if g:vikitasks_alarms | call vikitasks#Alarm() | endif
+    autocmd BufWrite * if exists('b:vikiEnabled') && b:vikiEnabled | call vikitasks#ScanCurrentBuffer() | endif
+augroup END
 
 
 let &cpo = s:save_cpo

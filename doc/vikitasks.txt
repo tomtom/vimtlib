@@ -84,24 +84,35 @@ Also available via git: http://github.com/tomtom/vimtlib/
 ========================================================================
 Contents~
 
+        g:vikitasks_alarms ............... |g:vikitasks_alarms|
         :VikiTasks ....................... |:VikiTasks|
         :VikiTasksAdd .................... |:VikiTasksAdd|
         :VikiTasksFiles .................. |:VikiTasksFiles|
-        g:vikitasks_files ................ |g:vikitasks_files|
-        g:vikitasks_intervikis ........... |g:vikitasks_intervikis|
-        g:vikitasks_intervikis_ignored ... |g:vikitasks_intervikis_ignored|
-        g:vikitasks_qfl_viewer ........... |g:vikitasks_qfl_viewer|
-        g:vikitasks_rx_letters ........... |g:vikitasks_rx_letters|
-        g:vikitasks_rx_levels ............ |g:vikitasks_rx_levels|
-        g:vikitasks_cache ................ |g:vikitasks_cache|
+        :VikiTasksAlarms ................. |:VikiTasksAlarms|
+        g:vikitasks#files ................ |g:vikitasks#files|
+        g:vikitasks#intervikis ........... |g:vikitasks#intervikis|
+        g:vikitasks#intervikis_ignored ... |g:vikitasks#intervikis_ignored|
+        g:vikitasks#qfl_viewer ........... |g:vikitasks#qfl_viewer|
+        g:vikitasks#rx_letters ........... |g:vikitasks#rx_letters|
+        g:vikitasks#rx_levels ............ |g:vikitasks#rx_levels|
+        g:vikitasks#cache ................ |g:vikitasks#cache|
         vikitasks#Tasks .................. |vikitasks#Tasks()|
         vikitasks#MakePattern ............ |vikitasks#MakePattern()|
         vikitasks#AddBuffer .............. |vikitasks#AddBuffer()|
         vikitasks#EditFiles .............. |vikitasks#EditFiles()|
+        vikitasks#Alarm .................. |vikitasks#Alarm()|
+        vikitasks#ScanCurrentBuffer ...... |vikitasks#ScanCurrentBuffer()|
 
 
 ========================================================================
 plugin/vikitasks.vim~
+
+                                                    *g:vikitasks_alarms*
+g:vikitasks_alarms             (default: !has('clientserver') || len(split(serverlist(), '\n')) == 1)
+    Show alarms on pending tasks.
+    If 0, don't display alarms for pending tasks.
+    If n > 0, display alarms for pending tasks or tasks with a deadline in n 
+    days.
 
                                                     *:VikiTasks*
 VikiTasks[!] [SELECT] [PATTERN] [FILE_PATTERNS]
@@ -130,19 +141,22 @@ VikiTasks[!] [SELECT] [PATTERN] [FILE_PATTERNS]
 
                                                     *:VikiTasksAdd*
 :VikiTasksAdd
-    Add the current buffer to |g:vikitasks_files|.
+    Add the current buffer to |g:vikitasks#files|.
 
                                                     *:VikiTasksFiles*
 :VikiTasksFiles
-    Edit |g:vikitasks_files|. This allows you to remove buffers from the 
+    Edit |g:vikitasks#files|. This allows you to remove buffers from the 
     list.
+
+                                                    *:VikiTasksAlarms*
+:VikiTasksAlarms
 
 
 ========================================================================
 autoload/vikitasks.vim~
 
-                                                    *g:vikitasks_files*
-g:vikitasks_files              (default: [])
+                                                    *g:vikitasks#files*
+g:vikitasks#files              (default: [])
     A list of glob patterns (or files) that will be searched for task 
     lists.
     Can be buffer-local.
@@ -150,44 +164,44 @@ g:vikitasks_files              (default: [])
     between editing sessions.
     Alternatively, add new items in ~/vimfiles/after/plugin/vikitasks.vim
 
-                                                    *g:vikitasks_intervikis*
-g:vikitasks_intervikis         (default: 0)
+                                                    *g:vikitasks#intervikis*
+g:vikitasks#intervikis         (default: 0)
     If non-null, automatically add the homepages of your intervikis to 
-    |g:vikitasks_files|.
+    |g:vikitasks#files|.
     Can be buffer-local.
 
-                                                    *g:vikitasks_intervikis_ignored*
-g:vikitasks_intervikis_ignored (default: [])
+                                                    *g:vikitasks#intervikis_ignored*
+g:vikitasks#intervikis_ignored (default: [])
     A list of ignored intervikis.
     Can be buffer-local.
 
-                                                    *g:vikitasks_qfl_viewer*
-g:vikitasks_qfl_viewer         (default: '')
+                                                    *g:vikitasks#qfl_viewer*
+g:vikitasks#qfl_viewer         (default: '')
     The viewer for the quickfix list. If empty, use |:TRagcw|.
 
-                                                    *g:vikitasks_rx_letters*
-g:vikitasks_rx_letters         (default: 'A-T')
+                                                    *g:vikitasks#rx_letters*
+g:vikitasks#rx_letters         (default: 'A-T')
     Item classes that should be included in the list when calling 
     |:VikiTasks|.
     A user-defined value must be set in |vimrc| before the plugin is 
     loaded.
 
-                                                    *g:vikitasks_rx_levels*
-g:vikitasks_rx_levels          (default: '1-5')
+                                                    *g:vikitasks#rx_levels*
+g:vikitasks#rx_levels          (default: '1-5')
     Item levels that should be included in the list when calling 
     |:VikiTasks|.
     A user-defined value must be set in |vimrc| before the plugin is 
     loaded.
 
-                                                    *g:vikitasks_cache*
-g:vikitasks_cache              (default: tlib#cache#Filename('vikitasks', 'files', 1))
+                                                    *g:vikitasks#cache*
+g:vikitasks#cache              (default: tlib#cache#Filename('vikitasks', 'files', 1))
     Cache file name.
     By default, use |tlib#cache#Filename()| to determine the file name.
 
                                                     *vikitasks#Tasks()*
 vikitasks#Tasks(?all=0, ?{'files': [], 'select': '', 'rx': ''})
     If files is non-empty, use these files (glob patterns actually) 
-    instead of those defined in |g:vikitasks_files|.
+    instead of those defined in |g:vikitasks#files|.
 
                                                     *vikitasks#MakePattern()*
 vikitasks#MakePattern(pattern)
@@ -196,10 +210,16 @@ vikitasks#MakePattern(pattern)
     and if 'smartcase' is true.
 
                                                     *vikitasks#AddBuffer()*
-vikitasks#AddBuffer(buffer)
+vikitasks#AddBuffer(buffer, ...)
 
                                                     *vikitasks#EditFiles()*
 vikitasks#EditFiles()
+
+                                                    *vikitasks#Alarm()*
+vikitasks#Alarm(...)
+
+                                                    *vikitasks#ScanCurrentBuffer()*
+vikitasks#ScanCurrentBuffer()
 
 
 
