@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-06-30.
-" @Last Change: 2010-01-05.
-" @Revision:    0.0.288
+" @Last Change: 2010-03-25.
+" @Revision:    0.0.298
 
 
 let s:bmru = []
@@ -174,11 +174,12 @@ function! tlib#buffer#ViewLine(line, ...) "{{{3
 endf
 
 
-function! tlib#buffer#HighlightLine(line) "{{{3
+function! tlib#buffer#HighlightLine(...) "{{{3
+    TVarArg ['line', line('.')]
     " exec '3match MatchParen /^\%'. a:line .'l.*/'
-    exec '3match Search /^\%'. a:line .'l.*/'
+    exec '3match Search /^\%'. line .'l.*/'
     call tlib#autocmdgroup#Init()
-    autocmd TLib CursorHold,CursorHoldI,CursorMoved,CursorMovedI * 3match none
+    exec 'autocmd TLib CursorHold,CursorHoldI,CursorMoved,CursorMovedI <buffer> if line(".") != '. line .' | 3match none | exec "autocmd! TLib CursorHold,CursorHoldI,CursorMoved,CursorMovedI <buffer>" | endif'
 endf
 
 
