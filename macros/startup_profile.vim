@@ -3,12 +3,17 @@
 " @GIT:         http://github.com/tomtom/vimtlib/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-04.
-" @Last Change: 2010-01-12.
-" @Revision:    22
+" @Last Change: 2010-03-24.
+" @Revision:    24
 " GetLatestVimScripts: 0 0 startup_profile.vim
 
 let s:save_cpo = &cpo
 set cpo&vim
+
+if !has('float')
+    echom 'startup_profile required +float support'
+    finish
+endif
 
 
 if !exists('g:startup_profile_csv')
