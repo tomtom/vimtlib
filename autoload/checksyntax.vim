@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-03.
-" @Last Change: 2010-01-03.
-" @Revision:    0.0.6
+" @Last Change: 2010-02-24.
+" @Revision:    0.0.9
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -175,7 +175,7 @@ if !exists('*CheckSyntaxSucceed')
 endif
 
 if !exists('*CheckSyntaxFail')
-    fun! CheckSyntaxFail(manually)
+    function! CheckSyntaxFail(manually)
         copen
     endf
 endif
@@ -190,7 +190,7 @@ endif
 "     let s:checksyntax_signs = 0
 " endif
 
-fun! s:Make()
+function! s:Make()
     try
         " TLogVAR &makeprg
         if &makeprg[0:0] == '*'
@@ -228,7 +228,7 @@ function! s:GetVar(var, ft, manually) "{{{3
 endf
 
 
-" CheckSyntax(manually, ?bang='', ?type=&ft)
+" :def: function! checksyntax#Check(manually, ?bang='', ?type=&ft)
 function! checksyntax#Check(manually, ...)
     let bang = a:0 >= 1 && a:1 != '' ? 1 : 0
     let ft   = a:0 >= 2 && a:2 != '' ? a:2 : &filetype

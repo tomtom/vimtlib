@@ -180,6 +180,7 @@ Contents~
         g:tplugin_helptags ........... |g:tplugin_helptags|
         g:tplugin_menu_prefix ........ |g:tplugin_menu_prefix|
         g:tplugin_scan ............... |g:tplugin_scan|
+        :PimMonth .................... |:PimMonth|
         TPluginMap ................... |TPluginMap()|
         :TPlugin ..................... |:TPlugin|
         :TPluginRoot ................. |:TPluginRoot|
@@ -236,6 +237,13 @@ g:tplugin_scan                 (default: 'cfpt')
        h ... helptags (always regenerate helptags, see also |g:tplugin_helptags|)
        a ... autoload
        all ... all of the above
+
+                                                    *:PimMonth*
+:PimMonth
+    TLogVAR a:type, a:def, a:bang, a:range, a:args
+    TLogVAR root, cmd0, cmd, file
+    TLogDBG exists(':'. cmd)
+    TLogDBG exists(':'. cmd)
 
                                                     *TPluginMap()*
 TPluginMap(map, repo, plugin, ?remap="")

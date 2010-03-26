@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2006-12-31.
-" @Last Change: 2009-08-04.
-" @Revision:    0.5.937
+" @Last Change: 2010-03-06.
+" @Revision:    0.5.938
 " GetLatestVimScripts: 1751 1 tGpg.vim
 "
 " TODO: Remove gpg messages from the top of the file & display them with 
@@ -563,7 +563,7 @@ function! s:TGpgUserInput_RECIPIENTS(parms) "{{{3
 endf
 
 
-function! s:TGpgRead(parms, range) "{{{3
+function! s:TGpgRead(parms, range) abort "{{{3
     " TLogVAR a:params, a:range
     if !filereadable(a:parms['tfile'])
         return
@@ -601,7 +601,7 @@ function! s:TGpgRead(parms, range) "{{{3
 endf
 
 
-function! s:TGpgWrite(parms) "{{{3
+function! s:TGpgWrite(parms) abort "{{{3
     if exists('s:tgpgWrite_'. a:parms['mode'])
         call s:StandardOptions()
         try
@@ -654,7 +654,7 @@ function! s:TGpgWrite(parms) "{{{3
 endf
 
 
-function! s:TGpgWrite_clearsign(parms) "{{{3
+function! s:TGpgWrite_clearsign(parms) abort "{{{3
     let iomode = empty(a:parms['autocommand']) ? 'W' : 'w'
     if exists('s:tgpgWrite_'. a:parms['mode'])
         call s:StandardOptions()

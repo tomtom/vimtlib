@@ -630,7 +630,7 @@ tlib#buffer#ViewLine(line, ?position='z')
     See also |g:tlib_viewline_position|.
 
                                                     *tlib#buffer#HighlightLine()*
-tlib#buffer#HighlightLine(line)
+tlib#buffer#HighlightLine(...)
 
                                                     *tlib#buffer#DeleteRange()*
 tlib#buffer#DeleteRange(line1, line2)
