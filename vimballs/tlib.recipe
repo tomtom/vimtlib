@@ -18,6 +18,7 @@ autoload/tlib/cache.vim
 autoload/tlib/char.vim
 autoload/tlib/cmd.vim
 autoload/tlib/comments.vim
+autoload/tlib/date.vim
 autoload/tlib/dir.vim
 autoload/tlib/eval.vim
 autoload/tlib/hook.vim
