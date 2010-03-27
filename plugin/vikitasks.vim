@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
 " @Last Change: 2010-03-27.
-" @Revision:    170
+" @Revision:    173
 " GetLatestVimScripts: 0 0 :AutoInstall: vikitasks.vim
 " Search for task lists and display them in a list
 
@@ -78,7 +78,7 @@ TLet g:vikitasks_alarms = !has('clientserver') || len(split(serverlist(), '\n'))
 command! -bang -nargs=* VikiTasks
             \ call vikitasks#Tasks({
             \   'cached': empty("<bang>"),
-            \   'all_tasks': get([<f-args>], 0, '.') == '.',
+            \   'all_tasks': get([<f-args>], 0, '.') =~ '^[.*]$',
             \   'tasks': get([<f-args>], 0, '.') == '*' ? 'tasks' : 'sometasks',
             \   'select': get([<f-args>], 0, '.'),
             \   'rx': vikitasks#MakePattern(get([<f-args>], 1, '')),
