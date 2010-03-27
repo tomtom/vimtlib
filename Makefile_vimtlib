@@ -23,7 +23,6 @@ vimtips:
 		ruby/vimtips2help.rb --xml tmp/pages_current.xml --out doc/vimtips.txt -v -m "*´"
 
 vba:
-	echo "If you get 'File does not exists' messages, that's because the plugin was moved to plugin_experimental"
 	cd ${VIMTLIB}; \
 		ruby/vimball.rb -u -z -b ${VIMTLIB} -d ${VIMTLIB}/vimballs vba vimballs/*.recipe
 

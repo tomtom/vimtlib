@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-10.
-" @Last Change: 2010-03-14.
-" @Revision:    610
+" @Last Change: 2010-03-26.
+" @Revision:    611
 " GetLatestVimScripts: 1863 1 tlib.vim
 "
 " Please see also ../test/tlib.vim for usage examples.
@@ -563,3 +563,4 @@ required)
 - tlib#World: optional scratch_pos field
 - tlib#input#List: By default <m-NUMBER> selects by number but NUMBER is 
 interpreted as string
+

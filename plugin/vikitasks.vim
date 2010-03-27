@@ -4,15 +4,15 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
 " @Last Change: 2010-03-26.
-" @Revision:    140
+" @Revision:    142
 " GetLatestVimScripts: 0 0 :AutoInstall: vikitasks.vim
 " Search for task lists and display them in a list
 
 
-if !exists('g:loaded_tlib') || g:loaded_tlib < 35
+if !exists('g:loaded_tlib') || g:loaded_tlib < 37
     runtime plugin/02tlib.vim
-    if !exists('g:loaded_tlib') || g:loaded_tlib < 35
-        echoerr 'tlib >= 0.35 is required'
+    if !exists('g:loaded_tlib') || g:loaded_tlib < 37
+        echoerr 'tlib >= 0.37 is required'
         finish
     endif
 endif
@@ -111,4 +111,6 @@ CHANGES:
 - :VikiTasks now takes a pattern as optional second argument. This 
 change makes the :VikiTasksGrep command obsolete, which was removed.
 - Moved the definition of some variables from plugin/vikitasks.vim to autoload/vikitasks.vim
+- Scan buffers on save
+- Require tlib 0.37
 
