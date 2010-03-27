@@ -4,8 +4,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-06-30.
-" @Last Change: 2010-03-26.
-" @Revision:    0.0.701
+" @Last Change: 2010-03-27.
+" @Revision:    0.0.703
 
 
 " :filedoc:
@@ -590,6 +590,8 @@ function! tlib#input#Resume(name, pick) "{{{3
         endfor
         unlet b:tlib_suspend
     endif
+    call tlib#autocmdgroup#Init()
+    autocmd! TLib InsertEnter,InsertChange <buffer>
     let b:tlib_{a:name}.state = 'display'
     " call tlib#input#List('resume '. a:name)
     let cmd = 'resume '. a:name
