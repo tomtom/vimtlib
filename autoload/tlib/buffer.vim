@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-06-30.
-" @Last Change: 2010-03-25.
-" @Revision:    0.0.298
+" @Last Change: 2010-03-27.
+" @Revision:    0.0.299
 
 
 let s:bmru = []
@@ -137,9 +137,9 @@ function! tlib#buffer#GetList(...)
     let buffer_nr = map(copy(buffer_list), 'matchstr(v:val, ''\s*\zs\d\+\ze'')')
     " TLogVAR buffer_list, buffer_nr
     if show_number
-        call map(buffer_list, 'matchstr(v:val, ''^\s*\d\+.\{-}\ze\s\+\w\+ \d\+\s*$'')')
+        call map(buffer_list, 'matchstr(v:val, ''^\s*\d\+.\{-}\ze\s\+\S\+ \d\+\s*$'')')
     else
-        call map(buffer_list, 'matchstr(v:val, ''^\s*\d\+\zs.\{-}\ze\s\+\w\+ \d\+\s*$'')')
+        call map(buffer_list, 'matchstr(v:val, ''^\s*\d\+\zs.\{-}\ze\s\+\S\+ \d\+\s*$'')')
     endif
     " TLogVAR buffer_list
     " call map(buffer_list, 'matchstr(v:val, ''^.\{-}\ze\s\+line \d\+\s*$'')')
