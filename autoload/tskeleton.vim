@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-03.
-" @Last Change: 2010-02-26.
-" @Revision:    0.0.1724
+" @Last Change: 2010-03-27.
+" @Revision:    0.0.1732
 
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
@@ -505,6 +505,7 @@ function! tskeleton#SetCursor(from, to, ...) "{{{3
     " TLogVAR a:from, a:to
     let mode     = a:0 >= 1 ? a:1 : 'n'
     let findOnly = a:0 >= 2 ? a:2 : (s:tskelScratchIdx > 1)
+    " TLogVAR mode, findOnly
     let c = col('.')
     " if s:IsEOL(mode) && s:IsInsertMode(mode)
     "     let c += 1
@@ -512,12 +513,13 @@ function! tskeleton#SetCursor(from, to, ...) "{{{3
     let l = line('.')
     if a:to == ''
         if a:from == '%'
-            silent norm! gg
+            silent norm! gg0
         else
             exec a:from
         endif
     else
         exec a:to
+        norm! 0
     end
     let cursor_rx = tskeleton#CursorMarker('rx')
     " if line('.') == 1
