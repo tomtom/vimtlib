@@ -3,7 +3,7 @@
 # @Author:      Thomas Link (micathom AT gmail com)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2009-02-23.
-# @Last Change: 2009-03-17.
+# @Last Change: 2010-03-27.
 
 require 'hpricot'
 require 'cgi'
@@ -224,7 +224,10 @@ HEADER
         end
         # Indentation should be done in wrap()
         text.gsub!(/^ +/, INDENT)
-        text.gsub!(/^\*(\S)/, "#{INDENT}- \\1")
+        # text.gsub!(/^\\*(\\S)/, "#{INDENT}- \\\\1")
+        text.gsub!(/^(\*+)([^*])/) do
+            "#{INDENT * $1.size}- #{$2.lstrip}"
+        end
         text.gsub!(/^#\s/, "#{INDENT}# ")
 
         text.gsub!(/(\s)\*(\S+?)\*(\s)/, "\\1*\\2#{@config[:cut_mark]}\\3") if @config[:convert_unintentional_tags]
