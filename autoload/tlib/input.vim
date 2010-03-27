@@ -5,7 +5,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-06-30.
 " @Last Change: 2010-03-27.
-" @Revision:    0.0.703
+" @Revision:    0.0.704
 
 
 " :filedoc:
@@ -519,7 +519,7 @@ function! tlib#input#ListW(world, ...) "{{{3
         "     call getchar(0)
         " endfor
         echo
-        redraw
+        redraw!
     endtry
 endf
 
