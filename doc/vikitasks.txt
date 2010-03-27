@@ -8,8 +8,7 @@ files.
 
 
 Usage:
-    :VikiTasks[!] [SELECT] [GLOB PATTERNS]
-    :VikiTasksGrep[!] [REGEXP] [GLOB PATTERNS]
+    :VikiTasks[!] [CONSTRAINT] [PATTERN] [FILE_PATTERNS]
 
 
 Features:
@@ -38,7 +37,7 @@ bar.txt: >
 Let's assume you have added both files to |g:vikitasks_files|. Switch to 
 the buffer foo.txt and call >
 
-    :VikiTasks
+    :VikiTasks!
 
 and you get the following list: >
 
@@ -115,27 +114,41 @@ g:vikitasks_alarms             (default: !has('clientserver') || len(split(serve
     days.
 
                                                     *:VikiTasks*
-VikiTasks[!] [SELECT] [PATTERN] [FILE_PATTERNS]
-    SELECT items by date. Possible values for SELECT are: today, current, 
-    NUMBER (of days). If SELECT is *, all items are elegible.
+VikiTasks[!] [CONSTRAINT] [PATTERN] [FILE_PATTERNS]
     Collect a list of tasks from a set of viki pages matching 
     FILE_PATTERNS.
+    
     The optional |regexp| PATTERN argument is preprocesed by 
     |vikitasks#MakePattern()|.
-    With the optional !, show all tasks not just those with a date
+    
+    CONSTRAINT defined which tasks should be displayed. Possible values 
+    for CONSTRAINT are:
+    
+      today            ... Show tasks that are due today
+      current          ... Show pending and today's tasks
+      NUMBER (of days) ... Show tasks that are due within N days
+      .                ... Show some tasks (see |g:vikitasks#rx_letters| 
+                           and |g:vikitasks#rx_levels|)
+      *                ... Show all tasks
+    
+    The default value for CONSTRAINT is ".".
+    
+    With the optional !, all files are rescanned. Otherwise cached 
+    information is used.
+    
     The current buffer has to be a viki buffer. If it isn't, your 
     |g:vikiHomePage|, which must be set, is opened first.
-    Use a period "." for empty SELECT or PATTERN parameters.
+    Use a period "." for empty CONSTRAINT or PATTERN parameters.
     
     Examples:
-        Show all tasks with a date: >
+        Show all cached tasks with a date: >
             VikiTasks
-<     Show all tasks: >
+<     Rescan files and show all tasks: >
             VikiTasks!
-<     Show all tasks for today: >
+<     Show all cached tasks for today: >
             VikiTasks today
-<     Show all current tasks (today or with a deadline in the past) in a 
-        specified list of files: >
+<     Show all current cached tasks (today or with a deadline in the 
+    past) in a specified list of files: >
             VikiTasks current Notes*.txt
 <
 
@@ -199,7 +212,7 @@ g:vikitasks#cache              (default: tlib#cache#Filename('vikitasks', 'files
     By default, use |tlib#cache#Filename()| to determine the file name.
 
                                                     *vikitasks#Tasks()*
-vikitasks#Tasks(?all=0, ?{'files': [], 'select': '', 'rx': ''})
+vikitasks#Tasks(?{'all_tasks': 0, 'cached': 1, 'files': [], 'select': '', 'rx': ''})
     If files is non-empty, use these files (glob patterns actually) 
     instead of those defined in |g:vikitasks#files|.
 

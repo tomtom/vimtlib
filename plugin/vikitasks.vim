@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
 " @Last Change: 2010-03-27.
-" @Revision:    169
+" @Revision:    170
 " GetLatestVimScripts: 0 0 :AutoInstall: vikitasks.vim
 " Search for task lists and display them in a list
 
@@ -85,13 +85,6 @@ command! -bang -nargs=* VikiTasks
             \   'files': [<f-args>][2:-1]
             \ })
 cabbr vikitasks VikiTasks
-
-
-" " :display: :VikiTasksGrep[!] REGEXP [FILE PATTERNS]
-" " Like |:VikiTasks| but display only those items matching REGEXP.
-" " The optional PATTERN argument is preprocesed by 
-" " |vikitasks#MakePattern()|.
-" command! -bang -nargs=* VikiTasksGrep call vikitasks#TasksGrep(!empty("<bang>"), <f-args>)
 
 
 " :display: :VikiTasksAdd
