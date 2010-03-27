@@ -3,8 +3,8 @@
 " @GIT:         http://github.com/tomtom/vimtlib/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
-" @Last Change: 2010-03-26.
-" @Revision:    142
+" @Last Change: 2010-03-27.
+" @Revision:    169
 " GetLatestVimScripts: 0 0 :AutoInstall: vikitasks.vim
 " Search for task lists and display them in a list
 
@@ -39,33 +39,49 @@ set cpo&vim
 TLet g:vikitasks_alarms = !has('clientserver') || len(split(serverlist(), '\n')) == 1
 
 
-" :display: VikiTasks[!] [SELECT] [PATTERN] [FILE_PATTERNS]
-" SELECT items by date. Possible values for SELECT are: today, current, 
-" NUMBER (of days). If SELECT is *, all items are elegible.
+" :display: VikiTasks[!] [CONSTRAINT] [PATTERN] [FILE_PATTERNS]
 " Collect a list of tasks from a set of viki pages matching 
 " FILE_PATTERNS.
+"
 " The optional |regexp| PATTERN argument is preprocesed by 
 " |vikitasks#MakePattern()|.
-" With the optional !, show all tasks not just those with a date
+" 
+" CONSTRAINT defined which tasks should be displayed. Possible values 
+" for CONSTRAINT are:
+"
+"   today            ... Show tasks that are due today
+"   current          ... Show pending and today's tasks
+"   NUMBER (of days) ... Show tasks that are due within N days
+"   .                ... Show some tasks (see |g:vikitasks#rx_letters| 
+"                        and |g:vikitasks#rx_levels|)
+"   *                ... Show all tasks
+"
+" The default value for CONSTRAINT is ".".
+"
+" With the optional !, all files are rescanned. Otherwise cached 
+" information is used.
+"
 " The current buffer has to be a viki buffer. If it isn't, your 
 " |g:vikiHomePage|, which must be set, is opened first.
-" Use a period "." for empty SELECT or PATTERN parameters.
+" Use a period "." for empty CONSTRAINT or PATTERN parameters.
 "
 " Examples:
-"     Show all tasks with a date: >
+"     Show all cached tasks with a date: >
 "         VikiTasks
-" <   Show all tasks: >
+" <   Rescan files and show all tasks: >
 "         VikiTasks!
-" <   Show all tasks for today: >
+" <   Show all cached tasks for today: >
 "         VikiTasks today
-" <   Show all current tasks (today or with a deadline in the past) in a 
-"     specified list of files: >
+" <   Show all current cached tasks (today or with a deadline in the 
+" past) in a specified list of files: >
 "         VikiTasks current Notes*.txt
-command! -bang -nargs=* VikiTasks 
-            \ call vikitasks#Tasks(!empty("<bang>"), {
-            \   'tasks': 'sometasks', 
-            \   'select': get([<f-args>], 0, '.'), 
-            \   'rx': vikitasks#MakePattern(get([<f-args>], 1, '')), 
+command! -bang -nargs=* VikiTasks
+            \ call vikitasks#Tasks({
+            \   'cached': empty("<bang>"),
+            \   'all_tasks': get([<f-args>], 0, '.') == '.',
+            \   'tasks': get([<f-args>], 0, '.') == '*' ? 'tasks' : 'sometasks',
+            \   'select': get([<f-args>], 0, '.'),
+            \   'rx': vikitasks#MakePattern(get([<f-args>], 1, '')),
             \   'files': [<f-args>][2:-1]
             \ })
 cabbr vikitasks VikiTasks
@@ -104,6 +120,7 @@ unlet s:save_cpo
 finish
 
 CHANGES:
+
 0.1
 - Initial release
 
@@ -113,4 +130,5 @@ change makes the :VikiTasksGrep command obsolete, which was removed.
 - Moved the definition of some variables from plugin/vikitasks.vim to autoload/vikitasks.vim
 - Scan buffers on save
 - Require tlib 0.37
+- The arguments for :VikiTasks have changed
 

@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
-" @Last Change: 2010-03-26.
-" @Revision:    0.0.385
+" @Last Change: 2010-03-27.
+" @Revision:    0.0.437
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -48,89 +48,121 @@ TLet g:vikitasks#rx_levels = '1-5'
 TLet g:vikitasks#cache = tlib#cache#Filename('vikitasks', 'files', 1)
 
 
-function! s:VikitasksRx(letters, levels) "{{{3
-    return '\C^[[:blank:]]\+\zs'.
+function! s:VikitasksRx(inline, sometasks, letters, levels) "{{{3
+    let val = '\C^[[:blank:]]'. (a:inline ? '*' : '\+') .'\zs'.
                 \ '#\(T: \+.\{-}'. a:letters .'.\{-}:\|'. 
                 \ '['. a:levels .']\?['. a:letters .']['. a:levels .']\?'.
                 \ '\( \+\(_\|[0-9%-]\+\)\)\?\) %s'
+    return val
 endf
 
-exec 'TRagDefKind tasks viki /'. s:VikitasksRx('A-Z', '0-9') .'/'
-exec 'TRagDefKind sometasks viki /'. s:VikitasksRx(g:vikitasks#rx_letters, g:vikitasks#rx_levels) .'/'
+let s:sometasks_rx = s:VikitasksRx(1, 1, g:vikitasks#rx_letters, g:vikitasks#rx_levels)
+let s:tasks_rx = s:VikitasksRx(0, 0, 'A-Z', '0-9')
+exec 'TRagDefKind tasks viki /'. s:tasks_rx .'/'
+
+delf s:VikitasksRx
+
 
 let s:date_rx = '\C^\s*#[A-Z0-9]\+ \zs\d\+-\d\+-\d\+'
 
 
-" :display: vikitasks#Tasks(?all=0, ?{'files': [], 'select': '', 'rx': ''})
+" :display: vikitasks#Tasks(?{'all_tasks': 0, 'cached': 1, 'files': [], 'select': '', 'rx': ''})
 " If files is non-empty, use these files (glob patterns actually) 
 " instead of those defined in |g:vikitasks#files|.
 function! vikitasks#Tasks(...) "{{{3
-    TVarArg ['all_tasks', 0], ['args', {}]
-    " TLogVAR all_tasks, args
+    TVarArg ['args', {}]
 
-    if &filetype != 'viki' && !viki#HomePage()
-        echoerr "VikiTasks: Not a viki buffer and cannot open the homepage"
-        return
-    endif
+    if get(args, 'cached', 1)
 
-    " TLogVAR all_tasks, a:0
-    let files = get(args, 'files', [])
-    if empty(files)
-        let files = s:MyFiles()
-        " TLogVAR files
-    endif
-    " TAssertType files, 'list'
-
-    call map(files, 'glob(v:val)')
-    let files = split(join(files, "\n"), '\n')
-    " TLogVAR files
-    if !empty(files)
-        let which_tasks = get(args, 'tasks', 'tasks')
-        " TLogVAR which_tasks
-        let qfl = trag#Grep(which_tasks, 1, files)
-        " TLogVAR qfl
-        " TLogVAR filter(copy(qfl), 'v:val.text =~ "#D7"')
-        if !all_tasks
-            call filter(qfl, 'v:val.text =~ s:date_rx')
-            " TLogVAR len(qfl)
-            let select = get(args, 'select', '.')
-            " TLogVAR select
-            let from = 0
-            let to = 0
-            if select =~ '^t\%[oday]'
-                let from = localtime()
-                let to = from
-            elseif select =~ '^c\%[urrent]'
-                let to = localtime()
-            elseif select =~ '^\d\+$'
-                let from = localtime()
-                let to = from + select * 86400
-            endif
-            " TLogVAR from, to
-            if from != 0 || to != 0
-                call filter(qfl, 's:Select(v:val.text, s:date_rx, from, to)')
-            endif
-        endif
-
-        let rx = get(args, 'rx', [])
-        if !empty(rx)
-            call filter(qfl, 'v:val.text =~ rx')
-        endif
-
-        call sort(qfl, "s:SortTasks")
-        " TLogVAR qfl
-        let tasks = copy(qfl)
-        for i in range(len(tasks))
-            call remove(tasks[i], 'bufnr')
-        endfor
-        call s:SaveInfo(s:Files(), tasks)
-        call setqflist(qfl)
-
-        let i = s:GetCurrentTask(qfl, 0)
-        call s:View(i, 0)
+        let qfl = copy(s:Tasks())
+        call s:TasksList(qfl, args)
 
     else
-        echom "VikiTasks: No task files"
+
+        if &filetype != 'viki' && !viki#HomePage()
+            echoerr "VikiTasks: Not a viki buffer and cannot open the homepage"
+            return
+        endif
+
+        " TLogVAR args
+        let files = get(args, 'files', [])
+        if empty(files)
+            let files = s:MyFiles()
+            " TLogVAR files
+        endif
+        " TAssertType files, 'list'
+
+        call map(files, 'glob(v:val)')
+        let files = split(join(files, "\n"), '\n')
+        " TLogVAR files
+        if !empty(files)
+            let qfl = trag#Grep('tasks', 1, files)
+            " TLogVAR qfl
+            " TLogVAR filter(copy(qfl), 'v:val.text =~ "#D7"')
+
+            " TLogVAR qfl
+            let tasks = copy(qfl)
+            for i in range(len(tasks))
+                call remove(tasks[i], 'bufnr')
+            endfor
+            call s:SaveInfo(s:Files(), tasks)
+
+            call s:TasksList(qfl, args)
+        else
+            echom "VikiTasks: No task files"
+        endif
+
+    endif
+endf
+
+
+function! s:TasksList(qfl, args) "{{{3
+    call s:FilterTasks(a:qfl, a:args)
+    call sort(a:qfl, "s:SortTasks")
+    call setqflist(a:qfl)
+    let i = s:GetCurrentTask(a:qfl, 0)
+    call s:View(i, 0)
+endf
+
+
+function! s:FilterTasks(tasks, args) "{{{3
+    " TLogVAR a:args
+
+    let rx = get(a:args, 'rx', '')
+    if !empty(rx)
+        call filter(a:tasks, 'v:val.text =~ rx')
+    endif
+
+    let which_tasks = get(a:args, 'tasks', 'tasks')
+    " TLogVAR which_tasks
+    if which_tasks == 'sometasks'
+        let rx = s:TasksRx('sometasks')
+        " TLogVAR rx
+        " TLogVAR len(a:tasks)
+        call filter(a:tasks, 'v:val.text =~ rx')
+        " TLogVAR len(a:tasks)
+    endif
+
+    if !get(a:args, 'all_tasks', 0)
+        call filter(a:tasks, 'v:val.text =~ s:date_rx')
+        " TLogVAR len(a:tasks)
+        let select = get(a:args, 'select', '.')
+        " TLogVAR select
+        let from = 0
+        let to = 0
+        if select =~ '^t\%[oday]'
+            let from = localtime()
+            let to = from
+        elseif select =~ '^c\%[urrent]'
+            let to = localtime()
+        elseif select =~ '^\d\+$'
+            let from = localtime()
+            let to = from + select * 86400
+        endif
+        " TLogVAR from, to
+        if from != 0 || to != 0
+            call filter(a:tasks, 's:Select(v:val.text, s:date_rx, from, to)')
+        endif
     endif
 endf
 
@@ -149,24 +181,6 @@ function! s:View(index, suspend) "{{{3
         exec g:vikitasks#qfl_viewer
     endif
 endf
-
-
-" " :display: vikitasks#TasksGrep(all_tasks, ?pattern='.', *files)
-" function! vikitasks#TasksGrep(all_tasks, ...) "{{{3
-"     TVarArg ['pattern', '']
-"     if a:0 > 2
-"         let args = map(range(2, a:0), 'a:{v:val}')
-"     else
-"         let args = []
-"     endif
-"     let pattern = vikitasks#MakePattern(pattern)
-"     " TLogVAR a:all_tasks, a:pattern, pattern, files
-"     call vikitasks#Tasks(a:all_tasks, {
-"                 \ 'rx': pattern,
-"                 \ 'select': '.',
-"                 \ 'files': args
-"                 \ })
-" endf
 
 
 " The |regexp| PATTERN is prepended with |\<| if it seems to be a word. 
@@ -341,6 +355,7 @@ function! vikitasks#Alarm(...) "{{{3
     " TLogVAR i
     if i > 0
         let subtasks = tasks[0 : i]
+        call s:FilterTasks(subtasks, {'all_tasks': 0, 'tasks': 'sometasks'})
         " TLogVAR subtasks
         call setqflist(subtasks)
         call s:View(0, 1)
@@ -354,6 +369,11 @@ function! vikitasks#Alarm(...) "{{{3
         " setlocal nowrap
         " 1
     endif
+endf
+
+
+function! s:TasksRx(which_tasks) "{{{3
+    return printf(s:{a:which_tasks}_rx, '.*')
 endf
 
 
@@ -376,7 +396,7 @@ function! vikitasks#ScanCurrentBuffer() "{{{3
 	unlet task
     endfor
     " TLogVAR len(tasks)
-    let rx = printf(s:VikitasksRx(g:vikitasks#rx_letters, g:vikitasks#rx_levels), '.*')
+    let rx = s:TasksRx('tasks')
     let @r = rx
     let update = 0
     let lnum = 1
