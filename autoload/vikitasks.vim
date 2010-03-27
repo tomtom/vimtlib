@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
 " @Last Change: 2010-03-27.
-" @Revision:    0.0.437
+" @Revision:    0.0.444
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -343,6 +343,7 @@ endf
 
 function! vikitasks#Alarm(...) "{{{3
     TVarArg ['ddays', g:vikitasks_alarms - 1]
+    " TLogVAR ddays
     if ddays < 0
         return
     endif
@@ -351,7 +352,7 @@ function! vikitasks#Alarm(...) "{{{3
     " TLogVAR tasks
     " TLogVAR len(tasks)
     " let i = s:GetCurrentTask(tasks, ddays) - 2
-    let i = s:GetCurrentTask(tasks, ddays)
+    let i = s:GetCurrentTask(tasks, ddays) - 1
     " TLogVAR i
     if i > 0
         let subtasks = tasks[0 : i]
