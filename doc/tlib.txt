@@ -235,6 +235,7 @@ Contents~
         tlib#win#SetLayout ...................... |tlib#win#SetLayout()|
         tlib#win#List ........................... |tlib#win#List()|
         tlib#win#Width .......................... |tlib#win#Width()|
+        tlib#win#WinDo .......................... |tlib#win#WinDo()|
         tlib#World#New .......................... |tlib#World#New()|
         prototype.Reset
 
@@ -1465,6 +1466,9 @@ tlib#win#List()
 
                                                     *tlib#win#Width()*
 tlib#win#Width(wnr)
+
+                                                    *tlib#win#WinDo()*
+tlib#win#WinDo(ex)
 
 
 ========================================================================
