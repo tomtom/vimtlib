@@ -3,8 +3,8 @@
 " @Website:     http://members.a1.net/t.link/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-05-01.
-" @Last Change: 2010-03-25.
-" @Revision:    0.1.826
+" @Last Change: 2010-03-28.
+" @Revision:    0.1.834
 
 " :filedoc:
 " A prototype used by |tlib#input#List|.
@@ -694,14 +694,20 @@ endf
 " :nodoc:
 function! s:prototype.Resize(hsize, vsize) dict "{{{3
     " TLogVAR self.scratch_vertical, a:hsize, a:vsize
+    let world_resize = ''
     if self.scratch_vertical
         if a:vsize
-            exec 'vert resize '. a:vsize
+            let world_resize = 'vert resize '. a:vsize
         endif
     else
         if a:hsize
-            exec 'resize '. a:hsize
+            let world_resize = 'resize '. a:hsize
         endif
+    endif
+    if !empty(world_resize)
+        " TLogVAR world_resize
+        exec world_resize
+        redraw!
     endif
 endf
 
