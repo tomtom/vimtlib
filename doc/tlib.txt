@@ -132,6 +132,8 @@ Contents~
         tlib#cmd#UseVertical .................... |tlib#cmd#UseVertical()|
         tlib#cmd#Time ........................... |tlib#cmd#Time()|
         tlib#comments#Comments .................. |tlib#comments#Comments()|
+        tlib#date#DiffInDays .................... |tlib#date#DiffInDays()|
+        tlib#date#SecondsSince1970 .............. |tlib#date#SecondsSince1970()|
         tlib#dir#CanonicName .................... |tlib#dir#CanonicName()|
         tlib#dir#PlainName ...................... |tlib#dir#PlainName()|
         tlib#dir#Ensure ......................... |tlib#dir#Ensure()|
@@ -733,6 +735,17 @@ autoload/tlib/comments.vim~
                                                     *tlib#comments#Comments()*
 tlib#comments#Comments(...)
     function! tlib#comments#Comments(?rx='')
+
+
+========================================================================
+autoload/tlib/date.vim~
+
+                                                    *tlib#date#DiffInDays()*
+tlib#date#DiffInDays(date, ...)
+
+                                                    *tlib#date#SecondsSince1970()*
+tlib#date#SecondsSince1970(date, ...)
+    tlib#date#SecondsSince1970(date, ?daysshift=0)
 
 
 ========================================================================
