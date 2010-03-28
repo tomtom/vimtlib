@@ -3,7 +3,7 @@
 # @Author:      Thomas Link (micathom AT gmail com)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2009-02-23.
-# @Last Change: 2010-03-27.
+# @Last Change: 2010-03-28.
 
 require 'hpricot'
 require 'cgi'
@@ -232,6 +232,7 @@ HEADER
 
         text.gsub!(/(\s)\*(\S+?)\*(\s)/, "\\1*\\2#{@config[:cut_mark]}\\3") if @config[:convert_unintentional_tags]
         text.gsub!(/\{\{script\|id=(\d+)(\|.*?)?\}\}/, 'vimscript#\\1')
+        text.gsub!(/\{\{TipNew\n\|id=(\d+)\n(\|.*?)?\}\}/m, "URL: http://vim.wikia.com/wiki/VimTip\\1\n\n")
         text.gsub!(/\{\{help\|(.*?)\}\}/) do
             t = $1
             if $1 =~ /^'.*?'$/
