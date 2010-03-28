@@ -3,8 +3,8 @@
 " @GIT:         http://github.com/tomtom/vimtlib/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
-" @Last Change: 2010-03-27.
-" @Revision:    173
+" @Last Change: 2010-03-28.
+" @Revision:    175
 " GetLatestVimScripts: 0 0 :AutoInstall: vikitasks.vim
 " Search for task lists and display them in a list
 
@@ -52,6 +52,11 @@ TLet g:vikitasks_alarms = !has('clientserver') || len(split(serverlist(), '\n'))
 "   today            ... Show tasks that are due today
 "   current          ... Show pending and today's tasks
 "   NUMBER (of days) ... Show tasks that are due within N days
+"   Nd               ... Tasks for the next N days
+"   Nw               ... Tasks for the next N weeks
+"   Nm               ... Tasks for the next N months
+"   week             ... Tasks for the next week
+"   month            ... Tasks for the next month
 "   .                ... Show some tasks (see |g:vikitasks#rx_letters| 
 "                        and |g:vikitasks#rx_levels|)
 "   *                ... Show all tasks

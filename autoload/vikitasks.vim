@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
-" @Last Change: 2010-03-27.
-" @Revision:    0.0.444
+" @Last Change: 2010-03-28.
+" @Revision:    0.0.458
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -18,6 +18,11 @@ set cpo&vim
 " between editing sessions.
 " Alternatively, add new items in ~/vimfiles/after/plugin/vikitasks.vim
 TLet g:vikitasks#files = []
+
+" A list of |regexp| patterns for filenames that should not be 
+" scanned.
+TLet g:vikitasks#files_ignored = []
+let s:files_ignored = join(g:vikitasks#files_ignored, '\|')
 
 " If non-null, automatically add the homepages of your intervikis to 
 " |g:vikitasks#files|.
@@ -150,14 +155,27 @@ function! s:FilterTasks(tasks, args) "{{{3
         " TLogVAR select
         let from = 0
         let to = 0
+        let n = matchstr(select, '^\d\+')
         if select =~ '^t\%[oday]'
             let from = localtime()
             let to = from
         elseif select =~ '^c\%[urrent]'
             let to = localtime()
-        elseif select =~ '^\d\+$'
+        elseif select == 'month'
             let from = localtime()
-            let to = from + select * 86400
+            let to = from + 86400 * 31
+        elseif select == 'week'
+            let from = localtime()
+            let to = from + 86400 * 7
+        elseif select =~ '^\d\+m$'
+            let from = localtime()
+            let to = from + n * 86400 * 31
+        elseif select =~ '^\d\+w$'
+            let from = localtime()
+            let to = from + n * 86400 * 7
+        elseif select =~ '^\d\+d\?$'
+            let from = localtime()
+            let to = from + n * 86400
         endif
         " TLogVAR from, to
         if from != 0 || to != 0
@@ -208,8 +226,9 @@ function! s:GetCurrentTask(qfl, daysdiff) "{{{3
     let today = strftime('%Y-%m-%d')
     for qi in a:qfl
         let qid = matchstr(qi.text, s:date_rx)
-        " TLogVAR qid
-        if qid && (a:daysdiff == 0 ? qid < today : tlib#date#DiffInDays(qid, today) <= a:daysdiff)
+        let ddiff = tlib#date#DiffInDays(qid, today)
+        " TLogVAR qid, today, ddiff
+        if qid && ddiff <= a:daysdiff
             let i += 1
         else
             break
@@ -283,6 +302,7 @@ function! s:MyFiles() "{{{3
     if tlib#var#Get('vikitasks_intervikis', 'bg', 0)
         call s:AddInterVikis(files)
     endif
+    call filter(files, 'v:val !~ s:files_ignored')
     if !has('fname_case') || !&shellslash
         call map(files, 's:CanonicFilename(v:val)')
     endif
@@ -379,8 +399,11 @@ endf
 
 
 function! vikitasks#ScanCurrentBuffer() "{{{3
-    let tasks = s:Tasks()
     let filename = s:CanonicFilename(fnamemodify(bufname('%'), ':p'))
+    if filename =~ s:files_ignored
+        return
+    endif
+    let tasks = s:Tasks()
     let ntasks = len(tasks)
     let tasks = []
     let buftasks = {}

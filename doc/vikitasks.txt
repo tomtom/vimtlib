@@ -89,6 +89,7 @@ Contents~
         :VikiTasksFiles .................. |:VikiTasksFiles|
         :VikiTasksAlarms ................. |:VikiTasksAlarms|
         g:vikitasks#files ................ |g:vikitasks#files|
+        g:vikitasks#files_ignored ........ |g:vikitasks#files_ignored|
         g:vikitasks#intervikis ........... |g:vikitasks#intervikis|
         g:vikitasks#intervikis_ignored ... |g:vikitasks#intervikis_ignored|
         g:vikitasks#qfl_viewer ........... |g:vikitasks#qfl_viewer|
@@ -127,6 +128,11 @@ VikiTasks[!] [CONSTRAINT] [PATTERN] [FILE_PATTERNS]
       today            ... Show tasks that are due today
       current          ... Show pending and today's tasks
       NUMBER (of days) ... Show tasks that are due within N days
+      Nd               ... Tasks for the next N days
+      Nw               ... Tasks for the next N weeks
+      Nm               ... Tasks for the next N months
+      week             ... Tasks for the next week
+      month            ... Tasks for the next month
       .                ... Show some tasks (see |g:vikitasks#rx_letters| 
                            and |g:vikitasks#rx_levels|)
       *                ... Show all tasks
@@ -176,6 +182,11 @@ g:vikitasks#files              (default: [])
     If you add ! to 'viminfo', this variable will be automatically saved 
     between editing sessions.
     Alternatively, add new items in ~/vimfiles/after/plugin/vikitasks.vim
+
+                                                    *g:vikitasks#files_ignored*
+g:vikitasks#files_ignored      (default: [])
+    A list of |regexp| patterns for filenames that should not be 
+    scanned.
 
                                                     *g:vikitasks#intervikis*
 g:vikitasks#intervikis         (default: 0)
