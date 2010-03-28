@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
 " @Last Change: 2010-03-28.
-" @Revision:    0.0.488
+" @Revision:    0.0.516
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -72,6 +72,27 @@ delf s:VikitasksRx
 
 
 let s:date_rx = '\C^\s*#[A-Z0-9]\+ \zs\d\+-\d\+-\d\+'
+
+
+" :nodoc:
+function! vikitasks#GetArgs(bang, list) "{{{3
+    let args = {}
+    let args.cached = !a:bang
+    let a0 = get(a:list, 0, '.')
+    if a0 =~ '^[@:]'
+        let args.all_tasks = 1
+        let args.tasks = 'tasks'
+        let args.constraint = '.'
+    else
+        call remove(a:list, 0)
+        let args.all_tasks = a0 =~ '^[.*]$'
+        let args.tasks = a0 == '*' ? 'tasks' : 'sometasks'
+        let args.constraint = a0
+    endif
+    let args.rx = s:MakePattern(get(a:list, 0, '.'))
+    let args.files = a:list[2:-1]
+    return args
+endf
 
 
 " :display: vikitasks#Tasks(?{'all_tasks': 0, 'cached': 1, 'files': [], 'constraint': '', 'rx': ''})
@@ -156,7 +177,12 @@ function! s:FilterTasks(tasks, args) "{{{3
         " TLogVAR len(a:tasks)
         let constraint = get(a:args, 'constraint', '.')
         " TLogVAR constraint
-        let [m0, future, n; _] = matchlist(constraint, '^\(+\?\)\(\d\+\)')
+        if match(constraint, '^\(+\?\)\(\d\+\)') == -1
+            let future = ''
+            let n = 1
+        else
+            let [m0, future, n; _] = matchlist(constraint, '^\(+\?\)\(\d\+\)')
+        endif
         let from = empty(future) ? 0 : localtime()
         let to = 0
         if constraint =~ '^t\%[oday]'
@@ -165,7 +191,7 @@ function! s:FilterTasks(tasks, args) "{{{3
         elseif constraint =~ '^c\%[urrent]'
             let from = 0
             let to = localtime()
-        elseif constraint == 'month'
+        elseif constraint =~ '^m\%[onth]'
             let to = localtime() + 86400 * 31
         elseif constraint == 'week'
             let to = localtime() + 86400 * 7
@@ -175,6 +201,8 @@ function! s:FilterTasks(tasks, args) "{{{3
             let to = localtime() + n * 86400 * 7
         elseif constraint =~ '^+\?\d\+d\?$'
             let to = localtime() + n * 86400
+        else
+            echoerr "vikitasks: Malformed constraint: ". constraint
         endif
         " TLogVAR from, to
         if from != 0 || to != 0
@@ -203,11 +231,11 @@ endf
 " The |regexp| PATTERN is prepended with |\<| if it seems to be a word. 
 " The PATTERN is made case sensitive if it contains an upper-case letter 
 " and if 'smartcase' is true.
-function! vikitasks#MakePattern(pattern) "{{{3
+function! s:MakePattern(pattern) "{{{3
     let pattern = a:pattern
     if empty(pattern)
         let pattern = '.'
-    else
+    elseif pattern != '.'
         if pattern =~ '^\w'
             let pattern = '\<'. pattern
         endif
@@ -338,6 +366,7 @@ function! s:Select(text, date_rx, from, to) "{{{3
 endf
 
 
+" Register BUFFER as a file that should be scanned for task lists.
 function! vikitasks#AddBuffer(buffer, ...) "{{{3
     TVarArg ['save', 1]
     " TLogVAR a:buffer, save
@@ -352,6 +381,7 @@ function! vikitasks#AddBuffer(buffer, ...) "{{{3
 endf
 
 
+" Edit the list of files.
 function! vikitasks#EditFiles() "{{{3
     let files = tlib#input#EditList('Edit task files:', sort(copy(s:Files())))
     if files != s:files
@@ -360,6 +390,9 @@ function! vikitasks#EditFiles() "{{{3
 endf
 
 
+" :nodoc:
+" :display: vikitasks#Alarm(?ddays = g:vikitasks_alarms - 1)
+" Display a list of alarms.
 function! vikitasks#Alarm(...) "{{{3
     TVarArg ['ddays', g:vikitasks_alarms - 1]
     " TLogVAR ddays
@@ -388,6 +421,8 @@ function! s:TasksRx(which_tasks) "{{{3
 endf
 
 
+" :nodoc:
+" Scan the current buffer for task lists.
 function! vikitasks#ScanCurrentBuffer() "{{{3
     let filename = s:CanonicFilename(fnamemodify(bufname('%'), ':p'))
     if filename =~ s:files_ignored

@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
 " @Last Change: 2010-03-28.
-" @Revision:    182
+" @Revision:    189
 " GetLatestVimScripts: 0 0 :AutoInstall: vikitasks.vim
 " Search for task lists and display them in a list
 
@@ -60,8 +60,12 @@ TLet g:vikitasks_alarms = !has('clientserver') || len(split(serverlist(), '\n'))
 "
 " The default value for CONSTRAINT is ".".
 "
-" The optional |regexp| PATTERN argument is preprocesed by 
-" |vikitasks#MakePattern()|. Only tasks matching the PATTERN will be 
+" If CONSTRAINT starts with "@" or ":" it is assumed to be a PATTERN -- 
+" see also |viki-tasks|.
+"
+" The |regexp| PATTERN is prepended with |\<| if it seems to be a word. 
+" The PATTERN is made case sensitive if it contains an upper-case letter 
+" and if 'smartcase' is true. Only tasks matching the PATTERN will be 
 " listed. Use "." to match all tasks.
 " 
 " With the optional !, all files are rescanned. Otherwise cached 
@@ -81,15 +85,7 @@ TLet g:vikitasks_alarms = !has('clientserver') || len(split(serverlist(), '\n'))
 " <   Show all current cached tasks (today or with a deadline in the 
 " past) in a specified list of files: >
 "         VikiTasks current Notes*.txt
-command! -bang -nargs=* VikiTasks
-            \ call vikitasks#Tasks({
-            \   'cached': empty("<bang>"),
-            \   'all_tasks': get([<f-args>], 0, '.') =~ '^[.*]$',
-            \   'tasks': get([<f-args>], 0, '.') == '*' ? 'tasks' : 'sometasks',
-            \   'constraint': get([<f-args>], 0, '.'),
-            \   'rx': vikitasks#MakePattern(get([<f-args>], 1, '')),
-            \   'files': [<f-args>][2:-1]
-            \ })
+command! -bang -nargs=* VikiTasks call vikitasks#Tasks(vikitasks#GetArgs(!empty("<bang>"), [<f-args>]))
 cabbr vikitasks VikiTasks
 
 
