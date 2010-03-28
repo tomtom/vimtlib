@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
 " @Last Change: 2010-03-28.
-" @Revision:    0.0.458
+" @Revision:    0.0.462
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -226,9 +226,8 @@ function! s:GetCurrentTask(qfl, daysdiff) "{{{3
     let today = strftime('%Y-%m-%d')
     for qi in a:qfl
         let qid = matchstr(qi.text, s:date_rx)
-        let ddiff = tlib#date#DiffInDays(qid, today)
-        " TLogVAR qid, today, ddiff
-        if qid && ddiff <= a:daysdiff
+        " TLogVAR qid, today
+        if !empty(qid) && tlib#date#DiffInDays(qid, today) <= a:daysdiff
             let i += 1
         else
             break

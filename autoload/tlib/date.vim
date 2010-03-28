@@ -3,8 +3,8 @@
 " @Website:     http://www.lithom.net
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-03-25.
-" @Last Change: 2010-03-27.
-" @Revision:    0.0.7
+" @Last Change: 2010-03-28.
+" @Revision:    0.0.9
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -27,6 +27,7 @@ endf
 
 " tlib#date#SecondsSince1970(date, ?daysshift=0)
 function! tlib#date#SecondsSince1970(date, ...) "{{{3
+    " TLogVAR a:date
     let year  = matchstr(a:date, '^\(\d\+\)\ze-\(\d\+\)-\(\d\+\)$')
     let month = matchstr(a:date, '^\(\d\+\)-\zs\(\d\+\)\ze-\(\d\+\)$')
     let days  = matchstr(a:date, '^\(\d\+\)-\(\d\+\)-\zs\(\d\+\)$')
