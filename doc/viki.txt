@@ -443,8 +443,8 @@ where:
     9        ... priority (a number from 0 to 9)
     DATE     ... a date or date range formatted as YEAR-MONTH-DAY or 
                  YEAR-MONTH-DAY..YEAR-MONTH-DAY
-    TAGS     ... a list of tags formatted as [tag1,tag2]
-    CONTACTS ... a list of tags formatted as @contact1 contact2
+    TAGS     ... a list of tags formatted as :tag1 :tag2
+    CONTACTS ... a list of tags formatted as @contact1 @contact2
     MESSAGE  ... some text
 
 Examples: >
@@ -456,8 +456,8 @@ Examples: >
     #B2 x2005-10-25 Less important task (completed)
     #X2 2005-10-25  Task (completed)
     #A2 2005-10-25..2005-11-25 Task with date range
-    #A2 2005-10-25 [garden] Task with a tag
-    #A2 2005-10-25 [garden] @Anne Task with a tag & contact
+    #A2 2005-10-25 :garden Task with a tag
+    #A2 2005-10-25 :garden @Anne Task with a tag & contact
 
 You can switch category, priority, and date: >
 
