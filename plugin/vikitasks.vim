@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
 " @Last Change: 2010-03-28.
-" @Revision:    175
+" @Revision:    182
 " GetLatestVimScripts: 0 0 :AutoInstall: vikitasks.vim
 " Search for task lists and display them in a list
 
@@ -40,12 +40,6 @@ TLet g:vikitasks_alarms = !has('clientserver') || len(split(serverlist(), '\n'))
 
 
 " :display: VikiTasks[!] [CONSTRAINT] [PATTERN] [FILE_PATTERNS]
-" Collect a list of tasks from a set of viki pages matching 
-" FILE_PATTERNS.
-"
-" The optional |regexp| PATTERN argument is preprocesed by 
-" |vikitasks#MakePattern()|.
-" 
 " CONSTRAINT defined which tasks should be displayed. Possible values 
 " for CONSTRAINT are:
 "
@@ -60,15 +54,22 @@ TLet g:vikitasks_alarms = !has('clientserver') || len(split(serverlist(), '\n'))
 "   .                ... Show some tasks (see |g:vikitasks#rx_letters| 
 "                        and |g:vikitasks#rx_levels|)
 "   *                ... Show all tasks
+" 
+" If N is prepended with + (e.g. "+2w"), tasks with a deadline in the 
+" past are hidden.
 "
 " The default value for CONSTRAINT is ".".
 "
+" The optional |regexp| PATTERN argument is preprocesed by 
+" |vikitasks#MakePattern()|. Only tasks matching the PATTERN will be 
+" listed. Use "." to match all tasks.
+" 
 " With the optional !, all files are rescanned. Otherwise cached 
-" information is used.
+" information is used. Either scan all known files (|interviki|s and 
+" pages registered via |:VikiTasksAdd|) or files matching FILE_PATTERNS.
 "
 " The current buffer has to be a viki buffer. If it isn't, your 
 " |g:vikiHomePage|, which must be set, is opened first.
-" Use a period "." for empty CONSTRAINT or PATTERN parameters.
 "
 " Examples:
 "     Show all cached tasks with a date: >
@@ -85,7 +86,7 @@ command! -bang -nargs=* VikiTasks
             \   'cached': empty("<bang>"),
             \   'all_tasks': get([<f-args>], 0, '.') =~ '^[.*]$',
             \   'tasks': get([<f-args>], 0, '.') == '*' ? 'tasks' : 'sometasks',
-            \   'select': get([<f-args>], 0, '.'),
+            \   'constraint': get([<f-args>], 0, '.'),
             \   'rx': vikitasks#MakePattern(get([<f-args>], 1, '')),
             \   'files': [<f-args>][2:-1]
             \ })

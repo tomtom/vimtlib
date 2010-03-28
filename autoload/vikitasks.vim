@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
 " @Last Change: 2010-03-28.
-" @Revision:    0.0.462
+" @Revision:    0.0.488
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -52,6 +52,9 @@ TLet g:vikitasks#rx_levels = '1-5'
 " By default, use |tlib#cache#Filename()| to determine the file name.
 TLet g:vikitasks#cache = tlib#cache#Filename('vikitasks', 'files', 1)
 
+" Definition of the tasks that should be included in the Alarms list.
+TLet g:vikitasks#alarms = {'all_tasks': 0, 'tasks': 'sometasks', 'constraint': 14}
+
 
 function! s:VikitasksRx(inline, sometasks, letters, levels) "{{{3
     let val = '\C^[[:blank:]]'. (a:inline ? '*' : '\+') .'\zs'.
@@ -71,7 +74,7 @@ delf s:VikitasksRx
 let s:date_rx = '\C^\s*#[A-Z0-9]\+ \zs\d\+-\d\+-\d\+'
 
 
-" :display: vikitasks#Tasks(?{'all_tasks': 0, 'cached': 1, 'files': [], 'select': '', 'rx': ''})
+" :display: vikitasks#Tasks(?{'all_tasks': 0, 'cached': 1, 'files': [], 'constraint': '', 'rx': ''})
 " If files is non-empty, use these files (glob patterns actually) 
 " instead of those defined in |g:vikitasks#files|.
 function! vikitasks#Tasks(...) "{{{3
@@ -151,31 +154,27 @@ function! s:FilterTasks(tasks, args) "{{{3
     if !get(a:args, 'all_tasks', 0)
         call filter(a:tasks, 'v:val.text =~ s:date_rx')
         " TLogVAR len(a:tasks)
-        let select = get(a:args, 'select', '.')
-        " TLogVAR select
-        let from = 0
+        let constraint = get(a:args, 'constraint', '.')
+        " TLogVAR constraint
+        let [m0, future, n; _] = matchlist(constraint, '^\(+\?\)\(\d\+\)')
+        let from = empty(future) ? 0 : localtime()
         let to = 0
-        let n = matchstr(select, '^\d\+')
-        if select =~ '^t\%[oday]'
+        if constraint =~ '^t\%[oday]'
             let from = localtime()
             let to = from
-        elseif select =~ '^c\%[urrent]'
+        elseif constraint =~ '^c\%[urrent]'
+            let from = 0
             let to = localtime()
-        elseif select == 'month'
-            let from = localtime()
-            let to = from + 86400 * 31
-        elseif select == 'week'
-            let from = localtime()
-            let to = from + 86400 * 7
-        elseif select =~ '^\d\+m$'
-            let from = localtime()
-            let to = from + n * 86400 * 31
-        elseif select =~ '^\d\+w$'
-            let from = localtime()
-            let to = from + n * 86400 * 7
-        elseif select =~ '^\d\+d\?$'
-            let from = localtime()
-            let to = from + n * 86400
+        elseif constraint == 'month'
+            let to = localtime() + 86400 * 31
+        elseif constraint == 'week'
+            let to = localtime() + 86400 * 7
+        elseif constraint =~ '^+\?\d\+m$'
+            let to = localtime() + n * 86400 * 31
+        elseif constraint =~ '^+\?\d\+w$'
+            let to = localtime() + n * 86400 * 7
+        elseif constraint =~ '^+\?\d\+d\?$'
+            let to = localtime() + n * 86400
         endif
         " TLogVAR from, to
         if from != 0 || to != 0
@@ -333,8 +332,9 @@ function! s:Select(text, date_rx, from, to) "{{{3
     let date = matchstr(a:text, a:date_rx)
     let sfrom = strftime('%Y-%m-%d', a:from)
     let sto = strftime('%Y-%m-%d', a:to)
-    " TLogVAR date, sfrom, sto
-    return date >= sfrom && date <= sto
+    let rv = date >= sfrom && date <= sto
+    " TLogVAR date, sfrom, sto, rv
+    return rv
 endf
 
 
@@ -366,28 +366,19 @@ function! vikitasks#Alarm(...) "{{{3
     if ddays < 0
         return
     endif
-    let tasks = s:Tasks()
+    let tasks = copy(s:Tasks())
     call sort(tasks, "s:SortTasks")
-    " TLogVAR tasks
-    " TLogVAR len(tasks)
-    " let i = s:GetCurrentTask(tasks, ddays) - 2
-    let i = s:GetCurrentTask(tasks, ddays) - 1
-    " TLogVAR i
-    if i > 0
-        let subtasks = tasks[0 : i]
-        call s:FilterTasks(subtasks, {'all_tasks': 0, 'tasks': 'sometasks'})
-        " TLogVAR subtasks
-        call setqflist(subtasks)
+    let alarms = copy(g:vikitasks#alarms)
+    if ddays > 0
+        let alarms.constraint = ddays
+    endif
+    " TLogVAR alarms
+    call s:FilterTasks(tasks, alarms)
+    if !empty(tasks)
+        " TLogVAR tasks
+        call setqflist(tasks)
         call s:View(0, 1)
         redraw
-        " call tlib#scratch#UseScratch()
-        " for j in range(i, 0, -1)
-        "     call append(0, ' '. tasks[j].text)
-        " endfor
-        " exec 'resize '. line('$')
-        " setlocal ft=viki
-        " setlocal nowrap
-        " 1
     endif
 endf
 
