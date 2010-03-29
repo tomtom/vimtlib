@@ -927,17 +927,21 @@ endf
 
 function! trag#CWord() "{{{3
     if has_key(g:trag_keyword_chars, &filetype)
-        let line  = getline('.')
-        let chars = g:trag_keyword_chars[&filetype]
-        let rx    = '['. chars .']\+'
-        let pre   = matchstr(line[0 : col('.') - 2],  rx.'$')
-        let post  = matchstr(line[col('.') - 1 : -1], '^'.rx)
-        let word  = pre . post
-        " TLogVAR word, pre, post, chars, line
+        let rx = '['. g:trag_keyword_chars[&filetype] .']\+'
+        let line = getline('.')
+        let col  = col('.')
+        if col == 1
+            let pre = ''
+        else
+            let pre = matchstr(line[0 : col - 2],  rx.'$')
+        endif
+        let post = matchstr(line[col - 1 : -1], '^'.rx)
+        let word = pre . post
+        " TLogVAR word, pre, post, line, col
     else
-        let word  = expand('<cword>')
+        let word = expand('<cword>')
+        " TLogVAR word
     endif
-    " TLogVAR word
     return word
 endf
 
