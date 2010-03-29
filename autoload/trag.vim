@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-29.
 " @Last Change: 2010-03-29.
-" @Revision:    0.0.850
+" @Revision:    0.0.890
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
@@ -479,7 +479,7 @@ endf
 "   if foo == 1
 function! trag#Grep(args, ...) "{{{3
     TVarArg ['replace', 1], ['files', []]
-    " TLogVAR replace, files
+    " TLogVAR a:args, replace, files
     let [kindspos, kindsneg, rx] = s:SplitArgs(a:args)
     " TLogVAR kindspos, kindsneg, rx, a:args
     if empty(rx)
@@ -544,21 +544,29 @@ function! trag#Grep(args, ...) "{{{3
             if empty(prcacc)
                 " TLogVAR search_mode, rxneg
                 if search_mode == 0 || !empty(rxneg)
-                    " TLogDBG 1
-                    if empty(scratch)
-                        let scratch = {'scratch': '__TRagFileScratch__'}
-                        call tlib#scratch#UseScratch(scratch)
-                        resize 1
-                        let lazyredraw = &lazyredraw
-                        set lazyredraw
-                    endif
-                    norm! ggdG
-                    exec 'silent 0read '. tlib#arg#Ex(f)
                     let qfl = {}
-                    silent exec 'g/'. escape(rxpos, '/') .'/ call s:AddCurrentLine(f, qfl, rxneg)'
-                    norm! ggdG
+                    " if empty(scratch)
+                    "     let scratch = {'scratch': '__TRagFileScratch__'}
+                    "     call tlib#scratch#UseScratch(scratch)
+                    "     resize 1
+                    "     let lazyredraw = &lazyredraw
+                    "     set lazyredraw
+                    " endif
+                    " norm! ggdG
+                    " exec 'silent 0read '. tlib#arg#Ex(f)
+                    " silent exec 'g/'. escape(rxpos, '/') .'/ call s:AddCurrentLine(f, qfl, rxneg)'
+                    " norm! ggdG
                     " TLogVAR qfl
-                    call setqflist(values(qfl), 'a')
+                    let lnum = 1
+                    for line in readfile(f)
+                        if line =~ rxpos && (empty(rxneg) || line !~ rxneg)
+                            let qfl[lnum] = {"filename": f, "lnum": lnum, "text": tlib#string#Strip(line)}
+                        endif
+                        let lnum += 1
+                    endfor
+                    if !empty(qfl)
+                        call setqflist(values(qfl), 'a')
+                    endif
                 else
                     " TLogDBG 'vimgrepadd /'. escape(rxpos, '/') .'/j '. tlib#arg#Ex(f)
                     " TLogVAR len(getqflist())
@@ -610,8 +618,10 @@ endf
 
 
 function! s:AddCurrentLine(file, qfl, rxneg) "{{{3
+    " TLogVAR a:file, a:rxneg
     let lnum = line('.')
     let text = getline(lnum)
+    " TLogVAR lnum, text
     if empty(a:rxneg) || text !~ a:rxneg
         let a:qfl[lnum] = {"filename": a:file, "lnum": lnum, "text": tlib#string#Strip(text)}
     endif
@@ -625,6 +635,7 @@ endf
 
 
 function! s:SplitArgs(args) "{{{3
+    " TLogVAR a:args
     let kind = matchstr(a:args, '^\S\+')
     if kind == '.' || kind == '*'
         let kind = ''
