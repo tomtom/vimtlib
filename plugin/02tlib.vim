@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-10.
-" @Last Change: 2010-03-27.
-" @Revision:    612
+" @Last Change: 2010-03-29.
+" @Revision:    615
 " GetLatestVimScripts: 1863 1 tlib.vim
 "
 " Please see also ../test/tlib.vim for usage examples.
@@ -99,6 +99,11 @@ command! -nargs=+ TKeyArg exec tlib#arg#Key([<args>])
 " EXAMPLES: >
 "   TBrowseOutput 20verb TeaseTheCulprit
 command! -nargs=1 -complete=command TBrowseOutput call tlib#cmd#BrowseOutput(<q-args>)
+
+
+" :display: TTimeCommand CMD
+" Time the execution time of CMD.
+command! -nargs=1 -complete=command TTimeCommand call tlib#cmd#Time(<q-args>)
 
 
 
@@ -564,4 +569,5 @@ required)
 - tlib#input#List: By default <m-NUMBER> selects by number but NUMBER is 
 interpreted as string
 - tlib#date
+- TTimeCommand
 

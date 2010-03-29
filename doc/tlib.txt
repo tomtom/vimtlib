@@ -34,6 +34,7 @@ Contents~
         :TVarArg ................................ |:TVarArg|
         :TKeyArg ................................ |:TKeyArg|
         :TBrowseOutput .......................... |:TBrowseOutput|
+        :TTimeCommand ........................... |:TTimeCommand|
         g:tlib_pick_last_item ................... |g:tlib_pick_last_item|
         g:tlib_sortprefs_threshold .............. |g:tlib_sortprefs_threshold|
         g:tlib_scratch_pos ...................... |g:tlib_scratch_pos|
@@ -310,6 +311,10 @@ TBrowseOutput COMMAND
     EXAMPLES: >
       TBrowseOutput 20verb TeaseTheCulprit
 <
+
+                                                    *:TTimeCommand*
+TTimeCommand CMD
+    Time the execution time of CMD.
 
                                                     *g:tlib_pick_last_item*
 g:tlib_pick_last_item          (default: 1)
