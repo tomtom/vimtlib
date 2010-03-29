@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-29.
-" @Last Change: 2010-03-25.
-" @Revision:    0.0.814
+" @Last Change: 2010-03-29.
+" @Revision:    0.0.850
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
@@ -18,7 +18,8 @@
 " Please not, this is only in effect with simple searches (as for 0.3 
 " all searches are simple). For more complex multi-line patterns, the 
 " built-in search will be used (some day in the future).
-TLet g:trag_search_mode = 2
+TLet g:trag_search_mode = 0
+" TLet g:trag_search_mode = 2
 
 " If no project files are defined, evaluate this expression as 
 " fallback-strategy.
@@ -541,7 +542,9 @@ function! trag#Grep(args, ...) "{{{3
             " into a buffer and use search(), which should be faster than 
             " running match() on every line.
             if empty(prcacc)
+                " TLogVAR search_mode, rxneg
                 if search_mode == 0 || !empty(rxneg)
+                    " TLogDBG 1
                     if empty(scratch)
                         let scratch = {'scratch': '__TRagFileScratch__'}
                         call tlib#scratch#UseScratch(scratch)
@@ -560,6 +563,7 @@ function! trag#Grep(args, ...) "{{{3
                     " TLogDBG 'vimgrepadd /'. escape(rxpos, '/') .'/j '. tlib#arg#Ex(f)
                     " TLogVAR len(getqflist())
                     " silent! exec 'vimgrepadd /'. escape(rxpos, '/') .'/gj '. tlib#arg#Ex(f)
+                    " silent! exec 'noautocmd vimgrepadd /'. escape(rxpos, '/') .'/j '. tlib#arg#Ex(f)
                     silent! exec 'noautocmd vimgrepadd /'. escape(rxpos, '/') .'/j '. tlib#arg#Ex(f)
                     let strip = 1
                 endif
@@ -584,30 +588,14 @@ function! trag#Grep(args, ...) "{{{3
             endif
         endfor
 
-        let qfl = getqflist()
-        let qfl_set = 0
-        let qfl_top1 = len(getqflist())
-        if qfl_top1 > qfl_top
-            let qfl_set = 1
-            for i in range(qfl_top, qfl_top1 - 1)
-                let item = qfl[i]
-                if !has_key(item, 'filename') && has_key(item, 'bufnr') && bufexists(item.bufnr)
-                    let qfl[i].filename = fnamemodify(bufname(item.bufnr), ':p')
-                endif
-            endfor
-            call setqflist(qfl)
-        endif
+        let qfl1 = getqflist()
         if strip
-            let qfl_set = 1
-            call map(qfl, 's:StripText(v:val)')
-        endif
-        if qfl_set
-            " TLogVAR qfl
-            call setqflist(qfl, 'r')
+            let qfl1[qfl_top : -1] = map(qfl1[qfl_top : -1], 's:StripText(v:val)')
+            call setqflist(qfl1, 'r')
         endif
 
         " TLogDBG 'qfl:'. string(getqflist())
-        return qfl
+        return qfl1[qfl_top : -1]
     finally
         " if search_mode == 2
         "     let &ei = ei

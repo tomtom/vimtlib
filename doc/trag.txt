@@ -351,7 +351,7 @@ TRagDefFiletype FILETYPE EXTENSION ... FILENAME ...
 autoload/trag.vim~
 
                                                     *g:trag_search_mode*
-g:trag_search_mode             (default: 2)
+g:trag_search_mode             (default: 0)
     0 ... use the built-in search.
     1 ... use vimgrep.
     2 ... use vimgrep but set 'ei' to all; this means special file 
