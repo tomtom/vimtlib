@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-06-30.
-" @Last Change: 2010-03-27.
-" @Revision:    0.0.299
+" @Last Change: 2010-03-29.
+" @Revision:    0.0.315
 
 
 let s:bmru = []
@@ -174,12 +174,22 @@ function! tlib#buffer#ViewLine(line, ...) "{{{3
 endf
 
 
+function! s:UndoHighlightLine() "{{{3
+    3match none
+    autocmd! TLib CursorMoved,CursorMovedI <buffer>
+    autocmd! TLib CursorHold,CursorHoldI <buffer>
+    autocmd! TLib BufLeave,BufWinLeave,WinLeave,BufHidden <buffer>
+endf
+
+
 function! tlib#buffer#HighlightLine(...) "{{{3
     TVarArg ['line', line('.')]
     " exec '3match MatchParen /^\%'. a:line .'l.*/'
     exec '3match Search /^\%'. line .'l.*/'
     call tlib#autocmdgroup#Init()
-    exec 'autocmd TLib CursorHold,CursorHoldI,CursorMoved,CursorMovedI <buffer> if line(".") != '. line .' | 3match none | exec "autocmd! TLib CursorHold,CursorHoldI,CursorMoved,CursorMovedI <buffer>" | endif'
+    exec 'autocmd TLib CursorMoved,CursorMovedI <buffer> if line(".") != '. line .' | call s:UndoHighlightLine() | endif'
+    autocmd TLib CursorHold,CursorHoldI <buffer> call s:UndoHighlightLine()
+    autocmd TLib BufLeave,BufWinLeave,WinLeave,BufHidden <buffer> call s:UndoHighlightLine()
 endf
 
 
