@@ -97,6 +97,7 @@ Contents~
         g:vikitasks#rx_levels ............ |g:vikitasks#rx_levels|
         g:vikitasks#cache ................ |g:vikitasks#cache|
         g:vikitasks#alarms ............... |g:vikitasks#alarms|
+        g:vikitasks#use_end_date ......... |g:vikitasks#use_end_date|
         vikitasks#Tasks .................. |vikitasks#Tasks()|
         vikitasks#AddBuffer .............. |vikitasks#AddBuffer()|
         vikitasks#EditFiles .............. |vikitasks#EditFiles()|
@@ -207,7 +208,7 @@ g:vikitasks#qfl_viewer         (default: '')
     The viewer for the quickfix list. If empty, use |:TRagcw|.
 
                                                     *g:vikitasks#rx_letters*
-g:vikitasks#rx_letters         (default: 'A-T')
+g:vikitasks#rx_letters         (default: 'A-W')
     Item classes that should be included in the list when calling 
     |:VikiTasks|.
     A user-defined value must be set in |vimrc| before the plugin is 
@@ -228,6 +229,10 @@ g:vikitasks#cache              (default: tlib#cache#Filename('vikitasks', 'files
                                                     *g:vikitasks#alarms*
 g:vikitasks#alarms             (default: {'all_tasks': 0, 'tasks': 'sometasks', 'constraint': 14})
     Definition of the tasks that should be included in the Alarms list.
+
+                                                    *g:vikitasks#use_end_date*
+g:vikitasks#use_end_date       (default: 1)
+    If true, the end-date of date ranges (FROM..TO) is significant.
 
                                                     *vikitasks#Tasks()*
 vikitasks#Tasks(?{'all_tasks': 0, 'cached': 1, 'files': [], 'constraint': '', 'rx': ''})

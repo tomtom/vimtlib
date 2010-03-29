@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
-" @Last Change: 2010-03-28.
-" @Revision:    0.0.516
+" @Last Change: 2010-03-29.
+" @Revision:    0.0.544
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -55,6 +55,9 @@ TLet g:vikitasks#cache = tlib#cache#Filename('vikitasks', 'files', 1)
 " Definition of the tasks that should be included in the Alarms list.
 TLet g:vikitasks#alarms = {'all_tasks': 0, 'tasks': 'sometasks', 'constraint': 14}
 
+" If true, the end-date of date ranges (FROM..TO) is significant.
+TLet g:vikitasks#use_end_date = 1
+
 
 function! s:VikitasksRx(inline, sometasks, letters, levels) "{{{3
     let val = '\C^[[:blank:]]'. (a:inline ? '*' : '\+') .'\zs'.
@@ -71,7 +74,7 @@ exec 'TRagDefKind tasks viki /'. s:tasks_rx .'/'
 delf s:VikitasksRx
 
 
-let s:date_rx = '\C^\s*#[A-Z0-9]\+ \zs\d\+-\d\+-\d\+'
+let s:date_rx = '\C^\s*#[A-Z0-9]\+ \(\d\+-\d\+-\d\+\)\(\.\.\(\(\d\+-\d\+-\d\+\)\)\)\?'
 
 
 " :nodoc:
@@ -84,10 +87,12 @@ function! vikitasks#GetArgs(bang, list) "{{{3
         let args.tasks = 'tasks'
         let args.constraint = '.'
     else
-        call remove(a:list, 0)
         let args.all_tasks = a0 =~ '^[.*]$'
         let args.tasks = a0 == '*' ? 'tasks' : 'sometasks'
         let args.constraint = a0
+        if !empty(a:list)
+            call remove(a:list, 0)
+        endif
     endif
     let args.rx = s:MakePattern(get(a:list, 0, '.'))
     let args.files = a:list[2:-1]
@@ -115,12 +120,14 @@ function! vikitasks#Tasks(...) "{{{3
 
         " TLogVAR args
         let files = get(args, 'files', [])
+        " TLogVAR files
         if empty(files)
             let files = s:MyFiles()
             " TLogVAR files
         endif
         " TAssertType files, 'list'
 
+        " TLogVAR files
         call map(files, 'glob(v:val)')
         let files = split(join(files, "\n"), '\n')
         " TLogVAR files
@@ -173,7 +180,7 @@ function! s:FilterTasks(tasks, args) "{{{3
     endif
 
     if !get(a:args, 'all_tasks', 0)
-        call filter(a:tasks, 'v:val.text =~ s:date_rx')
+        call filter(a:tasks, '!empty(s:GetTaskDueDate(v:val.text))')
         " TLogVAR len(a:tasks)
         let constraint = get(a:args, 'constraint', '.')
         " TLogVAR constraint
@@ -206,7 +213,7 @@ function! s:FilterTasks(tasks, args) "{{{3
         endif
         " TLogVAR from, to
         if from != 0 || to != 0
-            call filter(a:tasks, 's:Select(v:val.text, s:date_rx, from, to)')
+            call filter(a:tasks, 's:Select(v:val.text, from, to)')
         endif
     endif
 endf
@@ -247,12 +254,27 @@ function! s:MakePattern(pattern) "{{{3
 endf
 
 
+function! s:GetTaskDueDate(task) "{{{3
+    let m = matchlist(a:task, s:date_rx)
+    if g:vikitasks#use_end_date
+        let rv = get(m, 3, '')
+    else
+        let rv = ''
+    endif
+    if empty(rv)
+        let rv = get(m, 1, '')
+    endif
+    " TLogVAR a:task, m, rv
+    return rv
+endf
+
+
 function! s:GetCurrentTask(qfl, daysdiff) "{{{3
     " TLogVAR a:daysdiff
     let i = 1
     let today = strftime('%Y-%m-%d')
     for qi in a:qfl
-        let qid = matchstr(qi.text, s:date_rx)
+        let qid = s:GetTaskDueDate(qi.text)
         " TLogVAR qid, today
         if !empty(qid) && tlib#date#DiffInDays(qid, today) <= a:daysdiff
             let i += 1
@@ -267,8 +289,8 @@ endf
 function! s:SortTasks(a, b) "{{{3
     let a = a:a.text
     let b = a:b.text
-    let ad = matchstr(a, s:date_rx)
-    let bd = matchstr(b, s:date_rx)
+    let ad = s:GetTaskDueDate(a)
+    let bd = s:GetTaskDueDate(b)
     if ad && !bd
         return -1
     elseif !ad && bd
@@ -324,11 +346,17 @@ endf
 
 function! s:MyFiles() "{{{3
     let files = copy(tlib#var#Get('vikitasks_files', 'bg', []))
+    " TLogVAR files
     let files += s:Files()
+    " TLogVAR files
     if tlib#var#Get('vikitasks_intervikis', 'bg', 0)
         call s:AddInterVikis(files)
     endif
-    call filter(files, 'v:val !~ s:files_ignored')
+    " TLogVAR files
+    if !empty(s:files_ignored)
+        call filter(files, 'v:val !~ s:files_ignored')
+    endif
+    " TLogVAR files
     if !has('fname_case') || !&shellslash
         call map(files, 's:CanonicFilename(v:val)')
     endif
@@ -356,8 +384,8 @@ function! s:AddInterVikis(files) "{{{3
 endf
 
 
-function! s:Select(text, date_rx, from, to) "{{{3
-    let date = matchstr(a:text, a:date_rx)
+function! s:Select(text, from, to) "{{{3
+    let date = s:GetTaskDueDate(a:text)
     let sfrom = strftime('%Y-%m-%d', a:from)
     let sto = strftime('%Y-%m-%d', a:to)
     let rv = date >= sfrom && date <= sto
@@ -425,7 +453,7 @@ endf
 " Scan the current buffer for task lists.
 function! vikitasks#ScanCurrentBuffer() "{{{3
     let filename = s:CanonicFilename(fnamemodify(bufname('%'), ':p'))
-    if filename =~ s:files_ignored
+    if !empty(s:files_ignored) && filename =~ s:files_ignored
         return
     endif
     let tasks = s:Tasks()
@@ -453,6 +481,7 @@ function! vikitasks#ScanCurrentBuffer() "{{{3
     for line in getline(1, '$')
         let text = tlib#string#Strip(line)
         if line =~ rx
+            " TLogVAR text
             if get(get(buftasks, lnum, {}), 'text', '') != text
                 " TLogVAR lnum
                 " echom "DBG ". get(buftasks,lnum,'')
@@ -471,7 +500,7 @@ function! vikitasks#ScanCurrentBuffer() "{{{3
     endfor
     " TLogVAR len(tasks)
     if update
-        " TLogVAR update
+        TLogVAR update
         call vikitasks#AddBuffer(filename, 0)
         call s:SaveInfo(s:Files(), tasks)
     endif
