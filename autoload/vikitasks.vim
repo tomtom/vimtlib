@@ -40,7 +40,7 @@ TLet g:vikitasks#qfl_viewer = ''
 " |:VikiTasks|.
 " A user-defined value must be set in |vimrc| before the plugin is 
 " loaded.
-TLet g:vikitasks#rx_letters = 'A-T'
+TLet g:vikitasks#rx_letters = 'A-W'
 
 " Item levels that should be included in the list when calling 
 " |:VikiTasks|.
