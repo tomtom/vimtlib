@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-29.
-" @Last Change: 2010-03-27.
-" @Revision:    605
+" @Last Change: 2010-03-30.
+" @Revision:    606
 " GetLatestVimScripts: 2033 1 trag.vim
 
 if &cp || exists("loaded_trag")
@@ -124,7 +124,7 @@ command! -nargs=1 -bang -bar Tragsearch TRagsearch<bang> <args>
 "   :TRaggrep bar
 command! -nargs=+ -bang -bar -complete=file TRaggrep
             \ let g:trag_grepargs = ['.', <f-args>]
-            \ | call trag#Grep(g:trag_grepargs[0] .' '. g:trag_grepargs[1], empty("<bang>"), split(glob(get(g:trag_grepargs, 2, '')), "\n"))
+            \ | call trag#Grep(g:trag_grepargs[0] .' '. g:trag_grepargs[1], empty("<bang>"), g:trag_grepargs[2:-1])
             \ | unlet g:trag_grepargs
             \ | TRagcw
 command! -nargs=+ -bang -bar -complete=file Traggrep TRaggrep<bang> <args>

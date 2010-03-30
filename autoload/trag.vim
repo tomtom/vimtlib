@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-29.
-" @Last Change: 2010-03-29.
-" @Revision:    0.0.890
+" @Last Change: 2010-03-30.
+" @Revision:    0.0.894
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
@@ -491,8 +491,10 @@ function! trag#Grep(args, ...) "{{{3
     " TLogVAR kindspos, kindsneg, rx, files
     if empty(files)
         let files = s:GetFiles()
-        " TLogVAR files
+    else
+        let files = split(join(map(files, 'glob(v:val)'), "\n"), '\n')
     endif
+    " TLogVAR files
     " TAssertType files, 'list'
     call tlib#progressbar#Init(len(files), 'TRag: Grep %s', 20)
     if replace
