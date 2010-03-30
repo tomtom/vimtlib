@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
-" @Last Change: 2010-03-29.
-" @Revision:    0.0.544
+" @Last Change: 2010-03-30.
+" @Revision:    0.0.560
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -139,6 +139,8 @@ function! vikitasks#Tasks(...) "{{{3
             " TLogVAR qfl
             let tasks = copy(qfl)
             for i in range(len(tasks))
+                let bufnr = tasks[i].bufnr
+                let tasks[i].filename = s:CanonicFilename(fnamemodify(bufname(bufnr), ':p'))
                 call remove(tasks[i], 'bufnr')
             endfor
             call s:SaveInfo(s:Files(), tasks)
@@ -402,6 +404,7 @@ function! vikitasks#AddBuffer(buffer, ...) "{{{3
     let files = s:Files()
     if filereadable(fname) && index(files, fname) == -1
         call add(files, fname)
+        let save = !vikitasks#ScanCurrentBuffer(fname)
         if save
             call s:SaveInfo(files, s:Tasks())
         endif
@@ -411,9 +414,10 @@ endf
 
 " Edit the list of files.
 function! vikitasks#EditFiles() "{{{3
-    let files = tlib#input#EditList('Edit task files:', sort(copy(s:Files())))
+    let files = tlib#input#EditList('Edit task files:', copy(s:Files()))
     if files != s:files
         call s:SaveInfo(files, s:Tasks())
+        call tlib#notify#Echo('Please update your task list by running :VikiTasks!', 'WarningMsg')
     endif
 endf
 
@@ -451,10 +455,17 @@ endf
 
 " :nodoc:
 " Scan the current buffer for task lists.
-function! vikitasks#ScanCurrentBuffer() "{{{3
-    let filename = s:CanonicFilename(fnamemodify(bufname('%'), ':p'))
+function! vikitasks#ScanCurrentBuffer(...) "{{{3
+    TVarArg ['filename', '']
+    let use_buffer = empty(filename)
+    if use_buffer
+        let filename = s:CanonicFilename(fnamemodify(bufname('%'), ':p'))
+    else
+        let filename = s:CanonicFilename(filename)
+    endif
+    " TLogVAR filename, use_buffer
     if !empty(s:files_ignored) && filename =~ s:files_ignored
-        return
+        return 0
     endif
     let tasks = s:Tasks()
     let ntasks = len(tasks)
@@ -478,7 +489,12 @@ function! vikitasks#ScanCurrentBuffer() "{{{3
     let update = 0
     let lnum = 1
     " echom "DBG ". string(keys(buftasks))
-    for line in getline(1, '$')
+    if use_buffer
+        let lines = getline(1, '$')
+    else
+        let lines = readfile(filename)
+    endif
+    for line in lines
         let text = tlib#string#Strip(line)
         if line =~ rx
             " TLogVAR text
@@ -500,10 +516,11 @@ function! vikitasks#ScanCurrentBuffer() "{{{3
     endfor
     " TLogVAR len(tasks)
     if update
-        TLogVAR update
+        " TLogVAR update
         call vikitasks#AddBuffer(filename, 0)
         call s:SaveInfo(s:Files(), tasks)
     endif
+    return update
 endf
 
 
