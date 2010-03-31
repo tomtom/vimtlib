@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
 " @Last Change: 2010-03-31.
-" @Revision:    0.0.580
+" @Revision:    0.0.583
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -347,11 +347,11 @@ endf
 
 
 function! s:MyFiles() "{{{3
-    let files = copy(tlib#var#Get('vikitasks_files', 'bg', []))
+    let files = copy(tlib#var#Get('vikitasks#files', 'bg', []))
     " TLogVAR files
     let files += s:Files()
     " TLogVAR files
-    if tlib#var#Get('vikitasks_intervikis', 'bg', 0)
+    if tlib#var#Get('vikitasks#intervikis', 'bg', 0)
         call s:AddInterVikis(files)
     endif
     " TLogVAR files
@@ -370,7 +370,7 @@ endf
 
 function! s:AddInterVikis(files) "{{{3
     " TLogVAR a:files
-    let ivignored = tlib#var#Get('vikitasks_intervikis_ignored', 'bg', [])
+    let ivignored = tlib#var#Get('vikitasks#intervikis_ignored', 'bg', [])
     for iv in viki#GetInterVikis()
         if index(ivignored, matchstr(iv, '^\u\+')) == -1
             " TLogVAR iv
