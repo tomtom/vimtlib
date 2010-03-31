@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
-" @Last Change: 2010-03-30.
-" @Revision:    0.0.560
+" @Last Change: 2010-03-31.
+" @Revision:    0.0.580
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -182,7 +182,7 @@ function! s:FilterTasks(tasks, args) "{{{3
     endif
 
     if !get(a:args, 'all_tasks', 0)
-        call filter(a:tasks, '!empty(s:GetTaskDueDate(v:val.text))')
+        call filter(a:tasks, '!empty(s:GetTaskDueDate(v:val.text, 0))')
         " TLogVAR len(a:tasks)
         let constraint = get(a:args, 'constraint', '.')
         " TLogVAR constraint
@@ -256,9 +256,9 @@ function! s:MakePattern(pattern) "{{{3
 endf
 
 
-function! s:GetTaskDueDate(task) "{{{3
+function! s:GetTaskDueDate(task, use_end_date) "{{{3
     let m = matchlist(a:task, s:date_rx)
-    if g:vikitasks#use_end_date
+    if a:use_end_date && g:vikitasks#use_end_date
         let rv = get(m, 3, '')
     else
         let rv = ''
@@ -276,9 +276,9 @@ function! s:GetCurrentTask(qfl, daysdiff) "{{{3
     let i = 1
     let today = strftime('%Y-%m-%d')
     for qi in a:qfl
-        let qid = s:GetTaskDueDate(qi.text)
+        let qid = s:GetTaskDueDate(qi.text, 1)
         " TLogVAR qid, today
-        if !empty(qid) && tlib#date#DiffInDays(qid, today) <= a:daysdiff
+        if !empty(qid) && tlib#date#DiffInDays(qid, today, 1) <= a:daysdiff
             let i += 1
         else
             break
@@ -291,8 +291,8 @@ endf
 function! s:SortTasks(a, b) "{{{3
     let a = a:a.text
     let b = a:b.text
-    let ad = s:GetTaskDueDate(a)
-    let bd = s:GetTaskDueDate(b)
+    let ad = s:GetTaskDueDate(a, 1)
+    let bd = s:GetTaskDueDate(b, 1)
     if ad && !bd
         return -1
     elseif !ad && bd
@@ -387,11 +387,16 @@ endf
 
 
 function! s:Select(text, from, to) "{{{3
-    let date = s:GetTaskDueDate(a:text)
     let sfrom = strftime('%Y-%m-%d', a:from)
     let sto = strftime('%Y-%m-%d', a:to)
-    let rv = date >= sfrom && date <= sto
-    " TLogVAR date, sfrom, sto, rv
+    let date1 = s:GetTaskDueDate(a:text, 0)
+    let date2 = s:GetTaskDueDate(a:text, 1)
+    if date1 == date2
+        let rv = date1 >= sfrom && date1 <= sto
+    else
+        let rv = (date1 >= sfrom && date1 <= sto) || (date2 >= sfrom && date2 <= sto)
+    endif
+    " TLogVAR sfrom, sto, date1, date2, rv
     return rv
 endf
 
@@ -423,18 +428,22 @@ endf
 
 
 " :nodoc:
-" :display: vikitasks#Alarm(?ddays = g:vikitasks_alarms - 1)
+" :display: vikitasks#Alarm(?ddays = -1)
 " Display a list of alarms.
+" If ddays >= 0, the constraint value in |g:vikitasks#alarms| is set to 
+" ddays days.
+" If ddays is -1 and |g:vikitasks#alarms| is empty, not alarms will be 
+" listed.
 function! vikitasks#Alarm(...) "{{{3
-    TVarArg ['ddays', g:vikitasks_alarms - 1]
+    TVarArg ['ddays', -1]
     " TLogVAR ddays
-    if ddays < 0
+    if ddays < 0 && empty(g:vikitasks#alarms)
         return
     endif
     let tasks = copy(s:Tasks())
     call sort(tasks, "s:SortTasks")
     let alarms = copy(g:vikitasks#alarms)
-    if ddays > 0
+    if ddays >= 0
         let alarms.constraint = ddays
     endif
     " TLogVAR alarms
@@ -464,7 +473,7 @@ function! vikitasks#ScanCurrentBuffer(...) "{{{3
         let filename = s:CanonicFilename(filename)
     endif
     " TLogVAR filename, use_buffer
-    if !empty(s:files_ignored) && filename =~ s:files_ignored
+    if &buftype =~ '\<nofile\>' || (!empty(s:files_ignored) && filename =~ s:files_ignored)
         return 0
     endif
     let tasks = s:Tasks()

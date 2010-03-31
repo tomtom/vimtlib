@@ -3,8 +3,8 @@
 " @GIT:         http://github.com/tomtom/vimtlib/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
-" @Last Change: 2010-03-28.
-" @Revision:    189
+" @Last Change: 2010-03-31.
+" @Revision:    199
 " GetLatestVimScripts: 0 0 :AutoInstall: vikitasks.vim
 " Search for task lists and display them in a list
 
@@ -36,8 +36,10 @@ set cpo&vim
 " If 0, don't display alarms for pending tasks.
 " If n > 0, display alarms for pending tasks or tasks with a deadline in n 
 " days.
-TLet g:vikitasks_alarms = !has('clientserver') || len(split(serverlist(), '\n')) == 1
+TLet g:vikitasks_startup_alarms = !has('clientserver') || len(split(serverlist(), '\n')) == 1
 
+" Scan a buffer on these events.
+TLet g:vikitasks_scan_events = 'BufWrite,BufWinEnter'
 
 " :display: VikiTasks[!] [CONSTRAINT] [PATTERN] [FILE_PATTERNS]
 " CONSTRAINT defined which tasks should be displayed. Possible values 
@@ -105,8 +107,11 @@ command! -count VikiTasksAlarms call vikitasks#Alarm(<count>)
 
 augroup VikiTasks
     autocmd!
-    autocmd VimEnter * if g:vikitasks_alarms | call vikitasks#Alarm() | endif
-    autocmd BufWrite * if exists('b:vikiEnabled') && b:vikiEnabled | call vikitasks#ScanCurrentBuffer() | endif
+    if g:vikitasks_startup_alarms
+        autocmd VimEnter *  call vikitasks#Alarm()
+    endif
+    exec 'autocmd '. g:vikitasks_scan_events .' * if exists("b:vikiEnabled") && b:vikiEnabled | call vikitasks#ScanCurrentBuffer(expand("<afile>:p")) | endif'
+    unlet g:vikitasks_startup_alarms g:vikitasks_scan_events
 augroup END
 
 

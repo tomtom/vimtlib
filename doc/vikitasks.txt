@@ -83,7 +83,8 @@ Also available via git: http://github.com/tomtom/vimtlib/
 ========================================================================
 Contents~
 
-        g:vikitasks_alarms ............... |g:vikitasks_alarms|
+        g:vikitasks_startup_alarms ....... |g:vikitasks_startup_alarms|
+        g:vikitasks_scan_events .......... |g:vikitasks_scan_events|
         :VikiTasks ....................... |:VikiTasks|
         :VikiTasksAdd .................... |:VikiTasksAdd|
         :VikiTasksFiles .................. |:VikiTasksFiles|
@@ -106,12 +107,16 @@ Contents~
 ========================================================================
 plugin/vikitasks.vim~
 
-                                                    *g:vikitasks_alarms*
-g:vikitasks_alarms             (default: !has('clientserver') || len(split(serverlist(), '\n')) == 1)
+                                                    *g:vikitasks_startup_alarms*
+g:vikitasks_startup_alarms     (default: !has('clientserver') || len(split(serverlist(), '\n')) == 1)
     Show alarms on pending tasks.
     If 0, don't display alarms for pending tasks.
     If n > 0, display alarms for pending tasks or tasks with a deadline in n 
     days.
+
+                                                    *g:vikitasks_scan_events*
+g:vikitasks_scan_events        (default: 'BufWrite,BufWinEnter')
+    Scan a buffer on these events.
 
                                                     *:VikiTasks*
 VikiTasks[!] [CONSTRAINT] [PATTERN] [FILE_PATTERNS]
