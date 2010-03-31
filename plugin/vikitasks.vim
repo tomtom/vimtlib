@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
 " @Last Change: 2010-03-31.
-" @Revision:    200
+" @Revision:    202
 " GetLatestVimScripts: 0 0 :AutoInstall: vikitasks.vim
 " Search for task lists and display them in a list
 
@@ -26,7 +26,7 @@ endif
 if &cp || exists("loaded_vikitasks")
     finish
 endif
-let loaded_vikitasks = 2
+let loaded_vikitasks = 3
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -134,3 +134,5 @@ change makes the :VikiTasksGrep command obsolete, which was removed.
 - Require tlib 0.37
 - The arguments for :VikiTasks have changed
 
+0.3
+- 

@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
 " @Last Change: 2010-03-31.
-" @Revision:    0.0.583
+" @Revision:    0.0.586
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -473,7 +473,7 @@ function! vikitasks#ScanCurrentBuffer(...) "{{{3
         let filename = s:CanonicFilename(filename)
     endif
     " TLogVAR filename, use_buffer
-    if &buftype =~ '\<nofile\>' || (!empty(s:files_ignored) && filename =~ s:files_ignored)
+    if &buftype =~ '\<nofile\>' || (!empty(s:files_ignored) && filename =~ s:files_ignored) || !filereadable(filename) || isdirectory(filename) || empty(filename)
         return 0
     endif
     let tasks = s:Tasks()
