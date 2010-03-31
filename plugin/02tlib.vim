@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-10.
-" @Last Change: 2010-03-29.
-" @Revision:    615
+" @Last Change: 2010-03-31.
+" @Revision:    616
 " GetLatestVimScripts: 1863 1 tlib.vim
 "
 " Please see also ../test/tlib.vim for usage examples.
@@ -16,7 +16,7 @@ if v:version < 700 "{{{2
     echoerr "tlib requires Vim >= 7"
     finish
 endif
-let loaded_tlib = 37
+let loaded_tlib = 38
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -571,3 +571,5 @@ interpreted as string
 - tlib#date
 - TTimeCommand
 
+0.38
+- 
