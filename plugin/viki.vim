@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2010-03-12.
-" @Revision:    2687
+" @Last Change: 2010-03-31.
+" @Revision:    2691
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -40,7 +40,7 @@ if !exists('g:loaded_tlib') || g:loaded_tlib < 32
         finish
     endif
 endif
-let loaded_viki = 317
+let loaded_viki = 319
 
 
 " Configuration {{{1
@@ -709,8 +709,10 @@ VikiDefine()) in order to reduce startup time
 - viki#RestoreCursorPosition(): use winrestview() (reported by Marko Mahnic)
 
 3.18
-- g:vikiFoldMethodVersion defaults to 7 (a simpler method that relies on
-"=" though)
+- g:vikiFoldMethodVersion defaults to 7 (a simpler method that relies on "=" though)
+- Syntax for tasks lists
 
+3.19
+- 
 
 " vim: ff=unix
