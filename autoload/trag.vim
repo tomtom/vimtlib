@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-29.
 " @Last Change: 2010-03-30.
-" @Revision:    0.0.894
+" @Revision:    0.0.898
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
@@ -566,6 +566,7 @@ function! trag#Grep(args, ...) "{{{3
                         endif
                         let lnum += 1
                     endfor
+                    " TLogVAR qfl
                     if !empty(qfl)
                         call setqflist(values(qfl), 'a')
                     endif
@@ -599,6 +600,7 @@ function! trag#Grep(args, ...) "{{{3
         endfor
 
         let qfl1 = getqflist()
+        " TLogVAR qfl1
         if strip
             let qfl1[qfl_top : -1] = map(qfl1[qfl_top : -1], 's:StripText(v:val)')
             call setqflist(qfl1, 'r')
