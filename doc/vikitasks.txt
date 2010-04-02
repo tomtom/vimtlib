@@ -115,7 +115,7 @@ g:vikitasks_startup_alarms     (default: !has('clientserver') || len(split(serve
     days.
 
                                                     *g:vikitasks_scan_events*
-g:vikitasks_scan_events        (default: 'BufWrite,BufWinEnter')
+g:vikitasks_scan_events        (default: 'BufWritePost,BufWinEnter')
     Scan a buffer on these events.
 
                                                     *:VikiTasks*

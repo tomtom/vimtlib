@@ -3,8 +3,8 @@
 " @GIT:         http://github.com/tomtom/vimtlib/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
-" @Last Change: 2010-03-31.
-" @Revision:    202
+" @Last Change: 2010-04-01.
+" @Revision:    203
 " GetLatestVimScripts: 0 0 :AutoInstall: vikitasks.vim
 " Search for task lists and display them in a list
 
@@ -39,7 +39,7 @@ set cpo&vim
 TLet g:vikitasks_startup_alarms = !has('clientserver') || len(split(serverlist(), '\n')) == 1
 
 " Scan a buffer on these events.
-TLet g:vikitasks_scan_events = 'BufWrite,BufWinEnter'
+TLet g:vikitasks_scan_events = 'BufWritePost,BufWinEnter'
 
 " :display: VikiTasks[!] [CONSTRAINT] [PATTERN] [FILE_PATTERNS]
 " CONSTRAINT defined which tasks should be displayed. Possible values 
