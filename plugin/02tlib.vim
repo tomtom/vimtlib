@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-10.
-" @Last Change: 2010-03-31.
-" @Revision:    616
+" @Last Change: 2010-04-02.
+" @Revision:    617
 " GetLatestVimScripts: 1863 1 tlib.vim
 "
 " Please see also ../test/tlib.vim for usage examples.
@@ -572,4 +572,5 @@ interpreted as string
 - TTimeCommand
 
 0.38
-- 
+- tlib#World#Resize: set winfix{height|width}
+

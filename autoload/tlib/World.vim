@@ -3,8 +3,8 @@
 " @Website:     http://members.a1.net/t.link/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-05-01.
-" @Last Change: 2010-03-28.
-" @Revision:    0.1.834
+" @Last Change: 2010-04-02.
+" @Revision:    0.1.841
 
 " :filedoc:
 " A prototype used by |tlib#input#List|.
@@ -698,10 +698,14 @@ function! s:prototype.Resize(hsize, vsize) dict "{{{3
     if self.scratch_vertical
         if a:vsize
             let world_resize = 'vert resize '. a:vsize
+            " let w:winresize = {'v': a:vsize}
+            setlocal winfixwidth
         endif
     else
         if a:hsize
             let world_resize = 'resize '. a:hsize
+            " let w:winresize = {'h': a:hsize}
+            setlocal winfixheight
         endif
     endif
     if !empty(world_resize)
@@ -709,6 +713,20 @@ function! s:prototype.Resize(hsize, vsize) dict "{{{3
         exec world_resize
         redraw!
     endif
+endf
+
+
+" :nodoc:
+function! s:prototype.GetResize(size) dict "{{{3
+    let resize0 = get(self, 'resize', 0)
+    let resize = empty(resize0) ? 0 : eval(resize0)
+    " TLogVAR resize0, resize
+    let resize = resize == 0 ? a:size : min([a:size, resize])
+    " let min = self.scratch_vertical ? &cols : &lines
+    let min = self.scratch_vertical ? winwidth(0) : winheight(0)
+    let resize = min([resize, (min * g:tlib_inputlist_pct / 100)])
+    " TLogVAR resize, a:size, min
+    return resize
 endf
 
 
@@ -734,13 +752,7 @@ function! s:prototype.DisplayList(query, ...) dict "{{{3
         let x  = self.index_width + 1
         " TLogVAR ll
         if self.state =~ '\<display\>'
-            let resize0 = get(self, 'resize', 0)
-            let resize = empty(resize0) ? 0 : eval(resize0)
-            " TLogVAR resize0, resize
-            let resize = resize == 0 ? ll : min([ll, resize])
-            let resize = min([resize, (&lines * g:tlib_inputlist_pct / 100)])
-            " TLogVAR resize, ll, &lines
-            call self.Resize(resize, eval(get(self, 'resize_vertical', 0)))
+            call self.Resize(self.GetResize(ll), eval(get(self, 'resize_vertical', 0)))
             call tlib#normal#WithRegister('gg"tdG', 't')
             let w = winwidth(0) - &fdc
             " let w = winwidth(0) - &fdc - 1
