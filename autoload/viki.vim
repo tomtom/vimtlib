@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2010-03-09.
-" @Revision:    0.621
+" @Last Change: 2010-04-03.
+" @Revision:    0.628
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
@@ -357,6 +357,7 @@ endif
 
 if !exists('*VikiOpenSpecialFile') "{{{2
     function! VikiOpenSpecialFile(file) "{{{3
+        " TLogVAR a:file
         " let proto = tolower(matchstr(a:file, '\c\.\zs[a-z]\+$'))
         let proto = tolower(fnamemodify(a:file, ':e'))
         if exists('g:vikiOpenFileWith_'. proto)

@@ -36,6 +36,7 @@ See INSTALL.TXT
     #A ttags            -- Tag list browser (List, filter, preview, jump to tags)
     #A ttoc             -- Display a "table of contents" for the current buffer
     #A Viki             -- A personal wiki for Vim
+    #A vikitasks        -- Search viki files for tasks and display them in a list
     #B Eval\Selection   -- evaluate selected vim/ruby/... code
     #B localvariables   -- Set/let per-file-variables à la Emacs
     #B ttagcomplete     -- Context-sensitive tag completion
@@ -43,7 +44,6 @@ See INSTALL.TXT
     #C prototype        -- \JavaScript-like prototype-based programming in vimscript
     #C spec             -- Behaviour-driven design: easy on the eye specifications of VIM scripts
     #C tbak             -- Yet another simple backup plugin using diff
-    #C vikitasks        -- Search viki files for tasks and display them in a list
     #D concordance      -- Concordance table (sort of)
     #D glark            -- a wrapper for the glark command (superseded by trag)
     #D linglang         -- Perform actions on basis of the current line's language

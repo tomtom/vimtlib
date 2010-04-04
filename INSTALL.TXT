@@ -11,7 +11,8 @@ this repository:
 Short version:
 
     1. Save a local copy of the vimtlib repository under 
-       ''~/vimfiles/repos'' (on some systems it's ''~/.vim/repos'')
+       ''~/vimfiles/repos/vimtlib'' (on some systems it's 
+       ''~/.vim/repos/vimtlib'')
 
     2. Insert the following line rather at the beginning of your 
        ''vimrc'' file:
@@ -24,7 +25,7 @@ Short version:
        ''vimrc'' file:
        ''TPlugin! vimtlib 02tlib''.
 
-    3. Run '':TPluginScan all'' to enable autoloading.
+    3. Run '':TPluginScan! all'' to enable autoloading.
 
     4. Restart vim.
 
