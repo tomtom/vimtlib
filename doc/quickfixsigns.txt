@@ -102,7 +102,7 @@ g:quickfixsigns_class_marks    (default: {...})
     The definition of signs for marks.
 
                                                     *g:quickfixsigns_class_rel*
-g:quickfixsigns_class_rel      (default: {'sign': '*s:RelSign', 'get': 's:GetRelList()', 'event': g:quickfixsigns_events1, 'max': 9, 'level': 9})
+g:quickfixsigns_class_rel      (default: {'sign': '*s:RelSign', 'get': 's:GetRelList("rel")', 'event': g:quickfixsigns_events1, 'max': 9, 'level': 9})
     Signs for number of lines relative to the current line.
 
                                                     *g:quickfixsigns_class_qfl*

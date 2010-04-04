@@ -4,8 +4,8 @@
 " @GIT:         http://github.com/tomtom/vimtlib/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-03-14.
-" @Last Change: 2010-03-24.
-" @Revision:    440
+" @Last Change: 2010-04-03.
+" @Revision:    452
 " GetLatestVimScripts: 2584 1 :AutoInstall: quickfixsigns.vim
 
 if &cp || exists("loaded_quickfixsigns") || !has('signs')
@@ -96,8 +96,11 @@ endif
 
 if !exists('g:quickfixsigns_class_rel')
     " Signs for number of lines relative to the current line.
-    let g:quickfixsigns_class_rel = {'sign': '*s:RelSign', 'get': 's:GetRelList()', 'event': g:quickfixsigns_events1, 'max': 9, 'level': 9}  "{{{2
+    let g:quickfixsigns_class_rel = {'sign': '*s:RelSign', 'get': 's:GetRelList("rel")', 'event': g:quickfixsigns_events1, 'max': 9, 'level': 9}  "{{{2
 endif
+let g:quickfixsigns_class_rel2 = copy(g:quickfixsigns_class_rel)
+let g:quickfixsigns_class_rel2.get = 's:GetRelList("rel2")'
+let g:quickfixsigns_class_rel2.max = 99
 
 
 if !exists('g:quickfixsigns_class_qfl')
@@ -186,9 +189,9 @@ let s:last_run = {}
 
 function! QuickfixsignsSelect(list) "{{{3
 	" FIXME: unset first
-    let s:quickfixsigns_lists = {}
+    let g:quickfixsigns_lists = {}
 	for what in a:list
-		let s:quickfixsigns_lists[what] = g:quickfixsigns_class_{what}
+		let g:quickfixsigns_lists[what] = g:quickfixsigns_class_{what}
 	endfor
 endf
 call QuickfixsignsSelect(g:quickfixsigns_classes)
@@ -287,7 +290,7 @@ endf
 
 
 function! s:ListValues() "{{{3
-    return sort(items(s:quickfixsigns_lists), 's:CompareClasses')
+    return sort(items(g:quickfixsigns_lists), 's:CompareClasses')
 endf
 
 
@@ -334,16 +337,18 @@ function! s:RelSign(item) "{{{3
 endf
 
 
-function! s:GetRelList() "{{{3
+function! s:GetRelList(class) "{{{3
 	let lnum = line('.')
 	let col = col('.')
 	let bn = bufnr('%')
     let top = line('w0') - lnum
     let bot = line('w$') - lnum
-    if g:quickfixsigns_class_rel.max >= 0
-        let top = max([top, -g:quickfixsigns_class_rel.max])
-        let bot = min([bot, g:quickfixsigns_class_rel.max])
+    let max = g:quickfixsigns_class_{a:class}.max
+    if max >= 0
+        let top = max([top, -max])
+        let bot = min([bot, max])
     endif
+    " TLogVAR top, bot
     call s:GenRel(max([abs(top), abs(bot)]))
     return map(range(top, bot), '{"bufnr": bn, "lnum": lnum + v:val, "col": col, "text": "REL_". abs(v:val)}')
 endf
@@ -511,4 +516,5 @@ buffer (patch by Sergey Khorev; must be set before entering a buffer)
 0.8
 - Support for relative line numbers
 - QuickfixsignsSet command
+- quickfixsigns#RelNumbersOnce()
 
