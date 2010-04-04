@@ -122,9 +122,16 @@ Contents~
         tlib#buffer#InsertText0 ................. |tlib#buffer#InsertText0()|
         tlib#buffer#CurrentByte ................. |tlib#buffer#CurrentByte()|
         tlib#buffer#KeepCursorPosition .......... |tlib#buffer#KeepCursorPosition()|
+        g:tlib#cache#purge_days ................. |g:tlib#cache#purge_days|
+        g:tlib#cache#purge_every_days ........... |g:tlib#cache#purge_every_days|
+        g:tlib#cache#script_encoding ............ |g:tlib#cache#script_encoding|
+        g:tlib#cache#run_script ................. |g:tlib#cache#run_script|
+        tlib#cache#Dir .......................... |tlib#cache#Dir()|
         tlib#cache#Filename ..................... |tlib#cache#Filename()|
         tlib#cache#Save ......................... |tlib#cache#Save()|
         tlib#cache#Get .......................... |tlib#cache#Get()|
+        tlib#cache#MaybePurge ................... |tlib#cache#MaybePurge()|
+        tlib#cache#Purge ........................ |tlib#cache#Purge()|
         tlib#char#Get ........................... |tlib#char#Get()|
         tlib#char#IsAvailable ................... |tlib#char#IsAvailable()|
         tlib#char#GetWithTimeout ................ |tlib#char#GetWithTimeout()|
@@ -684,6 +691,33 @@ tlib#buffer#KeepCursorPosition(cmd)
 ========================================================================
 autoload/tlib/cache.vim~
 
+                                                    *g:tlib#cache#purge_days*
+g:tlib#cache#purge_days        (default: 31)
+    |tlib#cache#Purge()|: Remove cache files older than N days.
+
+                                                    *g:tlib#cache#purge_every_days*
+g:tlib#cache#purge_every_days  (default: 31)
+    Purge the cache every N days. Disable automatic purging by setting 
+    this value to a negative value.
+
+                                                    *g:tlib#cache#script_encoding*
+g:tlib#cache#script_encoding   (default: '')
+    The encoding used for the purge-cache script.
+    Default:
+    &shell == bash: latin-1
+    &shell == cmd.exe: cp850
+
+                                                    *g:tlib#cache#run_script*
+g:tlib#cache#run_script        (default: 1)
+    Whether to run the directory removal script:
+       0 ... No
+       1 ... Query user
+       2 ... Yes
+
+                                                    *tlib#cache#Dir()*
+tlib#cache#Dir(?mode = 'bg')
+    The default cache directory
+
                                                     *tlib#cache#Filename()*
 tlib#cache#Filename(type, ?file=%, ?mkdir=0)
 
@@ -692,6 +726,15 @@ tlib#cache#Save(cfile, dictionary)
 
                                                     *tlib#cache#Get()*
 tlib#cache#Get(cfile)
+
+                                                    *tlib#cache#MaybePurge()*
+tlib#cache#MaybePurge()
+    Call |tlib#cache#Purge()| if the last purge was done before 
+    |g:tlib#cache#purge_every_days|.
+
+                                                    *tlib#cache#Purge()*
+tlib#cache#Purge()
+    Delete old files.
 
 
 ========================================================================
