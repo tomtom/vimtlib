@@ -3,8 +3,8 @@
 " @GIT:         http://github.com/tomtom/vimtlib/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-02-25.
-" @Last Change: 2009-03-06.
-" @Revision:    12
+" @Last Change: 2010-04-03.
+" @Revision:    13
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -12,6 +12,13 @@ set cpo&vim
 
 SpecBegin 'title': 'tlib/file',
             \ 'sfile': 'autoload/tlib/file.vim'
+
+
+
+It should split filenames.
+Should be equal tlib#file#Split('foo/bar/filename.txt'), ['foo', 'bar', 'filename.txt']
+Should be equal tlib#file#Split('/foo/bar/filename.txt'), ['', 'foo', 'bar', 'filename.txt']
+Should be equal tlib#file#Split('ftp://foo/bar/filename.txt'), ['ftp:/', 'foo', 'bar', 'filename.txt']
 
 
 It should join filenames.
@@ -24,6 +31,10 @@ Should be#Equal tlib#file#Join(['', 'foo', 'bar', 'filename.txt']), '/foo/bar/fi
 Should be#Equal tlib#file#Join(['ftp:/', 'foo', 'bar', 'filename.txt']), 'ftp://foo/bar/filename.txt'
 Should be#Equal tlib#file#Join(['ftp://', 'foo', 'bar', 'filename.txt'], 1), 'ftp://foo/bar/filename.txt'
 
+Should be equal tlib#file#Join(['foo', 'bar', 'filename.txt']), 'foo/bar/filename.txt'
+Should be equal tlib#file#Join(['', 'foo', 'bar', 'filename.txt']), '/foo/bar/filename.txt'
+Should be equal tlib#file#Join(['ftp:/', 'foo', 'bar', 'filename.txt']), 'ftp://foo/bar/filename.txt'
+
 
 It should construct relative path names.
 Should be#Equal tlib#file#Relative('foo/bar/filename.txt', 'foo'), 'bar/filename.txt'
@@ -33,6 +44,15 @@ Should be#Equal tlib#file#Relative('/foo/bar/filename.txt', '/boo/base'), '../..
 Should be#Equal tlib#file#Relative('/bar/filename.txt', '/boo/base'), '../../bar/filename.txt'
 Should be#Equal tlib#file#Relative('/foo/bar/filename.txt', '/base'), '../foo/bar/filename.txt'
 Should be#Equal tlib#file#Relative('c:/bar/filename.txt', 'x:/boo/base'), 'c:/bar/filename.txt'
+
+
+Should be equal tlib#file#Relative('foo/bar/filename.txt', 'foo'), 'bar/filename.txt'
+Should be equal tlib#file#Relative('foo/bar/filename.txt', 'foo/base'), '../bar/filename.txt'
+Should be equal tlib#file#Relative('filename.txt', 'foo/base'), '../../filename.txt'
+Should be equal tlib#file#Relative('/foo/bar/filename.txt', '/boo/base'), '../../foo/bar/filename.txt'
+Should be equal tlib#file#Relative('/bar/filename.txt', '/boo/base'), '../../bar/filename.txt'
+Should be equal tlib#file#Relative('/foo/bar/filename.txt', '/base'), '../foo/bar/filename.txt'
+Should be equal tlib#file#Relative('c:/bar/filename.txt', 'x:/boo/base'), 'c:/bar/filename.txt'
 
 
 let &cpo = s:save_cpo
