@@ -3,8 +3,8 @@
 " @Website:     http://www.lithom.net
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-03-25.
-" @Last Change: 2010-03-31.
-" @Revision:    0.0.12
+" @Last Change: 2010-04-03.
+" @Revision:    0.0.14
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -13,7 +13,7 @@ set cpo&vim
 if !exists('g:tlib#date#ShortDatePrefix') | let g:tlib#date#ShortDatePrefix = '20' | endif "{{{2
 if !exists('g:tlib#date#TimeZoneShift')   | let g:tlib#date#TimeZoneShift = 0      | endif "{{{2
 
-let g:tlib#date#Dayshift    = 60 * 60 * 24
+let g:tlib#date#dayshift = 60 * 60 * 24
 
 
 " :display: tlib#date#DiffInDays(date1, ?date2=localtime(), ?allow_zero=0)
@@ -21,7 +21,7 @@ function! tlib#date#DiffInDays(date, ...)
     let allow_zero = a:0 >= 2 ? a:2 : 0
     let s0 = tlib#date#SecondsSince1970(a:date, 0, allow_zero)
     let s1 = a:0 >= 1 ? tlib#date#SecondsSince1970(a:1, 0, allow_zero) : localtime()
-    let dd = (s0 - s1) / g:tlib#date#Dayshift
+    let dd = (s0 - s1) / g:tlib#date#dayshift
     " TLogVAR dd
     return dd
 endf
