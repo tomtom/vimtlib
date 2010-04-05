@@ -197,9 +197,10 @@ class VimDedoc
     end
 
     def process
-        if @update and File.exist?(@outfile)
-            out_mtime = File.mtime(@outfile)
-            $logger.debug "MTIME: #{@outfile}: #{out_mtime}"
+        outfile = filename_on_disk(@outfile)
+        if @update and File.exist?(outfile)
+            out_mtime = File.mtime(outfile)
+            $logger.debug "MTIME: #{outfile}: #{out_mtime}"
             tpl_mtime = File.mtime(@template)
             $logger.debug "MTIME: #{@template}: #{tpl_mtime}"
             if tpl_mtime <= out_mtime and @sources.all? {|filename|
@@ -210,7 +211,7 @@ class VimDedoc
                 $logger.debug "MTIME: #{filename}: #{mtime} => #{older}"
                 older
             }
-                $logger.info "Help is up to date: #{@outfile}"
+                $logger.info "Help is up to date: #{outfile}"
                 return
             end
         end
