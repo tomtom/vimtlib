@@ -3,7 +3,7 @@
 # @Author:      Tom Link (micathom at gmail com)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2007-07-25.
-# @Last Change: 2010-03-09.
+# @Last Change: 2010-04-05.
 # @Revision:    501
 
 
@@ -39,6 +39,7 @@ class VimDedoc
     def initialize(outfile=1, sources=[])
         @logger    = AppLog.new
         @outfile   = outfile
+        @repo      = nil
         @sources   = sources
         @template  = nil
         @update    = false
@@ -534,6 +535,18 @@ class VimDedoc
         if File.exist?(filename)
             return filename
         else
+            if @repo
+                return File.join(@repo, filename)
+            end
+            for root in @config['roots'] || []
+                repo = File.join(root, File.basename(@outfile, '.*'))
+                filename1 = File.join(repo, filename)
+                if File.exist?(filename1)
+                    @repo = repo
+                    @outfile = File.join(repo, @outfile)
+                    return filename1
+                end
+            end
             r = @config['replacements']
             if r and r[filename]
                 return r[filename]

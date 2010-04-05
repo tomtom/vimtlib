@@ -3,7 +3,7 @@
 # @Author:      Tom Link (micathom AT gmail com)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2009-02-10.
-# @Last Change: 2010-03-12.
+# @Last Change: 2010-04-05.
 #
 # This script creates and installs vimballs without vim.
 #
@@ -239,6 +239,7 @@ HEADER
 
             meth = "do_#{@config['cmd']}"
             @config['files'].each do |file|
+                @repo = nil
                 $logger.debug "#{@config['cmd']}: #{file}"
                 if respond_to?(meth)
                     send(meth, file)
@@ -286,8 +287,10 @@ HEADER
         vimball = [HEADER]
 
         files = File.readlines(recipe)
-        vbafile = File.join(@config['outdir'], File.basename(recipe, '.recipe') + '.vba')
+        name = File.basename(recipe, '.recipe')
+        vbafile = File.join(@config['outdir'], name + '.vba')
         vbafile << '.gz' if @config['compress']
+        
 
         if @config['update'] and File.exist?(vbafile)
             vba_mtime = File.mtime(vbafile)
@@ -295,7 +298,7 @@ HEADER
             if files.all? {|file|
                 file = file.strip
                 filename = File.join(@config['vimfiles'], file)
-                filename1 = filename_on_disk(filename)
+                filename1 = filename_on_disk(name, file, filename)
                 unless File.exist?(filename1)
                     $logger.error "File does not exist: #{filename1}"
                     return
@@ -314,7 +317,7 @@ HEADER
             file = file.strip
             unless file.empty?
                 filename = File.join(@config['vimfiles'], file)
-                filename1 = filename_on_disk(filename)
+                filename1 = filename_on_disk(name, file, filename)
                 if File.readable?(filename1)
                     content = File.readlines(filename1)
                 else
@@ -362,11 +365,11 @@ HEADER
 
     def do_install(file)
         filebase, vimball = read_vimball(file)
-        outdir = install_out_dir(filebase)
-        $logger.warn "Install #{file} in #{outdir}"
+        installdir = get_installdir(filebase)
+        $logger.warn "Install #{file} in #{installdir}"
 
         recipe = with_vimball(vimball) do |basename, content|
-            filename = File.join(outdir, basename)
+            filename = File.join(installdir, basename)
             ensure_dir_exists(File.dirname(filename))
             $logger.info "Write #{filename}"
             file_write(filename) do |io|
@@ -375,7 +378,7 @@ HEADER
         end
 
         if @config['save_recipes']
-            recipefile = File.join(@config['outdir'], 'vimballs', 'recipes', filebase + '.recipe')
+            recipefile = File.join(@config['installdir'], 'vimballs', 'recipes', filebase + '.recipe')
             $logger.debug "Save recipe file: #{recipefile}"
             ensure_dir_exists(File.dirname(recipefile))
             file_write(recipefile) do |io|
@@ -462,12 +465,12 @@ HEADER
     end
 
 
-    def install_out_dir(vimball)
-        outdir = @config['outdir']
+    def get_installdir(vimball)
+        installdir = @config['installdir']
         if @config['repo']
-            outdir = File.join(outdir, @config['repodir'], File.basename(vimball, '.*'))
+            installdir = File.join(installdir, @config['repodir'], File.basename(vimball, '.*'))
         end
-        outdir
+        installdir
     end
 
     def ensure_dir_exists(dir)
@@ -498,10 +501,25 @@ HEADER
         return filename
     end
 
-    def filename_on_disk(filename)
+
+    def filename_on_disk(name, file, filename)
         if File.exist?(filename)
             return filename
         else
+            case @repo
+            when String
+                return File.join(@repo, file)
+            when nil
+                for root in @config['roots'] || []
+                    repo = File.join(root, name)
+                    filename1 = File.join(repo, file)
+                    if File.exist?(filename1)
+                        @repo = repo
+                        return filename1
+                    end
+                end
+                @repo = false
+            end
             r = @config['replacements']
             if r and r[filename]
                 return r[filename]
