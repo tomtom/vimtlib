@@ -1,0 +1,5 @@
+doc/vimform.txt
+autoload/vimform.vim
+plugin/vimform.vim
+syntax/vimform.vim
+
