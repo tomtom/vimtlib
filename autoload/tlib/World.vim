@@ -3,8 +3,8 @@
 " @Website:     http://members.a1.net/t.link/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-05-01.
-" @Last Change: 2010-04-03.
-" @Revision:    0.1.843
+" @Last Change: 2010-04-06.
+" @Revision:    0.1.844
 
 " :filedoc:
 " A prototype used by |tlib#input#List|.
@@ -729,7 +729,7 @@ function! s:prototype.GetResize(size) dict "{{{3
         let min = self.scratch_vertical ? &columns : &lines
     endif
     let resize = min([resize, (min * g:tlib_inputlist_pct / 100)])
-    TLogVAR resize, a:size, min
+    " TLogVAR resize, a:size, min
     return resize
 endf
 
