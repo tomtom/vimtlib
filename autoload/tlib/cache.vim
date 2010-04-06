@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-06-30.
-" @Last Change: 2010-04-03.
-" @Revision:    0.1.119
+" @Last Change: 2010-04-06.
+" @Revision:    0.1.124
 
 
 " |tlib#cache#Purge()|: Remove cache files older than N days.
@@ -114,6 +114,7 @@ function! tlib#cache#MaybePurge() "{{{3
         if yn =~ '^y\%[es]$'
             call tlib#cache#Purge()
         else
+            let g:tlib#cache#purge_every_days = -1
             echohl WarningMsg
             echom "TLib: Please run :call tlib#cache#Purge() to clean up ". dir
             echohl NONE
@@ -124,33 +125,39 @@ endf
 
 " Delete old files.
 function! tlib#cache#Purge() "{{{3
+    let threshold = localtime() - g:tlib#cache#purge_days * g:tlib#date#dayshift
+    let dir = tlib#cache#Dir('g')
     echohl WarningMsg
     echom "TLib: Delete files older than ". g:tlib#cache#purge_days ." days from ". dir
     echohl NONE
-    let threshold = localtime() - g:tlib#cache#purge_days * g:tlib#date#dayshift
-    let dir = tlib#cache#Dir('g')
     let files = reverse(split(glob(tlib#file#Join([dir, '**'])), '\n'))
     let deldir = []
     let newer = []
     let msg = []
-    for file in files
-        if isdirectory(file)
-            if empty(filter(copy(newer), 'strpart(v:val, 0, len(file)) ==# file'))
-                call add(deldir, file)
-            endif
-        else
-            if getftime(file) < threshold
-                if delete(file)
-                    call add(msg, "TLib: Could not delete cache file: ". file)
-                else
-                    " call add(msg, "TLib: Delete cache file: ". file)
-                    echo "TLib: Delete cache file: ". file
+    let more = &more
+    set nomore
+    try
+        for file in files
+            if isdirectory(file)
+                if empty(filter(copy(newer), 'strpart(v:val, 0, len(file)) ==# file'))
+                    call add(deldir, file)
                 endif
             else
-                call add(newer, file)
+                if getftime(file) < threshold
+                    if delete(file)
+                        call add(msg, "TLib: Could not delete cache file: ". file)
+                    else
+                        " call add(msg, "TLib: Delete cache file: ". file)
+                        echo "TLib: Delete cache file: ". file
+                    endif
+                else
+                    call add(newer, file)
+                endif
             endif
-        endif
-    endfor
+        endfor
+    finally
+        let &more = more
+    endtry
     if !empty(msg)
         echo join(msg, "\n")
     endif
