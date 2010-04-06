@@ -2,6 +2,9 @@
 
 See INSTALL.TXT
 
+Certain plugins were removed from vimtlib and put into a repo of their own -- please see: http://github.com/tomtom
+If you're missing something, write an e-mail.
+
 
 * Status
 
@@ -23,7 +26,6 @@ See INSTALL.TXT
     #A tComment         -- An easily extensible & universal comment plugin
     #A tgpg             -- Yet another plugin for encrypting files with gpg
     #A tlib             -- A library of vim functions
-    #A tmarks           -- A simple marks browser
     #A tmru             -- Most Recently Used Files
     #A toptions/tstatus -- display changed options in the status line (toptions should be sourced from vimrc)
     #A tplugin          -- A simple plugin loader/runtimepath manager
@@ -48,6 +50,7 @@ See INSTALL.TXT
     #D glark            -- a wrapper for the glark command (superseded by trag)
     #D linglang         -- Perform actions on basis of the current line's language
     #D setsyntax        -- Set options specific for the syntax group under cursor
+    #D tmarks           -- A simple marks browser
     #D tmboxbrowser     -- A mbox browser
     #D TortoiseSVN      -- Some support for TortoiseSVN (a subversion client for Windows)
     #D tsession         -- An alternativ approach to sessions
