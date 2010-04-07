@@ -2,8 +2,8 @@
 " @Author:      Thomas Link (mailto:micathom AT gmail com?subject=[vim])
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-02-23.
-" @Last Change: 2010-03-15.
-" @Revision:    437
+" @Last Change: 2010-04-07.
+" @Revision:    496
 " GetLatestVimScripts: 2991 1 :AutoInstall: rcom.vim
 
 let s:save_cpo = &cpo
@@ -207,14 +207,18 @@ function! rcom#Initialize(...) "{{{3
                 end
                 # VIM.command(%{call inputdialog('mode = #{mode}; text = #{text}; meth = #{meth}; reuse = #@reuse')})
                 begin
-                if mode == 'p'
-                    # rv = send(meth, %{do.call(cat, c(as.list(parse(text=#{text.inspect})), sep="\n"))})
-                    rv = send(meth, %{print(#{text})})
-                else
-                    rv = send(meth, text)
-                end
+                    if mode == 'p'
+                        # rv = send(meth, %{do.call(cat, c(as.list(parse(text=#{text.inspect})), sep="\n"))})
+                        rv = send(meth, %{print(#{text})})
+                    else
+                        rv = send(meth, text)
+                    end
                 rescue Exception => e
-                    log(e.to_s)
+                    if e.to_s =~ /unknown property or method `EvaluateNoReturn'/
+                        return 'It seems R GUI was closed.'
+                    else
+                        log(e.to_s)
+                    end
                 end
                 out << @ole_printer.Text if @ole_printer
                 if out.empty?
@@ -233,15 +237,17 @@ function! rcom#Initialize(...) "{{{3
                 VIM.command(%{call s:Log(#{text.inspect})})
             end
 
-            def quit
-                begin
-                    if @rhist
-                        r_send(%{try(savehistory("#{@rhist}"))})
+            def quit(just_the_ole_server = false)
+                unless just_the_ole_server
+                    begin
+                        if @rhist
+                            r_send(%{try(savehistory("#{@rhist}"))})
+                        end
+                        if !@reuse
+                            r_send(%{q()})
+                        end
+                    rescue
                     end
-                    if !@reuse
-                        r_send(%{q()})
-                    end
-                rescue
                 end
                 begin
                     @ole_server.Close
@@ -318,20 +324,21 @@ function! rcom#EvaluateInBuffer(...) range "{{{3
     else
         " TLogVAR a:000
         " echo printf("Evaluating %d lines of R code ...", len(a:1))
-        echohl WarningMsg
-        echo "Evaluating R code ..."
-        echohl NONE
+        call s:Warning("Evaluating R code ...")
         let bn = bufnr('%')
         if !has_key(s:rcom, bn)
             call rcom#Initialize(g:rcom#reuse)
         endif
+        let logn = s:LogN()
         let rv = call('rcom#Evaluate', a:000)
         if !g:rcom#reuse || s:IsRemoteServer()
             call rcom#Transcribe(a:1, rv)
         endif
-        redraw
-        " echo " "
-        echo printf("Evaluated %d lines", len)
+        if logn == s:LogN()
+            redraw
+            " echo " "
+            echo printf("Evaluated %d lines", len)
+        endif
     endif
     return rv
 endf
@@ -383,8 +390,13 @@ function! s:Log(text) "{{{3
         let s:log[s:LogID()] = a:text
     endif
     redraw
+    call s:Warning('RCom: '. s:LogN() .' messages in the log')
+endf
+
+
+function! s:Warning(text) "{{{3
     echohl WarningMsg
-    echo 'RCom: '. len(keys(s:log)) .' messages in the log'
+    echom a:text
     echohl NONE
 endf
 
@@ -402,7 +414,7 @@ function! rcom#Quit(...) "{{{3
             let bufnr = bufnr('%')
         endif
     endif
-    " TLogVAR bufnr
+    TLogVAR bufnr
     if has_key(s:rcom, bufnr)
         try
             ruby RCom.disconnect
@@ -549,6 +561,7 @@ endf
 
 
 function! s:ScratchBuffer(type, name) "{{{3
+    " TLogVAR a:type, a:name
     let bufnr = bufnr(a:name)
     if bufnr != -1 && bufwinnr(bufnr)
         exec 'drop '. a:name
@@ -571,10 +584,12 @@ function! rcom#LogBuffer() "{{{3
         call remote_send('RCOM', ':call rcom#LogBuffer()<cr>')
     else
         let bufname = bufname('%')
+        " TLogVAR bufname
         try
             call s:ScratchBuffer('log', '__RCom_Log__')
             1,$delete
             let items = sort(keys(s:log))
+            " TLogVAR items
             call map(items, 'v:val .": ". substitute(s:log[v:val], ''\s*\n\s*'', ". ", "g")')
             call append(0, items)
             norm! Gzb
