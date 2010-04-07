@@ -2,15 +2,15 @@
 " @Author:      Tom Link (micathom AT gmail com)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2010-01-05.
-" @Revision: 2.0.120
+" @Last Change: 2010-04-07.
+" @Revision: 2.0.121
 " 
 " vimscript #853
 
-if &cp || exists("s:loaded_localvariables")
+if &cp || exists("g:loaded_localvariables")
     finish
 endif
-let s:loaded_localvariables = 1
+let g:loaded_localvariables = 1
 
 
 command! LocalVariablesReCheck call localvariables#ReCheck()
