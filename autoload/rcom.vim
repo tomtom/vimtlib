@@ -148,6 +148,7 @@ function! rcom#Initialize(...) "{{{3
                     # r_send(%{options(show.error.messages=TRUE)})
                 end
                 # r_send(%{options(error=function(e) {cat(e$message)})})
+                r_send(%{if (options("warn")$warn == 0) options(warn = 1)})
                 d = VIM::evaluate(%{expand("%:p:h")})
                 d.gsub!(/\\/, '/')
                 r_send(%{setwd("#{d}")})
