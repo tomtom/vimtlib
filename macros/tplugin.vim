@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-04.
-" @Last Change: 2010-04-06.
-" @Revision:    1355
+" @Last Change: 2010-04-07.
+" @Revision:    1365
 " GetLatestVimScripts: 2917 1 :AutoInstall: tplugin.vim
 
 if &cp || exists("loaded_tplugin")
@@ -406,7 +406,7 @@ endf
 
 let s:scanner = {
             \ 'c': {
-            \   'rx':  '^\s*:\?com\%[mand]!\?\s\+\(-\S\+\s\+\)*\w\+',
+            \   'rx':  '^\s*:\?com\%[mand]!\?\s\+\(-\S\+\s\+\)*\u\k*',
             \   'fmt': {'sargs3': 'call TPluginCommand(%s, %s, %s)'}
             \ },
             \ 'f': {
@@ -1028,6 +1028,7 @@ endf
 function! TPluginFunction(...) "{{{3
     let fn = a:000[0]
     if g:tplugin_autoload && !exists('*'. fn)
+        " echom "DBG fn = ". fn
         let s:functions[fn] = [s:GetRoot()] + a:000
     endif
 endf
@@ -1047,6 +1048,7 @@ function! TPluginCommand(...) "{{{3
     let cmd = a:000[0]
     if g:tplugin_autoload && exists(':'. matchstr(cmd, '\s\zs\u\w*$')) != 2
         let args = [s:GetRoot()] + a:000
+        " echom "DBG cmd =" cmd
         exec s:DefineCommand(a:000) .' call s:Autoload(1, '. string(args) .', "<bang>", ["<line1>", "<line2>"], <q-args>)'
     endif
 endf
