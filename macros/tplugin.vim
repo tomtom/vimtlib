@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-04.
 " @Last Change: 2010-04-07.
-" @Revision:    1365
+" @Revision:    1387
 " GetLatestVimScripts: 2917 1 :AutoInstall: tplugin.vim
 
 if &cp || exists("loaded_tplugin")
@@ -119,7 +119,7 @@ command! -nargs=+ -complete=dir TPluginRoot
 
 " :display: :TPluginScan[!] [WHAT] [ROOT]
 " Scan the current root directory for commands and functions. Save 
-" autoload information in "ROOT/tplugin.vim".
+" autoload information in "ROOT/_tplugin.vim".
 "
 " Where WHAT is a set of letters determining the information being 
 " collected. See |g:tplugin_scan| for details.
@@ -131,6 +131,21 @@ command! -nargs=+ -complete=dir TPluginRoot
 "
 " If you collect repositories in one than more directory, I'd suggest to 
 " create a special script.
+"
+" The source file may contain special markers that make :TPluginScan 
+" include text in the _tplugin.vim file:
+"
+" Block on non-empty lines are introduced with an #TPluginInclude tag: >
+"
+"   " #TPluginInclude
+"   augroup Foo
+"        autocmd!
+"        autocmd Filetype foo call foo#Init()
+"   augroup END
+"
+" Special lines are prefixed with #TPluginInclude: >
+"   
+"   " #TPluginInclude if !exists('g:foo') | let g:foo = 1 | endif
 "
 " Example: >
 "   TPluginRoot dir1
@@ -425,10 +440,28 @@ function! s:ScanSource(file, repo, plugin, what, lines) "{{{3
     let text = substitute(text, '\n\s*\\', '', 'g')
     let lines = split(text, '\n')
     let rx = join(filter(map(copy(a:what), 'get(get(s:scanner, v:val, {}), "rx", "")'), '!empty(v:val)'), '\|')
-    call filter(lines, 'v:val =~ rx')
-    call map(lines, 's:ScanLine(a:file, a:repo, a:plugin, a:what, v:val)')
-    call filter(lines, '!empty(v:val)')
-    return lines
+    let out = []
+    let include = 0
+    for line in lines
+        if include
+            if line !~ '\S'
+                let include = 0
+            else
+                call add(out, line)
+            endif
+        elseif line =~ '^\s*"\s*#TPluginInclude\s*$'
+            let include = 1
+        elseif line =~ '^\s*"\s*#TPluginInclude\s*\S'
+            let out_line = substitute(line, '^\s*"\s*#TPluginInclude\s*', '', '')
+            call add(out, out_line)
+        elseif line =~ rx
+            let out_line = s:ScanLine(a:file, a:repo, a:plugin, a:what, line)
+            if !empty(out_line)
+                call add(out, out_line)
+            endif
+        endif
+    endfor
+    return out
 endf
 
 
@@ -1149,4 +1182,5 @@ the prefix.
 - g:tplugin_scan defaults to 'cfpta'
 - TPluginCommand and TPluginFunction are functions. Removed the commands 
 with the same name.
+- #TPluginInclude tag
 
