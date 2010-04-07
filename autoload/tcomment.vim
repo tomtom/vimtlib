@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-17.
-" @Last Change: 2010-01-29.
-" @Revision:    0.0.71
+" @Last Change: 2010-04-07.
+" @Revision:    0.0.80
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
@@ -571,6 +571,7 @@ function! s:CommentDef(beg, end, checkRx, commentMode, cstart, cend)
 endf
 
 function! s:ProcessedLine(uncomment, match, checkRx, replace)
+    " TLogVAR a:uncomment, a:match, a:checkRx, a:replace
     if !(a:match =~ '\S' || g:tcommentBlankLines)
         return a:match
     endif
@@ -580,11 +581,16 @@ function! s:ProcessedLine(uncomment, match, checkRx, replace)
     else
         let rv = s:SPrintF(a:replace, a:match)
     endif
+    " TLogVAR rv
     " let md = len(rv) - ml
     let s:pos_end = getpos('.')
     let s:pos_end[2] += len(rv)
     " TLogVAR pe, md, a:match
-    let rv = escape(rv, '\')
+    if v:version > 702 || (v:version == 702 && has('patch407'))
+        let rv = escape(rv, '')
+    else
+        let rv = escape(rv, '\')
+    endif
     let rv = substitute(rv, '\n', '\\\n', 'g')
     return rv
 endf
