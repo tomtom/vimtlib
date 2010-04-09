@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-04.
-" @Last Change: 2010-04-07.
-" @Revision:    1387
+" @Last Change: 2010-04-09.
+" @Revision:    1392
 " GetLatestVimScripts: 2917 1 :AutoInstall: tplugin.vim
 
 if &cp || exists("loaded_tplugin")
@@ -76,6 +76,7 @@ if !exists('g:tplugin_scan')
     "    a ... autoload
     "    all ... all of the above
     let g:tplugin_scan = 'cfpta'   "{{{2
+    "    l ... loaded_* variables
 endif
 
 
@@ -134,8 +135,8 @@ command! -nargs=+ -complete=dir TPluginRoot
 "
 " The source file may contain special markers that make :TPluginScan 
 " include text in the _tplugin.vim file:
-"
-" Block on non-empty lines are introduced with an #TPluginInclude tag: >
+"                                                     *#TPluginInclude*
+" Blocks of non-empty lines are introduced with an #TPluginInclude tag: >
 "
 "   " #TPluginInclude
 "   augroup Foo
@@ -205,6 +206,7 @@ let s:functions = {}
 let s:autoloads = {}
 let s:maps = {}
 let s:command_nobang = {}
+" let s:loaded_variables = {}
 let s:tplugin_file = '_tplugin'
 
 
@@ -509,7 +511,7 @@ function! s:ScanRoots(immediate, roots, args) "{{{3
         let awhat = g:tplugin_scan
     endif
     if awhat == 'all'
-        let what = ['c', 'f', 'a', 'p', 'h', 't']
+        let what = ['c', 'f', 'a', 'p', 'h', 't', 'l']
     else
         let what = split(awhat, '\zs')
     endif
@@ -634,6 +636,7 @@ function! s:ScanRoots(immediate, roots, args) "{{{3
                     let fidx += 1
                     call tlib#progressbar#Display(fidx)
                 endif
+                let pluginfile = s:GetCanonicFilename(file)
                 if is_tree
                     let repo = matchstr(strpart(file, pos0), '^[^\/]\+\ze[\/]')
                 else
@@ -642,24 +645,42 @@ function! s:ScanRoots(immediate, roots, args) "{{{3
                 let plugin = matchstr(file, '[\/]\zs[^\/]\{-}\ze\.vim$')
                 " TLogVAR file, repo, plugin
 
-                if !empty(g:tplugin_menu_prefix) && (!is_tree || strpart(file, pos0) =~ '^[^\/]\+[\/]plugin[\/][^\/]\{-}\.vim$')
-                    if is_tree
-                        let mrepo = escape(repo, '\.')
-                    else
-                        let mrepo = escape(fnamemodify(root, ':t'), '\.')
+                let is_plugin = !is_tree || strpart(file, pos0) =~ '^[^\/]\+[\/]plugin[\/][^\/]\{-}\.vim$'
+
+                let lines = readfile(file)
+
+                if is_plugin
+                    if !empty(g:tplugin_menu_prefix)
+                        if is_tree
+                            let mrepo = escape(repo, '\.')
+                        else
+                            let mrepo = escape(fnamemodify(root, ':t'), '\.')
+                        endif
+                        let mplugin = escape(plugin, '\.')
+                        if !has_key(menu_done, repo)
+                            call add(out, 'call TPluginMenu('. string(mrepo .'.Add\ Repository') .', '.
+                                        \ string(repo) .')')
+                            call add(out, 'call TPluginMenu('. string(mrepo .'.-'. mrepo .'-') .', ":")')
+                            let menu_done[repo] = 1
+                        endif
+                        call add(out, 'call TPluginMenu('. string(mrepo .'.'. mplugin) .', '.
+                                    \ string(repo) .', '. string(plugin) .')')
                     endif
-                    let mplugin = escape(plugin, '\.')
-                    if !has_key(menu_done, repo)
-                        call add(out, 'call TPluginMenu('. string(mrepo .'.Add\ Repository') .', '.
-                                    \ string(repo) .')')
-                        call add(out, 'call TPluginMenu('. string(mrepo .'.-'. mrepo .'-') .', ":")')
-                        let menu_done[repo] = 1
-                    endif
-                    call add(out, 'call TPluginMenu('. string(mrepo .'.'. mplugin) .', '.
-                                \ string(repo) .', '. string(plugin) .')')
+
+                    " if index(what, 'l') != -1
+                    "     for line in lines
+                    "         if line =~ '\c^let\s\+\(g:\)\?loaded_'. plugin .'\s*='
+                    "             let loaded = matchstr(line, '\c^let\s\+\zs\(g:\)\?loaded_'. plugin)
+                    "             let s:loaded_variables[pluginfile] = loaded
+                    "             call add(out, line)
+                    "             break
+                    "         endif
+                    "     endfor
+                    " endif
+
                 endif
 
-                let out += s:ScanSource(file, repo, plugin, what, readfile(file))
+                let out += s:ScanSource(file, repo, plugin, what, lines)
             endfor
         finally
             unlet s:scan_repo_done
@@ -942,6 +963,11 @@ endf
 
 function! s:RemoveAutoloads(pluginfile, commands) "{{{3
     " TLogVAR a:pluginfile, a:commands
+
+    " if has_key(s:loaded_variables, a:pluginfile)
+    "     exec 'unlet '. s:loaded_variables[a:pluginfile]
+    " endif
+
     " echom "DBG ". string(keys(s:maps))
     if has_key(s:maps, a:pluginfile)
         for [keys, map] in items(s:maps[a:pluginfile])
@@ -949,6 +975,7 @@ function! s:RemoveAutoloads(pluginfile, commands) "{{{3
         endfor
         call remove(s:maps, a:pluginfile)
     endif
+
     let pluginkey = s:CommandKey(a:pluginfile)
     " TLogVAR pluginkey
     " call tlog#Debug(string(keys(s:command_nobang)))
@@ -961,6 +988,7 @@ function! s:RemoveAutoloads(pluginfile, commands) "{{{3
     else
         let cmds = a:commands
     endif
+
     " TLogVAR cmds
     " echom "DBG ". string(keys(s:command_nobang))
     let remove = !empty(a:commands) && has_key(s:command_nobang, pluginkey)
