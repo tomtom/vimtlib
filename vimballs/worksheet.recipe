@@ -1,4 +1,5 @@
 doc/worksheet.txt
+ftplugin/worksheet.vim
 autoload/worksheet.vim
 autoload/worksheet/rcom.vim
 autoload/worksheet/ruby.vim
