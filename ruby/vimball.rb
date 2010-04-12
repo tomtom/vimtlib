@@ -3,7 +3,7 @@
 # @Author:      Tom Link (micathom AT gmail com)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2009-02-10.
-# @Last Change: 2010-04-05.
+# @Last Change: 2010-04-09.
 #
 # This script creates and installs vimballs without vim.
 #
@@ -511,7 +511,12 @@ HEADER
                 return File.join(@repo, file)
             when nil
                 for root in @config['roots'] || []
-                    repo = File.join(root, name)
+                    if @config['repo_fmt']
+                        repo_name = @config['repo_fmt'] % name
+                    else
+                        repo_name = name
+                    end
+                    repo = File.join(root, repo_name)
                     filename1 = File.join(repo, file)
                     if File.exist?(filename1)
                         @repo = repo
