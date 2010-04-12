@@ -3,8 +3,8 @@
 " @Website:     http://members.a1.net/t.link/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-05-01.
-" @Last Change: 2009-02-15.
-" @Revision:    0.1.121
+" @Last Change: 2010-04-09.
+" @Revision:    0.1.123
 
 " :filedoc:
 " Provides a prototype plus some OO-like methods.
@@ -147,9 +147,9 @@ function! s:prototype.Super(method, arglist) dict "{{{3
 endf
 
 
-function! s:prototype.Methods(...) dict "{{{3
+function! tlib#Object#Methods(object, ...) "{{{3
     TVarArg ['pattern', '\d\+']
-    let o = items(self)
+    let o = items(a:object)
     call filter(o, 'type(v:val[1]) == 2 && string(v:val[1]) =~ "^function(''\\d\\+'')"')
     let acc = {}
     for e in o
