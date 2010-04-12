@@ -1,5 +1,6 @@
 doc/vimform.txt
 autoload/vimform.vim
+ftplugin/vimform.vim
+indent/vimform.vim
 plugin/vimform.vim
 syntax/vimform.vim
-
