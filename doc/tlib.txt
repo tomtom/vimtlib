@@ -189,7 +189,7 @@ Contents~
         prototype.IsRelated
         prototype.RespondTo
         prototype.Super
-        prototype.Methods
+        tlib#Object#Methods ..................... |tlib#Object#Methods()|
         tlib#paragraph#GetMetric ................ |tlib#paragraph#GetMetric()|
         tlib#paragraph#Move ..................... |tlib#paragraph#Move()|
         tlib#progressbar#Init ................... |tlib#progressbar#Init()|
@@ -1191,8 +1191,8 @@ prototype.RespondTo
 
 prototype.Super
 
-
-prototype.Methods
+                                                    *tlib#Object#Methods()*
+tlib#Object#Methods(object, ...)
 
 
 ========================================================================

@@ -180,15 +180,15 @@ Contents~
         g:tplugin_helptags ........... |g:tplugin_helptags|
         g:tplugin_menu_prefix ........ |g:tplugin_menu_prefix|
         g:tplugin_scan ............... |g:tplugin_scan|
-        :PimMonth .................... |:PimMonth|
-        TPluginMap ................... |TPluginMap()|
         :TPlugin ..................... |:TPlugin|
         :TPluginRoot ................. |:TPluginRoot|
+        :TPluginScan ................. |:TPluginScan|
         :TPluginBefore ............... |:TPluginBefore|
         :TPluginAfter ................ |:TPluginAfter|
-        :TPluginFunction ............. |:TPluginFunction|
-        :TPluginCommand .............. |:TPluginCommand|
-        :TPluginScan ................. |:TPluginScan|
+        TPluginMap ................... |TPluginMap()|
+        TPluginAutoload .............. |TPluginAutoload()|
+        TPluginFunction .............. |TPluginFunction()|
+        TPluginCommand ............... |TPluginCommand()|
 
 
 ========================================================================
@@ -227,7 +227,7 @@ g:tplugin_menu_prefix          (default: '')
     value.
 
                                                     *g:tplugin_scan*
-g:tplugin_scan                 (default: 'cfpt')
+g:tplugin_scan                 (default: 'cfpta')
     The default value for |:TPluginScan|. A set of identifiers 
     determining the information being collected:
        c ... commands
@@ -237,27 +237,6 @@ g:tplugin_scan                 (default: 'cfpt')
        h ... helptags (always regenerate helptags, see also |g:tplugin_helptags|)
        a ... autoload
        all ... all of the above
-
-                                                    *:PimMonth*
-:PimMonth
-    TLogVAR a:type, a:def, a:bang, a:range, a:args
-    TLogVAR root, cmd0, cmd, file
-    TLogDBG exists(':'. cmd)
-    TLogDBG exists(':'. cmd)
-
-                                                    *TPluginMap()*
-TPluginMap(map, repo, plugin, ?remap="")
-    MAP is a map command and the map. REPO and PLUGIN are the same as for 
-    the |:TPlugin| command.
-    
-    Examples: >
-      " Map for <plug>Foo:
-      call TPluginMap('map <plug>Foo', 'mylib', 'myplugin')
-    
-      " Load the plugin when pressing <f3> and remap the key to an appropriate 
-      " command from the autoloaded plugin:
-      call TPluginMap('map <f3>', 'mylib', 'myplugin', ':Foo<cr>')
-<
 
                                                     *:TPlugin*
 :TPlugin[!] REPOSITORY [PLUGINS ...]
@@ -293,6 +272,44 @@ TPluginMap(map, repo, plugin, ?remap="")
       TPluginRoot ~/vimfiles/experimental_plugins/*
 <
 
+                                                    *:TPluginScan*
+:TPluginScan[!] [WHAT] [ROOT]
+    Scan the current root directory for commands and functions. Save 
+    autoload information in "ROOT/_tplugin.vim".
+    
+    Where WHAT is a set of letters determining the information being 
+    collected. See |g:tplugin_scan| for details.
+    
+    With the optional '!', the autocommands are immediatly usable.
+    
+    Other than the AsNeeded plugin, tplugin doesn't support the creation 
+    of autoload information for maps.
+    
+    If you collect repositories in one than more directory, I'd suggest to 
+    create a special script.
+    
+    The source file may contain special markers that make :TPluginScan 
+    include text in the _tplugin.vim file:
+                                                        *#TPluginInclude*
+    Blocks of non-empty lines are introduced with an #TPluginInclude tag: >
+    
+      " #TPluginInclude
+      augroup Foo
+           autocmd!
+           autocmd Filetype foo call foo#Init()
+      augroup END
+    
+<   Special lines are prefixed with #TPluginInclude: >
+      
+      " #TPluginInclude if !exists('g:foo') | let g:foo = 1 | endif
+    
+<   Example: >
+      TPluginRoot dir1
+      TPluginScan
+      TPluginRoot dir2
+      TPluginScan
+<
+
                                                     *:TPluginBefore*
 :TPluginBefore FILE_RX [GLOB_PATTERNS ...]
     Load dependencies given as GLOB_PATTERNS (see |wildcards|) before 
@@ -321,13 +338,30 @@ TPluginMap(map, repo, plugin, ?remap="")
       TPluginAfter plugin/master\.vim plugin/sub_*.vim
 <
 
-                                                    *:TPluginFunction*
-:TPluginFunction FUNCTION REPOSITORY [PLUGIN]
+                                                    *TPluginMap()*
+TPluginMap(map, repo, plugin, ?remap="")
+    MAP is a map command and the map. REPO and PLUGIN are the same as for 
+    the |:TPlugin| command.
+    
+    Examples: >
+      " Map for <plug>Foo:
+      call TPluginMap('map <plug>Foo', 'mylib', 'myplugin')
+    
+      " Load the plugin when pressing <f3> and remap the key to an appropriate 
+      " command from the autoloaded plugin:
+      call TPluginMap('map <f3>', 'mylib', 'myplugin', ':Foo<cr>')
+<
+
+                                                    *TPluginAutoload()*
+TPluginAutoload(prefix, def)
+
+                                                    *TPluginFunction()*
+TPluginFunction(FUNCTION, REPOSITORY, [PLUGIN])
     Load a certain plugin on demand (aka autoload) when FUNCTION is called 
     for the first time.
 
-                                                    *:TPluginCommand*
-:TPluginCommand[!] COMMAND REPOSITORY [PLUGIN]
+                                                    *TPluginCommand()*
+TPluginCommand(COMMAND, REPOSITORY, [PLUGIN])
     Load a certain plugin on demand (aka autoload) when COMMAND is called 
     for the first time. Then call the original command.
     
@@ -337,29 +371,6 @@ TPluginMap(map, repo, plugin, ?remap="")
     
     Example: >
       TPluginCommand TSelectBuffer vimtlib tselectbuffer
-<
-
-                                                    *:TPluginScan*
-:TPluginScan[!] [WHAT] [ROOT]
-    Scan the current root directory for commands and functions. Save 
-    autoload information in "ROOT/tplugin.vim".
-    
-    Where WHAT is a set of letters determining the information being 
-    collected. See |g:tplugin_scan| for details.
-    
-    With the optional '!', the autocommands are immediatly usable.
-    
-    Other than the AsNeeded plugin, tplugin doesn't support the creation 
-    of autoload information for maps.
-    
-    If you collect repositories in one than more directory, I'd suggest to 
-    create a special script.
-    
-    Example: >
-      TPluginRoot dir1
-      TPluginScan
-      TPluginRoot dir2
-      TPluginScan
 <
 
 
