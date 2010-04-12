@@ -4,8 +4,8 @@
 " @GIT:         http://github.com/tomtom/vimtlib/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-03-14.
-" @Last Change: 2010-04-03.
-" @Revision:    452
+" @Last Change: 2010-04-09.
+" @Revision:    455
 " GetLatestVimScripts: 2584 1 :AutoInstall: quickfixsigns.vim
 
 if &cp || exists("loaded_quickfixsigns") || !has('signs')
@@ -367,7 +367,10 @@ function! QuickfixsignsClear(class) "{{{3
     endif
     " TLogVAR idxs
     for idx in idxs
-        exec 'sign unplace '. idx .' buffer='. s:register[idx].bn
+        let bn = s:register[idx].bn
+        if bufnr(bn) != -1
+            exec 'sign unplace '. idx .' buffer='. bn
+        endif
         call remove(s:register, idx)
     endfor
 endf
