@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-11-11.
-" @Last Change: 2010-04-06.
-" @Revision:    0.0.86
+" @Last Change: 2010-04-12.
+" @Revision:    0.0.88
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -95,7 +95,7 @@ TLet g:ttoc_vertical = '&lines < &co'
 " TLet g:ttoc_vertical = -1
 
 " Vim code that evaluates to the desired window width/heigth.
-TLet g:ttoc_win_size = '((&lines > &co) ? &lines : &co) / 2'
+TLet g:ttoc_win_size = 'min([60, ((&lines > &co) ? &lines : &co) / 2])'
 " TLet g:ttoc_win_size = '((&lines > &co) ? winheight(0) : winwidth(0)) / 2'
 
 

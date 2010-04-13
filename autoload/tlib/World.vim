@@ -3,8 +3,8 @@
 " @Website:     http://members.a1.net/t.link/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-05-01.
-" @Last Change: 2010-04-06.
-" @Revision:    0.1.844
+" @Last Change: 2010-04-12.
+" @Revision:    0.1.862
 
 " :filedoc:
 " A prototype used by |tlib#input#List|.
@@ -57,6 +57,9 @@ let s:prototype = tlib#Object#New({
             \ 'timeout_resolution': 2,
             \ 'type': '', 
             \ 'win_wnr': -1,
+            \ 'win_height': -1,
+            \ 'win_width': -1,
+            \ 'win_pct': 25,
             \ })
             " \ 'handlers': [],
             " \ 'filter_options': '\c',
@@ -723,13 +726,11 @@ function! s:prototype.GetResize(size) dict "{{{3
     " TLogVAR resize0, resize
     let resize = resize == 0 ? a:size : min([a:size, resize])
     " let min = self.scratch_vertical ? &cols : &lines
-    if self.win_wnr > 0
-        let min = self.scratch_vertical ? winwidth(self.win_wnr) : winheight(self.win_wnr)
-    else
-        let min = self.scratch_vertical ? &columns : &lines
-    endif
-    let resize = min([resize, (min * g:tlib_inputlist_pct / 100)])
-    " TLogVAR resize, a:size, min
+    let min1 = (self.scratch_vertical ? self.win_width : self.win_height) * g:tlib_inputlist_pct
+    let min2 = (self.scratch_vertical ? &columns : &lines) * self.win_pct
+    let min = max([min1, min2])
+    let resize = min([resize, (min / 100)])
+    " TLogVAR resize, a:size, min, min1, min2
     return resize
 endf
 
@@ -912,6 +913,9 @@ function! s:prototype.SetOrigin(...) dict "{{{3
     " TLogDBG winnr()
     " TLogDBG winnr('$')
     let self.win_wnr = winnr()
+    let self.win_height = winheight(self.win_wnr)
+    let self.win_width = winwidth(self.win_wnr)
+    " TLogVAR self.win_wnr, self.win_height, self.win_width
     let self.bufnr   = bufnr('%')
     let self.cursor  = getpos('.')
     if winview

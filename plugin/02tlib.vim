@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-10.
-" @Last Change: 2010-04-02.
-" @Revision:    617
+" @Last Change: 2010-04-12.
+" @Revision:    620
 " GetLatestVimScripts: 1863 1 tlib.vim
 "
 " Please see also ../test/tlib.vim for usage examples.
@@ -121,7 +121,7 @@ TLet g:tlib_sortprefs_threshold = 200
 TLet g:tlib_scratch_pos = 'botright'
 
 " Size of the input list window (in percent) from the main size (of &lines).
-TLet g:tlib_inputlist_pct = 70
+TLet g:tlib_inputlist_pct = 50
 
 " Size of filename columns when listing filenames
 TLet g:tlib_inputlist_width_filename = '&co / 3'
