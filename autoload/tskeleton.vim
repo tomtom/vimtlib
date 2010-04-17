@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-03.
-" @Last Change: 2010-03-27.
-" @Revision:    0.0.1732
+" @Last Change: 2010-04-17.
+" @Revision:    0.0.1761
 
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
@@ -306,7 +306,7 @@ endf
 function! tskeleton#FillIn(bit, ...) "{{{3
     " try
         " TLogVAR a:bit
-        let filetype = a:0 >= 1 && a:1 != '' ? a:1 : ''
+        let filetype = a:0 >= 1 && a:1 != '' ? a:1 : s:Filetype()
         " TLogVAR filetype
         call tskeleton#PrepareBits(filetype)
         let b:tskelTemporaryVariables = []
@@ -1079,18 +1079,28 @@ function! tskeleton#Setup(template, ...) "{{{3
             echoerr 'Unknown skeleton: '. a:template
             return
         endif
-        let meta = s:ReadSkeleton(tf)
-        let s:tskel_highlight = 0
-        call tskeleton#FillIn('', &filetype, meta)
-        if s:tskel_highlight && !exists("b:tskelHighlight")
-            call tskeleton#Highlight()
+        let unset_ft = !exists('g:tskelFiletype')
+        if unset_ft
+            let g:tskelFiletype = &filetype
         endif
-        if g:tskelChangeDir
-            let cd = substitute(expand('%:p:h'), '\', '/', 'g')
-            let cd = substitute(cd, '//\+', '/', 'g')
-            exec 'cd '. tlib#arg#Ex(cd)
-        endif
-        let b:tskelDidFillIn = 1
+        try
+            let meta = s:ReadSkeleton(tf)
+            let s:tskel_highlight = 0
+            call tskeleton#FillIn('', &filetype, meta)
+            if s:tskel_highlight && !exists("b:tskelHighlight")
+                call tskeleton#Highlight()
+            endif
+            if g:tskelChangeDir
+                let cd = substitute(expand('%:p:h'), '\', '/', 'g')
+                let cd = substitute(cd, '//\+', '/', 'g')
+                exec 'cd '. tlib#arg#Ex(cd)
+            endif
+            let b:tskelDidFillIn = 1
+        finally
+            if unset_ft
+                unlet g:tskelFiletype
+            endif
+        endtry
     endif
 endf
 
@@ -1693,8 +1703,13 @@ endf
 " :def: function! tskeleton#PrepareBits(?filetype=&filetype, ?reset=0)
 " Prepare the buffer for use with tskeleton.
 function! tskeleton#PrepareBits(...) "{{{3
-    let filetype = a:0 >= 1 && a:1 != '' ? a:1 : &filetype
-    " TLogVAR filetype
+    if a:0 >= 1 && !empty(a:1)
+        let filetype = a:1
+        " TLogVAR 'a:1', filetype
+    else
+        let filetype = s:Filetype()
+    endif
+    " TLogVAR a:0, filetype, &filetype
     call tskeleton#Initialize()
     " if filetype == ''
     "     let b:tskelFiletype = ''
@@ -2016,7 +2031,7 @@ function! s:EditScratchBuffer(filetype, ...) "{{{3
     endif
     let vars = map(copy(s:tskelScratchVars), 'exists("b:".v:val) ? ["b:".v:val, b:{v:val}] : ["", ""]')
     let tskel_bitDefs = b:tskelBitDefs
-    let tskel_filetype = b:tskelFiletype
+    let tskelFiletype = b:tskelFiletype
     if tsbnr >= 0
         " TLogVAR tsbnr
         silent exec "sbuffer ". tsbnr
@@ -2045,7 +2060,7 @@ function! s:EditScratchBuffer(filetype, ...) "{{{3
     " TLogVAR a:filetype
     " TLogDBG 3
     " Let's assume the bits get inherited from the parent buffer
-    let b:tskelFiletype = tskel_filetype
+    let b:tskelFiletype = tskelFiletype
     let b:tskelBitDefs = copy(tskel_bitDefs)
     " TLogDBG 4
     if exists('*TSkelNewScratchHook_'. a:filetype)
@@ -2067,6 +2082,19 @@ function! tskeleton#Retrieve(name) "{{{3
 endf
 
 
+function! s:Filetype() "{{{3
+    if exists('b:tskelFiletype')
+        let filetype = b:tskelFiletype
+    elseif exists('g:tskelFiletype')
+        let filetype = g:tskelFiletype
+    else
+        let filetype = &filetype
+    endif
+    " TLogVAR filetype
+    return filetype
+endf
+
+
 " s:RetrieveBit(agent, bit, ?indent, ?filetype) => setCursor?; @t=expanded template bit
 function! s:RetrieveBit(agent, bit, ...) "{{{3
     if s:tskelScratchIdx >= g:tskelMaxRecDepth
@@ -2074,7 +2102,8 @@ function! s:RetrieveBit(agent, bit, ...) "{{{3
     endif
     " TLogVAR a:agent, a:bit
     let indent = a:0 >= 1 ? a:1 : ''
-    let filetype = a:0 >= 2 ? a:2 : &filetype
+    let filetype = a:0 >= 2 ? a:2 : s:Filetype()
+    " TLogVAR filetype
     let rv     = ''
     if s:tskelScratchIdx == 0
         let s:tskelDestBufNr = bufnr("%")
@@ -2343,7 +2372,7 @@ function! tskeleton#Bit(bit, ...) "{{{3
     let s:tskel_highlight = 0
     try
         if empty(a:bit)
-            call s:BitMenu(a:bit, mode, &filetype)
+            call s:BitMenu(a:bit, mode, s:Filetype())
         elseif s:SelectAndInsert(a:bit, mode)
             " call tlog#Debug('s:SelectAndInsert ok')
             return 1
@@ -2437,7 +2466,7 @@ endf
 
 
 function! s:MatchBit(value, rx) "{{{3
-    let case_sensitive = tlib#var#Get('tskelCaseSensitive_'. &filetype, 'bg', tlib#var#Get('tskelCaseSensitive', 'bg'))
+    let case_sensitive = tlib#var#Get('tskelCaseSensitive_'. s:Filetype(), 'bg', tlib#var#Get('tskelCaseSensitive', 'bg'))
     if case_sensitive == 1
         return a:value =~# a:rx
     elseif case_sensitive == -1
@@ -2554,9 +2583,14 @@ function! tskeleton#ExpandBitUnderCursor(mode, ...) "{{{3
     let t = @t
     let lazyredraw = &lazyredraw
     set lazyredraw
+    let unset_ft = !exists('g:tskelFiletype')
+    if unset_ft
+        let g:tskelFiletype = &filetype
+    endif
+    " TLogVAR g:tskelFiletype
     try
         let @t    = ''
-        let filetype    = &filetype
+        let filetype = s:Filetype()
         let imode = s:IsInsertMode(a:mode)
         " TLogVAR col0
         let col   = col0
@@ -2649,12 +2683,15 @@ function! tskeleton#ExpandBitUnderCursor(mode, ...) "{{{3
         let @t = t
         call s:UnsetLine()
         let lazyredraw  = &lazyredraw
+        if unset_ft
+            unlet g:tskelFiletype
+        endif
     endtry
 endf
 
 
 function! s:KeywordRx(...) "{{{3
-    TVarArg ['quantifier', '\{-}'], ['filetype', &filetype]
+    TVarArg ['quantifier', '\{-}'], ['filetype', s:Filetype()]
     let rx = tlib#var#Get('tskelKeyword_'. filetype, 'bg', '\k\Q')
     let rx = substitute(rx, '\(\\\)\@<!\\Q', tlib#rx#EscapeReplace(quantifier), 'g')
     return rx
@@ -2842,11 +2879,12 @@ function! tskeleton#Complete(findstart, base, ...)
     else
         let default = a:0 >= 1 ? a:1 : {}
         " TAssertType default, 'dictionary'
-        let t = s:BitMenuEligible('complete', a:base, 'i', &filetype)
-        let setup_done = s:DidSetup(&filetype)
+        let filetype = s:Filetype()
+        let t = s:BitMenuEligible('complete', a:base, 'i', filetype)
+        let setup_done = s:DidSetup(filetype)
         " TLogVAR len(t), setup_done
         if setup_done
-            let completions = copy(g:tskelBits_{&filetype})
+            let completions = copy(g:tskelBits_{filetype})
             " TLogVAR len(completions)
             call filter(completions, 'strpart(v:val.text, 0, len(a:base)) ==# a:base')
             " TLogVAR len(completions)
@@ -3095,7 +3133,8 @@ function! tskeleton#HyperComplete_query(mode, default) "{{{3
         " TLogVAR a:mode
         let w:tskeleton_hypercomplete = 1
         try
-            call tskeleton#ExpandBitUnderCursor(a:mode, '', tlib#var#Get('tskelHyperComplete_'. &filetype, 'bg', tlib#var#Get('tskelHyperComplete', 'bg', {})))
+            let filetype = s:Filetype()
+            call tskeleton#ExpandBitUnderCursor(a:mode, '', tlib#var#Get('tskelHyperComplete_'. filetype, 'bg', tlib#var#Get('tskelHyperComplete', 'bg', {})))
         finally
             unlet! w:tskeleton_hypercomplete
         endtry
@@ -3121,7 +3160,8 @@ function! tskeleton#HyperComplete_pum(mode, default) "{{{3
     " TLogVAR text
     call append(line - 1, text)
     call setpos('.', pos)
-    let hyper = tlib#var#Get('tskelHyperComplete_'. &filetype, 'bg', tlib#var#Get('tskelHyperComplete', 'bg', {}))
+    let filetype = s:Filetype()
+    let hyper = tlib#var#Get('tskelHyperComplete_'. filetype, 'bg', tlib#var#Get('tskelHyperComplete', 'bg', {}))
     let completions = tskeleton#Complete(0, base, hyper)
     " TLogVAR len(completions)
     call sort(completions)
