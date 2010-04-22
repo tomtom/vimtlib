@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-11-12.
-" @Last Change: 2010-02-16.
-" @Revision:    141
+" @Last Change: 2010-04-18.
+" @Revision:    160
 " GetLatestVimScripts: 2437 0 shymenu.vim
 
 if &cp || exists("loaded_shymenu")
@@ -125,7 +125,10 @@ function! s:IsFullScreen() "{{{3
 endf
 
 function! s:InstallAutocmd() "{{{3
-    autocmd ShyMenu BufEnter,BufWinEnter,CursorMoved,CursorMovedI,CursorHold,CursorHoldI,FocusGained * if s:show_menu | call ShyMenu(0) | endif
+    let s:line = line('.')
+    autocmd ShyMenu CursorMoved,CursorMovedI * if s:show_menu | call s:ShyMenuCursorMoved(0, '', s:line) | endif
+    " autocmd ShyMenu BufEnter,BufWinEnter,CursorHold,CursorHoldI,FocusGained * if s:show_menu | call ShyMenu(0, '') | endif
+    autocmd ShyMenu BufEnter,BufWinEnter,FocusGained * if s:show_menu | call ShyMenu(0, '') | endif
 endf
 
 function! s:UninstallAutocmd() "{{{3
@@ -142,8 +145,8 @@ function! s:SetTopLine(lineno) "{{{3
     endif
 endf
 
-function! s:SetMenu(mode) "{{{3
-    if a:mode
+function! s:SetMenu(set_mode, mode) "{{{3
+    if a:set_mode
         let topline = line('w0') + g:shymenu_lines
         if !s:IsFullScreen()
             let &lines -= g:shymenu_lines
@@ -160,8 +163,17 @@ function! s:SetMenu(mode) "{{{3
         let s:show_menu = 0
         call s:UninstallAutocmd()
     endif
-    call s:SetTopLine(topline)
+    if abs(a:mode) <= 1
+        call s:SetTopLine(topline)
+    endif
     redraw
+endf
+
+
+function! s:ShyMenuCursorMoved(mode, key, line) "{{{3
+    if a:line != line('.')
+        call ShyMenu(a:mode, a:key)
+    endif
 endf
 
 
@@ -170,31 +182,41 @@ endf
 "   -1 ... toggle
 "    0 ... hide
 "    1 ... show
-function! ShyMenu(mode) "{{{3
+function! ShyMenu(mode, key) "{{{3
     let options = {}
     for o in g:shymenu_options
         exec 'let options[o] = '. o
     endfor
-    if a:mode == -1
+    if a:mode < 0
         if s:ShowMenu()
-            call s:SetMenu(0)
+            call s:SetMenu(0, a:mode)
         else
-            call s:SetMenu(1)
+            call s:SetMenu(1, a:mode)
         endif
-    elseif a:mode
+    elseif a:mode > 0
         if !s:ShowMenu()
-            call s:SetMenu(1)
+            call s:SetMenu(1, a:mode)
         endif
     else
         if s:ShowMenu()
-            call s:SetMenu(0)
+            call s:SetMenu(0, a:mode)
         endif
     endif
     for o in g:shymenu_options
         " TLogVAR o, options[o]
         exec 'if '. o .' != options[o] | let '. o .' = '. options[o] .' | endif'
     endfor
+    if has('win32') && !empty(a:key)
+        exec 'simalt '. a:key
+    endif
 endf
+
+
+function! ShyMenuShow(key) "{{{3
+    call ShyMenu(2, '')
+    return a:key
+endf
+
 
 let s:ttogglemenu = 0
 
@@ -213,17 +235,22 @@ function! s:ShyMenuInstall() "{{{3
             endif
         else
             if g:shymenu_modes =~ 'n'
-                exec 'noremap <silent> <m-'. key .'> :call ShyMenu(1)\|simalt '. key .'<cr>'
+                exec 'noremap <silent> <m-'. key .'> :call ShyMenu(1, '. string(key) .')<cr>'
             endif
             if g:shymenu_modes =~ 'i'
-                exec 'inoremap <silent> <m-'. key .'> <c-o>:call ShyMenu(1)\|simalt '. key .'<cr>'
+                exec 'inoremap <silent> <m-'. key .'> <c-o>:call ShyMenu(1, '. string(key) .')<cr>'
             endif
             let s:ttogglemenu = 1
         endif
     endfor
 endf
 
+
 autocmd ShyMenu VimEnter * call s:ShyMenuInstall()
+
+
+map <expr> <f10> ShyMenuShow("\<f10>")
+imap <expr> <f10> ShyMenuShow("\<f10>")
 
 
 let &cpo = s:save_cpo
