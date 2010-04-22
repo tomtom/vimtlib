@@ -4,8 +4,8 @@
 " @GIT:         http://github.com/tomtom/vimtlib/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-03-14.
-" @Last Change: 2010-04-09.
-" @Revision:    455
+" @Last Change: 2010-04-19.
+" @Revision:    458
 " GetLatestVimScripts: 2584 1 :AutoInstall: quickfixsigns.vim
 
 if &cp || exists("loaded_quickfixsigns") || !has('signs')
@@ -307,7 +307,7 @@ function! s:Marks() "{{{3
     let ignore = exists('b:quickfixsigns_ignore_marks') ? b:quickfixsigns_ignore_marks : []
     for mark in g:quickfixsigns_marks
         let pos = getpos("'". mark)
-        if (pos[0] == 0 || pos[0] == bn) && index(ignore, mark) == -1
+        if pos[1] != 0 && index(ignore, mark) == -1 && (mark =~# '[a-z]' || pos[0] == bn)
             call add(acc, {'bufnr': bn, 'lnum': pos[1], 'col': pos[2], 'text': 'Mark_'. mark})
         endif
     endfor
