@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2010-04-03.
-" @Revision:    0.628
+" @Last Change: 2010-04-19.
+" @Revision:    0.637
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
@@ -1956,11 +1956,11 @@ function! viki#InterVikiDest(vikiname, ...)
             let i_dest = fnamemodify(i_dest, ':p')
             " TLogVAR i_dest, rx
             if !empty(rx)
+                if i_dest !~ '[\/]$'
+                    let i_dest .= '/'
+                endif
                 let i_dest = s:RxifyFilename(i_dest)
                 " TLogVAR i_dest
-                if i_dest !~ '\[\\/\]$'
-                    let i_dest .= '[\/]'
-                endif
                 let v_dest = i_dest . v_dest
             else
                 let v_dest = tlib#file#Join([i_dest, v_dest], 1)
