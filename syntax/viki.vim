@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     30-Dez-2003.
-" @Last Change: 2010-03-25.
-" @Revision: 0.938
+" @Last Change: 2010-04-18.
+" @Revision: 0.943
 
 if !g:vikiEnabled
     finish
@@ -232,7 +232,7 @@ if version >= 508 || !exists("did_viki_syntax_inits")
   HiLink vikiSemiParagraph NonText
   HiLink vikiEscapedChars Normal
   exe "hi vikiEscape ctermfg=". s:cm2 ."grey guifg=". s:cm2 ."grey"
-  exe "hi vikiList term=bold cterm=bold gui=bold ctermfg=". s:cm1 ."Cyan guifg=". s:cm1 ."Cyan"
+  hi vikiList term=bold cterm=bold gui=italic,bold ctermfg=Cyan guifg=Cyan
   HiLink vikiDescription vikiList
   if g:vikiFancyHeadings
       if &background == "light"
