@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-06-30.
-" @Last Change: 2010-03-29.
-" @Revision:    0.0.315
+" @Last Change: 2010-04-19.
+" @Revision:    0.0.316
 
 
 let s:bmru = []
@@ -189,7 +189,7 @@ function! tlib#buffer#HighlightLine(...) "{{{3
     call tlib#autocmdgroup#Init()
     exec 'autocmd TLib CursorMoved,CursorMovedI <buffer> if line(".") != '. line .' | call s:UndoHighlightLine() | endif'
     autocmd TLib CursorHold,CursorHoldI <buffer> call s:UndoHighlightLine()
-    autocmd TLib BufLeave,BufWinLeave,WinLeave,BufHidden <buffer> call s:UndoHighlightLine()
+    " autocmd TLib BufLeave,BufWinLeave,WinLeave,BufHidden <buffer> call s:UndoHighlightLine()
 endf
 
 
