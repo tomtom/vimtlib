@@ -3,8 +3,8 @@
 " @GIT:         http://github.com/tomtom/vimtlib/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
-" @Last Change: 2010-04-01.
-" @Revision:    203
+" @Last Change: 2010-04-18.
+" @Revision:    207
 " GetLatestVimScripts: 0 0 :AutoInstall: vikitasks.vim
 " Search for task lists and display them in a list
 
@@ -36,7 +36,7 @@ set cpo&vim
 " If 0, don't display alarms for pending tasks.
 " If n > 0, display alarms for pending tasks or tasks with a deadline in n 
 " days.
-TLet g:vikitasks_startup_alarms = !has('clientserver') || len(split(serverlist(), '\n')) == 1
+TLet g:vikitasks_startup_alarms = !has('clientserver') || len(split(serverlist(), '\n')) <= 1
 
 " Scan a buffer on these events.
 TLet g:vikitasks_scan_events = 'BufWritePost,BufWinEnter'
