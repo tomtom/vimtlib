@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-03.
 " @Last Change: 2010-04-17.
-" @Revision:    0.0.1761
+" @Revision:    0.0.1763
 
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
@@ -2691,7 +2691,10 @@ endf
 
 
 function! s:KeywordRx(...) "{{{3
-    TVarArg ['quantifier', '\{-}'], ['filetype', s:Filetype()]
+    TVarArg ['quantifier', '\{-}'], ['filetype', '']
+    if empty(filetype)
+        let filetype = s:Filetype()
+    endif
     let rx = tlib#var#Get('tskelKeyword_'. filetype, 'bg', '\k\Q')
     let rx = substitute(rx, '\(\\\)\@<!\\Q', tlib#rx#EscapeReplace(quantifier), 'g')
     return rx
