@@ -3,8 +3,8 @@
 " @GIT:         http://github.com/tomtom/vimtlib/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-04.
-" @Last Change: 2010-03-24.
-" @Revision:    24
+" @Last Change: 2010-04-18.
+" @Revision:    25
 " GetLatestVimScripts: 0 0 startup_profile.vim
 
 let s:save_cpo = &cpo
@@ -70,7 +70,7 @@ function! s:LogEnd() "{{{3
 endf
 
 function! s:FloatAsString(num) "{{{3
-    return substitute(string(a:num), '\.', g:startup_profile_comma, '')
+    return substitute(string(a:num), '[,.]', g:startup_profile_comma, '')
 endf
 
 call s:LogScript(expand("<sfile>"))
