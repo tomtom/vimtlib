@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     27-Dez-2004.
-" @Last Change: 2010-01-03.
-" @Revision:    1.9.675
+" @Last Change: 2010-04-24.
+" @Revision:    1.9.678
 " 
 " GetLatestVimScripts: 1173 1 tComment.vim
 
@@ -13,9 +13,13 @@ endif
 let loaded_tcomment = 112
 
 if !exists("g:tcommentMapLeader1")
+    " g:tcommentMapLeader1 should be a shortcut that can be used with 
+    " map, imap, vmap.
     let g:tcommentMapLeader1 = '<c-_>'
 endif
 if !exists("g:tcommentMapLeader2")
+    " g:tcommentMapLeader2 should be a shortcut that can be used with 
+    " map, xmap.
     let g:tcommentMapLeader2 = '<Leader>_'
 endif
 if !exists("g:tcommentMapLeaderOp1")
@@ -73,12 +77,12 @@ if (g:tcommentMapLeader1 != '')
 endif
 if (g:tcommentMapLeader2 != '')
     exec 'noremap <silent> '. g:tcommentMapLeader2 .'_ :TComment<cr>'
-    exec 'vnoremap <silent> '. g:tcommentMapLeader2 .'_ :TCommentMaybeInline<cr>'
+    exec 'xnoremap <silent> '. g:tcommentMapLeader2 .'_ :TCommentMaybeInline<cr>'
     exec 'noremap <silent> '. g:tcommentMapLeader2 .'p vip:TComment<cr>'
     exec 'noremap '. g:tcommentMapLeader2 .'<space> :TComment '
-    exec 'vnoremap <silent> '. g:tcommentMapLeader2 .'i :TCommentInline<cr>'
+    exec 'xnoremap <silent> '. g:tcommentMapLeader2 .'i :TCommentInline<cr>'
     exec 'noremap <silent> '. g:tcommentMapLeader2 .'r :TCommentRight<cr>'
-    exec 'vnoremap <silent> '. g:tcommentMapLeader2 .'r :TCommentRight<cr>'
+    exec 'xnoremap <silent> '. g:tcommentMapLeader2 .'r :TCommentRight<cr>'
     exec 'noremap '. g:tcommentMapLeader2 .'b :TCommentBlock<cr>'
     exec 'noremap '. g:tcommentMapLeader2 .'a :TCommentAs '
     exec 'noremap '. g:tcommentMapLeader2 .'n :TCommentAs <c-r>=&ft<cr> '
@@ -87,12 +91,12 @@ endif
 if (g:tcommentMapLeaderOp1 != '')
     exec 'nnoremap <silent> '. g:tcommentMapLeaderOp1 .' :let w:tcommentPos = getpos(".") \| set opfunc=tcomment#Operator<cr>g@'
     exec 'nnoremap <silent> '. g:tcommentMapLeaderOp1 .'c :let w:tcommentPos = getpos(".") \| set opfunc=tcomment#OperatorLine<cr>g@$'
-    exec 'vnoremap <silent> '. g:tcommentMapLeaderOp1 .' :TCommentMaybeInline<cr>'
+    exec 'xnoremap <silent> '. g:tcommentMapLeaderOp1 .' :TCommentMaybeInline<cr>'
 endif 
 if (g:tcommentMapLeaderOp2 != '')
     exec 'nnoremap <silent> '. g:tcommentMapLeaderOp2 .' :let w:tcommentPos = getpos(".") \| set opfunc=tcomment#OperatorAnyway<cr>g@'
     exec 'nnoremap <silent> '. g:tcommentMapLeaderOp2 .'c :let w:tcommentPos = getpos(".") \| set opfunc=tcomment#OperatorLineAnyway<cr>g@$'
-    exec 'vnoremap <silent> '. g:tcommentMapLeaderOp2 .' :TCommentMaybeInline<cr>'
+    exec 'xnoremap <silent> '. g:tcommentMapLeaderOp2 .' :TCommentMaybeInline<cr>'
 endif 
 
 finish
