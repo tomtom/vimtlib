@@ -3,8 +3,8 @@
 " @Author:      Tom Link (micathom AT gmail com)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     18-Mai-2004.
-" @Last Change: 2009-12-26.
-" @Revision:    285
+" @Last Change: 2010-04-24.
+" @Revision:    297
 " 
 " GetLatestVimScripts: 1030 1 scalefont.vim
 
@@ -425,6 +425,7 @@ fun! s:ScaleFontSetSize(mode, ...) "{{{3
             let &guifont=fnt
             call ScaleFontMaximizeWindow()
             let nco=0
+            let nli = 0
         else
             let nco=cols
             let nli=lines
@@ -434,6 +435,7 @@ fun! s:ScaleFontSetSize(mode, ...) "{{{3
         let nli = s:scaleFontLines / (g:scaleFontSize + &linespace)
     else
         let nco = 0
+        let nli = 0
     endif
     " TLogVAR nco, nli, fnt
     if nco > 0
@@ -450,6 +452,7 @@ fun! s:ScaleFontSetSize(mode, ...) "{{{3
         let &guifont=fnt
     endif
 
+    " TLogVAR a:mode
     if a:mode != ''
         let s:scaleFontMode = a:mode
         call s:ScaleFontSetLinesCols(0, &lines, &co)
