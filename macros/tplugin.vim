@@ -383,10 +383,38 @@ function! TPluginMap(map, repo, plugin, ...) "{{{3
             endtry
             if empty(maparg)
                 let map = substitute(a:map, '<script>', '', '')
-                exec map .' <C-\><C-G>:call <SID>Remap('. join([string(keys), string(a:map), string(remap), string(def)], ',') .')<cr>'
+                let [pre, post] = s:GetMapPrePost(a:map)
+                let map .= ' '. pre . ':call <SID>Remap('. join([string(keys), string(a:map), string(remap), string(def)], ',') .')<cr>' . post
+                " echom "DBG" map
+                exec map
             endif
         endif
     endif
+endf
+
+
+function! s:GetMapPrePost(map) "{{{3
+    let mode = matchstr(a:map, '\([incvoslx]\?\)\ze\(nore\)\?map')
+    if mode ==# 'n'
+        let pre  = ''
+        let post = ''
+    elseif mode ==# 'i'
+        let pre = '<c-\><c-o>'
+        let post = ''
+    elseif mode ==# 'v' || mode ==# 'x'
+        let pre = '<c-c>'
+        let post = '<C-\><C-G>'
+    elseif mode ==# 'c'
+        let pre = '<c-c>'
+        let post = '<C-\><C-G>'
+    elseif mode ==# 'o'
+        let pre = '<c-c>'
+        let post = '<C-\><C-G>'
+    else
+        let pre  = ''
+        let post = ''
+    endif
+    return [pre, post]
 endf
 
 
@@ -431,7 +459,7 @@ let s:scanner = {
             \   'fmt': {'sargs3': 'call TPluginFunction(%s, %s, %s)'}
             \ },
             \ 'p': {
-            \   'rx':  '\c^\s*:\?\zs[incvoslx]\?\(nore\)\?map\s\+\(<\(silent\|unique\|buffer\|script\)>\s*\)*<plug>\w\+',
+            \   'rx':  '\c^\s*:\?\zs[incvoslx]\?\(nore\)\?map\s\+\(<\(silent\|unique\|buffer\|script\)>\s*\)*<plug>[^[:space:]<]\+',
             \   'fmt': {'sargs3': 'call TPluginMap(%s, %s, %s)'}
             \ },
             \ }
@@ -1249,3 +1277,5 @@ with the same name.
 0.9
 - Renamed #TPluginInclude to @TPluginInclude
 - Added support for @TPluginMap, @TPluginBefore, @TPluginAfter annotations
+- TPluginMap() restores the proper mode
+
