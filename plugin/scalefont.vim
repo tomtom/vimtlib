@@ -19,7 +19,7 @@ let loaded_scalefont = 104
 if !exists("g:scaleFontSize") || !exists("g:scaleFont") "{{{2
     echomsg "ScaleFont: Please set g:scaleFont, g:scaleFontSize (g:scaleFontWidth) in ~/.vimrc."
     if has("gui_gtk2")
-        let g:scaleFont='Luxi\ Mono\ #{SIZE}'
+        let g:scaleFont='monospace #{SIZE}'
     elseif has("x11")
         " Also for GTK 1
         let g:scaleFont='*-lucidatypewriter-medium-r-normal-*-#{SIZE}-180-*-*-m-*-*'
