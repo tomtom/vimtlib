@@ -135,18 +135,18 @@ command! -nargs=+ -complete=dir TPluginRoot
 "
 " The source file may contain special markers that make :TPluginScan 
 " include text in the _tplugin.vim file:
-"                                                     *#TPluginInclude*
-" Blocks of non-empty lines are introduced with an #TPluginInclude tag: >
+"                                                     *@TPluginInclude*
+" Blocks of non-empty lines are introduced with an @TPluginInclude tag: >
 "
-"   " #TPluginInclude
+"   " @TPluginInclude
 "   augroup Foo
 "        autocmd!
 "        autocmd Filetype foo call foo#Init()
 "   augroup END
 "
-" Special lines are prefixed with #TPluginInclude: >
+" Special lines are prefixed with @TPluginInclude: >
 "   
-"   " #TPluginInclude if !exists('g:foo') | let g:foo = 1 | endif
+"   " @TPluginInclude if !exists('g:foo') | let g:foo = 1 | endif
 "
 " Example: >
 "   TPluginRoot dir1
@@ -451,11 +451,45 @@ function! s:ScanSource(file, repo, plugin, what, lines) "{{{3
             else
                 call add(out, line)
             endif
-        elseif line =~ '^\s*"\s*#TPluginInclude\s*$'
+        elseif line =~ '^\s*"\s*@TPluginInclude\s*$'
             let include = 1
-        elseif line =~ '^\s*"\s*#TPluginInclude\s*\S'
-            let out_line = substitute(line, '^\s*"\s*#TPluginInclude\s*', '', '')
+        elseif line =~ '^\s*"\s*@TPluginInclude\s*\S'
+            let out_line = substitute(line, '^\s*"\s*@TPluginInclude\s*', '', '')
             call add(out, out_line)
+        elseif line =~ '^\s*"\s*@TPlugin\(Before\|After\)\s\+\S'
+            let out_line = matchstr(line, '^\s*"\s*@\zsTPlugin.*$')
+            call add(out, out_line)
+        elseif line =~ '^\s*"\s*@TPluginMap!\?\s\+\w\{-}map\s\+.\+$'
+            let maplist = matchlist(line, '^\s*"\s*@TPluginMap\(!\)\?\s\+\(\w\{-}map\(\s*<silent>\)\+\)\s\+\(.\+\)$')
+            let bang = !empty(maplist[1])
+            let cmd = maplist[2]
+            for val in split(maplist[4], '\s\+')
+                if bang
+                    if has_key(s:parameters, val)
+                        let val = s:parameters[val]
+                    else
+                        if val =~ '^g:\w\+$'
+                            if exists(val)
+                                let var = val
+                                let val = eval(val)
+                                call add(out, printf('if !exists(%s)', string(var)))
+                                call add(out, printf('    let %s = %s', var, string(val)))
+                                call add(out, 'endif')
+                            else
+                                echom "TPlugin: Undefined variable ". val
+                                continue
+                            endif
+                        else
+                            let val = eval(val)
+                        endif
+                        let s:parameters[var] = val
+                    endif
+                endif
+                let out_line = printf("call TPluginMap(%s, %s, %s)",
+                            \ string(cmd .' '. val),
+                            \ string(a:repo), string(a:plugin))
+                call add(out, out_line)
+            endfor
         elseif line =~ rx
             let out_line = s:ScanLine(a:file, a:repo, a:plugin, a:what, line)
             if !empty(out_line)
@@ -1212,3 +1246,6 @@ the prefix.
 with the same name.
 - #TPluginInclude tag
 
+0.9
+- Renamed #TPluginInclude to @TPluginInclude
+- Added support for @TPluginMap, @TPluginBefore, @TPluginAfter annotations
