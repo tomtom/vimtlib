@@ -1,5 +1,12 @@
 doc/vimform.txt
 autoload/vimform.vim
+autoload/vimform/forms/substitute.vim
+autoload/vimform/widget.vim
+autoload/vimform/widgets/checkbox.vim
+autoload/vimform/widgets/dir.vim
+autoload/vimform/widgets/file.vim
+autoload/vimform/widgets/singlechoice.vim
+autoload/vimform/widgets/text.vim
 ftplugin/vimform.vim
 indent/vimform.vim
 plugin/vimform.vim
