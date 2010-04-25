@@ -290,18 +290,18 @@ g:tplugin_scan                 (default: 'cfpta')
     
     The source file may contain special markers that make :TPluginScan 
     include text in the _tplugin.vim file:
-                                                        *#TPluginInclude*
-    Blocks of non-empty lines are introduced with an #TPluginInclude tag: >
+                                                        *@TPluginInclude*
+    Blocks of non-empty lines are introduced with an @TPluginInclude tag: >
     
-      " #TPluginInclude
+      " @TPluginInclude
       augroup Foo
            autocmd!
            autocmd Filetype foo call foo#Init()
       augroup END
     
-<   Special lines are prefixed with #TPluginInclude: >
+<   Special lines are prefixed with @TPluginInclude: >
       
-      " #TPluginInclude if !exists('g:foo') | let g:foo = 1 | endif
+      " @TPluginInclude if !exists('g:foo') | let g:foo = 1 | endif
     
 <   Example: >
       TPluginRoot dir1

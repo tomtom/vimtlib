@@ -108,7 +108,7 @@ Contents~
 plugin/vikitasks.vim~
 
                                                     *g:vikitasks_startup_alarms*
-g:vikitasks_startup_alarms     (default: !has('clientserver') || len(split(serverlist(), '\n')) == 1)
+g:vikitasks_startup_alarms     (default: !has('clientserver') || len(split(serverlist(), '\n')) <= 1)
     Show alarms on pending tasks.
     If 0, don't display alarms for pending tasks.
     If n > 0, display alarms for pending tasks or tasks with a deadline in n 

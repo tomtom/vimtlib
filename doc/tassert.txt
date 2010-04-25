@@ -119,6 +119,7 @@ Contents~
         tlog#Style ............. |tlog#Style()|
         tlog#Fun ............... |tlog#Fun()|
         tlog#Var ............... |tlog#Var()|
+        tlog#Display_dialog .... |tlog#Display_dialog()|
         tlog#Display_echo ...... |tlog#Display_echo()|
         tlog#Display_echom ..... |tlog#Display_echom()|
         tlog#Display_file ...... |tlog#Display_file()|
@@ -296,6 +297,9 @@ tlog#Fun(fn)
 
                                                     *tlog#Var()*
 tlog#Var(caller, var, ...)
+
+                                                    *tlog#Display_dialog()*
+tlog#Display_dialog(text)
 
                                                     *tlog#Display_echo()*
 tlog#Display_echo(text)

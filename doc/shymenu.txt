@@ -48,6 +48,9 @@ Contents~
         g:shymenu_lines ............... |g:shymenu_lines|
         g:shymenu_options ............. |g:shymenu_options|
         ShyMenu ....................... |ShyMenu()|
+        ShyMenuShow ................... |ShyMenuShow()|
+        <expr> ........................ |<expr>|
+        i_<expr> ...................... |i_<expr>|
 
 
 ========================================================================
@@ -102,12 +105,21 @@ g:shymenu_options              (default: ['&cmdheight'])
     A list of options that shall be maintained.
 
                                                     *ShyMenu()*
-ShyMenu(mode)
+ShyMenu(mode, key)
     Set menu bar visibility.
     mode:
       -1 ... toggle
        0 ... hide
        1 ... show
+
+                                                    *ShyMenuShow()*
+ShyMenuShow(key)
+
+                                                    *<expr>*
+<expr> ... <f10> ShyMenuShow("\<f10>")
+
+                                                    *i_<expr>*
+i_<expr> ... <f10> ShyMenuShow("\<f10>")
 
 
 
