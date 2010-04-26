@@ -3,7 +3,7 @@
 # @Author:      Tom Link (micathom AT gmail com)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2009-02-10.
-# @Last Change: 2010-04-09.
+# @Last Change: 2010-04-26.
 #
 # This script creates and installs vimballs without vim.
 #
@@ -91,8 +91,12 @@ HEADER
                 $logger.warn "or set it in your config file."
                 '.'
             end
+            config['installdir'] = config['vimfiles']
 
-            config['configfile'] = File.join(config['vimfiles'], 'vimballs', 'config.yml')
+            config['configfile'] = File.join(config['vimfiles'], 'vimballs', "config_#{ENV['HOSTNAME']}.yml")
+            unless File.exists?(config['configfile'])
+                config['configfile'] = File.join(config['vimfiles'], 'vimballs', 'config.yml')
+            end
             @configs = []
             read_config(config)
 
