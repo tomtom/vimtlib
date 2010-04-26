@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
-" @Last Change: 2010-04-01.
-" @Revision:    0.0.587
+" @Last Change: 2010-04-26.
+" @Revision:    0.0.588
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -230,6 +230,7 @@ function! s:View(index, suspend) "{{{3
         let w.trag_list_syntax = 'viki'
         let w.trag_list_syntax_nextgroup = '@vikiPriorityListTodo'
         let w.trag_short_filename = 1
+        let w.scratch = '__VikiTasks__'
         call trag#QuickList(w, a:suspend)
     else
         exec g:vikitasks#qfl_viewer
