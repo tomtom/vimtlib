@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-04.
-" @Last Change: 2010-04-23.
-" @Revision:    1421
+" @Last Change: 2010-04-26.
+" @Revision:    1463
 " GetLatestVimScripts: 2917 1 :AutoInstall: tplugin.vim
 
 if &cp || exists("loaded_tplugin")
@@ -157,9 +157,10 @@ command! -bang -nargs=* TPluginScan
             \ call s:ScanRoots(!empty("<bang>"), s:roots, [<f-args>])
 
 
-" :display: :TPluginBefore FILE_RX [GLOB_PATTERNS ...]
-" Load dependencies given as GLOB_PATTERNS (see |wildcards|) before 
-" loading a file matching the |regexp| pattern FILE_RX.
+" :display: :TPluginBefore FILE_RX [GLOB_PATTERNS ...|@REPO]
+" Load dependencies given as GLOB_PATTERNS (see |wildcards|) or as a 
+" REPO's name before loading a file matching the |regexp| pattern 
+" FILE_RX.
 "
 " The files matching FILE_PATTERNS are loaded after the repo's path is 
 " added to the 'runtimepath'. You can thus use partial filenames as you 
@@ -175,9 +176,10 @@ command! -nargs=+ TPluginBefore
             \ let s:before[[<f-args>][0]] = [<f-args>][1:-1]
 
 
-" :display: :TPluginAfter FILE_RX [GLOB_PATTERNS ...]
-" Load other plugins matching GLOB_PATTERNS (see |wildcards|) after 
-" loading a file matching the |regexp| pattern FILE_RX.
+" :display: :TPluginAfter FILE_RX [GLOB_PATTERNS ...|@REPO]
+" Load other plugins matching GLOB_PATTERNS (see |wildcards|) or as a 
+" REPO's name after loading a file matching the |regexp| pattern 
+" FILE_RX.
 " See also |:TPluginBefore|.
 "
 " Example: >
@@ -197,6 +199,8 @@ endf
 let s:roots = []
 let s:rtp = split(&rtp, ',')
 let s:reg = {}
+let s:repos = {}
+let s:plugins = {}
 let s:done = {'-': {}}
 let s:immediate = 0
 let s:before = {}
@@ -337,7 +341,7 @@ function! s:AutoloadFunction(fn) "{{{3
             let root = def[0]
             let repo = def[1]
             call TPluginRequire(1, root, repo)
-            let [rootrepo, plugindir] = s:GetPluginDir(root, repo)
+            let [root, rootrepo, plugindir] = s:GetRootPluginDir(root, repo)
             " echom "DBG AutoloadFunction def" rootrepo plugindir
             call s:RunHooks(s:before, rootrepo, rootrepo .'/autoload/')
             call s:RunHooks(s:after, rootrepo, rootrepo .'/autoload/')
@@ -700,6 +704,7 @@ function! s:ScanRoots(immediate, roots, args) "{{{3
         try
             let fidx = 0
             let menu_done = {}
+            let repos_done = {}
             for file in filelist
                 " TLogVAR file
                 if progressbar
@@ -712,6 +717,10 @@ function! s:ScanRoots(immediate, roots, args) "{{{3
                 else
                     let repo = '-'
                 endif
+                if !has_key(repos_done, repo)
+                    call add(out, printf('call TPluginRegisterRepo(%s)', string(repo)))
+                    let repos_done[repo] = 1
+                endif
                 let plugin = matchstr(file, '[\/]\zs[^\/]\{-}\ze\.vim$')
                 " TLogVAR file, repo, plugin
 
@@ -720,6 +729,8 @@ function! s:ScanRoots(immediate, roots, args) "{{{3
                 let lines = readfile(file)
 
                 if is_plugin
+                    call add(out, printf('call TPluginRegisterPlugin(%s, %s)',
+                                \ string(repo), string(plugin)))
                     if !empty(g:tplugin_menu_prefix)
                         if is_tree
                             let mrepo = escape(repo, '\.')
@@ -832,6 +843,18 @@ endf
 function! TPluginAutoload(prefix, def) "{{{3
     " echom "DBG ". a:prefix
     let s:autoloads[a:prefix] = [s:GetRoot()] + a:def
+endf
+
+
+" :nodoc:
+function! TPluginRegisterRepo(repo) "{{{3
+    let s:repos[a:repo] = s:GetRoot()
+endf
+
+
+" :nodoc:
+function! TPluginRegisterPlugin(repo, plugin) "{{{3
+    let s:plugins[a:plugin] = a:repo
 endf
 
 
@@ -985,12 +1008,17 @@ function! s:LoadDependency(rootrepo, filename_rxs, dict) "{{{3
         let others = a:dict[filename_rx]
         " TLogVAR others
         for other in others
-            if stridx(other, '*') != -1
-                let pluginfiles = split(glob(a:rootrepo .'/'. other), '\n')
+            if other[0] == '@'
+                let args = split(other[1 : -1], '\s\+')
+                call call('TPluginRequire', [1, s:GetRoot()] + args)
             else
-                let pluginfiles = [a:rootrepo .'/'. other]
+                if stridx(other, '*') != -1
+                    let pluginfiles = split(glob(a:rootrepo .'/'. other), '\n')
+                else
+                    let pluginfiles = [a:rootrepo .'/'. other]
+                endif
+                call s:LoadPlugins(0, a:rootrepo, pluginfiles)
             endif
-            call s:LoadPlugins(0, a:rootrepo, pluginfiles)
         endfor
     endfor
 endf
@@ -1012,10 +1040,10 @@ endf
 " :nodoc:
 function! TPluginRequire(mode, root, repo, ...) "{{{3
     " TLogVAR a:mode, a:root, a:repo, a:000
-    let [rootrepo, plugindir] = s:GetPluginDir(a:root, a:repo)
+    let [root, rootrepo, plugindir] = s:GetRootPluginDir(a:root, a:repo)
     " TLogVAR rootrepo, plugindir
     if empty(a:000)
-        " TLogDBG s:FileJoin(plugindir, '*.vim')
+        " echom "DBG" s:FileJoin(plugindir, '*.vim')
         let pluginfiles = split(glob(s:FileJoin(plugindir, '*.vim')), '\n')
     elseif a:1 == '.'
         let pluginfiles = []
@@ -1028,7 +1056,7 @@ function! TPluginRequire(mode, root, repo, ...) "{{{3
     if a:mode || s:immediate
         " TLogVAR rootrepo, pluginfiles
         " echom "DBG TPluginRequire" rootrepo string(pluginfiles)
-        call s:AddRepo([rootrepo], s:IsFlatRoot(a:root))
+        call s:AddRepo([rootrepo], s:IsFlatRoot(root))
         call s:LoadPlugins(a:mode, rootrepo, pluginfiles)
     else
         if !has_key(s:reg, rootrepo)
@@ -1111,7 +1139,7 @@ function! s:TPluginComplete(ArgLead, CmdLine, CursorPos) "{{{3
         "     let subdir  = s:FileJoin(repo, 'plugin')
         " endif
         " let plugindir   = s:FileJoin(root, subdir)
-        let [rootrepo, plugindir] = s:GetPluginDir(root, repo)
+        let [root, rootrepo, plugindir] = s:GetRootPluginDir(root, repo)
         " TLogVAR subdir, plugindir
         let pos0  = len(plugindir) + 1
         let files = split(glob(s:FileJoin(plugindir, '*.vim')), '\n')
@@ -1132,9 +1160,14 @@ function! s:IsFlatRoot(root) "{{{3
 endf
 
 
-function! s:GetPluginDir(root, repo) "{{{3
+function! s:GetRootPluginDir(root, repo) "{{{3
     " echom "DBG ". string([a:root, a:repo])
-    let root = s:GetRootDirOnDisk(empty(a:root) ? s:GetRoot() : a:root)
+    if empty(a:root)
+        let root = s:GetRootDirOnDisk(get(s:repos, a:repo, s:GetRoot()))
+    else
+        let root = a:root
+    endif
+    let root = s:GetRootDirOnDisk(root)
     let repo = s:IsFlatRoot(a:root) ? '-' : a:repo
     " deprecated
     if repo == '.'
@@ -1151,12 +1184,12 @@ function! s:GetPluginDir(root, repo) "{{{3
     else
         let plugindir = s:FileJoin(rootrepo, 'plugin')
     endif
-    return [rootrepo, plugindir]
+    return [root, rootrepo, plugindir]
 endf
 
 
 function! s:GetPluginFile(root, repo, plugin) "{{{3
-    let [rootrepo, plugindir] = s:GetPluginDir(a:root, a:repo)
+    let [root, rootrepo, plugindir] = s:GetRootPluginDir(a:root, a:repo)
     return printf('%s/%s.vim', plugindir, a:plugin)
 endf
 
