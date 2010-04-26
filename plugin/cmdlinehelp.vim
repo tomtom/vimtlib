@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-07-01.
-" @Last Change: 2010-03-14.
-" @Revision:    350
+" @Last Change: 2010-04-26.
+" @Revision:    352
 " GetLatestVimScripts: 2279 0 cmdlinehelp.vim
 
 " :doc:
@@ -24,8 +24,6 @@ set cpo&vim
 if !exists('g:cmdlinehelpMapView')
     " Default map.
     let g:cmdlinehelpMapView = '<f1>'  "{{{2
-    " let g:cmdlinehelpMapView = '<c-o>'  "{{{2
-    " let g:cmdlinehelpMapView = '<c-]>'  "{{{2
 endif
 
 if !exists('g:cmdlinehelpMapDown')
@@ -48,10 +46,10 @@ if !hasmapto('CmdLineHelpDown', 'c')
 end
 
 
-if &cpoptions !~# 'x'
-    cnoremap <esc> <c-c><c-w>z
-endif
-cnoremap <c-c> <c-c><c-w>z
+" if &cpoptions !~# 'x'
+"     cnoremap <esc> <c-c><c-w>z
+" endif
+" cnoremap <c-c> <c-c><c-w>z
 
 
 let &cpo = s:save_cpo
