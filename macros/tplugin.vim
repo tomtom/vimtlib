@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-04.
-" @Last Change: 2010-04-26.
-" @Revision:    1463
+" @Last Change: 2010-05-01.
+" @Revision:    1526
 " GetLatestVimScripts: 2917 1 :AutoInstall: tplugin.vim
 
 if &cp || exists("loaded_tplugin")
@@ -258,6 +258,7 @@ function! s:DefineCommand(def1) "{{{3
             endif
             let string = substitute(string, '^com\%[mand]\zs\s', '! ', '')
         endif
+        " echom "DBG" string
         return string
     endif
 endf
@@ -340,12 +341,16 @@ function! s:AutoloadFunction(fn) "{{{3
             let def = remove(s:autoloads, prefix)
             let root = def[0]
             let repo = def[1]
-            call TPluginRequire(1, root, repo)
+            " TLogVAR root, repo, prefix
+            call TPluginRequire(1, root, repo, '.')
             let [root, rootrepo, plugindir] = s:GetRootPluginDir(root, repo)
-            " echom "DBG AutoloadFunction def" rootrepo plugindir
+            " call s:LoadFile(rootrepo, s:FileJoin(rootrepo, 'autoload', prefix .'.vim'))
+            " " echom "DBG AutoloadFunction def" rootrepo plugindir
             call s:RunHooks(s:before, rootrepo, rootrepo .'/autoload/')
             call s:RunHooks(s:after, rootrepo, rootrepo .'/autoload/')
-            return 1
+            " echom "DBG s:AutoloadFunction ok:" a:fn exists('*'. a:fn)
+            " echom "DBG s:AutoloadFunction:" v:exception v:errmsg
+            " return 0
         endif
     endif
     if has_key(s:functions, a:fn)
@@ -354,8 +359,9 @@ function! s:AutoloadFunction(fn) "{{{3
         " TLogVAR def
         call s:Autoload(2, def, '', [], [])
         " Ignored
-        return 1
+        " return 0
     endif
+    " return 1
 endf
 
 
@@ -934,24 +940,24 @@ function! s:AddRepo(rootrepos, isflat) "{{{3
         for rootrepo in rootrepos
             " echom "DBG AddRepo done" rootrepo
             let s:done[rootrepo] = {}
-            let tplugin_repo = fnamemodify(rootrepo, ':h') .'/'. s:tplugin_file .'_'. fnamemodify(rootrepo, ':t') .'.vim'
-            " TLogVAR rootrepo, tplugin_repo
-            if filereadable(tplugin_repo)
-                exec 'silent! source '. s:FnameEscape(tplugin_repo)
-            endif
             if !a:isflat
+                call insert(rtp, rootrepo, idx)
+                call insert(rtp, s:FileJoin(rootrepo, 'after'), -1)
+                let &rtp = join(rtp, ',')
                 let repo_tplugin = rootrepo .'/'. s:tplugin_file .'.vim'
                 " echom "DBG ". repo_tplugin
                 if filereadable(repo_tplugin)
                     exec 'source '. s:FnameEscape(repo_tplugin)
                 endif
                 " TLogVAR repo_tplugin
-                call insert(rtp, rootrepo, idx)
-                call insert(rtp, s:FileJoin(rootrepo, 'after'), -1)
             endif
             " TLogVAR rtp
+            let tplugin_repo = fnamemodify(rootrepo, ':h') .'/'. s:tplugin_file .'_'. fnamemodify(rootrepo, ':t') .'.vim'
+            " TLogVAR rootrepo, tplugin_repo
+            if filereadable(tplugin_repo)
+                exec 'silent! source '. s:FnameEscape(tplugin_repo)
+            endif
         endfor
-        let &rtp = join(rtp, ',')
     endif
 endf
 
@@ -967,28 +973,33 @@ function! s:LoadPlugins(mode, rootrepo, pluginfiles) "{{{3
     if has_key(done, '*')
         return
     endif
-    let pos0 = len(a:rootrepo) + 1
     for pluginfile in a:pluginfiles
         let pluginfile = s:GetCanonicFilename(pluginfile)
         " TLogVAR pluginfile
         if pluginfile != '-' && !has_key(done, pluginfile)
             let done[pluginfile] = 1
             if filereadable(pluginfile)
-                call s:RemoveAutoloads(pluginfile, [])
-                call s:RunHooks(s:before, a:rootrepo, pluginfile)
-                " TLogDBG 'source '. pluginfile
-                " TLogDBG filereadable(pluginfile)
-                " call tlog#Debug(s:FnameEscape(pluginfile))
-                exec 'source '. s:FnameEscape(pluginfile)
-                " TLogDBG 'runtime! after/'. strpart(pluginfile, pos0)
-                exec 'runtime! after/'. s:FnameEscape(strpart(pluginfile, pos0))
-                call s:RunHooks(s:after, a:rootrepo, pluginfile)
+                call s:LoadFile(a:rootrepo, pluginfile)
                 if a:mode == 2
                     echom "TPlugin: Loaded ". pathshorten(pluginfile)
                 endif
             endif
         endif
     endfor
+endf
+
+
+function! s:LoadFile(rootrepo, filename) "{{{3
+    " TLogVAR a:rootrepo, a:filename
+    let pos0 = len(a:rootrepo) + 1
+    call s:RemoveAutoloads(a:filename, [])
+    call s:RunHooks(s:before, a:rootrepo, a:filename)
+    " echom 'DBG source' a:filename filereadable(a:filename)
+    " call tlog#Debug(s:FnameEscape(a:filename))
+    exec 'source '. s:FnameEscape(a:filename)
+    " TLogDBG 'runtime! after/'. strpart(a:filename, pos0)
+    exec 'runtime! after/'. s:FnameEscape(strpart(a:filename, pos0))
+    call s:RunHooks(s:after, a:rootrepo, a:filename)
 endf
 
 
