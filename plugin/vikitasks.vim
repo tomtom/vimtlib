@@ -3,9 +3,10 @@
 " @GIT:         http://github.com/tomtom/vimtlib/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
-" @Last Change: 2010-04-18.
-" @Revision:    207
+" @Last Change: 2010-04-28.
+" @Revision:    214
 " GetLatestVimScripts: 0 0 :AutoInstall: vikitasks.vim
+" @TPluginBefore vikitasks\.vim @trag
 " Search for task lists and display them in a list
 
 
@@ -16,9 +17,9 @@ if !exists('g:loaded_tlib') || g:loaded_tlib < 37
         finish
     endif
 endif
-if !exists('g:loaded_trag') || g:loaded_trag < 7
+if !exists('g:loaded_trag') || g:loaded_trag < 8
     runtime plugin/trag.vim
-    if !exists('g:loaded_trag') || g:loaded_trag < 7
+    if !exists('g:loaded_trag') || g:loaded_trag < 8
         echoerr 'trag >= 0.8 is required'
         finish
     endif
@@ -36,7 +37,7 @@ set cpo&vim
 " If 0, don't display alarms for pending tasks.
 " If n > 0, display alarms for pending tasks or tasks with a deadline in n 
 " days.
-TLet g:vikitasks_startup_alarms = !has('clientserver') || len(split(serverlist(), '\n')) <= 1
+TLet g:vikitasks_startup_alarms = !has('clientserver') || len(split(serverlist(), '\n')) <= (has('gui_gtk') ? 0 : 1)
 
 " Scan a buffer on these events.
 TLet g:vikitasks_scan_events = 'BufWritePost,BufWinEnter'
