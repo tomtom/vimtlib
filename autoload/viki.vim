@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2010-04-19.
-" @Revision:    0.637
+" @Last Change: 2010-05-09.
+" @Revision:    0.644
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
@@ -844,6 +844,13 @@ else
     endf
 endif
 
+
+function! viki#ExprMarkInexistentInElement(elt, key) "{{{3
+    call viki#MarkInexistentInElement(a:elt)
+    return a:key
+endf
+
+
 function! viki#MarkInexistentInRange(line1, line2) "{{{3
     let lr = &lazyredraw
     set lazyredraw
@@ -1156,9 +1163,10 @@ function! viki#MapMarkInexistent(key, element) "{{{3
     if arg == ''
         let arg = key
     endif
-    let map = '<c-r>=viki#MarkInexistentInElement("'. a:element .'")<cr>'
-    let map = stridx(g:vikiMapBeforeKeys, a:key) != -1 ? arg.map : map.arg
-    exe 'inoremap <silent> <buffer> '. key .' '. map
+    " let map = '<c-r>=viki#MarkInexistentInElement('. string(a:element) .')<cr>'
+    " let map = stridx(g:vikiMapBeforeKeys, a:key) != -1 ? arg.map : map.arg
+    " exe 'inoremap <silent> <buffer> '. key .' '. map
+    exe 'inoremap <buffer> <expr> '. key .' viki#ExprMarkInexistentInElement('. string(a:element) .','. string(key) .')'
 endf
 
 
