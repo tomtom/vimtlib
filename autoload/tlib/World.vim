@@ -3,8 +3,8 @@
 " @Website:     http://members.a1.net/t.link/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-05-01.
-" @Last Change: 2010-04-12.
-" @Revision:    0.1.862
+" @Last Change: 2010-05-08.
+" @Revision:    0.1.866
 
 " :filedoc:
 " A prototype used by |tlib#input#List|.
@@ -714,7 +714,7 @@ function! s:prototype.Resize(hsize, vsize) dict "{{{3
     if !empty(world_resize)
         " TLogVAR world_resize
         exec world_resize
-        redraw!
+        " redraw!
     endif
 endf
 
