@@ -348,7 +348,7 @@ if !exists("g:vikiOpenFileWith_ANY") "{{{2
         let g:vikiOpenFileWith_ANY = "exec 'silent ! start \"\" '. shellescape('%{FILE}')"
     elseif has("mac")
         let g:vikiOpenFileWith_ANY = "exec 'silent !open '. shellescape('%{FILE}')"
-    elseif $GNOME_DESKTOP_SESSION_ID != ""
+    elseif $GNOME_DESKTOP_SESSION_ID != "" || $DESKTOP_SESSION == 'gnome'
         let g:vikiOpenFileWith_ANY = "exec 'silent !gnome-open '. shellescape('%{FILE}')"
     elseif $KDEDIR != ""
         let g:vikiOpenFileWith_ANY = "exec 'silent !kfmclient exec '. shellescape('%{FILE}')"
