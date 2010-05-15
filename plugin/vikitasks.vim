@@ -3,8 +3,8 @@
 " @GIT:         http://github.com/tomtom/vimtlib/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
-" @Last Change: 2010-04-28.
-" @Revision:    214
+" @Last Change: 2010-05-13.
+" @Revision:    216
 " GetLatestVimScripts: 0 0 :AutoInstall: vikitasks.vim
 " @TPluginBefore vikitasks\.vim @trag
 " Search for task lists and display them in a list
@@ -136,4 +136,5 @@ change makes the :VikiTasksGrep command obsolete, which was removed.
 - The arguments for :VikiTasks have changed
 
 0.3
-- 
+- vikitasks pseudo-mode-line: % vikitasks: letters=A-C:levels=1-3
+

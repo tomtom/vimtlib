@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
-" @Last Change: 2010-04-26.
-" @Revision:    0.0.588
+" @Last Change: 2010-05-13.
+" @Revision:    0.0.610
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -482,7 +482,7 @@ function! vikitasks#ScanCurrentBuffer(...) "{{{3
     let tasks = []
     let buftasks = {}
     for task in s:Tasks()
-	" TLogVAR task
+        " TLogVAR task
         if s:CanonicFilename(task.filename) == filename
             " TLogVAR task.lnum, task
             if has_key(task, 'text')
@@ -491,10 +491,11 @@ function! vikitasks#ScanCurrentBuffer(...) "{{{3
         else
             call add(tasks, task)
         endif
-	unlet task
+        unlet task
     endfor
     " TLogVAR len(tasks)
     let rx = s:TasksRx('tasks')
+    let def = {'inline': 0, 'sometasks': 0, 'letters': 'A-Z', 'levels': '0-9'}
     let @r = rx
     let update = 0
     let lnum = 1
@@ -506,7 +507,27 @@ function! vikitasks#ScanCurrentBuffer(...) "{{{3
     endif
     for line in lines
         let text = tlib#string#Strip(line)
-        if line =~ rx
+        if line =~ '^%\s*vikitasks:'
+            let paramss = matchstr(line, '^%\s*vikitasks:\s*\zs.*$')
+            " TLogVAR paramss
+            if paramss =~ '^\s*none\s*$'
+                return
+            else
+                let paramsl = split(paramss, ':')
+                " TLogVAR paramsl
+                call map(paramsl, 'split(v:val, "=", 1)')
+                " TLogVAR paramsl
+                try
+                    for [var, val] in paramsl
+                        let def[var] = val
+                    endfor
+                catch
+                    echoerr 'Vikitasks: Malformed vikitasks-mode-line parameters: '. paramss
+                endtry
+                unlet! var val
+            endif
+            let rx = s:VikitasksRx(def.inline, def.sometasks, def.letters, def.levels)
+        elseif line =~ rx
             " TLogVAR text
             if get(get(buftasks, lnum, {}), 'text', '') != text
                 " TLogVAR lnum
