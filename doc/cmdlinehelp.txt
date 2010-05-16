@@ -32,8 +32,6 @@ Contents~
         g:cmdlinehelpMapView ..... |g:cmdlinehelpMapView|
         g:cmdlinehelpMapDown ..... |g:cmdlinehelpMapDown|
         g:cmdlinehelpMapUp ....... |g:cmdlinehelpMapUp|
-        c_<esc> .................. |c_<esc>|
-        c_<c-c> .................. |c_<c-c>|
 
 
 ========================================================================
@@ -53,12 +51,6 @@ g:cmdlinehelpMapDown           (default: '<c-pagedown>')
 
                                                     *g:cmdlinehelpMapUp*
 g:cmdlinehelpMapUp             (default: '<c-pageup>')
-
-                                                    *c_<esc>*
-c_<esc> ... <c-c><c-w>z
-
-                                                    *c_<c-c>*
-c_<c-c> ... <c-c><c-w>z
 
 
 

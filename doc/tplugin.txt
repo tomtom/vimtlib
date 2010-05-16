@@ -311,9 +311,10 @@ g:tplugin_scan                 (default: 'cfpta')
 <
 
                                                     *:TPluginBefore*
-:TPluginBefore FILE_RX [GLOB_PATTERNS ...]
-    Load dependencies given as GLOB_PATTERNS (see |wildcards|) before 
-    loading a file matching the |regexp| pattern FILE_RX.
+:TPluginBefore FILE_RX [GLOB_PATTERNS ...|@REPO]
+    Load dependencies given as GLOB_PATTERNS (see |wildcards|) or as a 
+    REPO's name before loading a file matching the |regexp| pattern 
+    FILE_RX.
     
     The files matching FILE_PATTERNS are loaded after the repo's path is 
     added to the 'runtimepath'. You can thus use partial filenames as you 
@@ -328,9 +329,10 @@ g:tplugin_scan                 (default: 'cfpta')
 <
 
                                                     *:TPluginAfter*
-:TPluginAfter FILE_RX [GLOB_PATTERNS ...]
-    Load other plugins matching GLOB_PATTERNS (see |wildcards|) after 
-    loading a file matching the |regexp| pattern FILE_RX.
+:TPluginAfter FILE_RX [GLOB_PATTERNS ...|@REPO]
+    Load other plugins matching GLOB_PATTERNS (see |wildcards|) or as a 
+    REPO's name after loading a file matching the |regexp| pattern 
+    FILE_RX.
     See also |:TPluginBefore|.
     
     Example: >

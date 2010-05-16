@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     27-Dez-2004.
-" @Last Change: 2010-04-24.
-" @Revision:    1.9.678
+" @Last Change: 2010-05-16.
+" @Revision:    1.9.680
 " 
 " GetLatestVimScripts: 1173 1 tComment.vim
 
@@ -197,4 +197,5 @@ new: >)
 1.12
 - Moved the definition of some variables from plugin/tComment.vim to 
 autoload/tcomment.vim
+- Changed comment string for eruby (proposed by Vinicius Baggio)
 
