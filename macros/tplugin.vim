@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-04.
-" @Last Change: 2010-05-01.
-" @Revision:    1526
+" @Last Change: 2010-05-23.
+" @Revision:    1559
 " GetLatestVimScripts: 2917 1 :AutoInstall: tplugin.vim
 
 if &cp || exists("loaded_tplugin")
@@ -347,7 +347,10 @@ function! s:AutoloadFunction(fn) "{{{3
             " call s:LoadFile(rootrepo, s:FileJoin(rootrepo, 'autoload', prefix .'.vim'))
             " " echom "DBG AutoloadFunction def" rootrepo plugindir
             call s:RunHooks(s:before, rootrepo, rootrepo .'/autoload/')
-            call s:RunHooks(s:after, rootrepo, rootrepo .'/autoload/')
+            let autoload_file = 'autoload/'. prefix .'.vim'
+            " TLogVAR autoload_file
+            exec printf('autocmd TPlugin SourceCmd */%s call s:SourceAutoloadFunction(%s, %s)',
+                        \ escape(autoload_file, '\ '), string(rootrepo), string(autoload_file))
             " echom "DBG s:AutoloadFunction ok:" a:fn exists('*'. a:fn)
             " echom "DBG s:AutoloadFunction:" v:exception v:errmsg
             " return 0
@@ -362,6 +365,19 @@ function! s:AutoloadFunction(fn) "{{{3
         " return 0
     endif
     " return 1
+endf
+
+
+function! s:SourceAutoloadFunction(rootrepo, autoload_file) "{{{3
+    " TLogVAR a:rootrepo, a:autoload_file
+    let afile = expand('<afile>')
+    let afile = strpart(afile, len(afile) - len(a:autoload_file))
+    if afile == a:autoload_file
+        exec printf('autocmd! TPlugin SourceCmd %s', escape(a:autoload_file, '\ '))
+        exec 'runtime! '. s:FnameEscape(a:autoload_file)
+        exec 'runtime! after/'. s:FnameEscape(a:autoload_file)
+        call s:RunHooks(s:after, a:rootrepo, a:rootrepo .'/autoload/')
+    endif
 endf
 
 
@@ -1338,4 +1354,5 @@ with the same name.
 - Renamed #TPluginInclude to @TPluginInclude
 - Added support for @TPluginMap, @TPluginBefore, @TPluginAfter annotations
 - TPluginMap() restores the proper mode
+- Load after/autoload/* files
 
