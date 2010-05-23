@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-12-13.
-" @Last Change: 2010-05-13.
-" @Revision:    0.0.610
+" @Last Change: 2010-05-21.
+" @Revision:    0.0.612
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -51,6 +51,7 @@ TLet g:vikitasks#rx_levels = '1-5'
 " Cache file name.
 " By default, use |tlib#cache#Filename()| to determine the file name.
 TLet g:vikitasks#cache = tlib#cache#Filename('vikitasks', 'files', 1)
+call add(g:tlib#cache#dont_purge, '^vikitasks[\/]files$')
 
 " Definition of the tasks that should be included in the Alarms list.
 TLet g:vikitasks#alarms = {'all_tasks': 0, 'tasks': 'sometasks', 'constraint': 14}
