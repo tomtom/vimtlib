@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2010-05-09.
-" @Revision:    0.644
+" @Last Change: 2010-05-16.
+" @Revision:    0.646
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
@@ -814,6 +814,9 @@ if v:version == 700 && !has('patch8')
     endf
 
     function! viki#MarkInexistentInElement(elt) "{{{3
+        if exists('b:vikiEnabled') && b:vikiEnabled <= 1
+            finish
+        endif
         let lr = &lazyredraw
         set lazyredraw
         call viki#SaveCursorPosition()
@@ -826,6 +829,9 @@ if v:version == 700 && !has('patch8')
     endf
 else
     function! viki#MarkInexistentInElement(elt) "{{{3
+        if exists('b:vikiEnabled') && b:vikiEnabled <= 1
+            finish
+        endif
         let lr = &lazyredraw
         set lazyredraw
         " let pos = getpos('.')
