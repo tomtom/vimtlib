@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-06-30.
-" @Last Change: 2010-04-06.
-" @Revision:    0.1.124
+" @Last Change: 2010-05-21.
+" @Revision:    0.1.144
 
 
 " |tlib#cache#Purge()|: Remove cache files older than N days.
@@ -15,16 +15,19 @@ TLet g:tlib#cache#purge_days = 31
 TLet g:tlib#cache#purge_every_days = 31
 
 " The encoding used for the purge-cache script.
-" Default:
-" &shell == bash: latin-1
-" &shell == cmd.exe: cp850
-TLet g:tlib#cache#script_encoding = ''
+" Default: 'enc'
+TLet g:tlib#cache#script_encoding = &enc
 
 " Whether to run the directory removal script:
 "    0 ... No
 "    1 ... Query user
 "    2 ... Yes
 TLet g:tlib#cache#run_script = 1
+
+" A list of regexps that are matched against partial filenames of the 
+" cached files. If a regexp matches, the file won't be removed by 
+" |tlib#cache#Purge()|.
+TLet g:tlib#cache#dont_purge = ['^\.last_purge$']
 
 
 " :display: tlib#cache#Dir(?mode = 'bg')
@@ -130,7 +133,7 @@ function! tlib#cache#Purge() "{{{3
     echohl WarningMsg
     echom "TLib: Delete files older than ". g:tlib#cache#purge_days ." days from ". dir
     echohl NONE
-    let files = reverse(split(glob(tlib#file#Join([dir, '**'])), '\n'))
+    let files = tlib#cache#ListFilesInCache(dir)
     let deldir = []
     let newer = []
     let msg = []
@@ -165,13 +168,11 @@ function! tlib#cache#Purge() "{{{3
         if &shell =~ 'sh\(\.exe\)\?$'
             let scriptfile = 'deldir.sh'
             let rmdir = 'rm -rf %s'
-            let enc = 'latin1'
         else
             let scriptfile = 'deldir.bat'
             let rmdir = 'rmdir /S /Q %s'
-            let enc = 'cp850'
         endif
-        let enc = tlib#var#Get('tlib#cache#script_encoding', 'g', enc)
+        let enc = g:tlib#cache#script_encoding
         if has('multi_byte') && enc != &enc
             call map(deldir, 'iconv(v:val, &enc, enc)')
         endif
@@ -194,7 +195,7 @@ function! tlib#cache#Purge() "{{{3
                 let yn = g:tlib#cache#run_script == 2 ? 'y' : inputdialog("TLib: Could not delete some directories.\nDirectory removal script: ". scriptfile ."\nRun script to delete directories now? (yes/NO/edit)")
                 if yn =~ '^y\%[es]$'
                     exec 'cd '. fnameescape(dir)
-                    exec '! '. shellescape(scriptfile, 1)
+                    exec '! ' &shell shellescape(scriptfile, 1)
                     exec 'cd -'
                     call delete(scriptfile)
                 elseif yn =~ '^e\%[dit]$'
@@ -207,5 +208,24 @@ function! tlib#cache#Purge() "{{{3
     endif
     let last_purge = tlib#file#Join([dir, '.last_purge'])
     call writefile([], last_purge)
+endf
+
+
+function! tlib#cache#ListFilesInCache(dir) "{{{3
+    let files = reverse(split(glob(tlib#file#Join([a:dir, '**']), 1), '\n'))
+    let pos0 = len(tlib#dir#CanonicName(a:dir))
+    call filter(files, 's:ShouldPurge(strpart(v:val, pos0))')
+    return files
+endf
+
+
+function! s:ShouldPurge(partial_filename) "{{{3
+    for rx in g:tlib#cache#dont_purge
+        if a:partial_filename =~ rx
+            " TLogVAR a:partial_filename, rx
+            return 0
+        endif
+    endfor
+    return 1
 endf
 
