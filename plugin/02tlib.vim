@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-10.
-" @Last Change: 2010-04-24.
-" @Revision:    626
+" @Last Change: 2010-05-23.
+" @Revision:    629
 " GetLatestVimScripts: 1863 1 tlib.vim
 " @TPluginBefore \<autoload[\/]tlib.\{-}\.vim plugin/02tlib.vim
 
@@ -15,7 +15,7 @@ if v:version < 700 "{{{2
     echoerr "tlib requires Vim >= 7"
     finish
 endif
-let loaded_tlib = 38
+let loaded_tlib = 39
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -572,4 +572,7 @@ interpreted as string
 
 0.38
 - tlib#World#Resize: set winfix{height|width}
+
+0.39
+- g:tlib#cache#dont_purge
 
