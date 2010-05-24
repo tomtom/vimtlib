@@ -3,7 +3,7 @@
 # @Author:      Tom Link (micathom at gmail com)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2007-07-25.
-# @Last Change: 2010-04-05.
+# @Last Change: 2010-04-25.
 # @Revision:    501
 
 
@@ -325,6 +325,7 @@ class VimDedoc
                             use_name = nil
                         end
                         @docs[filename] << {:type => :entry, :head => head, :line => index, :doc => doc, :tag => tag}
+                        # p "DBG", @docs[filename][-1]
                     end
                 end
                 current_doc = []

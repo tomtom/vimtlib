@@ -4,8 +4,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-06-30.
-" @Last Change: 2010-03-27.
-" @Revision:    0.0.704
+" @Last Change: 2010-04-19.
+" @Revision:    0.0.710
 
 
 " :filedoc:
@@ -331,6 +331,7 @@ function! tlib#input#ListW(world, ...) "{{{3
                 elseif has_key(key_agents, c)
                     let sr = @/
                     silent! let @/ = lastsearch
+                    " TLogVAR c, key_agents[c]
                     " TLog "Agent: ". string(key_agents[c])
                     let world = call(key_agents[c], [world, world.GetSelectedItems(world.CurrentItem())])
                     call s:CheckAgentReturnValue(c, world)

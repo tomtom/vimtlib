@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-15.
-" @Last Change: 2009-02-15.
-" @Revision:    0.0.21
+" @Last Change: 2010-05-13.
+" @Revision:    0.0.25
 
 if &cp || exists("loaded_tskeleton_skeleton_autoload")
     finish
@@ -27,6 +27,7 @@ function! tskeleton#skeleton#FiletypeBits(dict, type) "{{{3
         if !isdirectory(f) && filereadable(f)
             let fname = fnamemodify(f, ":t")
             let [cname, mname] = tskeleton#PurifyBit(fname)
+            " TLogVAR cname
             let body = join(readfile(f), "\n")
             let [body, meta] = tskeleton#ExtractMeta(body)
             " if body !~ cx
@@ -36,6 +37,7 @@ function! tskeleton#skeleton#FiletypeBits(dict, type) "{{{3
                 let mname = meta.menu
             endif
             let a:dict[cname] = {'text': body, 'menu': mname, 'meta': meta, 'bitfile': f, 'type': 'tskeleton'}
+            " TLogVAR a:dict[cname]
         endif
     endfor
 endf

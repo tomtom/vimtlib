@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-02.
-" @Last Change: 2010-01-03.
-" @Revision:    0.1.22
+" @Last Change: 2010-04-18.
+" @Revision:    0.1.24
 
 if &cp || exists("loaded_tstatus")
     finish
@@ -33,5 +33,9 @@ command! -bang TStatus let statussel=empty("<bang>")
             \ | let &rulerformat = g:trulerformat{statussel}
             \ | unlet statussel
 
-TStatus
+
+augroup TStatus
+    autocmd!
+    autocmd VimEnter * TStatus
+augroup END
 

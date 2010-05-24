@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2008-11-12.
-" @Last Change: 2010-04-18.
-" @Revision:    160
+" @Last Change: 2010-05-23.
+" @Revision:    161
 " GetLatestVimScripts: 2437 0 shymenu.vim
 
 if &cp || exists("loaded_shymenu")
@@ -166,7 +166,9 @@ function! s:SetMenu(set_mode, mode) "{{{3
     if abs(a:mode) <= 1
         call s:SetTopLine(topline)
     endif
-    redraw
+    if !a:set_mode
+        redraw
+    endif
 endf
 
 

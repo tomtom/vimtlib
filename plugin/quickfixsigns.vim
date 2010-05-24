@@ -4,8 +4,8 @@
 " @GIT:         http://github.com/tomtom/vimtlib/
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2009-03-14.
-" @Last Change: 2010-05-08.
-" @Revision:    484
+" @Last Change: 2010-05-24.
+" @Revision:    486
 " GetLatestVimScripts: 2584 1 :AutoInstall: quickfixsigns.vim
 
 if &cp || exists("loaded_quickfixsigns") || !has('signs')
@@ -447,5 +447,6 @@ buffer (patch by Sergey Khorev; must be set before entering a buffer)
 - quickfixsigns#RelNumbersOnce()
 
 0.9
-- Support for git diff
+- Support for vcs diff (this requires either b:vcs_type or 
+b:VCSCommandVCSType to be set to a supported vcs, e.g. git)
 
