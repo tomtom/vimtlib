@@ -188,6 +188,7 @@ Contents~
         g:trag_get_files_java .... |g:trag_get_files_java|
         g:trag_get_files_c ....... |g:trag_get_files_c|
         g:trag_get_files_cpp ..... |g:trag_get_files_cpp|
+        g:trag#use_buffer ........ |g:trag#use_buffer|
         g:trag_files ............. |g:trag_files|
         g:trag_glob .............. |g:trag_glob|
         g:trag_project_ruby ...... |g:trag_project_ruby|
@@ -373,6 +374,13 @@ g:trag_get_files_c             (default: 'split(glob("**/*.[ch]"), "\n")')
 
                                                     *g:trag_get_files_cpp*
 g:trag_get_files_cpp           (default: 'split(glob("**/*.[ch]"), "\n")')
+
+                                                    *g:trag#use_buffer*
+g:trag#use_buffer              (default: 1)
+    If true, use an already loaded buffer instead of the file on disk in 
+    certain situations. This implies that if a buffer is dirty, the 
+    non-saved version in memory will be preferred over the version on 
+    disk.
 
 
 The following variables provide alternatives to collecting 

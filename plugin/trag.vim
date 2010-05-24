@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-29.
-" @Last Change: 2010-03-31.
-" @Revision:    608
+" @Last Change: 2010-05-24.
+" @Revision:    609
 " GetLatestVimScripts: 2033 1 trag.vim
 
 if &cp || exists("loaded_trag")
@@ -238,4 +238,5 @@ default file list will be used.
 - Require tlib 0.37
 
 0.9
-- 
+- g:trag#use_buffer
+

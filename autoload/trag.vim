@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-29.
-" @Last Change: 2010-03-30.
-" @Revision:    0.0.898
+" @Last Change: 2010-05-24.
+" @Revision:    0.0.903
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
@@ -27,6 +27,12 @@ TLet g:trag_get_files = 'split(glob("*"), "\n")'
 TLet g:trag_get_files_java = 'split(glob("**/*.java"), "\n")'
 TLet g:trag_get_files_c = 'split(glob("**/*.[ch]"), "\n")'
 TLet g:trag_get_files_cpp = 'split(glob("**/*.[ch]"), "\n")'
+
+" If true, use an already loaded buffer instead of the file on disk in 
+" certain situations. This implies that if a buffer is dirty, the 
+" non-saved version in memory will be preferred over the version on 
+" disk.
+TLet g:trag#use_buffer = 1
 
 " " If non-empty, display signs at matching lines.
 " TLet g:trag_sign = has('signs') ? '>' : ''
@@ -560,7 +566,14 @@ function! trag#Grep(args, ...) "{{{3
                     " norm! ggdG
                     " TLogVAR qfl
                     let lnum = 1
-                    for line in readfile(f)
+                    let bnum = bufnr(f)
+                    " TLogVAR bnum, f
+                    if g:trag#use_buffer && bnum != -1
+                        let lines = getbufline(bnum, 1, '$')
+                    else
+                        let lines = readfile(f)
+                    endif
+                    for line in lines
                         if line =~ rxpos && (empty(rxneg) || line !~ rxneg)
                             let qfl[lnum] = {"filename": f, "lnum": lnum, "text": tlib#string#Strip(line)}
                         endif
