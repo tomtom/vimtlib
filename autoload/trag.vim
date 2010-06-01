@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-29.
-" @Last Change: 2010-05-24.
-" @Revision:    0.0.903
+" @Last Change: 2010-05-31.
+" @Revision:    0.0.910
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
@@ -567,8 +567,8 @@ function! trag#Grep(args, ...) "{{{3
                     " TLogVAR qfl
                     let lnum = 1
                     let bnum = bufnr(f)
-                    " TLogVAR bnum, f
-                    if g:trag#use_buffer && bnum != -1
+                    if g:trag#use_buffer && bnum != -1 && bufloaded(bnum)
+                        " TLogVAR bnum, f, bufname(bnum)
                         let lines = getbufline(bnum, 1, '$')
                     else
                         let lines = readfile(f)
