@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-06-30.
-" @Last Change: 2010-05-21.
-" @Revision:    0.1.144
+" @Last Change: 2010-06-01.
+" @Revision:    0.1.148
 
 
 " |tlib#cache#Purge()|: Remove cache files older than N days.
@@ -133,7 +133,7 @@ function! tlib#cache#Purge() "{{{3
     echohl WarningMsg
     echom "TLib: Delete files older than ". g:tlib#cache#purge_days ." days from ". dir
     echohl NONE
-    let files = tlib#cache#ListFilesInCache(dir)
+    let files = tlib#cache#ListFilesInCache()
     let deldir = []
     let newer = []
     let msg = []
@@ -211,9 +211,15 @@ function! tlib#cache#Purge() "{{{3
 endf
 
 
-function! tlib#cache#ListFilesInCache(dir) "{{{3
-    let files = reverse(split(glob(tlib#file#Join([a:dir, '**']), 1), '\n'))
-    let pos0 = len(tlib#dir#CanonicName(a:dir))
+function! tlib#cache#ListFilesInCache(...) "{{{3
+    let dir = a:0 >= 1 ? a:1 : tlib#cache#Dir('g')
+    if v:version >= 702
+        let filess = glob(tlib#file#Join([dir, '**']), 1)
+    else
+        let filess = glob(tlib#file#Join([dir, '**']))
+    endif
+    let files = reverse(split(filess, '\n'))
+    let pos0 = len(tlib#dir#CanonicName(dir))
     call filter(files, 's:ShouldPurge(strpart(v:val, pos0))')
     return files
 endf
