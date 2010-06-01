@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2006-12-31.
-" @Last Change: 2010-03-06.
-" @Revision:    0.5.938
+" @Last Change: 2010-05-29.
+" @Revision:    0.5.944
 " GetLatestVimScripts: 1751 1 tGpg.vim
 "
 " TODO: Remove gpg messages from the top of the file & display them with 
@@ -27,6 +27,11 @@ if !exists('g:tgpg_timeout')
     " Reset cached passwords after N seconds.
     " 1800 ... 30 Minutes
     let g:tgpg_timeout = 1800 "{{{2
+endif
+
+if !exists('g:tgpg_dont_reset_rx')
+    " Don't reset the keys for filenames matching this |regexp|.
+    let g:tgpg_dont_reset_rx = ''  "{{{2
 endif
 
 if !exists('g:tgpg_gpg_cmd')
@@ -218,7 +223,11 @@ unlet s:rott_list s:rott_n
 " -----------------------------------------------------------------------
 " Commands and functions~
 
-command! TGpgResetCache let s:heights = {}
+command! TGpgResetCache if empty(g:tgpg_dont_reset_rx) 
+            \ |   let s:heights = {}
+            \ | else
+            \ |   call filter(s:heights, 'v:key =~ g:tgpg_dont_reset_rx')
+            \ | endif
 " command! TGpgShowCache echo string(s:heights)
 " command! TGpgShowTable echo s:rottb
 TGpgResetCache
@@ -684,37 +693,38 @@ endf
 
 augroup tGpg
     au!
-    for g in g:tgpgModes
-        if !exists('g:tgpgPattern_'. g)
+    for s:mode in g:tgpgModes
+        if !exists('g:tgpgPattern_'. s:mode)
             continue
         endif
 
-        let rcmd = exists('*s:TGpgRead_'. g) ? 's:TGpgRead_'. g : 's:TGpgRead'
-        let wcmd = exists('*s:TGpgWrite_'. g) ? 's:TGpgWrite_'. g : 's:TGpgWrite'
-        let gcap = toupper(g[0]).g[1:-1]
-        exec 'command! -range=% -nargs=? TGpg'. gcap .' call s:CallInDestDir("", <q-args>, "'. g .'", function("'. wcmd .'"), [])'
+        let s:rcmd = exists('*s:TGpgRead_'. s:mode) ? 's:TGpgRead_'. s:mode : 's:TGpgRead'
+        let s:wcmd = exists('*s:TGpgWrite_'. s:mode) ? 's:TGpgWrite_'. s:mode : 's:TGpgWrite'
+        let s:gcap = toupper(s:mode[0]).s:mode[1:-1]
+        exec 'command! -range=% -nargs=? TGpg'. s:gcap .' call s:CallInDestDir("", <q-args>, "'. s:mode .'", function("'. s:wcmd .'"), [])'
 
-        if empty(g:tgpgPattern_{g})
+        if empty(g:tgpgPattern_{s:mode})
             continue
         endif
-        if exists('s:tgpgRead_'. g)
+        if exists('s:tgpgRead_'. s:mode)
             " I'm not sure. I never fully understood the difference between BufRead and FileRead.
-            " exec 'autocmd BufReadCmd,FileReadCmd '. g:tgpgPattern_{g} .' echom "DBG <afile>"'
-            exec 'autocmd BufReadCmd  '. g:tgpgPattern_{g} .' call s:CallInDestDir("BufReadCmd", expand("<afile>:p"), "'. g .'", function("'. rcmd .'"), ["%"])'
-            exec 'autocmd FileReadCmd '. g:tgpgPattern_{g} .' call s:CallInDestDir("FileReadCmd", expand("<afile>:p"), "'. g .'", function("'. rcmd .'"), ["''[,'']"])'
+            " exec 'autocmd BufReadCmd,FileReadCmd '. g:tgpgPattern_{s:mode} .' echom "DBG <afile>"'
+            exec 'autocmd BufReadCmd  '. g:tgpgPattern_{s:mode} .' call s:CallInDestDir("BufReadCmd", expand("<afile>:p"), "'. s:mode .'", function("'. s:rcmd .'"), ["%"])'
+            exec 'autocmd FileReadCmd '. g:tgpgPattern_{s:mode} .' call s:CallInDestDir("FileReadCmd", expand("<afile>:p"), "'. s:mode .'", function("'. s:rcmd .'"), ["''[,'']"])'
             for m in ['BufReadPre', 'FileReadPre', 'BufReadPost', 'FileReadPost']
-                " exec 'autocmd '. m .' '. g:tgpgPattern_{g} .' echom "DBG ". m ." ". escape(expand("<afile>:r"), "%")'
-                exec 'autocmd '. m .' '. g:tgpgPattern_{g} .' exec ":doautocmd '. m .'" . expand("<afile>:r")'
+                " exec 'autocmd '. m .' '. g:tgpgPattern_{s:mode} .' echom "DBG ". m ." ". escape(expand("<afile>:r"), "%")'
+                exec 'autocmd '. m .' '. g:tgpgPattern_{s:mode} .' exec ":doautocmd '. m .'" . expand("<afile>:r")'
             endfor
         endif
-        if exists('s:tgpgWrite_'. g)
-            exec 'autocmd BufWriteCmd '. g:tgpgPattern_{g} .' call s:CallInDestDir("BufWriteCmd", expand("<afile>:p"), "'. g .'", function("'. wcmd .'"), [])'
-            exec 'autocmd FileWriteCmd '. g:tgpgPattern_{g} .' call s:CallInDestDir("FileWriteCmd", expand("<afile>:p"), "'. g .'", function("'. wcmd .'"), [])'
+        if exists('s:tgpgWrite_'. s:mode)
+            exec 'autocmd BufWriteCmd '. g:tgpgPattern_{s:mode} .' call s:CallInDestDir("BufWriteCmd", expand("<afile>:p"), "'. s:mode .'", function("'. s:wcmd .'"), [])'
+            exec 'autocmd FileWriteCmd '. g:tgpgPattern_{s:mode} .' call s:CallInDestDir("FileWriteCmd", expand("<afile>:p"), "'. s:mode .'", function("'. s:wcmd .'"), [])'
             for m in ['BufWritePre', 'FileWritePre', 'BufWritePost', 'FileWritePost']
-                exec 'autocmd '. m .' '. g:tgpgPattern_{g} .' exec ":doautocmd '. m .'" . expand("<afile>:r")'
+                exec 'autocmd '. m .' '. g:tgpgPattern_{s:mode} .' exec ":doautocmd '. m .'" . expand("<afile>:r")'
             endfor
         endif
     endfor
+    unlet s:mode s:rcmd s:wcmd s:gcap
 
     if s:tgpg_timeout > 0
         autocmd CursorHold,CursorHoldI,FocusGained,FocusLost call s:CheckTimeout()
