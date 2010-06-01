@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-17.
-" @Last Change: 2010-04-07.
-" @Revision:    0.0.80
+" @Last Change: 2010-05-25.
+" @Revision:    0.0.81
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
@@ -203,6 +203,7 @@ call TCommentDefineType('viki_inline',      '{cmt: %s}'        )
 call TCommentDefineType('vim',              '" %s'             )
 call TCommentDefineType('vim_3',            '""" %s'           )
 call TCommentDefineType('websec',           '# %s'             )
+call TCommentDefineType('x86conf',          '# %s'             )
 call TCommentDefineType('xml',              '<!-- %s -->'      )
 call TCommentDefineType('xml_inline',       g:tcommentInlineXML)
 call TCommentDefineType('xml_block',        g:tcommentBlockXML )
