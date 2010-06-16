@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-06-30.
-" @Last Change: 2010-06-01.
-" @Revision:    0.1.148
+" @Last Change: 2010-06-16.
+" @Revision:    0.1.150
 
 
 " |tlib#cache#Purge()|: Remove cache files older than N days.
@@ -213,7 +213,7 @@ endf
 
 function! tlib#cache#ListFilesInCache(...) "{{{3
     let dir = a:0 >= 1 ? a:1 : tlib#cache#Dir('g')
-    if v:version >= 702
+    if v:version > 702 || (v:version == 702 && has('patch51'))
         let filess = glob(tlib#file#Join([dir, '**']), 1)
     else
         let filess = glob(tlib#file#Join([dir, '**']))
