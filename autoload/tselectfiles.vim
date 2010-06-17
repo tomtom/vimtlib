@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-10-15.
-" @Last Change: 2010-01-24.
-" @Revision:    0.0.302
+" @Last Change: 2010-06-17.
+" @Revision:    0.0.316
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
@@ -77,8 +77,11 @@ TLet g:tselectfiles_world = {
 TLet g:tselectfiles_suffixes = printf('\(%s\)\$', join(map(split(&suffixes, ','), 'v:val'), '\|'))
 
 " Don't include files matching this regexp.
-TLet g:tselectfiles_hidden_rx = '\V\(/.\|/CVS/\|/.attic/\|/.svn/\|/vimfiles\(/\[^/]\+\)\{-}/cache/\|'. tlib#rx#Suffixes('V') .'\)'
-let g:tselectfiles_hidden_rx = substitute(g:tselectfiles_hidden_rx, '/', '\\[\\/]', 'g')
+" TLet g:tselectfiles_hidden_rx = '\V\(/.\|/CVS/\|/.attic/\|/.svn/\|/\(vimfiles\|.vim\)\(/\[^/]\+\)\{-}/cache/\|'. tlib#rx#Suffixes('V') .'\)'
+TLet g:tselectfiles_hidden_rx = '\V\(/tags\$\|/CVS/\|/.attic/\|/.svn/\|/\(vimfiles\|.vim\)\(/\[^/]\+\)\{-}/cache/\|'. tlib#rx#Suffixes('V') .'\)'
+if has('win16') || has('win32') || has('win64')
+    let g:tselectfiles_hidden_rx = substitute(g:tselectfiles_hidden_rx, '/', '\\[\\/]', 'g')
+endif
 " TLet g:tselectfiles_skip_rx = tlib#rx#Suffixes('V')
 
 " " TODO: cwindow doesn't currently work as expected
@@ -138,8 +141,9 @@ function! s:PrepareSelectFiles(hide)
         endif
     endfor
     " TLogVAR rv
-    if a:hide
+    if a:hide && !empty(g:tselectfiles_hidden_rx)
         call filter(rv, 'v:val !~ g:tselectfiles_hidden_rx')
+        " TLogVAR g:tselectfiles_hidden_rx, rv
     endif
     " call TLogDBG(string(s:select_files_pattern))
     if s:select_files_pattern.mode == 'r'
