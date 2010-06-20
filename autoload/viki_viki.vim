@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-03.
-" @Last Change: 2010-02-28.
-" @Revision:    0.0.127
+" @Last Change: 2010-06-20.
+" @Revision:    0.0.128
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -99,7 +99,7 @@ function! viki_viki#SetupBuffer(state, ...) "{{{3
                 call viki#CollectFileWords(b:vikiHyperWordTable, simpleWikiName)
             endif
             call viki#CollectHyperWords(b:vikiHyperWordTable)
-            let hyperWords = keys(b:vikiHyperWordTable)
+            let hyperWords = reverse(sort(keys(b:vikiHyperWordTable)))
             if !empty(hyperWords)
                 let simpleHyperWords = join(map(hyperWords, '"\\<".tlib#rx#Escape(v:val)."\\>"'), '\|') .'\|'
                 let simpleHyperWords = substitute(simpleHyperWords, ' \+', '\\s\\+', 'g')
