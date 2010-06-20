@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2010-05-16.
-" @Revision:    0.646
+" @Last Change: 2010-06-20.
+" @Revision:    0.650
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
@@ -2664,7 +2664,11 @@ fun! viki#DirListing(lhs, lhb, indent) "{{{3
             if !empty(types)
                 let show_files = stridx(types, 'f') != -1
                 let show_dirs  = stridx(types, 'd') != -1
-                call filter(ls, '(show_files && !isdirectory(v:val)) || (show_dirs && isdirectory(v:val))')
+                if show_files || show_dirs
+                    call filter(ls, '(show_files && !isdirectory(v:val)) || (show_dirs && isdirectory(v:val))')
+                else
+                    let ls = []
+                endif
             endif
             let filter = get(args, 'filter', '')
             if !empty(filter)
