@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-29.
-" @Last Change: 2010-05-31.
-" @Revision:    0.0.910
+" @Last Change: 2010-06-20.
+" @Revision:    0.0.913
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
@@ -519,6 +519,7 @@ function! trag#Grep(args, ...) "{{{3
         " TLogVAR files
         let qfl_top = len(getqflist())
         for f in files
+            let ff = fnamemodify(f, ':p')
             " TLogVAR f
             call tlib#progressbar#Display(fidx, ' '. pathshorten(f))
             let rxpos = s:GetRx(f, kindspos, rx, '.')
@@ -530,8 +531,8 @@ function! trag#Grep(args, ...) "{{{3
                 " TLogDBG f .': continue '. filereadable(f) .' '. empty(rxpos)
                 continue
             endif
-            let fext = fnamemodify(f, ':e')
             let prcacc = []
+            " let fext = fnamemodify(f, ':e')
             " TODO: This currently doesn't work.
             " for kindand in kinds
             "     for kind in kindand
@@ -566,7 +567,7 @@ function! trag#Grep(args, ...) "{{{3
                     " norm! ggdG
                     " TLogVAR qfl
                     let lnum = 1
-                    let bnum = bufnr(f)
+                    let bnum = bufnr(ff)
                     if g:trag#use_buffer && bnum != -1 && bufloaded(bnum)
                         " TLogVAR bnum, f, bufname(bnum)
                         let lines = getbufline(bnum, 1, '$')
