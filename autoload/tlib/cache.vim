@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-06-30.
-" @Last Change: 2010-06-16.
-" @Revision:    0.1.150
+" @Last Change: 2010-06-21.
+" @Revision:    0.1.156
 
 
 " |tlib#cache#Purge()|: Remove cache files older than N days.
@@ -27,7 +27,7 @@ TLet g:tlib#cache#run_script = 1
 " A list of regexps that are matched against partial filenames of the 
 " cached files. If a regexp matches, the file won't be removed by 
 " |tlib#cache#Purge()|.
-TLet g:tlib#cache#dont_purge = ['^\.last_purge$']
+TLet g:tlib#cache#dont_purge = ['[\/]\.last_purge$']
 
 
 " :display: tlib#cache#Dir(?mode = 'bg')
@@ -68,7 +68,7 @@ function! tlib#cache#Filename(type, ...) "{{{3
     let dir   = tlib#dir#PlainName(dir)
     " TLogVAR dir
     let file  = fnamemodify(file, ':t')
-    " TLogVAR file, dir
+    " TLogVAR file, dir, mkdir
     if mkdir && !isdirectory(dir)
         call mkdir(dir, 'p')
     endif
@@ -226,6 +226,7 @@ endf
 
 
 function! s:ShouldPurge(partial_filename) "{{{3
+    " TLogVAR a:partial_filename
     for rx in g:tlib#cache#dont_purge
         if a:partial_filename =~ rx
             " TLogVAR a:partial_filename, rx
