@@ -1,10 +1,10 @@
-" plugin.vim
+" tplugin.vim
 " @Author:      Tom Link (mailto:micathom AT gmail com?subject=[vim])
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-04.
-" @Last Change: 2010-05-23.
-" @Revision:    1559
+" @Last Change: 2010-06-30.
+" @Revision:    1592
 " GetLatestVimScripts: 2917 1 :AutoInstall: tplugin.vim
 
 if &cp || exists("loaded_tplugin")
@@ -271,7 +271,7 @@ endf
 
 " args: A string if type == 1, a list if type == 2
 function! s:Autoload(type, def, bang, range, args) "{{{3
-    " TLogVAR a:type, a:def, a:bang, a:range, a:args
+    " echom "DBG s:Autoload:" a:type a:def a:bang string(a:range) string(a:args)
     let [root, cmd0; file] = a:def
     let cmd0 = s:Strip(cmd0)
     if match(cmd0, '\s') != -1
@@ -318,6 +318,7 @@ endf
 
 
 function! s:LoadFiletype(filetype) "{{{3
+    " echom "DBG s:LoadFiletype:" a:filetype
     " TLogVAR a:repos
     let repos = remove(s:ftypes, a:filetype)
     for repo in repos
@@ -342,10 +343,11 @@ function! s:AutoloadFunction(fn) "{{{3
             let root = def[0]
             let repo = def[1]
             " TLogVAR root, repo, prefix
+            " echom "DBG AutoloadFunction prefix root repo:" prefix root repo
             call TPluginRequire(1, root, repo, '.')
             let [root, rootrepo, plugindir] = s:GetRootPluginDir(root, repo)
             " call s:LoadFile(rootrepo, s:FileJoin(rootrepo, 'autoload', prefix .'.vim'))
-            " " echom "DBG AutoloadFunction def" rootrepo plugindir
+            " echom "DBG AutoloadFunction def:" root rootrepo plugindir
             call s:RunHooks(s:before, rootrepo, rootrepo .'/autoload/')
             let autoload_file = 'autoload/'. prefix .'.vim'
             " TLogVAR autoload_file
@@ -467,7 +469,7 @@ endf
 
 
 function! s:Remap(keys, map, remap, def) "{{{3
-    " TLogVAR a:keys, a:map, a:def, a:remap
+    " echom "DBG s:Remap:" string([a:keys, a:map, a:def, a:remap])
     call s:Unmap(a:map, a:keys)
     call call('TPluginRequire', [1] + a:def)
     if !empty(a:remap)
@@ -866,6 +868,18 @@ function! s:GetRoot() "{{{3
 endf
 
 
+function! s:GetRootFromRootrepo(rootrepo) "{{{3
+    let root = ''
+    for r in s:roots
+        let rl = len(r)
+        if r == strpart(a:rootrepo, 0, rl) && rl > len(root)
+            let root = r
+        endif
+    endfor
+    return r
+endf
+
+
 function! TPluginAutoload(prefix, def) "{{{3
     " echom "DBG ". a:prefix
     let s:autoloads[a:prefix] = [s:GetRoot()] + a:def
@@ -945,7 +959,7 @@ endf
 
 
 function! s:AddRepo(rootrepos, isflat) "{{{3
-    " TLogVAR a:rootrepos
+    " echom "DBG AddRepo a:rootrepos:" string(a:rootrepos)
     let rtp = split(&rtp, ',')
     let idx = index(rtp, s:rtp[0])
     if idx == -1
@@ -954,7 +968,7 @@ function! s:AddRepo(rootrepos, isflat) "{{{3
         let idx += 1
     endif
     let rootrepos = filter(copy(a:rootrepos), '!has_key(s:done, v:val)')
-    " TLogVAR rootrepos
+    " echom "DBG AddRepo rootrepos:" string(rootrepos)
     " call tlog#Debug(string(keys(s:done)))
     if !empty(rootrepos)
         for rootrepo in rootrepos
@@ -1010,7 +1024,7 @@ endf
 
 
 function! s:LoadFile(rootrepo, filename) "{{{3
-    " TLogVAR a:rootrepo, a:filename
+    " echom "DBG s:LoadFile" a:rootrepo a:filename
     let pos0 = len(a:rootrepo) + 1
     call s:RemoveAutoloads(a:filename, [])
     call s:RunHooks(s:before, a:rootrepo, a:filename)
@@ -1037,11 +1051,11 @@ function! s:LoadDependency(rootrepo, filename_rxs, dict) "{{{3
     " call s:AddRepo([a:rootrepo])
     for filename_rx in a:filename_rxs
         let others = a:dict[filename_rx]
-        " TLogVAR others
+        " echom "DBG s:LoadDependency others:" string(others)
         for other in others
             if other[0] == '@'
                 let args = split(other[1 : -1], '\s\+')
-                call call('TPluginRequire', [1, s:GetRoot()] + args)
+                call call('TPluginRequire', [1, s:GetRootFromRootrepo(a:rootrepo)] + args)
             else
                 if stridx(other, '*') != -1
                     let pluginfiles = split(glob(a:rootrepo .'/'. other), '\n')
@@ -1070,7 +1084,7 @@ endf
 
 " :nodoc:
 function! TPluginRequire(mode, root, repo, ...) "{{{3
-    " TLogVAR a:mode, a:root, a:repo, a:000
+    " echom "DBG TPluginRequire:" a:mode a:root a:repo string(a:000)
     let [root, rootrepo, plugindir] = s:GetRootPluginDir(a:root, a:repo)
     " TLogVAR rootrepo, plugindir
     if empty(a:000)
@@ -1085,7 +1099,6 @@ function! TPluginRequire(mode, root, repo, ...) "{{{3
     " TLogVAR pluginfiles
     " echom "DBG TPluginRequire" (a:mode || s:immediate)
     if a:mode || s:immediate
-        " TLogVAR rootrepo, pluginfiles
         " echom "DBG TPluginRequire" rootrepo string(pluginfiles)
         call s:AddRepo([rootrepo], s:IsFlatRoot(root))
         call s:LoadPlugins(a:mode, rootrepo, pluginfiles)
