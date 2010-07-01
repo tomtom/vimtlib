@@ -1257,7 +1257,8 @@ function! TPluginCommand(...) "{{{3
 endf
 
 
-call s:SetRoot(s:FileJoin(s:rtp[0], 'repos'))
+" call s:SetRoot(s:FileJoin(s:rtp[0], 'repos'))
+call s:SetRoot(split(finddir('repos', &rtp) ."\n". s:FileJoin(s:rtp[0], 'repos'), '\n')[0])
 
 
 augroup TPlugin
