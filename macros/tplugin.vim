@@ -364,18 +364,22 @@ function! s:AutoloadFunction(fn) "{{{3
         " Ignored
         " return 0
     endif
+    " echom "DBG s:AutoloadFunction done:" a:fn
     " return 1
 endf
 
 
 function! s:SourceAutoloadFunction(rootrepo, autoload_file) "{{{3
-    " TLogVAR a:rootrepo, a:autoload_file
+    " echom "DBG s:SourceAutoloadFunction" a:rootrepo a:autoload_file
     let afile = expand('<afile>')
-    let afile = strpart(afile, len(afile) - len(a:autoload_file))
+    let afile = s:GetCanonicFilename(strpart(afile, len(afile) - len(a:autoload_file)))
+    " echom "DBG s:SourceAutoloadFunction afile" afile
     if afile == a:autoload_file
+        let autoload_file_e = s:FnameEscape(a:autoload_file)
+        " echom "DBG s:SourceAutoloadFunction" autoload_file_e
         exec printf('autocmd! TPlugin SourceCmd %s', escape(a:autoload_file, '\ '))
-        exec 'runtime! '. s:FnameEscape(a:autoload_file)
-        exec 'runtime! after/'. s:FnameEscape(a:autoload_file)
+        exec 'runtime! '. autoload_file_e
+        exec 'runtime! after/'. autoload_file_e
         call s:RunHooks(s:after, a:rootrepo, a:rootrepo .'/autoload/')
     endif
 endf
