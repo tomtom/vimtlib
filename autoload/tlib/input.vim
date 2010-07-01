@@ -4,8 +4,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-06-30.
-" @Last Change: 2010-04-19.
-" @Revision:    0.0.710
+" @Last Change: 2010-06-30.
+" @Revision:    0.0.719
 
 
 " :filedoc:
@@ -712,5 +712,29 @@ function! s:EditCallback(...) "{{{3
     let args = b:tlib_scratch_edit_args
     call tlib#scratch#CloseScratch(b:tlib_scratch_edit_scratch)
     call call(cb, args + [ok, text])
+endf
+
+
+function! tlib#input#Dialog(text, options, default) "{{{3
+    if has('dialog_con') || has('dialog_gui')
+        let opts = join(map(a:options, '"&". v:val'), "\n")
+        let val = confirm(a:text, opts)
+        if val
+            let yn = a:options[val - 1]
+        else
+            let yn = a:default
+        endif
+    else
+        let oi = index(a:options, a:default)
+        if oi == -1
+            let opts = printf("(%s|%s)", join(a:options, '/'), a:default)
+        else
+            let options = copy(a:options)
+            let options[oi] = toupper(options[oi])
+            let opts = printf("(%s)", join(a:options, '/'))
+        endif
+        let yn = inputdialog(a:text .' '. opts)
+    endif
+    return yn
 endf
 

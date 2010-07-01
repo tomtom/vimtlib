@@ -113,7 +113,12 @@ function! tlib#cache#MaybePurge() "{{{3
         let should_purge = 1
     endif
     if should_purge
-        let yn = last_purge_exists ? 'y' : inputdialog("TLib: The cache directory '". dir ."' should be purged of old files.\nDelete files older than ". g:tlib#cache#purge_days ." days now? (yes/NO/edit)")
+        if last_purge_exists
+            let yn = 'y'
+        else
+            let txt = "TLib: The cache directory '". dir ."' should be purged of old files.\nDelete files older than ". g:tlib#cache#purge_days ." days now?"
+            let yn = tlib#input#Dialog(txt, ['yes', 'no', 'edit'], 'no')
+        endif
         if yn =~ '^y\%[es]$'
             call tlib#cache#Purge()
         else
@@ -192,7 +197,7 @@ function! tlib#cache#Purge() "{{{3
             echohl NONE
         else
             try
-                let yn = g:tlib#cache#run_script == 2 ? 'y' : inputdialog("TLib: Could not delete some directories.\nDirectory removal script: ". scriptfile ."\nRun script to delete directories now? (yes/NO/edit)")
+                let yn = g:tlib#cache#run_script == 2 ? 'y' : tlib#input#Dialog("TLib: Could not delete some directories.\nDirectory removal script: ". scriptfile ."\nRun script to delete directories now?, ['yes', 'no', 'edit'], 'no')
                 if yn =~ '^y\%[es]$'
                     exec 'cd '. fnameescape(dir)
                     exec '! ' &shell shellescape(scriptfile, 1)
