@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-03.
-" @Last Change: 2010-04-17.
-" @Revision:    0.0.1763
+" @Last Change: 2010-07-01.
+" @Revision:    0.0.1764
 
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
@@ -1092,7 +1092,7 @@ function! tskeleton#Setup(template, ...) "{{{3
             endif
             if g:tskelChangeDir
                 let cd = substitute(expand('%:p:h'), '\', '/', 'g')
-                let cd = substitute(cd, '//\+', '/', 'g')
+                let cd = substitute(cd, '^\@<!//\+', '/', 'g')
                 exec 'cd '. tlib#arg#Ex(cd)
             endif
             let b:tskelDidFillIn = 1
