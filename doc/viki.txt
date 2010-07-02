@@ -151,10 +151,10 @@ less about page names.
 
 There are two ways to define an interviki:
 
-                                                    *viki#Define()*
-    1. Use viki#Define(name, prefix, ?suffix="*", ?index="Index.${suffix}")
+                                                    *VikiDefine()*
+    1. Use VikiDefine(name, prefix, ?suffix="*", ?index="Index.${suffix}")
 
-        call viki#Define('SCI', $HOME."/Projects/Sci/Ideas", ".txt")
+        call VikiDefine('SCI', $HOME."/Projects/Sci/Ideas", ".txt")
 
        This command will automatically define a menu for each interviki 
        (unless g:vikiMenuPrefix is empty) and it will also define a command 
@@ -163,23 +163,23 @@ There are two ways to define an interviki:
 
                                                     *g:viki_intervikis*
     2. Use g:viki_intervikis (a dictionary). The values can be either a list 
-       (arguments for |viki#Define()|) or a string.
+       (arguments for |VikiDefine()|) or a string.
 
         let g:viki_intervikis['SCI']  = [$HOME."/Projects/Sci/Ideas", ".txt"]
         let g:viki_intervikis['PROJ'] = $HOME."/Projects"
 
-Intervikis added to g:viki_intervikis will be defined via |viki#Define()| when 
+Intervikis added to g:viki_intervikis will be defined via |VikiDefine()| when 
 first loading ~/vimfiles/autoload/viki.vim. I.e. you cannot use automatically 
 defined commands or menus before loading the autoload file. So, if you don't 
 use the menus and the interviki commands to open files from the command line, 
-use the variable. Otherwise, calling |viki#Define()| from 
+use the variable. Otherwise, calling |VikiDefine()| from 
 ~/vimfiles/after/plugin/viki.vim might be the better solution (which would 
 also load autoload/viki.vim on startup though).
 
 This could then be accessed as SCI::ThisIdea, which would refer to the file 
 "~/Projects/Sci/Ideas/ThisIdea.txt".
 
-viki#Define also defines a command (:SCI in this example) that opens a wiki's 
+VikiDefine also defines a command (:SCI in this example) that opens a wiki's 
 index file (an optional 4th argument or "${g:vikiIndex}.${suffix}").
 
 Intervikis can also be defined as patterns or functions as in the following 
@@ -191,8 +191,8 @@ example: >
         return 'https://www.example.com/cgi/search.cgi?search='. surname .','. firstname
     endf
 
-    call viki#Define('CONTACT', '*GetAddress("%s")')
-    call viki#Define('INDEX', '%/foo/%s/index.html')
+    call VikiDefine('CONTACT', '*GetAddress("%s")')
+    call VikiDefine('INDEX', '%/foo/%s/index.html')
 
 CONTACT::JohnDoe would the refer to 
 https://www.example.com/cgi/search.cgi?search=Dow,John and [[INDEX::bar]] 
@@ -705,7 +705,7 @@ Commands~
   Open the |viki-homepage|.
 
 - VikiDefine NAME BASE ?SUFFIX                      *:VikiDefine*
-    Define an interviki. See also |viki#Define()|.
+    Define an interviki. See also |VikiDefine()|.
 
 ================================================================================
                                                     *viki-functions*
@@ -1165,7 +1165,7 @@ The bibtex ftplugin defines record labels as anchors. Thus, if make an
 |interviki| definition point to your bib files you can refer to bib entries as 
 viki names. Example: >
 
-    call viki#Define('BIB', $HOME ."/local/share/texmf/bibtex/bib/tml", ".bib")
+    call VikiDefine('BIB', $HOME ."/local/share/texmf/bibtex/bib/tml", ".bib")
 
     Then, activating the following viki name
     BIB::[-monos-]#rec02
