@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2010-06-20.
-" @Revision:    0.650
+" @Last Change: 2010-07-17.
+" @Revision:    0.662
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
@@ -285,13 +285,12 @@ command! VikiJump call viki#MaybeFollowLink(0,1)
 
 command! VikiIndex :call viki#Index()
 
-command! -nargs=1 -bang -complete=customlist,viki#EditComplete VikiEdit :call viki#Edit(<q-args>, "<bang>")
-command! -nargs=1 -bang -complete=customlist,viki#EditComplete VikiEditInVim :call viki#Edit(<q-args>, "<bang>", 0, 1)
-command! -nargs=1 -bang -complete=customlist,viki#EditComplete VikiEditTab :call viki#Edit(<q-args>, "<bang>", 'tab')
-command! -nargs=1 -bang -complete=customlist,viki#EditComplete VikiEditInWin1 :call viki#Edit(<q-args>, "<bang>", 1)
-command! -nargs=1 -bang -complete=customlist,viki#EditComplete VikiEditInWin2 :call viki#Edit(<q-args>, "<bang>", 2)
-command! -nargs=1 -bang -complete=customlist,viki#EditComplete VikiEditInWin3 :call viki#Edit(<q-args>, "<bang>", 3)
-command! -nargs=1 -bang -complete=customlist,viki#EditComplete VikiEditInWin4 :call viki#Edit(<q-args>, "<bang>", 4)
+command! -nargs=1 -bang -complete=customlist,viki#EditComplete VikiEdit :call viki#Edit(<q-args>, !empty("<bang>"))
+command! -nargs=1 -bang -complete=customlist,viki#EditComplete VikiEditTab :call viki#Edit(<q-args>, !empty("<bang>"), 'tab')
+command! -nargs=1 -bang -complete=customlist,viki#EditComplete VikiEditInWin1 :call viki#Edit(<q-args>, !empty("<bang>"), 1)
+command! -nargs=1 -bang -complete=customlist,viki#EditComplete VikiEditInWin2 :call viki#Edit(<q-args>, !empty("<bang>"), 2)
+command! -nargs=1 -bang -complete=customlist,viki#EditComplete VikiEditInWin3 :call viki#Edit(<q-args>, !empty("<bang>"), 3)
+command! -nargs=1 -bang -complete=customlist,viki#EditComplete VikiEditInWin4 :call viki#Edit(<q-args>, !empty("<bang>"), 4)
 
 command! VikiFilesUpdate call viki#FilesUpdate()
 command! VikiFilesUpdateAll call viki#FilesUpdateAll()
@@ -2181,7 +2180,12 @@ endf
 function! viki#HomePage(...) "{{{3
     TVarArg ['winNr', 0]
     if g:vikiHomePage != ''
-        call viki#OpenLink(g:vikiHomePage, '', '', '', winNr)
+        let bufnr = bufnr(g:vikiHomePage)
+        if bufnr != -1
+            exec 'buffer '. bufnr
+        else
+            call viki#OpenLink(g:vikiHomePage, '', '', '', winNr)
+        endif
         return 1
     else
         return 0
@@ -2190,16 +2194,16 @@ endf
 
 
 " Edit a vikiname
-" viki#Edit(name, ?bang='', ?winNr=0, ?ìgnoreSpecial=0)
+" viki#Edit(name, ?ìgnoreSpecial=0, ?winNr=0)
 function! viki#Edit(name, ...) "{{{3
-    TVarArg ['bang', ''], ['winNr', 0], ['ignoreSpecial', 0]
+    TVarArg ['ignoreSpecial', 0], ['winNr', 0]
     " TLogVAR a:name
-    if exists('b:vikiEnabled') && bang != '' && 
-                \ exists('b:vikiFamily') && b:vikiFamily != ''
-                " \ (!exists('b:vikiFamily') || b:vikiFamily != '')
-        if !viki#HomePage(winNr)
-            call s:EditWrapper('buffer', 1)
-        endif
+    if winNr != 0
+        exec winNr .'wincmd w'
+    endif
+    if !viki#HomePage(winNr)
+        call tlib#notify#Echo('VIKI: Please set g:vikiHomePage', 'WarningMsg')
+        call s:EditWrapper('buffer', 1)
     endif
     if a:name == '*'
         let name = g:vikiHomePage

@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2010-03-31.
-" @Revision:    2691
+" @Last Change: 2010-07-17.
+" @Revision:    2695
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -138,9 +138,8 @@ function! VikiDefine(name, prefix, ...) "{{{3
         let vname = a:name .'::'
     end
     " let vname = escape(vname, ' \%#')
-    " exec 'command! -bang -nargs=? -complete=customlist,viki#EditComplete '. a:name .' call viki#Edit(escape(empty(<q-args>) ?'. string(vname) .' : <q-args>, "#"), "<bang>")'
     if !exists(':'+ a:name)
-        exec 'command -bang -nargs=? -complete=customlist,viki#EditComplete '. a:name .' call viki#Edit(empty(<q-args>) ? '. string(vname) .' : viki#InterEditArg('. string(a:name) .', <q-args>), "<bang>")'
+        exec 'command -bang -nargs=? -complete=customlist,viki#EditComplete '. a:name .' call viki#Edit(empty(<q-args>) ? '. string(vname) .' : viki#InterEditArg('. string(a:name) .', <q-args>), !empty("<bang>"))'
     else
         echom "Viki: Command already exists. Cannot define a command for "+ a:name
     endif
@@ -186,8 +185,8 @@ command! -nargs=? -bar VikiModeMaybe echom "Deprecated command: VikiModeMaybe: P
 
 command! -nargs=1 -complete=customlist,viki#BrowseComplete VikiBrowse :call viki#Browse(<q-args>)
 
-command! VikiHome :call viki#Edit('*', '!')
-command! VIKI :call viki#Edit('*', '!')
+command! VikiHome :call viki#Edit('*')
+command! VIKI :call viki#Edit('*')
 
 
 augroup viki
@@ -713,6 +712,9 @@ VikiDefine()) in order to reduce startup time
 - Syntax for tasks lists
 
 3.19
-- 
+- viki#Edit(): The arguments have changed: Calling :INTERVIKI oder 
+:VikiEdit with a bang will open the file in vim regardless of whether 
+it's special; it will always be opened from the global homepage
+
 
 " vim: ff=unix
