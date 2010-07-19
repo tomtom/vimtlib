@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2010-07-17.
-" @Revision:    0.662
+" @Last Change: 19-Jul-2010.
+" @Revision:    0.663
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
@@ -54,8 +54,8 @@ if !exists("g:vikiSpecialProtocolsExceptions") "{{{2
     let g:vikiSpecialProtocolsExceptions = ""
 endif
 
-" Files matching these suffixes are handled by viki#OpenSpecialFile()
 if !exists("g:vikiSpecialFiles") "{{{2
+    " Files matching these suffixes are handled by viki#OpenSpecialFile()
     let g:vikiSpecialFiles = [
                 \ 'aac',
                 \ 'aif',
@@ -74,6 +74,7 @@ if !exists("g:vikiSpecialFiles") "{{{2
                 \ 'jpeg',
                 \ 'jpg',
                 \ 'm3u',
+                \ 'mhtml',
                 \ 'mp1',
                 \ 'mp2',
                 \ 'mp3',
