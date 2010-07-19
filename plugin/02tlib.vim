@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-10.
-" @Last Change: 2010-05-23.
-" @Revision:    629
+" @Last Change: 2010-07-19.
+" @Revision:    630
 " GetLatestVimScripts: 1863 1 tlib.vim
 " @TPluginBefore \<autoload[\/]tlib.\{-}\.vim plugin/02tlib.vim
 
@@ -575,4 +575,5 @@ interpreted as string
 
 0.39
 - g:tlib#cache#dont_purge
+- tlib#vim#RestoreWindow()
 
