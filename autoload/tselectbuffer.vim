@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2010-01-03.
-" @Last Change: 2010-03-25.
-" @Revision:    0.0.6
+" @Last Change: 2010-07-31.
+" @Revision:    0.0.15
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -101,12 +101,16 @@ endf
 
 function! s:DeleteThisBuffer(buffer)
     let bx = s:GetBufNr(a:buffer)
-    call inputsave()
-    let doit = input('Delete buffer "'. bufname(bx) .'"? (y/N) ', s:delete_this_buffer_default)
-    call inputrestore()
-    if doit ==? 'y'
-        if doit ==# 'Y'
-            let s:delete_this_buffer_default = 'y'
+    if s:delete_this_buffer_default =~# '^a'
+        let doit = 'y'
+    else
+        call inputsave()
+        let doit = input('Delete buffer "'. bufname(bx) .'"? (yes/Yes/no/None/all) ', s:delete_this_buffer_default)
+        call inputrestore()
+    endif
+    if doit =~? '^\(y\%[es]\|a\%[ll]\)$'
+        if doit =~# '^Y' || doit =~# '^a'
+            let s:delete_this_buffer_default = doit
         endif
         if bufloaded(bx)
             exec 'bdelete '. bx
@@ -115,9 +119,10 @@ function! s:DeleteThisBuffer(buffer)
             exec 'bwipeout '. bx
             echom 'Wipe out buffer '. bx .': '. a:buffer
         end
-        return 1
+    elseif doit =~# '^N\%[one]$'
+        return 0
     endif
-    return 0
+    return 1
 endf
 
 function! s:AgentDeleteBuffer(world, selected)
@@ -125,7 +130,9 @@ function! s:AgentDeleteBuffer(world, selected)
     let s:delete_this_buffer_default = ''
     for buffer in a:selected
         " TLogVAR buffer
-        call s:DeleteThisBuffer(buffer)
+        if !s:DeleteThisBuffer(buffer)
+            break
+        endif
     endfor
     let a:world.state = 'reset'
     let a:world.base  = s:PrepareSelectBuffer()

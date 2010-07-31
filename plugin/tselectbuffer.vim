@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-04-15.
-" @Last Change: 2010-01-03.
-" @Revision:    323
+" @Last Change: 2010-07-31.
+" @Revision:    326
 " GetLatestVimScripts: 1866 1 tselectbuffer.vim
 
 if &cp || exists("loaded_tselectbuffer")
@@ -53,4 +53,5 @@ page (if any)
 0.7
 - Moved the definition of some variables from plugin/tselectbuffer.vim 
 to autoload/tselectbuffer.vim
+- Delete buffer: New options: None, all
 
