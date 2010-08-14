@@ -397,7 +397,10 @@ augroup QuickFixSigns
             endif
         endfor
     endfor
-    unlet s:ev_set s:ev s:key s:def
+    unlet s:ev_set
+    if exists('s:key')
+        unlet s:ev s:key s:def
+    endif
     " autocmd BufRead,BufNewFile * exec 'sign place '. (g:quickfixsigns_base - 1) .' name=QFS_DUMMY line=1 buffer='. bufnr('%')
     autocmd User WokmarksChange if index(g:quickfixsigns_classes, 'marks') != -1 | call QuickfixsignsUpdate("marks") | endif
 augroup END
