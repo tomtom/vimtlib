@@ -251,8 +251,8 @@ endf
 autocmd ShyMenu VimEnter * call s:ShyMenuInstall()
 
 
-map <expr> <f10> ShyMenuShow("\<f10>")
-imap <expr> <f10> ShyMenuShow("\<f10>")
+silent! map <expr> <unique> <f10> ShyMenuShow("\<f10>")
+silent! imap <expr> <unique> <f10> ShyMenuShow("\<f10>")
 
 
 let &cpo = s:save_cpo
