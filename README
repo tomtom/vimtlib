@@ -23,7 +23,7 @@ If you're missing something, write an e-mail.
     #A tbibtools        -- bibtex related tools (sort, filter ...)
     #A tcalc            -- A simple ruby-based RPN calculator with a vim frontend
     #A tcommand         -- Select and execute a command or menu item from a list
-    #A tComment         -- An easily extensible & universal comment plugin
+    #A tcomment         -- An easily extensible & universal comment plugin
     #A tgpg             -- Yet another plugin for encrypting files with gpg
     #A tlib             -- A library of vim functions
     #A tmru             -- Most Recently Used Files

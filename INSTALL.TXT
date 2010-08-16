@@ -10,13 +10,14 @@ this repository:
 
 Short version:
 
-    1. Save a local copy of the vimtlib repository under 
+    1. Save a local copy of the tplugin_vim repository under 
        ''~/vimfiles/repos/vimtlib'' (on some systems it's 
-       ''~/.vim/repos/vimtlib'')
+       ''~/.vim/repos/vimtlib''). Get it from here:
+       http://github.com/tomtom/tplugin_vim
 
     2. Insert the following line rather at the beginning of your 
        ''vimrc'' file:
-       ''runtime repos/vimtlib/macros/tplugin.vim''.
+       ''runtime repos/tplugin_vim/macros/tplugin.vim''.
 
        Some plugins in the vimtlib repository require 
        ''plugin/02tlib.vim'' to be loaded first. If you get an error 
