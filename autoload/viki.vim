@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 19-Jul-2010.
-" @Revision:    0.663
+" @Last Change: 2010-08-20.
+" @Revision:    0.668
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
@@ -1905,13 +1905,20 @@ endf
 " Get the interviki name of a vikiname
 function! viki#InterVikiName(vikiname)
     " return substitute(a:vikiname, s:InterVikiRx, '\1', '')
-    return matchlist(a:vikiname, s:InterVikiRx)[1]
+    let ml = matchlist(a:vikiname, s:InterVikiRx)
+    let name = get(ml, 1, '')
+    " echom "DBG" a:vikiname string(ml) name
+    return name
 endf
 
 " Get the plain vikiname of a vikiname
 function! viki#InterVikiPart(vikiname)
     " return substitute(a:vikiname, s:InterVikiRx, '\2', '')
-    return matchlist(a:vikiname, s:InterVikiRx)[2]
+    " return matchlist(a:vikiname, s:InterVikiRx)[2]
+    let ml = matchlist(a:vikiname, s:InterVikiRx)
+    let part = get(ml, 2, '')
+    " echom "DBG" a:vikiname string(ml) part
+    return part
 endf
 
 " Return vimscript code describing an interviki
@@ -2326,8 +2333,8 @@ function! viki#EditComplete(ArgLead, CmdLine, CursorPos) "{{{3
     " TLogVAR a:ArgLead, a:CmdLine, a:CursorPos
     " let arglead = a:ArgLead
     let rx_pre = '^\s*\(\d*\(verb\|debug\|sil\|sp\|vert\|tab\)\w\+!\?\s\+\)*'
-    let arglead = matchstr(a:CmdLine, rx_pre .'\(\u\+\)\s\zs.*')
-    let ii = matchstr(a:CmdLine, rx_pre .'\zs\(\u\+\)\ze\s')
+    let arglead = matchstr(a:CmdLine, rx_pre .'\(\u\+\)!\?\s\zs.*')
+    let ii = matchstr(a:CmdLine, rx_pre .'\zs\(\u\+\)\ze!\?\s')
     " TLogVAR ii
     if !empty(ii) && arglead !~ '::'
         let arglead = ii.'::'.arglead
