@@ -42,4 +42,5 @@ autoload/tlib/type.vim
 autoload/tlib/url.vim
 autoload/tlib/var.vim
 autoload/tlib/win.vim
+autoload/tlib/vim.vim
 autoload/tlib.vim

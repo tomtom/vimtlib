@@ -4,7 +4,6 @@ autoload/viki_latex.vim
 autoload/viki_viki.vim
 compiler/deplate.vim
 doc/viki.txt
-ftdetect/viki.vim
 ftplugin/bib/viki.vim
 ftplugin/viki.vim
 indent/viki.vim

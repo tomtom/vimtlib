@@ -1,2 +1,3 @@
+doc/tselectbuffer.txt
 plugin/tselectbuffer.vim
 autoload/tselectbuffer.vim

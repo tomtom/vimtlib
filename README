@@ -2,11 +2,12 @@
 
 See INSTALL.TXT
 
-Certain plugins were removed from vimtlib and put into a repo of their own -- please see: http://github.com/tomtom
-If you're missing something, write an e-mail.
-
 
 * Status
+
+The code repositories for the following plugins are listed at: http://github.com/tomtom
+Please don't clone git@github.com:tomtom/vimtlib.git because this repository will be 
+cut down to the ruby scripts, the recipes etc. at some time in the future.
 
     #A bbcode           -- syntax & templates
     #A checksyntax      -- Check syntax when saving a file (php etc.)
@@ -19,7 +20,7 @@ If you're missing something, write an e-mail.
     #A scalefont        -- Switch between your favourite font/gui settings
     #A shymenu          -- Show the menu bar only when pressing an accelerator key
     #A startup_profile  -- Profile vim startup
-    #A tAssert          -- Simple Assertions
+    #A tassert          -- Simple Assertions
     #A tbibtools        -- bibtex related tools (sort, filter ...)
     #A tcalc            -- A simple ruby-based RPN calculator with a vim frontend
     #A tcommand         -- Select and execute a command or menu item from a list
@@ -33,11 +34,11 @@ If you're missing something, write an e-mail.
     #A tregisters       -- List, edit, and run/execute registers/clipboards
     #A tselectbuffer    -- A simplicistic buffer selector/switcher
     #A tselectfiles     -- A simplicistic files selector/browser (sort of)
-    #A tSkeleton        -- File Templates and Code Skeletons
+    #A tskeleton        -- File Templates and Code Skeletons
     #A ttagecho         -- Show current tag information
     #A ttags            -- Tag list browser (List, filter, preview, jump to tags)
     #A ttoc             -- Display a "table of contents" for the current buffer
-    #A Viki             -- A personal wiki for Vim
+    #A viki             -- A personal wiki for Vim
     #A vikitasks        -- Search viki files for tasks and display them in a list
     #B Eval\Selection   -- evaluate selected vim/ruby/... code
     #B localvariables   -- Set/let per-file-variables à la Emacs
