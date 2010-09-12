@@ -3,7 +3,7 @@
 # @Author:      Tom Link (micathom at gmail com)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2007-07-25.
-# @Last Change: 2010-04-25.
+# @Last Change: 2010-09-12.
 # @Revision:    501
 
 
@@ -273,6 +273,8 @@ class VimDedoc
                 m = $1
                 if m =~ /^:nodoc:\s*$/
                     no_doc = true
+                elsif m =~ /^@TPlugin/
+                    next
                 elsif m =~ /^:enddoc:\s*$/
                     break
                 elsif m =~ /^:filedoc:\s*$/
