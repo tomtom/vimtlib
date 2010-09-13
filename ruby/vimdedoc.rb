@@ -3,7 +3,7 @@
 # @Author:      Tom Link (micathom at gmail com)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2007-07-25.
-# @Last Change: 2010-09-12.
+# @Last Change: 2010-09-13.
 # @Revision:    501
 
 
@@ -246,7 +246,7 @@ class VimDedoc
         filedoc = false
         no_doc = false
         no_doc_default = false
-        use_doc  = false
+        use_doc  = nil
         use_tag  = nil
         use_head = nil
         use_name = nil
@@ -262,11 +262,15 @@ class VimDedoc
                 if filedoc
                     @fdocs[filename] += current_doc
                     filedoc = false
-                elsif use_doc
-                    doc = compile_doc(current_doc, process_doc, 0)
-                    @docs[filename] << {:type => :doc, :doc => doc, :tag => use_tag}
+                elsif !use_doc.nil?
+                    doc = compile_doc(current_doc, process_doc, :indent => 0, :nonl => use_doc =~ /\bnonl\b/)
+                    @docs[filename] << {
+                        :type => :doc,
+                        :doc => doc,
+                        :tag => use_doc =~ /\bnotag\b/ ? nil : (use_tag || '')
+                    }
                     use_tag = nil
-                    use_doc = false
+                    use_doc = nil
                 end
                 current_doc = []
             elsif line =~ doc_rx
@@ -279,8 +283,8 @@ class VimDedoc
                     break
                 elsif m =~ /^:filedoc:\s*$/
                     filedoc = true
-                elsif m =~ /^:doc:\s*$/
-                    use_doc = true
+                elsif m =~ /^:doc:\s*(.*)$/
+                    use_doc = $1
                 elsif m =~ /^:tagprefix( (.*?))?:\s*$/
                     tagprefix = $2
                 elsif m =~ /^:tag:\s*(.+?)\s*$/
@@ -335,9 +339,9 @@ class VimDedoc
         end
     end
 
-    def compile_doc(doc, process_doc=nil, indent=4)
-        doc = doc.dup << nil
-        doc = format_lines(doc, indent)
+    def compile_doc(doc, process_doc=nil, args={})
+        doc = doc.dup << nil unless args[:nonl]
+        doc = format_lines(doc, args[:indent] || 4)
         doc = process_doc.call(doc) if process_doc
         doc
     end
@@ -404,7 +408,14 @@ class VimDedoc
 
     def format_entry_vimhelp(filename, doc)
         body = doc.map do |entry|
-            rv = [entry[:tag] ? "                                                    *#{entry[:tag]}*" : nil]
+            rv = []
+            if entry[:tag]
+                if entry[:tag].empty?
+                    rv << nil
+                else
+                    rv << "                                                    *#{entry[:tag]}*"
+                end
+            end
             case entry[:type]
             when :doc
                 rv << entry[:doc]
