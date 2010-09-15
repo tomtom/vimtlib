@@ -1,3 +1,6 @@
+This repository comprises vim-related ruby-scripts, vimball recipes and some support files related to the vim plugins listed below.
+
+
 * Install
 
 See INSTALL.TXT
@@ -6,8 +9,6 @@ See INSTALL.TXT
 * Status
 
 The code repositories for the following plugins are listed at: http://github.com/tomtom
-Please don't clone git@github.com:tomtom/vimtlib.git because this repository will be 
-cut down to the ruby scripts, the recipes etc. at some time in the future.
 
     #A bbcode           -- syntax & templates
     #A checksyntax      -- Check syntax when saving a file (php etc.)
@@ -70,6 +71,7 @@ Legend:
 
 * Scripts
 
+    install_plugin.sh    ... A shell script to copy files to a master .vim directory
     ruby/vimball.rb      ... Create vimballs from the command-line (EXPERIMENTAL)
     ruby/vimdedoc.rb     ... The ill-conceived, casual vimscript source code documenter
     ruby/vimtips2help.rb ... Convert an XML dump of the vimtips wiki to a tagged help file

@@ -75,8 +75,23 @@ You have the following options to facilitate doing this:
 
 ** Use symbolic links
 
+You can use the file install_plugin.sh to copy files from a local copy 
+of a repository to a master .vim directory. Example:
+
+    install_plugin.sh --update vimtlib/*_vim
+
+See "install_plugin.sh --help" for details.
+
+J. Sukumaran provides a slightly simpler script at: 
+http://gist.github.com/580276
+
+
+
+** Use symbolic links
+
 Symlink the files to your vimfiles directory. You could use tools like 
 graft for this.
+
 
 
 ** Build vimballs
