@@ -1,15 +1,23 @@
 #!/bin/bash
 # install.sh -- created 2010-09-15, Tom Link
 # @Last Change: 2010-09-16.
-# @Revision:    0.83
+# @Revision:    0.113
 
 if [ -e $HOME/vimfiles ]; then
     VIMFILES=$HOME/vimfiles
 else
     VIMFILES=$HOME/.vim
 fi
+
+VIM=vim
 PRE=
 CMD=cp
+HELPTAGS=false
+VERBOSE=false
+
+if [ -e $VIMFILES/install_plugins.rc ]; then
+    . $VIMFILES/install_plugins.rc
+fi
 
 
 function usage {
@@ -17,11 +25,13 @@ function usage {
     echo "If no directories are given, use the directories in \$VIMPLUGINS"
     echo " "
     echo "Options:"
-    echo "  -d|--dir DIR ... Destination directory (default: $VIMFILES)"
-    echo "  --dry        ... Show which files would be copied"
-    echo "  -u|--update  ... Copy only newer files"
-    echo "  -v|--verbose ... Show messages"
-    echo "  -h|--help    ... Show help"
+    echo "  -d|--dir DIR  ... Destination directory (default: $VIMFILES)"
+    echo "  --dry         ... Show which files would be copied"
+    echo "  -t|--helptags ... Create helptags"
+    echo "  -u|--update   ... Copy only newer files"
+    echo "  --vim CMD     ... VIM command (default: ${VIM})"
+    echo "  -v|--verbose  ... Show messages"
+    echo "  -h|--help     ... Show help"
     exit 1
 }
 
@@ -37,6 +47,13 @@ function findfiles {
 }
 
 
+function log {
+    if [ "$VERBOSE" == true ]; then
+        echo $@
+    fi
+}
+
+
 while [ -n $1 ]; do
     case $1 in
     -d|--dir)
@@ -47,12 +64,21 @@ while [ -n $1 ]; do
         PRE=echo
         shift
         ;;
+    -t|--helptags)
+        HELPTAGS=true
+        shift
+        ;;
     -u|--update)
         CMD="$CMD -u"
         shift
         ;;
+    --vim)
+        VIM=$2
+        shift 2
+        ;;
     -v|--verbose)
         CMD="$CMD -v"
+        VERBOSE=true
         shift
         ;;
     -h|--help)
@@ -84,6 +110,7 @@ fi
 
 for DIR in $DIRS; do
     if [ -d $DIR ]; then
+        log Plugin: $DIR
         cd $DIR
         FILES=`findfiles .`
         cd - > /dev/null
@@ -96,6 +123,18 @@ for DIR in $DIRS; do
         done
     fi
 done
+
+
+if [ "$HELPTAGS" == true ]; then
+    if [ -d $VIMFILES/doc ]; then
+        cd $VIMFILES
+        log Create helptags ...
+        $VIM -u NONE -U NONE -c "helptags doc|q"
+        cd - > /dev/null
+    fi
+fi
+        
+log Done!
 
 
 # vi: ft=sh:tw=72:ts=4
