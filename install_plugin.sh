@@ -1,7 +1,7 @@
 #!/bin/bash
 # install.sh -- created 2010-09-15, Tom Link
-# @Last Change: 2010-09-15.
-# @Revision:    0.76
+# @Last Change: 2010-09-16.
+# @Revision:    0.83
 
 if [ -e $HOME/vimfiles ]; then
     VIMFILES=$HOME/vimfiles
@@ -13,7 +13,9 @@ CMD=cp
 
 
 function usage {
-    echo "`basename $0` [OPTIONS] [DIR1 DIR2 ...]"
+    echo "`basename $0` [OPTIONS] DIR1 DIR2 ..."
+    echo "If no directories are given, use the directories in \$VIMPLUGINS"
+    echo " "
     echo "Options:"
     echo "  -d|--dir DIR ... Destination directory (default: $VIMFILES)"
     echo "  --dry        ... Show which files would be copied"
@@ -69,7 +71,12 @@ fi
 
 
 if [ -z $1 ]; then
-    DIRS=`find . -maxdepth 1 -type d -not -name "."`
+    if [ -z $VIMPLUGINS ]; then
+        DIRS=`find $VIMPLUGINS -maxdepth 1 -type d -not -name "."`
+    else
+        echo "Error: \$VIMPLUGINS is undefined and no directories are given"
+        usage
+    fi
 else
     DIRS=$@
 fi
