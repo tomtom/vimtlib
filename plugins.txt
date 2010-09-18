@@ -1,0 +1,66 @@
+* Plugins
+
+The code repositories for the following plugins are listed at: http://github.com/tomtom
+
+    #A bbcode           -- syntax & templates
+    #A checksyntax      -- Check syntax when saving a file (php etc.)
+    #A cmdlinehelp      -- Display help on the command in the command line
+    #A hookcursormoved  -- Call functions when the cursor position changed
+    #A livetimestamp    -- Change a time stamp when saving a file
+    #A loremipsum       -- A dummy text generator
+    #A quickfixsigns    -- Mark quickfix & location list items with signs
+    #A rcom             -- Evaluate R (www.r-project.org) code via rcom (windows only)
+    #A scalefont        -- Switch between your favourite font/gui settings
+    #A shymenu          -- Show the menu bar only when pressing an accelerator key
+    #A startup_profile  -- Profile vim startup
+    #A tassert          -- Simple Assertions
+    #A tbibtools        -- bibtex related tools (sort, filter ...)
+    #A tcalc            -- A simple ruby-based RPN calculator with a vim frontend
+    #A tcommand         -- Select and execute a command or menu item from a list
+    #A tcomment         -- An easily extensible & universal comment plugin
+    #A tgpg             -- Yet another plugin for encrypting files with gpg
+    #A tlib             -- A library of vim functions
+    #A tmru             -- Most Recently Used Files
+    #A toptions/tstatus -- display changed options in the status line (toptions should be sourced from vimrc)
+    #A tplugin          -- A simple plugin loader/runtimepath manager
+    #A trag             -- Jump to a file registered in your tags
+    #A tregisters       -- List, edit, and run/execute registers/clipboards
+    #A tselectbuffer    -- A simplicistic buffer selector/switcher
+    #A tselectfiles     -- A simplicistic files selector/browser (sort of)
+    #A tskeleton        -- File Templates and Code Skeletons
+    #A ttagecho         -- Show current tag information
+    #A ttags            -- Tag list browser (List, filter, preview, jump to tags)
+    #A ttoc             -- Display a "table of contents" for the current buffer
+    #A viki             -- A personal wiki for Vim
+    #A vikitasks        -- Search viki files for tasks and display them in a list
+    #B evalselection    -- Evaluate selected vim/ruby/... code
+    #B localvariables   -- Set/let per-file-variables à la Emacs
+    #B ttagcomplete     -- Context-sensitive tag completion
+    #B worksheet        -- "Mathematica-like" worksheets (sort of) with support for R under Windows, ruby ...
+    #C prototype        -- \JavaScript-like prototype-based programming in vimscript
+    #C spec             -- Behaviour-driven design: easy on the eye specifications of VIM scripts
+    #C tbak             -- Yet another simple backup plugin using diff
+    #D concordance      -- Concordance table (sort of)
+    #D glark            -- a wrapper for the glark command (superseded by trag)
+    #D linglang         -- Perform actions on basis of the current line's language
+    #D setsyntax        -- Set options depending on the syntax group under cursor
+    #D tmarks           -- A simple marks browser
+    #D tmboxbrowser     -- A mbox browser
+    #D TortoiseSVN      -- Some support for TortoiseSVN (a subversion client for Windows)
+    #D tsession         -- An alternativ approach to sessions
+    #E pim              -- The vim pim (not really useful yet)
+    #E tEchoPair        -- Display matching parenthesis in the echo area
+
+
+Legend:
+
+    #A ... Works for me (there may be some minor quirks)
+    #B ... Minor problems
+    #C ... Work in progress
+    #D ... Not in use (I wouldn't know if there were problems)
+    #E ... Major known problems or unfinished work
+
+
+
+% @Last Change: 2009-01-10.
+% vi: ft=viki:tw=72:ts=4
