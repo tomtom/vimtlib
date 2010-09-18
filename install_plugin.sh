@@ -1,7 +1,7 @@
 #!/bin/bash
 # install.sh -- created 2010-09-15, Tom Link
-# @Last Change: 2010-09-16.
-# @Revision:    0.113
+# @Last Change: 2010-09-17.
+# @Revision:    0.122
 
 if [ -e $HOME/vimfiles ]; then
     VIMFILES=$HOME/vimfiles
@@ -11,27 +11,30 @@ fi
 
 VIM=vim
 PRE=
-CMD=cp
+CP=cp
+MKDIR=mkdir
 HELPTAGS=false
 VERBOSE=false
 
-if [ -e $VIMFILES/install_plugins.rc ]; then
-    . $VIMFILES/install_plugins.rc
+if [ -e $VIMFILES/install_plugin.rc ]; then
+    . $VIMFILES/install_plugin.rc
 fi
 
 
 function usage {
     echo "`basename $0` [OPTIONS] DIR1 DIR2 ..."
-    echo "If no directories are given, use the directories in \$VIMPLUGINS"
+    echo "If no directories are supplied, use the directories in \$VIMPLUGINS"
     echo " "
     echo "Options:"
     echo "  -d|--dir DIR  ... Destination directory (default: $VIMFILES)"
-    echo "  --dry         ... Show which files would be copied"
+    echo "  -n|--dry      ... Show which files would be copied"
     echo "  -t|--helptags ... Create helptags"
     echo "  -u|--update   ... Copy only newer files"
     echo "  --vim CMD     ... VIM command (default: ${VIM})"
     echo "  -v|--verbose  ... Show messages"
     echo "  -h|--help     ... Show help"
+    echo " "
+    echo "Configuration file: $VIMFILES/install_plugin.rc"
     exit 1
 }
 
@@ -39,7 +42,7 @@ function usage {
 function findfiles {
     find $1 -type f \
         -not -wholename "*/.*" \
-        -not -name "_*" \
+        -not -wholename "*/_*" \
         -not -name "Makefile" \
         -not -wholename "*/doc/tags" \
         -not -name README \
@@ -69,7 +72,7 @@ while [ -n $1 ]; do
         shift
         ;;
     -u|--update)
-        CMD="$CMD -u"
+        CP="$CP -u"
         shift
         ;;
     --vim)
@@ -77,7 +80,8 @@ while [ -n $1 ]; do
         shift 2
         ;;
     -v|--verbose)
-        CMD="$CMD -v"
+        CP="$CP -v"
+        MKDIR="$MKDIR -v"
         VERBOSE=true
         shift
         ;;
@@ -98,7 +102,7 @@ fi
 
 if [ -z $1 ]; then
     if [ -z $VIMPLUGINS ]; then
-        DIRS=`find $VIMPLUGINS -maxdepth 1 -type d -not -name "."`
+        DIRS=`find $VIMPLUGINS -maxdepth 1 -type d -not -name ".*" -not -name "_*"`
     else
         echo "Error: \$VIMPLUGINS is undefined and no directories are given"
         usage
@@ -117,9 +121,9 @@ for DIR in $DIRS; do
         for FILE in $FILES; do
             DDIR=`dirname ${VIMFILES}/$FILE`
             if [ ! -e $DDIR ]; then
-                $PRE mkdir -p $DDIR
+                $PRE $MKDIR -p $DDIR
             fi
-            $PRE $CMD $DIR/$FILE ${VIMFILES}/$FILE
+            $PRE $CP $DIR/$FILE ${VIMFILES}/$FILE
         done
     fi
 done
