@@ -1,7 +1,7 @@
 #!/bin/bash
 # install.sh -- created 2010-09-15, Tom Link
-# @Last Change: 2010-09-17.
-# @Revision:    0.122
+# @Last Change: 2010-09-26.
+# @Revision:    0.123
 
 if [ -e $HOME/vimfiles ]; then
     VIMFILES=$HOME/vimfiles
@@ -101,7 +101,7 @@ fi
 
 
 if [ -z $1 ]; then
-    if [ -z $VIMPLUGINS ]; then
+    if [ -n $VIMPLUGINS ]; then
         DIRS=`find $VIMPLUGINS -maxdepth 1 -type d -not -name ".*" -not -name "_*"`
     else
         echo "Error: \$VIMPLUGINS is undefined and no directories are given"
