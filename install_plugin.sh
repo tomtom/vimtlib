@@ -1,7 +1,7 @@
 #!/bin/bash
 # install.sh -- created 2010-09-15, Tom Link
 # @Last Change: 2010-09-26.
-# @Revision:    0.123
+# @Revision:    0.140
 
 if [ -e $HOME/vimfiles ]; then
     VIMFILES=$HOME/vimfiles
@@ -101,6 +101,14 @@ fi
 
 
 if [ -z $1 ]; then
+    if [ -z $VIMPLUGINS ]; then
+        echo "No directory is given and \$VIMPLUGINS is not set."
+        read -p "Copy files from '$PWD' to '$VIMFILES'? (y/N) " yesno
+        if [ "$yesno" != 'y' ]; then
+            echo "Cancel!"
+            exit 5
+        fi
+    fi
     if [ -n $VIMPLUGINS ]; then
         DIRS=`find $VIMPLUGINS -maxdepth 1 -type d -not -name ".*" -not -name "_*"`
     else
