@@ -13,6 +13,7 @@ autoload/tlib/World.vim
 autoload/tlib/agent.vim
 autoload/tlib/arg.vim
 autoload/tlib/autocmdgroup.vim
+autoload/tlib/balloon.vim
 autoload/tlib/buffer.vim
 autoload/tlib/cache.vim
 autoload/tlib/char.vim
