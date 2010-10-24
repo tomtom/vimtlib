@@ -3,7 +3,7 @@
 # @Author:      Tom Link (micathom AT gmail com)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2009-02-10.
-# @Last Change: 2010-04-26.
+# @Last Change: 2010-10-24.
 #
 # This script creates and installs vimballs without vim.
 #
@@ -107,7 +107,7 @@ HEADER
             config['dry']      ||= false
             config['record']   ||= true
             config['repo']     ||= false
-            config['repodir']  ||= 'repos'
+            config['repodir']  ||= 'bundle'
 
             opts = OptionParser.new do |opts|
                 opts.banner =  'Usage: vimball.rb [OPTIONS] COMMAND FILES ...'
