@@ -3,8 +3,8 @@
 # @Author:      Tom Link (micathom at gmail com)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2007-07-25.
-# @Last Change: 2010-09-13.
-# @Revision:    501
+# @Last Change: 2010-11-02.
+# @Revision:    504
 
 
 require 'yaml'
@@ -547,7 +547,7 @@ class VimDedoc
     end
 
     def filename_on_disk(filename)
-        if File.exist?(filename)
+        if filename.is_a?(Integer) or File.exist?(filename)
             return filename
         else
             if @repo

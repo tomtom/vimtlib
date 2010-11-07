@@ -1,0 +1,4 @@
+doc/stakeholders.txt
+autoload/stakeholders.vim
+autoload/stakeholders/delayed.vim
+autoload/stakeholders/immediate.vim
