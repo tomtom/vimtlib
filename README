@@ -9,9 +9,7 @@ See INSTALL.TXT
 * Scripts
 
     install_plugin.sh    ... A shell script to copy files to a master .vim directory
-    ruby/vimball.rb      ... Create vimballs from the command-line (EXPERIMENTAL)
     ruby/vimdedoc.rb     ... The ill-conceived, casual vimscript source code documenter
-    ruby/vimtips2help.rb ... Convert an XML dump of the vimtips wiki to a tagged help file
 
 
 % vi: ft=viki:tw=0:ts=4
