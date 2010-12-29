@@ -1,5 +1,6 @@
 doc/quickfixsigns.txt
 plugin/quickfixsigns.vim
 autoload/quickfixsigns.vim
+autoload/quickfixsigns/breakpoints.vim
 autoload/quickfixsigns/vcsdiff.vim
 autoload/quickfixsigns/marks.vim
