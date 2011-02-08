@@ -38,22 +38,24 @@ See also http://vim-scripts.org/vim/tools.html for additional information.
 Short version:
 
     1. Save a local copy of the tplugin_vim repository under 
-       ''~/vimfiles/bundles/vimtlib'' (on some systems it's 
-       ''~/.vim/bundles/vimtlib''). Get it from here:
-       http://github.com/tomtom/tplugin_vim
+       ''~/vimfiles/bundles'' (on some systems it's ''~/.vim/bundles''). 
+       Get it from here: http://github.com/tomtom/tplugin_vim
+       #Verb <<
+       cd ~/.vim/bundles
+       git clone git://github.com/tomtom/tplugin_vim.git
 
     2. Insert the following line rather at the beginning of your 
        ''vimrc'' file:
        ''runtime bundles/tplugin_vim/macros/tplugin.vim''.
 
-       Some plugins in the vimtlib repository require 
+       Some VIM plugins on http://github.com/tomtom require 
        ''plugin/02tlib.vim'' to be loaded first. If you get an error 
        message telling you that ''tlib'' is required, you can either 
        tell me about that error or add the following line to the 
-       ''vimrc'' file:
-       ''TPlugin! tlib_vim 02tlib''. This assumes that you saved the 
-       tlib library from http://github.com/tomtom/tlib_vim to the 
-       ''bundles'' directory from before.
+       ''vimrc'' file: ''TPlugin! tlib_vim 02tlib''.
+       This assumes that you saved the tlib library from 
+       http://github.com/tomtom/tlib_vim to the ''bundles'' directory 
+       mentioned above.
 
     3. Run '':TPluginScan! all'' to enable autoloading.
 
