@@ -1,9 +1,15 @@
-This repository comprises vim-related ruby-scripts, vimball recipes and some support files related to the vim plugins listed in "plugins.txt".
+This repository used to include several plugins many of which were moved to git repositories of their own -- please see https://github.com/tomtom for a list of plugins. The remaining parts of vimtlib include vim-related ruby-scripts, vimball recipes and other support files related to the vim plugins listed in "plugins.txt".
 
 
 * Install
 
-See INSTALL.TXT
+For VIM plugins see INSTALL.TXT.
+
+For vimdedoc.rb: Make sure the ruby script is executeable and put it (or an alias) into a directory that is included in ''$PATH''. On windows, I suggest to create a batch script that includes the line ''ruby.exe %DIRECTORY%\\vimtlib\\ruby\\vimdedoc.rb %*''.
+
+Skeletons: The skeletons have to be copied into ~/.vim/skeletons/... or ~/vimfiles/skeletons/...
+
+Vimball recipes: You can use VIM's ''MkVimball'' command or the ruby-based vimball.rb (https://github.com/tomtom/vimball.rb) to create vimballs from those recipes.
 
 
 * Scripts
