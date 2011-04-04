@@ -1,0 +1,41 @@
+*ttags.txt*         Tag list browser (List, filter, preview, jump to tags)
+                    Author: Tom Link, micathom at gmail com
+
+:TTags [KIND] [TAGS_RX] [FILE_RX]
+In order to match any kind/rx, use *.
+E.g. TTags * * _foo.vim$
+
+Features:
+    - List tags
+    - Filter tags matching a pattern
+    - Jump/Preview tags
+    - Insert tags (and a template for the argument list if supported by 
+      tSkeleton, which has to be installed for this)
+
+
+-----------------------------------------------------------------------
+Install~
+
+Edit the vba file and type: >
+
+    :so %%
+
+See :help vimball for details. If you have difficulties or use vim 7.0, 
+please make sure, you have the current version of vimball (vimscript 
+#1502) installed.
+
+This script requires tlib (vimscript #1863) to be installed.
+
+Suggested maps (to be set in ~/.vimrc): >
+    noremap <Leader>g. :TTags<cr>
+    noremap <Leader>g# :call ttags#List(0, "*", tlib#rx#Escape(expand("<cword>")))<cr>
+    noremap <Leader>g* :call ttags#List(0, "*", tlib#rx#Escape(expand("<cword>")) .".*")<cr>
+    noremap <Leader>g? :call ttags#List(1, "*", tlib#rx#Escape(expand("<cword>")))<cr>
+    for c in split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', '\zs')
+        exec 'noremap <Leader>g'. c .' :TTags '. c .'<cr>'
+    endfor
+
+You can use :echo keys(ttags#Kinds())<cr> to find out which kinds are defined.
+
+
+%s

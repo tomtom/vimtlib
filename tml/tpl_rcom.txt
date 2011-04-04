@@ -1,0 +1,103 @@
+*rcom.txt*          Evaluate R (www.r-project.org) code via rcom (windows only)
+                    Author: Tom Link, micathom at gmail com
+
+This plugin is still experimental. During development it made vim hang 
+from time to time. Please report any problem to the author. Thanks.
+
+The rcom ftplugin uses the RCom interface (http://rcom.univie.ac.at)
+to R for sending code to a running instance of R. This way any R
+snippet can be easily evaluated in that instance of R.
+
+After installation, interaction with R via rcom is enabled for all
+buffers with filetype r. For other filetypes, you can use the
+functions |rcom#EvaluateInBuffer()|.
+
+
+Features:
+
+    - Evaluate R code
+    - Omnicompletion for R
+    - Maps for normal, visual, and insert mode
+    - Keyword map (|K|)
+    - Operator
+
+
+Caveats:
+
+It is recommended to set |g:rcom#server| and |g:rcom#reuse| = 1.
+
+Setting |g:rcom#reuse| = 1 is more stable. Depending on your version of 
+ruby & R & rcom, g:rcom#reuse = 0 could make your gvim crash.
+
+
+Maps~
+
+The ftplugin provides several maps (see also |g:rcom_map|, 
+|g:rcom_mapp|) to evaluate R code and optionally print the result in 
+normal, insert, and visual mode. There is also an operator (see 
+|g:rcom_mapop|).
+
+
+Normal usage~
+
+    1. Start an instance of R GUI and load the image you want.
+    2. Open an R source file in VIM.
+    3. Type <c-cr> to evaluate the current line/visual area in R.
+    4. Type [count]+ or +{motion} to evaluate some text in R. (You can 
+       type ++ to invoke |+|.)
+
+By default, the results get printed in the R GUI window. You might want 
+to arrange the windows in a way, so that you can see VIM, R console and 
+R graphic device at the same time.
+
+
+Two modes~
+
+#1 Run as headless StatConnectorSrv:
+    This is only useful when used from another library as you won't see 
+    any output. Any output from a print command is inserted in the 
+    result. If there is a .Rdata image in the same directory as the 
+    current buffer, it is loaded.
+
+#2 Re-use a running instance of R:
+    If there is a .Rhistory file in the same directory as the current
+    buffer, it is loaded. This is the default mode when enabling an R 
+    buffer via |rcom#EvaluateInBuffer()|.
+
+You can only connect to one instance of R at a time. If there are
+several instances of R running ... well, good luck then. :-)
+
+
+-----------------------------------------------------------------------
+Install~
+
+Requirements:
+
+    - Windows only (because of rcom)
+    - A ruby-enabled version of vim -- :echo has('ruby') must print 1
+    - R
+    - A suitable version of rcom (http://rcom.univie.ac.at). The rcom 
+      library has to be loaded in vim, which should be the default 
+      behaviour after installing rcom. The following code snippet must 
+      not throw an error: >
+
+      :ruby require 'win32ole'; r = WIN32OLE.new("StatConnectorSrv.StatConnector"); r.Init("R"); r.Close
+
+Edit the vba file and type: >
+
+    :so %%
+
+See :help vimball for details. If you have difficulties or use vim 7.0,
+please make sure, you have the current version of vimball
+(vimscript #1502) installed or update your runtime.
+
+After installation, you might want to check the value of
+|g:rcom#server| and maybe set it in your |vimrc| file. When this 
+variable is set, an instance of gvim will be started that acts as a 
+proxy so that the instance used for editing the R file won't be 
+blocked.
+
+Also available via git: http://github.com/tomtom/rcom_vim
+
+
+%s

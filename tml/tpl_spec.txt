@@ -1,0 +1,60 @@
+*spec.txt*          Behaviour-driven design (BDD) for vim scripts
+                    Author: Tom Link, micathom at gmail com
+
+This plugin provides a small set of commands to facilitate 
+behaviour-driven design of vim plugins. It basically consists of two 
+parts:
+
+    spec   ... BDD-related commands
+    should ... Convenience functions for testing
+
+According to BDD theory, you are supposed to write a specification first 
+and then make the code fulfill that specification. If you don't believe 
+in BDD, you could also think of spec.vim as a more convenient approach 
+to unit testing.
+
+A example specification could look like this: >
+
+    SpecBegin 'title': 'Foo', 'sfile': 'autoload/foo.vim'
+
+    It should add numbers.
+    Should be equal foo#Add(1, 2), 3
+    
+    It should not add values of other types.
+    Should throw something 'foo#Add("1", 2)'
+
+Spec knows how to rewrite certain rules in order to turn them into 
+proper function call. Compare the following rules: >
+
+    Should should#throw#Something('foo#Add([1], 2)')
+    Should throw#Something('foo#Add([1], 2)')
+    Should throw something('foo#Add({1:2}, 2)')
+    Should throw something 'foo#Add({1:2}, 2)'
+
+    Should !should#be#Equal(foo#Add(1, 2), 3)
+    Should not be equal foo#Add(1, 2), 4
+
+Specification scripts basically are normal vim scripts but must be run 
+by the |:Spec| command. The |:SpecBegin| command also allows to define 
+options sets against which the specification will be tested.
+
+For an example specification see: ../spec/spec/spec.vim
+
+CAVEAT: Please read at least the comments on |:Spec| and |:SpecBegin|.
+
+
+-----------------------------------------------------------------------
+Install~
+
+Edit the vba file and type: >
+
+    :so %%
+
+See :help vimball for details. If you have difficulties or use vim 7.0, 
+please make sure, you have the current version of vimball
+(vimscript #1502) installed or update your runtime.
+
+Some "should"-functions require tlib (vimscript #1863) to be installed.
+
+
+%s

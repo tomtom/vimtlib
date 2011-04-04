@@ -1,0 +1,70 @@
+*tEchoPair.txt*     Display matching parenthesis in the echo area
+                    Author: Tom Link, micathom at gmail com
+
+VIM is an excellent editor but in comparison too e.g. emacs it lacks a 
+minor feature that makes editing lisp code somewhat cumbersome. While 
+VIM can highlight the matching parenthesis, this doesn't help much with 
+long functions when the matching parenthesis is off the screen. 
+Emacs users are better off in such a situation, since emace displays the 
+matching line in the echo area.
+
+This plugin tries to mimic Emacs's behaviour. Whenever the cursor is 
+placed over a parenthesis or an element of a pair the matching element 
+is displayed in the echo area. If 'cmdheight' is set to a value greater 
+than 1, additional context lines are displayed, too.
+
+
+In order to enable this plugin, you choose between the following  
+options:
+
+    TEchoPairInstallBuffer ... enable for the current buffer
+
+    call techopair#Install('*') ... enable globally
+
+    let g:tEchoPairInstall = ['lisp', 'scheme'] ... enable for certain 
+      filetypes
+
+
+Currently, there are the following display modes:
+
+    indicate ... Display the whole line and highlight the matching 
+      parenthesis. If 'cmdheight' is greater than 1, additional lines 
+      are display.
+
+    inner ... Display the inner text Emacs-style.
+
+In order to see the matching parenthesis when 'showmode' is on, set 
+'cmdheight' to something greater than 1.
+
+You can select the preferred display mode on a filetype basis, by 
+setting g:tEchoPairStyle_{STYLE}.
+
+Example: >
+
+    let g:tEchoPairStyle_inner = ['lisp', 'scheme']
+    let g:tEchoPairStyle_indicate = ['java']
+
+
+The pairs are usually deduced from the value of 'matchpairs' unless 
+there is an entry for the current buffer's filetype in g:tEchoPairs. For 
+the following filetypes custom pairs are pre-defined:
+
+    - ruby
+    - vim
+
+
+-----------------------------------------------------------------------
+Install~
+
+Edit the vba file and type: >
+
+    :so %%
+
+See :help vimball for details. If you have difficulties or use vim 7.0, 
+please make sure, you have the current version of vimball
+(vimscript #1502) installed or update your runtime.
+
+This script requires tlib (vimscript #1863) to be installed.
+
+
+%s

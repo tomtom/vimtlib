@@ -1,0 +1,45 @@
+*hookcursormoved.txt*  Call functions when the cursor position changed
+                       Author: Tom Link, micathom at gmail com
+
+This experimental plugin provides some help with the definition of 
+functions that should be called when the cursor position changed.
+
+When the cursor position changes, it first checks if a certain condition 
+is met and then calls functions registered in 
+b:hookcursormoved_{MODE}_{CONDITION} (an array).
+
+In order to define new conditions, you have to set the variable  
+"g:hookcursormoved_{CONDITION}" to a function name (STRING). This 
+function takes the current mode (i .. insert mode; n ... normal mode) 
+as single argument.
+
+Functions are best registered using |hookcursormoved#Register()|.
+Example: >
+
+    function! WhatsGoingOn(mode) "{{{3
+        if mode == 'i'
+            DoThis
+        elseif mode == 'n'
+            DoThat
+        endif
+    endf
+
+    call hookcursormoved#Register('syntaxchange', function('WhatsGoingOn'))
+
+
+
+-----------------------------------------------------------------------
+Install~
+
+Edit the vba file and type: >
+
+    :so %%
+
+See :help vimball for details. If you have difficulties or use vim 7.0, 
+please make sure, you have the current version of vimball (vimscript 
+#1502) installed.
+
+This script requires tlib (vimscript #1863) to be installed.
+
+
+%s

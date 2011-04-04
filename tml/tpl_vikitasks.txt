@@ -1,0 +1,85 @@
+*vikitasks.txt*     Search viki files for tasks and display them in a list
+                    Author: Tom Link, micathom at gmail com
+
+This plugin provides a quick overview of priority/task lists maintained 
+in different viki files. Depending on your settings, you can quickly 
+search all "homepages" of intervikis or search only project-specific 
+files.
+
+
+Usage:
+    :VikiTasks[!] [CONSTRAINT] [PATTERN] [FILE_PATTERNS]
+
+
+Features:
+    - Collect tasks from viki's priority lists (see |viki-tasks|)
+    - Sort those tasks
+    - Browse tasks with a given date
+    - Optionally browse all tasks (incl. those without a date)
+
+Demo:
+http://vimsomnia.blogspot.com/2010/11/vikitasks-viki-demonstration-personal.html 
+
+-----------------------------------------------------------------------
+Tutorial: How does it work?~
+
+Let's say you have the files:
+
+foo.txt: >
+    * Foo
+        #A 2009-12-13 Do this
+        #C 2009-12-20 Call @Anna
+        #A Whatever
+
+bar.txt: >
+    * Bar
+        #C 2009-12-24 Wish @Bernie good luck
+        #D 2009-11-01 Do that
+
+Let's assume you have added both files to |g:vikitasks_files|. Switch to 
+the buffer foo.txt and call >
+
+    :VikiTasks!
+
+and you get the following list: >
+
+    Bar.txt|2| #D 2009-11-01 Do that
+    Foo.txt|2| #A 2009-12-13 Do this
+    Foo.txt|3| #C 2009-12-20 Call @Anna
+    Bar.txt|3| #C 2009-12-24 Wish @Bernie good luck
+
+If you do/had done this on the 15 December 2009, the third line would be 
+highlighted, i.e. the entries above the cursor refer to passed/missed 
+events. If you had called :VikiTasks! (behold the bang), then the 
+"Whatever" entry would have been included in the list too.
+
+If you had called >
+    
+    :VikiTasks current
+
+only the first two items would be listed.
+
+This week's tasks (i.e. the tasks that should be accomplished today or 
+within the following six days) could be listed with >
+    
+    :VikiTasks 6
+
+
+-----------------------------------------------------------------------
+Install~
+
+Edit the vba file and type: >
+
+    :so %%
+
+See :help vimball for details. If you have difficulties or use vim 7.0, 
+please make sure, you have the current version of vimball
+(vimscript #1502) installed or update your runtime.
+
+This script requires tlib (vimscript #1863), trag (vimscript #2033), and 
+viki (vimscript #861) to be installed.
+
+Also available via git: http://github.com/tomtom/vikitasks_vim/
+
+
+%s

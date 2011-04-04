@@ -1,0 +1,165 @@
+*trag.txt*          A slightly language-aware alternative to grep
+                    Author: Tom Link, micathom at gmail com
+
+You can think of this plugin either as some kind of ad-hoc 
+tags/cescope-like solution or as a project-oriented and slightly 
+programming-language-aware alternative to grep that should support poor 
+dynamic programmers with refactoring. Like grep it scans files only as 
+needed and doesn't build a database, which is ok for smaller projects 
+and fast hard disks. It's more flexible and easier to configure (vim 
+only, no external program required) than tags/cescope. Apart from the 
+basic grep-like functionality, it can be used to find locations where a 
+variable is defined, where it is assigned to another variable, where a 
+method is called and stuff like that. At least that's the idea. The 
+plugin hasn't reached the point yet to be 100%% useful.
+
+
+Usage~
+
+First, define which files belong to your project. Most likely your 
+project's source files are already registered in your tags files, which 
+will be used by default. So, if you use tags, there is nothing more you 
+need to do. Alternatively you can set the variable [wbg]:trag_files to a 
+list of files that will be used instead. (Setting this variable will 
+prevent the use of tags.)
+
+Secondly, perform certain operations on these files, like:
+
+    - Select a file to edit (using :TRagfile)
+    - Scan files for an expression (using :TRag, :TRagsearch, or 
+      :TRaggrep): You can restrict searches to certain "kinds" like only 
+      variable definitions or only function calls.
+
+
+-----------------------------------------------------------------------
+Install~
+
+Edit the vba file and type: >
+
+    :so %%
+
+See :help vimball for details. If you have difficulties or use vim 7.0, 
+please make sure, you have the current version of vimball (vimscript 
+#1502) installed.
+
+This script requires tlib (vimscript #1863) to be installed.
+
+Suggested maps (best set in ~/vimfiles/after/plugin/trag.vim): >
+
+    noremap <Leader>r. :TRag * 
+    noremap <Leader>r- :TRagfile<cr>
+    noremap <silent> <Leader>r# :TRag #w <c-r>=trag#CWord()<cr><cr>
+    for c in keys(g:trag_kinds)
+        if len(c) == 1
+            exec "nnoremap <Leader>r". c .' :TRag #'. c .' <c-r>=trag#CWord()<cr><cr>'
+            exec "vnoremap <Leader>r". c .' y<esc>:TRag #'. c .' <c-r>"<cr>'
+        endif
+    endfor
+
+
+-----------------------------------------------------------------------
+                                                    *trag-kinds*
+Kinds~
+
+Certain commands take a "kind" as argument. A "kind" in the context of 
+trag means a way how the expression is interpreted and (in the future) 
+how the lines are scanned. The meaning of the letter is specific for a 
+certain filetype. In general, the following list should serve as a 
+common base:
+
+    c ... class definitions
+    d ... function/method definitions
+    f ... function calls
+    i ... ignored lines, comments etc.
+    l ... variable definition
+    m ... module definitions
+    r ... variable assignment (e.g. "= WORD")
+    w ... find as word
+    x ... subclasses
+
+    fuzzy ... use a typo-tolerant regexp
+    todo  ... TODO markers etc.
+
+Modifiers:
+    # ... escape a literal expression as regexp (place it somewhere in the 
+          kinds argument)
+
+Negation: -, ! ... negate/skip uninteresting lines.
+
+Positive (must match) and negative (must not match) patterns are joined 
+with "-" or "!". Positive and negative conditions must both be 
+satisfied. The positive regexp determines the speed of the operation. 
+I.e. trag first searches for matching lines and only then decides 
+whether to skip "bad" ones.
+
+    POSITIVE1,POSITIVE2a.POSITIVE2b...-NEGATIVE...
+
+Note: If you use negations, you should also give a positive kind (use . 
+as fallback). The use of negations causes trag to use it's own grep 
+procedure which is slightly slower than the standard vimgrep command.
+
+EXPERIMENTAL: Kinds can be joined as comma-separated list (OR) of 
+period-seprated list (CONTAIN). This may be unintuitive but that's the 
+way it is. Order in CONTAIN-patterns matters, i.e. w.i doesn't make too 
+much sense (a word that CONTAINs a comment, which could only be the word 
+itself) but i.w does (a comment that CONTAINs a word, which is quite 
+possible).
+
+The way this has done has changed from version 0.1 to 0.2 with the 
+effect that the current solution is less well tested. If you stumble 
+over wrong search result, please tell me about the problem. Most likely 
+it's a problem with the regexp not being properly updated.
+
+Example:
+    i   ... comment/ignored text that CONTAINs a word
+    i.w ... comment/ignored text that CONTAINs a word
+    l,r ... a word either on the left OR right hand side of an 
+            assignment
+    w-i ... word that is NOT contained in a comment
+    w-i,l,r ... word but NOT in assignments (left OR right hand) OR in 
+            comments
+
+More examples:
+    File contents: >
+        #1 function Foo() {}
+        #2 function FooBar() {}
+        #3 let x = FooBar()
+        #4 let x = Foo()
+<
+    :TRag * Foo
+    => Find "Foo": 1-4
+
+    :TRag w Foo
+    => Find the __w__ords "Foo": 1, 4
+
+    :TRag d Foo
+    => Find __d__efinitions of "Foo": 1, 2
+
+    :TRag d.w Foo
+    => Find __d__efinitions of the __w__ord "Foo": 1
+
+    :TRag f Foo
+    => Find (__f__unction) calls of "Foo": 3, 4
+
+    :TRag f.w Foo
+    => Find (__f__unction) calls of the __w__ord "Foo": 4
+
+
+Not every kind is defined for every filetype. Currenty, support for 
+the following filetype(s) is somewhat above average:
+    - ruby
+    - vim
+
+Note: I'd appreciate if you sent me sophisticated kind definitions for 
+more filetypes so that I can include them in future releases.
+
+A kind is best defined using the |:TRagDefKind| command.
+Take a look at ../plugin/trag.vim to find out more.
+
+If you want to run a command without kinds, use "*" or "." as 
+argument, whatever if more convenient to type on your keyboard.
+
+See |trag#Grep()| for details of how to use this.
+
+
+%s

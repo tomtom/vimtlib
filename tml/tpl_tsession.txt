@@ -1,0 +1,47 @@
+*tsession.txt*      tsession - An alternativ approach to sessions
+                    Author: Tom Link, micathom at gmail com
+
+These functions provide an alternative to vim's session handling to 
+which I never got accustomed. Filenames are stored as full names, which 
+helps to avoid some problems, e.g. with autochangedir-like settings.
+
+Other than vim's own |:mksession|, these commands will only restore 
+the buffer list and the window layout. This script relies on filetype 
+plugins etc. to re-establish the original keymaps, buffer-local 
+settings etc. This may or may not be what you want.
+
+Currently, the following won't be restored automatically:
+
+    - Variables, options (you can select to set certain 
+      variables/options in |g:tsession_save_global| and related 
+      parameters)
+    - Tab pages (tab pages will be ignored; don't use this plugin if you 
+      use tabs)
+
+The session info is stored in: &runtimepath[0]/cache/sessions
+
+If a file SESSION_NAME.vim exists in this directory, it is loaded after 
+setting a session. If a variable g:tsession_begin_{SESSION_NAME} exists, 
+it is |:execute|d afterwards.
+
+If a variable g:tsession_end_{SESSION_NAME} exists, it is |:execute|d 
+before switching to another session.
+
+The pseudo session "NONE" ends the current session.
+
+
+-----------------------------------------------------------------------
+Install~
+
+Edit the vba file and type: >
+
+    :so %
+
+See :help vimball for details. If you have difficulties, please make 
+sure, you have the current version of vimball (vimscript #1502) 
+installed.
+
+This script requires tlib (vimscript #1863) to be installed.
+
+
+%s

@@ -1,0 +1,32 @@
+*gdocs.txt*         Edit google documents
+                    Author: Tom Link, micathom at gmail com
+
+This plugin provides slightly improved integration with the google 
+command line client (http://code.google.com/p/googlecl/) to edit text 
+files in vim or to save files on google docs (limited support).
+
+
+-----------------------------------------------------------------------
+Install~
+
+In order to install the vba, open the vba file in VIM and type: >
+
+    :so %%
+
+See :help vimball for details.
+
+You have to authenticate via googlecl before using this plugin. Switch to a 
+shell and run: >
+
+    google docs list
+
+Requirement:
+    - googlecl http://code.google.com/p/googlecl/
+
+Optional enhancement:
+    - tlib (vimscript #1863)
+
+Also available via git: http://github.com/tomtom/gdocs_vim/
+
+
+%s

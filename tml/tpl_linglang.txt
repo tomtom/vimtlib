@@ -1,0 +1,46 @@
+*linglang.txt*      Perform actions on basis of the current line's language
+                    Author: Tom Link, micathom at gmail com
+
+The command |:Linglang| installs a buffer-local autocommand that checks 
+the current line's language. I.e. enabling linglang for the current 
+buffer won't affect other buffers. If the language of the line under the 
+cursor changes, a user-defined action (e.g., set spelllang) will be 
+executed.
+
+:Linglang[!] [LANGS ...]
+    Toggle linglang support for the current buffer.
+    With [!], suppress message.
+
+Currently supported:
+- English
+- German
+
+In order to add a new language, you'll have to come up with some good 
+words/regexps to identify it.
+
+                                                    *linglang-data*
+Language data is stored in .../autoload/linglang/LANGUAGE.ENCODING
+The fileformat is simple:
+
+- one word per line (these will be matched against word borders)
+- arbitrary regular expressions: /REGEXP/
+
+The pattern for the words and the regexps will be joined with \| (see 
+|/bar|).
+
+
+-----------------------------------------------------------------------
+Install~
+
+Edit the vba file and type: >
+
+    :so %%
+
+See :help vimball for details. If you have difficulties or use vim 7.0, 
+please make sure, you have the current version of vimball (vimscript 
+#1502) installed or update your runtime.
+
+This script requires hookcursormoved (vimscript #2037) to be installed.
+
+
+%s

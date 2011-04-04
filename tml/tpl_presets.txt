@@ -1,0 +1,33 @@
+*presets.txt*     Presets -- Quickly switch between vim configurations
+                  Author: Tom Link, micathom at gmail com
+
+This plugins allows users to push presets (sets of |options|) onto a 
+configuration stack and remove them later on, i.e., it allows users to 
+quickly switch between pre-defined configurations (e.g. GUI-related 
+options).
+
+In order to push a preset, use the |:Preset| command:
+
+    :Preset! NAME
+
+
+-----------------------------------------------------------------------
+Install~
+
+Edit the vba file and type: >
+
+    :so %%
+
+See :help vimball for details.
+
+
+Post-Install~
+
+Check the values of the following variables and set them in your |vimrc| 
+file if necessary:
+
+    - |g:presets#font|
+    - |g:presets#font_sizes|
+
+
+%s
