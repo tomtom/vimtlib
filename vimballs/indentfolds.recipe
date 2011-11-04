@@ -1,0 +1,3 @@
+doc/indentfolds.txt
+plugin/indentfolds.vim
+autoload/indentfolds.vim

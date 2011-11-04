@@ -21,6 +21,12 @@ you want to match on the basename, add the following to
 
     let g:tmru_world.filter_format = 'fnamemodify(%%s, ":t")'
 
+If you want to retain the last filter between calls of :TRecentlyUsedFiles, you 
+could also add the following lines: >
+
+    let g:tmru_world.cache_var = 'g:tmru_cache'
+    let g:tmru_world.restore_from_cache = ['filter']
+
 
 -----------------------------------------------------------------------
 Install~

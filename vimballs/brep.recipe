@@ -1,0 +1,3 @@
+doc/brep.txt
+plugin/brep.vim
+autoload/brep.vim

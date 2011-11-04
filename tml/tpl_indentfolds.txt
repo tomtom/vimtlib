@@ -1,0 +1,36 @@
+*indentfolds.txt*   Indentation-level based folds with a twist
+                    Author: Tom Link, micathom at gmail com
+
+When I write a longer text, I tend to use a top-down approach. I begin 
+with writing down the headings. I then outline each section. Next, I write 
+down keywords for each paragraph etc. At each step, I increase the 
+indentation level (multiples of 'shiftwidth', see also 'fold-indent').
+
+This plugin help maintaining an overview of the document by setting a 
+paragraph's 'foldlevel' based on its indentation level -- see 
+|:Indentfolds|. Other than vim's own 'fold-indent' method, any 
+indentation level can be assigned as the top fold level. E.g. text with 
+a prefix of 16 whitespace characters can be defined as level 1, 8 and 24 
+whitespace characters would then be at level 2 etc. By setting foldlevel=1, 
+only text at that indentation level is displayed.
+
+This plugin also provides a helper-command to comment out or delete all 
+lines at higher fold levels -- see |:IndentfoldsComment|.
+
+Users can also use key maps (default: <tab>, <s-tab>) to cycle through 
+indentation levels.
+
+
+-----------------------------------------------------------------------
+Install~
+
+In order to install the vba, open the vba file in VIM and type: >
+
+    :so %%
+
+See :help vimball for details.
+
+Also available via git: http://github.com/tomtom/indentfolds_vim/
+
+
+%s

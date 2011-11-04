@@ -1,0 +1,22 @@
+*tjumps.txt*  A tlib-based frontend to :jumps
+              Author: Tom Link, micathom at gmail com
+
+This plugin provides one command :Tjumps that lets users filter and select 
+items from the jump list.
+
+
+-----------------------------------------------------------------------
+Install~
+
+In order to install the vba, open the vba file in VIM and type: >
+
+    :so %%
+
+See :help vimball for details.
+
+This script requires tlib (vimscript #1863) to be installed.
+
+Also available via git: http://github.com/tomtom/tjumps_vim/
+
+
+%s
