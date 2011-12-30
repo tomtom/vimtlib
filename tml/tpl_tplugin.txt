@@ -1,6 +1,11 @@
 *tplugin.txt*       A simple plugin loader/runtimepath manager
                     Author: Tom Link, micathom at gmail com
 
+tplugin is a plugin management tool similar to pathogen. Other than 
+pathogen tplugin expands the 'runtimepath' as needed (e.g. when 
+calling a command or function that is defined in a bundle) in order to 
+have minimal impact on startup time.
+
 This plugin helps users to deal with plugins that are distributed via 
 source code repositories. Usually, you would make those plugins 
 available to vim by adding the local copies of those repositories to 
@@ -53,67 +58,48 @@ version 0.2) could cause problems and is deprecated.
 
 
 Usage~
-                                                    *tplugin-autoload*
-With autoload:
 
-    By default, tplugin has autoload enabled. With autoload, you can use 
-    tplugin by (1) loading the macro in your |vimrc| file and then (2) 
-    (optional step) setting non-standard root directories. The standard 
-    root-directory is where tplugin was installed in (see |:TPluginRoot|).
+By default, tplugin has autoload enabled. With autoload, you can use 
+tplugin by
 
-    Example: >
-        
-        runtime macros/tplugin.vim
-        " Only necessary if you use a non-standard root directory
-        TPluginRoot /home/x/src/bundle
+(1) loading the macro in your |vimrc| file >
+    
+    " Put this close to the top of your vimrc file
+    runtime macros/tplugin.vim
 
-<   (3) Collect the autoload information by running the |:TPluginScan| 
-    command. (4) Restart vim.
+(2) (optional step) setting non-standard root directories. The standard 
+root-directory is where tplugin was installed in (see |:TPluginRoot|). >
 
-    The plugins will be loaded as soon as one of its functions or 
-    commands is called for the first time.
+    " Only necessary if you use a non-standard root directory
+    TPluginRoot /home/x/src/bundle
 
-    When using autoload, for every known ROOT (see |:TPluginRoot|), the 
-    file ROOT/_tplugin.vim is loaded on startup. This file is created by 
-    the |:TPluginScan| command and should not be edited by the user.
+It might still be necessary to load certain plugins right on startup for them 
+to work properly.
 
-                            *tplugin-dependencies* *tplugin-metadata*
-    When enabling a repository (ROOT/REPO), e.g., by calling |:TPlugin|, 
-    the files ROOT/_tplugin_REPO.vim and ROOT/REPO/_tplugin.vim are 
-    loaded. These files allows users (or plugin developers) to, e.g., 
-    define dependencies (see |:TPluginBefore| and |:TPluginAfter|).
+(3) Start vim and collect the autoload information by running the 
+|:TPluginScan| command.
+
+(4) Restart vim.
+
+The plugins will be loaded as soon as one of its functions or 
+commands is called for the first time.
+
+Full example as it could be found in a |vimrc| file: >
+
+    runtime macros/tplugin.vim
+    TPluginRoot F:\vim-addons
+    TPlugin vim-surround
+    let g:snippets_dir = 'X:\vimfiles\snippets,F:\vim-addons\snipmate.vim\snippets'
+    TPlugin snipmate.vim
+    TPlugin! tlib_vim 02tlib
 
 
-Without autoload:
-
-    (1) Load the macro and (2) set non-standard root directories. In 
-    addition, (3) load plugins as desired.
-
-    Example: >
-
-        runtime macros/tplugin.vim
-        " Only necessary if you use a non-standard root directory
-        TPluginRoot /home/x/src/bundle
-        " Load all plugins in repo1
-        TPlugin repo1
-        " Load only specified plugins from repo2
-        TPlugin repo2 foo bar
-
-<   It is advantageous to source the macro rather at the top of your 
-    vimrc file before making any changes to the 'runtimepath'. If you 
-    don't change the 'runtimepath', the position is of no importance.
-
-    Then install your plugins/bundles/repos in the root directory. After 
-    restarting vim, type :TPluginScan!
-
-    Full example as it could be found in a |vimrc| file: >
-
-        runtime macros/tplugin.vim
-        TPluginRoot F:\vim-addons
-        TPlugin vim-surround
-        let g:snippets_dir = 'X:\vimfiles\snippets,F:\vim-addons\snipmate.vim\snippets'
-        TPlugin snipmate.vim
-        TPlugin! tlib_vim 02tlib
+                                                    *tplugin-dependencies*
+                                                    *tplugin-metadata*
+When enabling a repository (ROOT/REPO), e.g., by calling |:TPlugin|, 
+the files ROOT/_tplugin_REPO.vim and ROOT/REPO/_tplugin.vim are 
+loaded. These files allows users (or plugin developers) to, e.g., 
+define dependencies (see |:TPluginBefore| and |:TPluginAfter|).
 
 
 CAVEAT: If you have a file after/plugin/foo.vim in you user vimfiles 

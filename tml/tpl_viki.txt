@@ -675,7 +675,8 @@ The colors are tested using color scheme with a white background.
                                                     *viki-files*
 Files Region~
 
-Viki knows a special #Files region.
+Viki knows a special #Files region that allows users to quickly generate 
+catalogs for viki files in a directory.
 
 Example: >
     #Files glob=lib/** types=f <<
@@ -689,6 +690,9 @@ Example: >
 
 The filenames are stored as extended viki names. Each line can take a comment 
 that is restored upon automatic update.
+
+If a "head" argument is passed to the #Files region, the first N lines will be 
+shown after the reference.
 
 There are a few special commands to deal with this region.
 
