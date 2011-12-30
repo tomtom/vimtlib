@@ -1,4 +1,5 @@
 doc/tskeleton.txt
+skeletons/README_tskeleton.txt
 autoload/tskeleton/abbreviations.vim
 autoload/tskeleton/functions.vim
 autoload/tskeleton/mini.vim
