@@ -3,7 +3,8 @@
 
 This plugin provides a simple file browser. It is not a full blown 
 explorer but can be nevertheless be useful for quickly selecting a few 
-files or renaming them.
+files or renaming them. If you set |g:tlib_inputlist_match| to "fuzzy", 
+it behaves similar to the FuzzyFinder, command-t, or CtrlP plugins.
 
 As the plugin does some caching in the background, the filelist is only 
 generated once for each path or when called with [!]. In conjuncture 

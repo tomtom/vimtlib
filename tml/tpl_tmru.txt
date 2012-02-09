@@ -1,19 +1,16 @@
 *tmru.txt*  Most Recently Used Files
             Author: Tom Link, micathom at gmail com
 
-This plugin provides a simple most recently files facility.
-
-It was originally rather a by-product of tlib (vimscript #1863) and uses 
-its tlib#input#List() function. This function allows quickly selecting a 
-buffer by typing some part of the name (which will actually filter the 
-list until only one item is left), the number, or by clicking with the 
-mouse on the entry.
+This plugin provides a simple most recently used files facility. Users 
+can use patterns to filter the file list. Users can open multiple files 
+at once.
 
 :TRecentlyUsedFiles ... open one or more recently used file(s)
+:TRecentlyUsedFilesEdit ... edit the mru list
 
-If the 'viminfo' option contains !, then viminfo will be used to save 
-the filelist. Otherwise the list will be saved in 
-~/viminfo/cache/tmru/files.
+If viminfo contains "!", the data is stored as global variable. Otherwise,
+tlib#cache is used -- which saves the data in ${vimfiles}/cache/tmru/files
+by default.
 
 By default tmru matches the search pattern on the full filename. If 
 you want to match on the basename, add the following to 
