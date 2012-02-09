@@ -1,6 +1,0 @@
-Spec::Runner.configure do |config|
-  <+CURSOR+>config.before(:all) {<++>}
-  config.before(:each) {<++>}
-  config.after(:all) {<++>}
-  config.after(:each) {<++>}
-end<++>

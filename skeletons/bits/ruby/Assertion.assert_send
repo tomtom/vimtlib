@@ -1,1 +1,0 @@
-assert_send(<+CURSOR+><+SEND_ARRAY+>, "<+MESSAGE+>")<++>

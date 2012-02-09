@@ -1,1 +1,0 @@
-assert_operator(<+CURSOR+><+OBJECT1+>, <+OPERATOR+>, <+OBJECT2+>, "<+MESSAGE+>")<++>

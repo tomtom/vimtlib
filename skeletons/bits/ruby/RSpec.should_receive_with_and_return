@@ -1,1 +1,0 @@
-should_receive(<+CURSOR+>).with(<+ARGS+>).and_return(<+VALUE+>)<++>

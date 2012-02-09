@@ -1,1 +1,0 @@
-assert_not_equal(<+CURSOR+>, <+PROCESSED+>, "<+MESSAGE+>")<++>

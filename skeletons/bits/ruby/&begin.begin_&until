@@ -1,4 +1,0 @@
-begin
-    <+CURSOR+>
-end until <+CONDITION+>
-<++>

@@ -1,1 +1,0 @@
-assert_equal(<+CURSOR+>, <+PROCESSED+>, "<+MESSAGE+>")<++>
