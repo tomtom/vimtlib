@@ -87,6 +87,7 @@ Requirements:
 
                                                     *viki-related-plugins*
 Optional enhancements:
+- vikitasks (vimscript #2894): Distributed TODO lists
 - hookcursormoved (vimscript #2037): Enhanced detection of hyperlinks to inexistent destinations.
 - vxfold (vimscript #3004): Provides org-mode like fold cycling
 - VOoM (vimscript #2657): A two-pane outliner with support for viki
@@ -129,11 +130,6 @@ It's probably a good idea to check the values of the following variables:
         let g:vikiLowerCharacters = "a-zäöüßáàéèíìóòçñ"
         let g:vikiUpperCharacters = "A-ZÄÖÜ"
 <
-    - |g:vikiUseParentSuffix| (see also |viki-names|); I personally prefer 
-      this to be ON >
-
-        let g:vikiUseParentSuffix = 1
-<
     - |vikiNameTypes| (see |viki-names|): control which type of viki names you 
       want to use (this allows you to turn off, e.g., simple viki names)
 
@@ -144,6 +140,9 @@ example: >
     let g:vikiOpenUrlWith_mailto = 'thunderbird -compose %%{URL}'
     let g:vikiOpenFileWith_html  = "silent !firefox %%{FILE}"
     let g:vikiOpenFileWith_ANY   = "silent !start %%{FILE}"
+
+You should at least check the definitions of |g:vikiOpenFileWith_ANY| 
+and |g:vikiOpenUrlWith_ANY|.
 
 This way, if you had, e.g., pdftotext (from the xpdf distribution) installed, 
 you could make viki to open references to pdf files right in VIM: >
@@ -169,29 +168,29 @@ There are two ways to define an interviki:
 
     1. Use |VikiDefine()|: >
 
-        call VikiDefine('SCI', $HOME."/Projects/Sci/Ideas", ".txt")
+       call VikiDefine('SCI', $HOME."/Projects/Sci/Ideas", ".txt")
 
 <      This command will automatically define a menu for each interviki 
        (unless g:vikiMenuPrefix is empty) and it will also define a command 
        with the name of the interviki that can be used to quickly access viki 
        files from the vim command line.
 
+       The disadvantage of this approach is that you can define 
+       intervikis only after plugin/viki.vim was loaded -- e.g. in 
+       after/plugin/viki.vim.
+
     2. Use |g:viki_intervikis| (a dictionary). The values can be either a list 
        (arguments for |VikiDefine()|) or a string. >
 
-        let g:viki_intervikis['SCI']  = [$HOME."/Projects/Sci/Ideas", ".txt"]
-        let g:viki_intervikis['PROJ'] = $HOME."/Projects"
+       let g:viki_intervikis = {}
+       let g:viki_intervikis['SCI']  = [$HOME."/Projects/Sci/Ideas", ".txt"]
+       let g:viki_intervikis['PROJ'] = $HOME."/Projects"
 
-Intervikis added to g:viki_intervikis will be defined via |VikiDefine()| when 
-first loading ~/vimfiles/autoload/viki.vim. I.e. you cannot use automatically 
-defined commands or menus before loading the autoload file. So, if you don't 
-use the menus and the interviki commands to open files from the command line, 
-use the variable. Otherwise, calling |VikiDefine()| from 
-~/vimfiles/after/plugin/viki.vim might be the better solution (which would 
-also load autoload/viki.vim on startup though).
+<      This variable has to be set in vimrc before loading the vim 
+       plugin.
 
-This could then be accessed as SCI::ThisIdea, which would refer to the file 
-"~/Projects/Sci/Ideas/ThisIdea.txt".
+Your newly defined interviki can then be accessed as SCI::ThisIdea, 
+which would refer to the file "~/Projects/Sci/Ideas/ThisIdea.txt".
 
 VikiDefine also defines a command (:SCI in this example) that opens a wiki's 
 index file (an optional 4th argument or "${g:vikiIndex}.${suffix}").
@@ -224,15 +223,12 @@ In order to automatically set |deplate| as the compiler for viki files: >
     au FileType viki compiler deplate
 
                                                     *viki-filetype-detection*
-Some users might want to automatically set the filetype to viki depening on 
-the file extension. This can be done using |:autocmd|: >
-
-    let g:vikiNameSuffix=".viki"
-    autocmd! BufRead,BufNewFile *.viki set filetype=viki
+By default, the filetype of files matching the suffix defined in 
+|g:vikiNameSuffix| will be set to viki.
 
 You can also use |:autocmd| to set the filetype depending on the path: >
 
-    autocmd! BufRead,BufNewFile $HOME/MyWiki/* set filetype=viki
+    autocmd BufRead,BufNewFile $HOME/MyWiki/* set filetype=viki
 
 If the variables b:getVikiLink or b:getExtVikiLink exist, their values are 
 used as _function_ names for returning the current viki name's definition. A 
@@ -345,23 +341,25 @@ A viki name is either:
         |VikiOpenSpecialProtocol()|.
 
     4. Hyperwords (not supported by deplate)
-        Hyperwords are defined in either ./.vikiWords or &rtp[0]/vikiWords.txt 
-        each word in a line in the form "word destination" (lines beginning  
-        with '%%' are ignored). These words are automatically highlighted.  
-        Depending on your setting of |vikiNameTypes|, viki may try to make 
-        hyperwords out of the filenames in the current buffer's directory.  
-        I.e. if |vikiNameSuffix| is '.txt' and there is a file 'example.txt' 
+        Hyperwords are defined in either ./.vikiWords or 
+        &rtp[0]/vikiWords.txt each word in a line in the form "word 
+        destination" (lines beginning  with '%%' are ignored). These 
+        words are automatically highlighted.  Depending on your setting 
+        of |vikiNameTypes|, viki may try to make hyperwords out of the 
+        filenames in the current buffer's directory.  I.e. if 
+        |vikiNameSuffix| is '.viki' and there is a file 'example.viki' 
         in the same directory as the current buffer's file, then each 
-        occurrence of the word 'example' will be turned into a clickable link. 
-        You can prevent a file name from being highlighted as hyperword by 
-        defining an entry in the vikiWords file with "-" as destination.
+        occurrence of the word 'example' will be turned into a clickable 
+        link. You can prevent a file name from being highlighted as 
+        hyperword by defining an entry in the vikiWords file with "-" as 
+        destination.
 
 Adding #[a-z0-9]\+ to the wiki name denotes a reference to a specific anchor.  
 Examples for wiki names referring to an anchor: >
 
 	ThatPage#there
-	[[anyplace/filename.txt#there]]
-	[[anyplace/filename.txt#there][Filename]]
+	[[anyplace/filename.viki#there]]
+	[[anyplace/filename.viki#there][Filename]]
 
 A anchor is marked as "^".b:commentStart."\?#[a-z0-9]\+" in the destination
 file. If |b:commentStart| is not defined, the EnhancedCommentify-variables or
@@ -685,8 +683,8 @@ Example: >
     [[lib/example1.rb]]
     [[lib/example2.rb]]
 
-    #Files glob=*.txt types=f <<
-    [[example.txt]] The manual
+    #Files glob=*.viki types=f <<
+    [[example.viki]] The manual
 
 The filenames are stored as extended viki names. Each line can take a comment 
 that is restored upon automatic update.
@@ -819,11 +817,11 @@ viki names. Example: >
 Ctags~
 
 For ctags support (e.g. in conjunction with taglist) add this to your .ctags 
-file (this assumes that *.txt files are in viki mode; you have to adjust the 
+file (this assumes that *.viki files are in viki mode; you have to adjust the 
 file suffix if you choose a different suffix): >
 
     --langdef=deplate
-    --langmap=deplate:.txt
+    --langmap=deplate:.viki
     --regex-deplate=/^(\*+ .+)/\1/s,structure/
     --regex-deplate=/^(#[a-z][a-z0-9]+)/\1/s,structure/
     --regex-deplate=/\[\[[^\]]+\]\[([^\]]+)\]\]/\1/r,reference/
