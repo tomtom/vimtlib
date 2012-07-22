@@ -342,10 +342,11 @@ A viki name is either:
 
     4. Hyperwords (not supported by deplate)
         Hyperwords are defined in either ./.vikiWords or 
-        &rtp[0]/vikiWords.txt each word in a line in the form "word 
-        destination" (lines beginning  with '%%' are ignored). These 
-        words are automatically highlighted.  Depending on your setting 
-        of |vikiNameTypes|, viki may try to make hyperwords out of the 
+        &rtp[0]/vikiWords.txt each word in a line in the form 
+        "word<tab>destination", where <tab> is the tab character (code 
+        9). Lines beginning  with '%%' are ignored. These words are 
+        automatically highlighted.  Depending on your setting of 
+        |vikiNameTypes|, viki may try to make hyperwords out of the 
         filenames in the current buffer's directory.  I.e. if 
         |vikiNameSuffix| is '.viki' and there is a file 'example.viki' 
         in the same directory as the current buffer's file, then each 
