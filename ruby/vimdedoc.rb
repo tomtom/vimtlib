@@ -3,8 +3,8 @@
 # @Author:      Tom Link (micathom at gmail com)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2007-07-25.
-# @Last Change: 2010-11-02.
-# @Revision:    504
+# @Last Change: 2012-07-08.
+# @Revision:    520
 
 
 require 'yaml'
@@ -360,19 +360,23 @@ class VimDedoc
         idc = false
         doc = lines.map do |l|
             if l
-                if idc and (l =~ /^(<\s+)(.*)$/ or l =~ /^()(\S.*)$/)
-                    idc = false
-                    prefix  = $1.empty? ? '< ' : $1
-                    prefix += ' ' * (indent - 2) if indent > 0
-                    # prefix += ' ' * (indent) if indent > 0
-                    l = $2
+                if l !~ /\S/
+                    ''
                 else
-                    prefix = indent > 0 ? ' ' * indent : ''
+                    if idc and (l =~ /^(<\s+)(.*)$/ or l =~ /^()(\S.*)$/)
+                        idc = false
+                        prefix  = $1.empty? ? '< ' : $1
+                        prefix += ' ' * (indent - 2) if indent > 0
+                        # prefix += ' ' * (indent) if indent > 0
+                        l = $2
+                    else
+                        prefix = indent > 0 ? ' ' * indent : ''
+                    end
+                    if l =~ / >\s*$/
+                        idc = true
+                    end
+                    prefix + l
                 end
-                if l =~ / >\s*$/
-                    idc = true
-                end
-                prefix + l
             end
         end
         doc.insert(doc.index(nil), '<') if idc
