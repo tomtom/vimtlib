@@ -1,12 +1,15 @@
 * Install from GIT
 
-Let's assume that you downloaded some VIM plugins from 
-https://github.com/tomtom to your harddisk. The directory structure 
-could then look like this:
+There are several ways to install plugins from source code repository 
+(e.g. github). The easiest way is to install it as "bundle". In order to 
+do so, clone the source code repository to 
+''~/.vim/bundles/PLUGIN_NAME'' -- on Windows replace ".vim" with 
+"vimfiles". The directory structure should then look something like 
+this:
 
 #Verb <<
     ~/
-        .vim/
+        .vim/   (or vimfiles on Windows)
             autoload/
             bundles/
                 tlib_vim/
@@ -24,49 +27,38 @@ could then look like this:
             plugins/
             ...
 
-Please find below a few remarks on how to use VIM plugins in such an 
-alternative directory structure. ''pathogen'' probably is the simplest 
-solution to make this work. Since it enables all "bundles" on startup, 
-it may affect startup times though -- but this is of course only 
-relevant if you have a lot of plugins installed.
+The ''pathogen'' plugin probably is the simplest way to make such 
+"bundles" work. Please see also http://vim-scripts.org/vim/tools.html 
+for additional information.
 
-See also http://vim-scripts.org/vim/tools.html for additional information.
+Alternative solutions are described below.
 
 
 ** Use macros/tplugin.vim
 
-Short version:
-
-    1. Save a local copy of the tplugin_vim repository under 
-       ''~/vimfiles/bundles'' (on some systems it's ''~/.vim/bundles''). 
-       Get it from here: http://github.com/tomtom/tplugin_vim
+    1. Save a copy of the tplugin_vim repository 
+       (https://github.com/tomtom/tplugin_vim) under 
+       ''~/.vim/bundles''. 
        #Verb <<
        cd ~/.vim/bundles
        git clone git://github.com/tomtom/tplugin_vim.git
 
     2. Insert the following line rather at the beginning of your 
        ''vimrc'' file:
-       ''runtime bundles/tplugin_vim/macros/tplugin.vim''.
+       #Verb <<
+       runtime bundles/tplugin_vim/macros/tplugin.vim
 
-       Some VIM plugins on http://github.com/tomtom require 
-       ''plugin/02tlib.vim'' to be loaded first. If you get an error 
-       message telling you that ''tlib'' is required, you can either 
-       tell me about that error or add the following line to the 
-       ''vimrc'' file: ''TPlugin! tlib_vim 02tlib''.
-       This assumes that you saved the tlib library from 
-       http://github.com/tomtom/tlib_vim to the ''bundles'' directory 
-       mentioned above.
-
-    3. Run '':TPluginScan! all'' to enable autoloading.
+    3. In VIM, run '':TPluginScan!''
 
     4. Restart vim. VIM should now load stub definitions for all 
        commands defined in plugins under the ../bundels directory.
 
-See doc/tplugin.txt for details.
+See https://github.com/tomtom/tplugin_vim/doc/tplugin.txt for details.
 
 
 
 ** Use Marc Weber's vim-addon-manager
+
 See https://github.com/MarcWeber/vim-addon-manager for details. You can 
 also use the addon manager to download the plugins from github for you.
 
@@ -78,29 +70,6 @@ Add the path to the local copy to 'runtimepath':
 
 #Code <<
 set runtimepath+={PATH TO YOU LOCAL COPY}/vimtlib
-
-You have the following options to facilitate doing this:
-
-
-    1. Plugins like Tim Pope's pathogen could be of help -- see 
-       https://github.com/tpope/vim-pathogen for details.
-
-    2. If you choose this option, you will by default load all 
-       plugins---even those you don't care about. You can disable 
-       specific plugins by setting loaded_* variables in your vimrc 
-       file.
-
-       If you have GNU make available, run ''make -f Makefile_vimfiles 
-       loaded'', which will generate a file ''macros/vimtlib.vim''. Then 
-       add ''runtime macros/vimtlib.vim'' to your ''vimrc' file and 
-       ''unlet'' all those ''loaded_*'' variables that refer to those 
-       plugins you want to load.
-
-       Example: Load only the tlib, tskeleton, and viki plugins
-
-       #Code <<
-       runtime macros/vimtlib.vim
-       TLibUse tlib tskeleton viki
 
 
 
@@ -114,15 +83,10 @@ a local copy of a repository to a master .vim directory. Example:
 See "install_plugin.sh --help" for details.
 
 J. Sukumaran provides a slightly simpler script at: 
-http://gist.github.com/580276
+https://gist.github.com/580276
 
-
-
-** Use symbolic links
-
-Symlink the files to your vimfiles directory. You could use tools like 
-graft (http://peters.gormand.com.au/Home/tools/graft/graft-html) for 
-this.
+You could use tools like graft 
+(http://peters.gormand.com.au/Home/tools/graft/graft-html) for this.
 
 
 
