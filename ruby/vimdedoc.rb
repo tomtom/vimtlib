@@ -3,8 +3,8 @@
 # @Author:      Tom Link (micathom at gmail com)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2007-07-25.
-# @Last Change: 2012-07-08.
-# @Revision:    520
+# @Last Change: 2012-08-28.
+# @Revision:    559
 
 
 require 'yaml'
@@ -51,16 +51,16 @@ class VimDedoc
         @insyntax  = nil
         @filetypes = {
             :general => {
-                :entry_rx => /^\s*((function|def|class)\b.*)$/,
+                :entry_rx => /^(\s*)((function|def|class)\b.*)$/,
                 :doc_rx   => /^[#%]\s+(.*)$/,
                 :break_rx => /^\s*$/,
             },
             [:vim, '.vim'] => {
                 # :entry_rx => /^\s*(((com|fun|TLet)\w*)\b!?\s*[^"]+).*$/,
-                :entry_rx => /^\s*((com(mand)?|fun(ction)?|TLet)\b!?\s+.+?|let\s+.*?\s"\{\{\{\d|[incvoslx]?(nore)?map\s.*)\s*$/,
+                :entry_rx => /^(\s*)((com(mand)?|fun(ction)?|TLet)\b!?\s+.+?|let\s+.*?\s"\{\{\{\d|[incvoslx]?(nore)?map\s.*)\s*$/,
                 # :eligible => lambda {|head| head =~ /^\S+\s+s:prototype\./ || head !~ /^\S+\s+(s:|<SID>)/},
                 :eligible => lambda {|head| head =~ /^\S+\s+s:prototype\./ || head !~ /^\S+\s+(s:|<SID>|\w+#__)/},
-                :doc_rx   => /^\s*"\s?(.*)$/,
+                :doc_rx   => /^(\s*)"\s?(.*)$/,
                 :break_rx => /^\s*$/,
                 :process_head => lambda {|text, nodefault|
                     if text =~ /^\s*TLet!?\s*(\S*)\s*=\s*(.+?)\s*$/
@@ -184,8 +184,9 @@ class VimDedoc
                 exit 1
             end
         end
-        $logger.debug "command-line arguments: #{args}"
         @sources += opts.parse!(args)
+        $logger.debug "args = #{args.inspect}"
+        $logger.debug "sources = #{@sources.inspect}"
         self
     end
 
@@ -208,7 +209,7 @@ class VimDedoc
                 filename1 = filename_on_disk(filename)
                 mtime = File.mtime(filename1)
                 older = mtime <= out_mtime
-                $logger.debug "MTIME: #{filename}: #{mtime} => #{older}"
+                $logger.debug "MTIME: #{filename}: #{mtime} <= #{out_mtime} => #{older}"
                 older
             }
                 $logger.info "Help is up to date: #{outfile}"
@@ -243,6 +244,7 @@ class VimDedoc
         @docs[filename]  ||= []
         @fdocs[filename] ||= []
         current_doc = []
+        current_indent = 0
         filedoc = false
         no_doc = false
         no_doc_default = false
@@ -250,6 +252,7 @@ class VimDedoc
         use_tag  = nil
         use_head = nil
         use_name = nil
+        skip_indent = false
         tagprefix = ''
         @toc << filename
         file = File.readlines(filename1)
@@ -273,10 +276,21 @@ class VimDedoc
                     use_doc = nil
                 end
                 current_doc = []
+                current_indent = 0
             elsif line =~ doc_rx
-                m = $1
+                if skip_indent
+                    skip_indent = false
+                else
+                    indent = $1
+                end
+                m = $2
                 if m =~ /^:nodoc:\s*$/
                     no_doc = true
+                    current_doc = []
+                    current_indent = 0
+                    use_tag = nil
+                    use_doc = nil
+                    use_name = nil
                 elsif m =~ /^@TPlugin/
                     next
                 elsif m =~ /^:enddoc:\s*$/
@@ -297,12 +311,26 @@ class VimDedoc
                     no_doc_default = true
                 elsif m =~ /^:read:\s*(.+)$/
                     line = $1
+                    skip_indent = true
                     redo
                 else
-                    current_doc << m
+                    if current_doc.empty?
+                        current_doc << m
+                        current_indent = indent
+                    elsif current_indent == indent
+                        current_doc << m
+                    else
+                        current_doc = [m]
+                        current_indent = indent
+                    end
                 end
             elsif line =~ entry_rx
-                iline = $1
+                if skip_indent
+                    skip_indent = false
+                else
+                    indent = $1
+                end
+                iline = $2
                 if no_doc
                     no_doc = false
                 elsif !eligible or eligible.call(line)
@@ -323,7 +351,11 @@ class VimDedoc
                         head = process_head.call(head, no_doc_default)
                         no_doc_default = false
                     end
-                    doc = compile_doc(current_doc, process_doc)
+                    if indent == current_indent
+                        doc = compile_doc(current_doc, process_doc)
+                    else
+                        doc = compile_doc([], process_doc)
+                    end
                     unless tag.nil? and head.nil? and doc.empty?
                         @toc << [head, tag] unless tag.nil? || head.nil?
                         if use_name
@@ -335,6 +367,7 @@ class VimDedoc
                     end
                 end
                 current_doc = []
+                current_indent = 0
             end
         end
     end
