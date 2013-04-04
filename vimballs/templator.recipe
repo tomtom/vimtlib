@@ -1,0 +1,8 @@
+doc/templator.txt
+plugin/templator.vim
+autoload/templator.vim
+autoload/templator/*.vim
+autoload/templator/expander/*.vim
+templator/*.vim
+templator/*/*.*
+templator/*/*/*.*

@@ -1,0 +1,5 @@
+doc/tinykeymap.txt
+plugin/tinykeymap.vim
+autoload/tinykeymap.vim
+autoload/tinykeymap/*.vim
+autoload/tinykeymap/map/*.vim
