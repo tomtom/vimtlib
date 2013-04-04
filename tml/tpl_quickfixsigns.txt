@@ -47,4 +47,11 @@ please make sure, you have the current version of vimball
 (vimscript #1502) installed or update your runtime.
 
 
+Optional enhancements~
+
+If tinykeymap (vimscript #4199) is installed, a map (see 
+|g:tinykeymap#map#quickfixsigns#map|, which defaults to <Leader>ms) can be used 
+to jump from sign to sign or between sign groups.
+
+
 %s

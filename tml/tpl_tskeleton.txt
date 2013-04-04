@@ -1,0 +1,648 @@
+*tskeleton.txt*              tskeleton -- File Templates and Code Skeletons
+
+Author: Tom Link, micathom AT gmail com?subject=vim
+
+
+tskeleton provides file templates and code skeletons ("snippets" or "bits"). 
+These templates may contain special tags that are replaced with some computed 
+value (e.g., variables, user input ...), vimscript code, or place holders/jump 
+positions (see |tskeleton-jump-positions|).
+
+Basic usage:
+Type `:new filename.ext`. If a skeleton for the respective filetype is 
+defined (see |tskeleton-skeletons|), it will be read into the buffer.
+
+Type a partial name of a snippet (at least the first letter) and press 
+(in insert mode) <c-space> (see |tskeleton-key-bindings| for alternative 
+key maps). If the name identifies a snippet/bit, it will be replaced with 
+its expansion text. If there are several snippets beginning with that 
+"name", you will be asked to select one from a list of matching 
+snippets.
+
+<c-space> can be configured to expand snippets but also (albeit disabled 
+by default) abbreviations, functions (VIM script only), tags, word, 
+'completefunc' and 'omnifunc' items (see |g:tskelTypes| and 
+|g:tskelHyperComplete| for details.)
+
+Press <c-j> to jump to the next place holder (see 
+|tskeleton#GoToNextTag()|).
+
+
+Demo -- tskeleton and the stakeholders (vimscript #3326) plugin:
+http://vimsomnia.blogspot.com/2010/11/tskeleton-and-stakeholders-vim-plugins.html
+
+
+Git:
+https://github.com/tomtom/tskeleton_vim
+
+
+For similar plugins see: http://vim.wikia.com/wiki/Snippet_Plugin_Comparison
+
+Limitations of tskeleton:
+    - Place holders cannot be nested.
+    - tskeleton was originally written for vim 6.0. I'd expect it to be 
+      less snappy than more modern and simpler plugins, although it 
+      tries to provide acceptable performance on slower computers by 
+      caching frequently reused data.
+
+Advantages of tskeleton with respect to some other plugins:
+    - tskeleton provides for more complex templates (see 
+      |tskeleton-place-holder|) including conditional expansion, loops, 
+      inclusion of other templates, user queries etc.
+    - Easy creation of camel case, all upper/lower case letter names etc. (see 
+      |tskeleton-modifiers|).
+
+It depends:
+    - A place holder is some text in the buffer, i.e. tskeleton uses less magic 
+      when handling jump positions. As long as users don't replace all place 
+      holders, the buffer's contents most likely isn't valid code and an 
+      interpreter/compiler will most likely refuse to load it even if the 
+      code is never executed.
+
+
+-----------------------------------------------------------------------
+                                                    *tskeleton-install*
+Install~
+
+Edit the vba file and type:
+
+    :so %%
+
+See :help vimball for details.
+
+It is recommended to use tskeleton in conjunction with the stakeholders plugin 
+(vimscript #3326):
+
+    http://www.vim.org/scripts/script.php?script_id=3326
+    https://github.com/tomtom/stakeholders_vim
+
+If you don't already have some skeletons, you may want to download 
+tskeleton-Samples.zip from:
+
+    http://www.vim.org/scripts/script.php?script_id=1160
+
+or from
+
+    https://github.com/tomtom/tskeletons
+
+Copy the files to your local vimfiles directory (see also |add-global-plugin|). 
+The directory structure should look like this:
+
+    ~/.vim/skeletons/
+        FILE TEMPLATES ...
+        map/
+            MAP FILES FOR CONDITIONAL EXPANSION
+        bits/
+            &filetype.txt (single line templates)
+            general/
+                GENERAL CODE SKELETONS ...
+            &filetype/
+                FILETYPE SPECIFIC CODE SKELETONS: ONE SKELETON PER FILE ...
+
+
+                                                    *tskeleton-snippets*
+tskeleton also provides partial support for snipMate snippets (see 
+https://github.com/honza/snipmate-snippets). The following limitations apply:
+    - tskeleton cannot handle nested tags/place holders
+
+
+                                                    *tskeleton-cache*
+In order to speed up things, tskeleton caches intermediate results. 
+Those files are created in |g:tlib_cache|. By default, the old files 
+will be removed from the cache every |g:tlib#cache#purge_every_days| 
+days. In order to disable purging (e.g. if you purge the cache directory 
+by means of a cron script), set |g:tlib#cache#purge_every_days| to -1.
+
+
+-----------------------------------------------------------------------
+                                                    *tskeleton-usage*
+                                                    *tskeleton-skeletons*
+File templates~
+
+The file skeletons are stored in the skeletons subdirectory. Which 
+template is used for which new file is controlled by |:autocmd|s. This 
+provides greater flexibility than a &filetype based approach as you can 
+select templates on the basis of a filename pattern or a specific 
+directory.
+
+Currently, the following file types are supported by default:
+
+   - batch.bat
+   - deplate.txt
+   - latex.tex
+   - php.inc.php
+   - php.php
+   - plugin.vim
+   - ruby.rb
+   - shell.sh
+   - text.txt
+
+In order to add support for a new filetype, save a skeleton file to 
+~/.vim/skeletons/file.suffix and add something like this to your .vimrc 
+file: >
+
+    autocmd BufNewFile *.suffix       TSkeletonSetup template.suffix
+    autocmd BufNewFile /here/*.suffix TSkeletonSetup othertemplate.suffix
+
+
+Alternatively, you can store templates as: >
+
+    ~/.vim/skeletons/templates/GROUP/FILETYPE PATTERN
+
+where GROUP is an arbitrary name for a collection of auto templates, 
+FILETYPE is a know vim filetype, and the pattern is an encoded pattern (# == 
+*, %%XX=Char XXh) for auto-generated autocmds.
+
+Example: Templates file names for some vim-related files: >
+
+    ~/.vim/skeletons/templates/vim/help #%%2fvimfiles%%2fdoc%%2f#.txt
+    ~/.vim/skeletons/templates/vim/vim #%%2fvimfiles#%%2fftplugin%%2f#.vim
+    ~/.vim/skeletons/templates/vim/vim #%%2fvimfiles#%%2fsyntax%%2f#.vim
+
+< 
+                                                    *tskeleton-place-holder*
+
+Tags (which look like <+...+>) serve two purposes:
+
+    - marker for jump positions (see |tskeleton#GoToNextTag()|)
+    - dynamic content expansion
+
+You can use tags to define cursor jump positions. tskeleton also 
+supports some special tags that are expanded when inserting the 
+skeleton.
+
+A list of special tags:
+                                                    *tSkeletion-<+FILE NAME ROOT+>*
+    <+FILE NAME ROOT+>
+        The file name root
+                                                    *tSkeletion-<+FILE NAME+>*
+    <+FILE NAME+>
+        The file name
+                                                    *tSkeletion-<+FILE SUFFIX+>*
+    <+FILE SUFFIX+>
+        The file suffix
+                                                    *tSkeletion-<+FILE DIRNAME+>*
+    <+FILE DIRNAME+>
+        The file's directory
+                                                    *tSkeletion-<+NOTE+>*
+    <+NOTE+>
+        A note
+                                                    *tSkeletion-<+DATE+>*
+    <+DATE+>
+        The current date (the format is controlled via 
+        g:tskelDateFormat)
+                                                    *tSkeletion-<+AUTHOR+>*
+    <+AUTHOR+>
+        The author's name (g:tskelUserName)
+                                                    *tSkeletion-<+EMAIL+>*
+    <+EMAIL+>
+        The author's e-mail (g:tskelUserEmail)
+                                                    *tSkeletion-<+COMPANY+>*
+    <+COMPANY+>
+        The author's company (g:tskelUserCompany)
+                                                    *tSkeletion-<+WEBSITE+>*
+    <+WEBSITE+>
+        The author's homepage (g:tskelUserWWW)
+                                                    *tSkeletion-<+LICENSE+>*
+    <+LICENSE+>
+        The name of the license this file is released under 
+        (g:tskelLicense)
+
+In order to define your own tag, you have to define a function called 
+TSkeleton_TAGNAME() that returns the text to be filled in.
+
+                                                    *tskeleton-tags*
+tskeleton also supports the following pseudo-tags:
+
+    <+CURSOR+>                                      *tSkeletion-<+CURSOR+>*
+        Where to place the cursor after insertion
+
+    <+&NAME+>                                       *tSkeletion-<+&+>*
+        A vim option
+
+    <+g:NAME+>                                      *tSkeletion-<+g:+>*
+        A global variable
+
+    <+b:NAME+>                                      *tSkeletion-<+b:+>*
+        A buffer local variable
+ 
+    <+?QUERY?+>                                     *tSkeletion-<+?+>*
+        Query[1] the user
+
+    <+?VAR|QUERY?+>
+        Query[1] the user and propose some choices from the variable VAR
+
+                                                    *tSkeletion-<+bit+>*
+    <+bit:BIT+>, <+bit:BIT|"DEFAULT"+>, <+bit:BIT|COMMANDS+>
+        Insert a bit; if the bit isn't defined for the current filetype, 
+        use DEFAULT; if DEFAULT matches ".*" insert it as a string; 
+        otherwise interpret it as a command sequence to be fed to normal
+
+    <+tskel:TSKELETON+>                             *tSkeletion-<+tskel+>*
+        Same as the above
+
+    <+call:FUNCTION(ARGS)+>                         *tSkeletion-<+call+>*
+        Insert the result value of some function
+
+    <+include(TSKELETON)+>                           *tSkeletion-<+include+>*
+        Another synonym for the above.
+
+    <+execute(EX COMMAND)+>                         *tSkeletion-<+execute+>*
+        Run a vim command.
+
+[1] If the query ends with a colon, the second question mark will be 
+removed. Up to verson 2.4 VAR is a string, separating the items by an 
+"\n". From 3.0 on, VAR is a list.
+
+NOTE: Flow control and loop tags are experimental and it's more than 
+just likely that the output doesn't meet your expectations.
+
+Flow control:                                       *tSkeletion-<+if+>*
+    <+if(CONDITION)+>
+    <+elseif(CONDITION)+>
+    <+else+>
+    <+endif+>
+
+Loops:                                              *tSkeletion-<+for+>*
+    <+for(VAR in LIST)+>
+    <+endfor+>, <+endfor(VAR)+>
+        If you nest for loops, you have to add the variable name to the 
+        endfor tag. And no, this isn't the most clever way to do this.
+
+Variables:                                          *tSkeletion-<+let+>*
+    <+let(VAR=VALUE)+>
+        The variable will be unset or restored to its original value 
+        after processing the current template.
+        VAR may have some modifiers attached:
+            VAR? ... Set only if undefined
+            VAR& ... Don't restore original variable
+
+Interaction:                                        *tSkeletion-<+input+>*
+    <+input(VAR, QUERY, [DEFAULT], [COMPLETION])+>
+        This will insert the user input and set the variable VAR (unless 
+        empty), which can be used throughout the template. The variable 
+        will be removed after finishing the current template. If the 
+        variable was previously defined, the original value will be 
+        restored.
+        If VAR ends with '!', no text will be inserted in the buffer. In 
+        this case any whitespace (including one newline) after the tag 
+        will be removed. See also the notes on |tSkeletion-<+input+>|.
+
+                                                    *tSkeletion-<+select+>*
+    <+select(VAR, LIST, [TYPE='s'], [SEPARATOR=', '])+>
+        Let the user select an item from a list.
+        VAR is a string.
+        TYPE is either 's' (single selection) or 'm' (multiple selection) -- 
+        see also |tlib#input#List()|.
+        If TYPE is 'm', the results are joined with SEPARATOR.
+        Example: >
+            before(<+select("s:type", [":all", ":each"])+>)
+            before(<+select("s:type", ["A", "B", "C", "D"], "m", "-")+>)
+< 
+
+Other:                                              *tSkeletion-<+nl+>*
+    <+nl+>
+        Insert a newline
+                
+    <+joinline+>                                    *tSkeletion-<+joinline+>*
+        Join with next line. Delete any whitespace.
+            
+    <+nop+>                                         *tSkeletion-<+nop+>*
+        Insert nothing (could be necessary in conjunction with the "for" 
+        tag)
+
+A wiki like table could then be constructed using a skeleton like this: >
+
+    <tskel:before>
+    let s:my_rows = input('Rows: ')
+    let s:my_cols = input('Columns: ')
+    </tskel:before>
+    <tskel:after>
+    unlet! s:my_rows s:my_cols
+    </tskel:after>
+    <+CURSOR+><+for(i in range(s:my_rows))+>
+    |<+for(j in range(s:my_cols))+> <+CELL+> |<+endfor(j)+><+nop+>
+    <+endfor(i)+>
+
+or: >
+
+    <+input('s:my_rows?!', 'Rows: ')+>
+    <+input('s:my_cols?!', 'Cols: ')+>
+    <+for(i in range(s:my_rows))+>
+    |<+for(j in range(s:my_cols))+> <+CURSOR+> |<+endfor(j)+><+nop+>
+    <+endfor(i)+>
+
+NOTE: The <+nop+> is necessary in order to prevent the <+endfor+> tag to 
+"eat" the newline. If we include this bit from another bit that already 
+sets s:my_rows and/or s:my_cols, the user won't be queried again (because of 
+the "?" in the input statement). E.g. >
+
+    <+let(s:my_rows = 3)+>
+    <+let(s:my_cols = 3)+>
+    <+include(table)+>
+
+                                                    *tSkeletion-backslash*
+Any special tag can be preceded with a backslash in order to prevent 
+expansion. Examples: >
+
+    <+\if(foo=1)+>
+    
+surprisingly expands to >
+
+    <+if(foo=1)+>
+
+It's best to use global variables with "if" and "for" tags as the body 
+is most likely evaluated in a different buffer in a hypothetically 
+unknown context.
+
+
+                                                    *tskeleton-jump-positions*
+Unknown tags are kept in the expanded skeleton. These tags can be used 
+as cursor jump marks. This syntax was originally used by imap (vimscript 
+#244 or vimscript #475). If you don't want to install imap, you can also  
+use |TSkeletonMapGoToNextTag()|.
+
+Nameless tags (<++>) will disappear when they are selected.
+
+Example:>
+
+    case <+CURSOR+> in
+    <+PATTERN+>)
+        <+BODY+>
+        ;;
+    *)
+        <+DEFAULT+>
+        ;;
+    esac
+    <++>
+
+When you insert this skeleton, the cursor will be placed at 
+"<+CURSOR+>".  If you press <c-j>, the cursor will jump to "<+PATTERN+>" 
+(the tag will remain selected). If you press <c-j> three times, the 
+cursor will jump to "<++>" (the tag will be deleted).
+
+Check out the "test_tskeleton" skeleton for examples.
+
+
+                                                    *tskeleton-modifiers*
+Tags can be modified using modifiers, like in: >
+
+    <+TAG NAME:MODIFIER+>
+
+Known modifiers:
+
+    l          :: lower case
+    u          :: upper case
+    c          :: capitalize
+    C          :: transform to CamelCase
+    s/FROM/TO/ :: replace text (actually a s//g); this has to be the 
+                  last modifier; the pattern separator can be selected 
+                  arbitrarily
+
+Example for a ruby class template: >
+
+    class <+FILE NAME ROOT:cs*\W*_*+>
+        <+CURSOR+>
+    end
+    <++>
+
+-----------------------------------------------------------------------
+                                                    *tskeleton-code-skeletons*
+                                                    *tskeleton-bits*
+Bits/Code Skeletons~
+
+Smaller skeleton bits are stored in SKELETONS/bits/FILETYPE/ or 
+SKELETONS/bits/general/. I.e., code skeletons can be filetype specific 
+or generally available.
+
+The filenames of the bits may be grouped in submenus as in:
+
+    ../tex/&Define.%%5Cnew&command
+    ../tex/&Define.%%5Cnew&environment
+
+This will create skeletons for \newcommand and \newenvironment but will 
+group the skeletons under the TSkel.Define. menu with the respective 
+accelerators.
+
+                                                    *tskeleton-Types* *g:tskelTypes*
+                                                    *tskeleton#Initialize()*
+tskeleton supports several types of code templates:
+
+    - skeleton (standard tskeleton functionality)
+    - abbreviations (VIM abbreviations)
+    - functions (VIM script functions extracted from :function)
+    - mini ("mini" bits, one-liners etc.)
+    - tags (tags-based code templates, requires ctags, I presume)
+
+Not all types are enabled by default. User have to select, which types 
+they want to use, by setting the g:tskelTypes at start-up. When changing 
+the variable, users might have to call tskeleton#Initialize().
+
+                                                    *tskeleton-Skeleton*
+Smaller skeleton bits are stored in SKELETONS/bits/FILETYPE/ or 
+SKELETONS/bits/general/. I.e., code skeletons can be filetype specific 
+or generally available.
+
+Skeleton bits can be filled in by typing: >
+
+    :TSkeletonBit NAME
+
+For this command, command line completion is implemented. Calling this 
+command will insert the contents of the respective file below the 
+current line.
+
+NOTE: Bit names should not contain ampersand (as these are interpreted 
+as menu accelerators) and periods (which are used to construct 
+submenus). Other special characters can be included by encoding them in 
+hex form as %%XX as it is done in URLs.  Example: "%%5Csection" becomes 
+"\section".
+
+                                                    *tskeleton-key-bindings*
+The default key bindings for inserting code skeletons are:
+
+    <c-space>  ... In insert mode, expand name before the cursor
+    <Leader>## ... Expand name under cursor
+    <Leader>#t ... Insert code skeleton via command line
+    <c-\><c-\> ... In insert mode, expand the bit before the cursor (on 
+                   a German keyboard this happens to be <c-#><c-#>)
+
+                                                    *g:tskelKeyword_{&filetype}*
+A bit name usually is the |word| under the cursor. If this doesn't fit 
+your needs, you can define g:tskelKeyword_{&filetype} to define what 
+makes up a skeleton name. Example: >
+
+    let g:tskelKeyword_viki = '\(#\|{\)\?[^#{[:blank:]]\{-}'
+
+
+                                                    *tskeleton-embedded-code*
+Code skeletons may contain vim code that is evaluated before or after 
+expanding the tags. The before/after blocks are fed to |:exec| and must 
+not contain function definitions.
+
+NOTE: The "parser" is quite primitive. These tags have to start as 
+single statement in a line at column 1, and they have to appear in the 
+following order:
+
+    <tskel:msg>                                     *<tskel:msg>*
+        Display an explanatory message after template expansion
+
+    <tskel:before>                                  *<tskel:before>*
+        Execute code before template expansion in the target buffer
+
+    <tskel:after>                                   *<tskel:after>*
+        Execute code after template expansion in the target buffer
+
+    <tskel:here_before>                             *<tskel:here_before>*
+        Execute code before template expansion in the template buffer
+
+    <tskel:here_after>                              *<tskel:here_after>*
+        Execute code after template expansion in the template buffer
+
+    <tskel:abbrev>                                  *<tskel:abbrev>*
+        Make the bit available via |:abbreviate| under the enclosed name.
+
+    <tskel:menu>                                    *<tskel:menu>*
+        Use this menu name instead of the default one.
+
+    <tskel:condition>                               *<tskel:condition>*
+        An expression that checks whether a bit is eligible in the 
+        current context.
+
+BibTeX example: >
+
+    <tskel:msg>
+        Insert a collection entry
+    </tskel:msg>
+    <tskel:before>
+        let b:tskelArticleID = input("ID of bibentry: ")
+        if b:tskelArticleID == "" | let b:tskelArticleID = "<+CURSOR+>" | endif
+    </tskel:before>
+    <tskel:after>
+        unlet b:tskelArticleID
+    </tskel:after>
+    @INCOLLECTION{<+b:tskelArticleID+>,
+        author   = {<+CURSOR+>},
+        title    = {<+ARTICLE TITLE+>},
+        crossref = {<+CROSSREF+>},
+        pages    = {<+PAGES+>},
+        abstract = {[[~/Docs/Abstracts/<+b:tskelArticleID+>.txt]]},
+    }
+    <++>
+
+In the above example, we query the user for an ID and insert this ID as 
+entry key and as an abstract's file name.
+
+The before/after blocks are evaluated in the destination buffer. The 
+variants here_before/here_after are evaluated in the scratch buffer for 
+the current code skeleton.
+
+                                                    *tskeleton-groups*
+                                                    *g:tskelBitGroup_{&filetype}*
+Groups~
+
+Some filetype's bits might be of use for other filetypes too. You can 
+make them accessible by defining a g:tskelBitGroup_{&filetype} variable. 
+E.g., in php mode all html bits are made accessible by setting this 
+variable (the default): >
+
+    let g:tskelBitGroup_php = ['php', 'html']
+
+Bits of type "general" are always available.
+
+                                                    *tskeleton-context*
+                                                    *tskeleton-map*
+Maps -- Context-sensitive expansion~
+
+To some extent, tskeleton is capable of offering the user only a small 
+selection of eligible bits for a specific context if a map file 
+($VIMFILES/skeletons/map/{&filetype}) is provided. Such a map file is made up 
+of regular expressions matching a specific context (before the cursor 
+only) and a blank-separated list of eligible bits. The regexp and the 
+list are separated by whitespace: >
+
+    REGEXP  BIT1 BIT2 ... BITn
+
+Example: >
+
+    <form\\([^>]\\|\\n\\)*	name= action= method=
+
+If an eligible bit is undefined, the name is inserted as is. I.e. you 
+don't have to define skeletons for all these options and argument names.
+
+
+                                                    *tskeleton-minibits*
+Minibits~
+
+Mini bits are kept in the files:
+
+    - $CWD/.tskelmini
+    - $VIMFILES/skeletons/bits/{&filetype}.txt
+
+These files contain whitespace-separated pairs of bit names and their 
+expansions. These files are meant to keep expansions of accronyms and 
+abbreviations and the like. Example: >
+
+    IMHO    In my humble opinion
+    AFAIK   As far as I know
+
+                                                    *tskeleton-menu*
+                                                    *g:tskelMenuPrefix*
+Menu~
+
+If g:tskelMenuPrefix is non-empty, tskeleton will display a menu 
+containing all eligible bits for a certain filetype.
+
+The menu can be hierarchical and certain entries may have shortcuts by 
+properly naming the bits. Example: >
+
+    &Environment.&Quote
+    &Environment.Q&uotation
+
+This will create the submenu "Environment" that can be selected by 
+typing "e" (on Windows) and two entries, the first of which can be 
+selected by typing "q" and the second by typing "u".
+
+Be aware that the actual bit names are Quote and Quotation (i.e. the 
+submenu and the ampersand are stripped off).
+
+
+-----------------------------------------------------------------------
+                                                    *tskeleton-utilities*
+Utilities~
+
+                                                    *tskeleton#IncreaseRevisionNumber()*
+The function tskeleton#IncreaseRevisionNumber() provides a way to 
+automatically update a revision number in the form >
+
+    @Revision: 1.0.393
+
+In order to use this function, add something like this to your |vimrc| 
+file: >
+
+    autocmd BufWritePre * call tskeleton#IncreaseRevisionNumber()
+
+                                                    *:TSkeletonCleanUpBibEntry*
+The TSkeletonCleanUpBibEntry command can be used to purge the current bibtex 
+entry from expendable fields (i.e., lines matching <+.\{-}+>).
+
+For bibtex files, this command is bound to: <Leader>tc
+
+                                                    *TSkeletonMapGoToNextTag()*
+                                                    *tskeleton#GoToNextTag()*
+If g:tskelMapGoToNextTag is true, the <c-j> map will be enabled. (That 
+is the key that was also used by the imaps.vim plugin.) Press <c-j> to 
+jump between tags.
+
+This function provides one or two extras over the version of imaps.vim. 
+An explanation:
+
+    - ###, +++, ???, !!! are used as markers too.
+    - If a marker is empty (e.g. <++>), the marker will be removed (as 
+      imaps.vim does).
+    - If a marker matches <+NAME/DEFAULT+>, the marker will be replaced 
+      with DEFAULT.
+    - If a snippet contains numbered placeholders (e.g. <+1+>), these 
+      will be selected first in increasing number.
+
+
+%s

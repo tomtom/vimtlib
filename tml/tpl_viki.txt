@@ -690,19 +690,18 @@ Example: >
 The filenames are stored as extended viki names. Each line can take a comment 
 that is restored upon automatic update.
 
-If a "head" argument is passed to the #Files region, the first N lines will be 
-shown after the reference.
+For a list of available arguments, see |viki#DirListing()|.
 
-There are a few special commands to deal with this region.
-
-If in the following commands a "!" is added, the command works only on files 
-in the same directory or a subdirectory as the file on the current line.
+The following arguments can be used to deal with #Files regions. An 
+additional <bang> ("!") makes these command work on just files in the 
+same directory or a subdirectory as the file on the current line.
 
 Default Key Binding~
-<LocalLeader>vu ... :VikiFilesUpdate
-<LocalLeader>vU ... :VikiFilesUpdateAll
-<LocalLeader>vx ... :VikiFilesExec
-<LocalLeader>vX ... :VikiFilesExec!
+
+    <LocalLeader>vu ... :VikiFilesUpdate
+    <LocalLeader>vU ... :VikiFilesUpdateAll
+    <LocalLeader>vx ... :VikiFilesExec
+    <LocalLeader>vX ... :VikiFilesExec!
 
 Example: >
     Use ":VikiFilesExec! e" (<LocalLeader>vXe<cr>) to edit all the files in 

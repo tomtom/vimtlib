@@ -3,10 +3,17 @@
 
 The rcom ftplugin uses one of the following methods to evaluate R code:
 
-    - screen (default, also works under Windows with cygwin/mintty & Windows Rterm)
-    - screen or tmux via the screen vim plugin
-    - RServe (requires +ruby and the rserve-client rubygem)
-    - RCom interface (http://rcom.univie.ac.at; Windows only)
+    screen ........ default method; works under Linux & Windows (with 
+                    cygwin/mintty & Windows Rterm)
+    screen/tmux ... via the screen vim plugin; works under Linux & 
+                    Windows
+    RServe ........ requires +ruby and the rserve-client rubygem; works 
+                    under Linux & (less reliably) under Windows
+    RCOM .......... requires http://rcom.univie.ac.at; works under 
+                    Windows
+
+With the exception of RCOM, most methods should work also under Mac OS 
+but that was not tested.
 
 After installation, interaction with R is enabled for all
 buffers with filetype r. For other filetypes, you can use the
@@ -15,9 +22,11 @@ functions |rcom#EvaluateInBuffer()|.
 Features:
 
     - Evaluate R code
+    - Operator map
     - Maps for normal, visual, and insert mode
     - Keyword map (|K|)
-    - Operator
+    - Inspect & edit/fix object (<LocalLeader>K)
+    - Debug function
 
 The following features are supported only with some methods:
 
@@ -49,6 +58,21 @@ The ftplugin provides several maps (see also |g:rcom_map|,
 normal, insert, and visual mode. There is also an operator (see 
 |g:rcom_mapop|).
 
+Default Maps:
+    <c-cr>    ... Evaluate the current line
+    <c-s-cr>  ... Evaluate the current line & print result
+    +.        ... Evaluate the current line (normal mode)
+    +{motion} ... Operator
+    [visual]+ ... Evaluate the visual area
+    +p        ... Toggle printing for the above maps
+    +d        ... Toggle a function's debug status
+    +s        ... Source the current buffer in R
+    +t        ... Show the transcript buffer
+    +l        ... Open the log window
+    ++        ... Evaluate the |maparg| previously mapped to #
+    K         ... Info on the word under cursor
+    <LocalLeader>K ... Inspect/edit/fix the object under cursor
+
 
 Normal usage~
 
@@ -63,7 +87,6 @@ Normal usage~
     2a. Type <c-cr> to evaluate the current line/visual area in R.
     2b. Type [count]+ or +{motion} to evaluate some text in R. (You can 
         type ++ to invoke |+|.)
-
 
 
 -----------------------------------------------------------------------

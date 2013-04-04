@@ -1,9 +1,10 @@
 *tmru.txt*  Most Recently Used Files
             Author: Tom Link, micathom at gmail com
 
-This plugin provides a simple most recently used files facility. Users 
-can use patterns to filter the file list. Users can open multiple files 
-at once.
+This plugin allows users to open recently used files. Users can filter 
+the file list by typing a pattern. Users can open multiple files at 
+once. The list of recently used files is synchronized across multiple 
+instances of (g)vim running simultaneously.
 
 :TRecentlyUsedFiles ... open one or more recently used file(s)
 :TRecentlyUsedFilesEdit ... edit the mru list
@@ -13,9 +14,10 @@ tlib#cache is used -- which saves the data in ${vimfiles}/cache/tmru/files
 by default.
 
 By default tmru matches the search pattern on the full filename. If 
-you want to match on the basename, add the following to 
-~/vimfiles/after/plugin/tmru.vim: >
+you want to match on the basename, add the following to your |.vimrc| 
+file: >
 
+    let g:tmru_world = {}
     let g:tmru_world.filter_format = 'fnamemodify(%%s, ":t")'
 
 If you want to retain the last filter between calls of :TRecentlyUsedFiles, you 
