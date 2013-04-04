@@ -1,0 +1,6 @@
+* Foo
+
+<+CURSOR+>
+
+% 2012-12-02; @Last Change: 2009-01-10.
+% vi: ft=viki:tw=72:ts=4
