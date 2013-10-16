@@ -10,7 +10,7 @@ an external viewer.
 
 From http://sourceforge.net/projects/deplate/ you can download a ruby based 
 tool to convert viki markup to LaTeX, HTML, or DocBook. On its homepage 
-(http://deplate.sf.net) you can read a more detailled specification of the 
+(http://deplate.sf.net) you can read a more detailed specification of the 
 markup.
 
 MINOR WIKI MODE:
@@ -62,7 +62,7 @@ VIKI Forum (questions, feature requests):
 http://sourceforge.net/projects/deplate/forums/forum/700962
 
 Bug tracker:
-http://sourceforge.net/tracker/?group_id=108085&atid=649488
+https://github.com/tomtom/deplate/issues
 
 Demo:
 http://vimsomnia.blogspot.com/2010/11/vikitasks-viki-demonstration-personal.html 
@@ -391,9 +391,8 @@ Pseudo Markup~
 The pseudo markup is to some degree compatible with emacs-wiki, which in turn  
 is to some degree compatible with some other wiki -- i.e., it's compatible 
 enough to edit and work with files in emacs-wiki markup, but in some aspects 
-it's more restrictive. Unfortunately, as there is currently no 
-html-translator/exporter for this markup, it's quite useless for the moment.
-But it looks nice on the screen.
+it's more restrictive. To convert viki markup to other formats, see the
+|deplate|.
 
 
                                                     *viki-headings*
@@ -679,13 +678,13 @@ catalogs for viki files in a directory.
 
 Example: >
     #Files glob=lib/** types=f <<
-    [[example1.rb]]     This is an example file
-    [[example2.rb]]     This is another example
-    [[lib/example1.rb]]
-    [[lib/example2.rb]]
+    [[example1.rb]!]     This is an example file
+    [[example2.rb]!]     This is another example
+    [[lib/example1.rb]!]
+    [[lib/example2.rb]!]
 
     #Files glob=*.viki types=f <<
-    [[example.viki]] The manual
+    [[example.viki]!] The manual
 
 The filenames are stored as extended viki names. Each line can take a comment 
 that is restored upon automatic update.

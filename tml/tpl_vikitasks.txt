@@ -39,7 +39,7 @@ bar.txt: >
 Let's assume you have added both files to |g:vikitasks_files|. Switch to 
 the buffer foo.txt and call >
 
-    :VikiTasks!
+    :VikiTasks
 
 and you get the following list: >
 
