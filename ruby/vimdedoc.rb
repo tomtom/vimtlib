@@ -4,7 +4,7 @@
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2007-07-25.
 # @Last Change: 2012-08-28.
-# @Revision:    559
+# @Revision:    561
 
 
 require 'yaml'
@@ -217,6 +217,7 @@ class VimDedoc
             end
         end
         @sources.each do |file|
+            # puts "DEBUG file=#{file}"
             collect_docs(file)
         end
         write_doc(format_doc)
