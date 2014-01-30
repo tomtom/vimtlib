@@ -1,0 +1,3 @@
+doc/gdocs.txt
+plugin/gdocs.vim
+autoload/gdocs.vim

@@ -1,0 +1,4 @@
+doc/reclojure.txt
+plugin/reclojure.vim
+ftplugin/clojure/reclojure.vim
+autoload/**/*.vim

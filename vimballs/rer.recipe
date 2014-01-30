@@ -1,0 +1,4 @@
+doc/rer.txt
+plugin/rer.vim
+ftplugin/r/rer.vim
+autoload/**/*.vim

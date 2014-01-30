@@ -1,0 +1,3 @@
+doc/rescreen.txt
+plugin/rescreen.vim
+autoload/**/*.vim
