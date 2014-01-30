@@ -4,7 +4,7 @@
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2007-07-25.
 # @Last Change: 2012-08-28.
-# @Revision:    561
+# @Revision:    562
 
 
 require 'yaml'
@@ -262,22 +262,6 @@ class VimDedoc
             # p "DBG", line, line =~ break_rx, line =~ doc_rx, line =~ entry_rx
             if line =~ /^finish\s*$/
                 break
-            elsif line =~ break_rx
-                if filedoc
-                    @fdocs[filename] += current_doc
-                    filedoc = false
-                elsif !use_doc.nil?
-                    doc = compile_doc(current_doc, process_doc, :indent => 0, :nonl => use_doc =~ /\bnonl\b/)
-                    @docs[filename] << {
-                        :type => :doc,
-                        :doc => doc,
-                        :tag => use_doc =~ /\bnotag\b/ ? nil : (use_tag || '')
-                    }
-                    use_tag = nil
-                    use_doc = nil
-                end
-                current_doc = []
-                current_indent = 0
             elsif line =~ doc_rx
                 if skip_indent
                     skip_indent = false
@@ -366,6 +350,23 @@ class VimDedoc
                         @docs[filename] << {:type => :entry, :head => head, :line => index, :doc => doc, :tag => tag}
                         # p "DBG", @docs[filename][-1]
                     end
+                end
+                current_doc = []
+                current_indent = 0
+            # elsif line =~ break_rx
+            else
+                if filedoc
+                    @fdocs[filename] += current_doc
+                    filedoc = false
+                elsif !use_doc.nil?
+                    doc = compile_doc(current_doc, process_doc, :indent => 0, :nonl => use_doc =~ /\bnonl\b/)
+                    @docs[filename] << {
+                        :type => :doc,
+                        :doc => doc,
+                        :tag => use_doc =~ /\bnotag\b/ ? nil : (use_tag || '')
+                    }
+                    use_tag = nil
+                    use_doc = nil
                 end
                 current_doc = []
                 current_indent = 0
