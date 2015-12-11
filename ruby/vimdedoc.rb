@@ -3,8 +3,8 @@
 # @Author:      Tom Link (micathom at gmail com)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2007-07-25.
-# @Last Change: 2012-08-28.
-# @Revision:    562
+# @Last Change: 2015-11-24.
+# @Revision:    570
 
 
 require 'yaml'
@@ -528,7 +528,7 @@ class VimDedoc
     end
 
     def format_epilogue_vimhelp(*args)
-       %{\nvim:tw=78:fo=tcq2:isk=!-~,^*,^\|,^\":ts=8:ft=help:norl:}
+       %{\nvim:tw=78:fo=w2croql:isk=!-~,^*,^\|,^\":ts=8:ft=help:norl:}
     end
 
     def format_doc
