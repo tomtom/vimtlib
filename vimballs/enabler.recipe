@@ -1,0 +1,4 @@
+doc/enabler.txt
+plugin/*.vim
+autoload/**/*.vim
+enabler/**/*.vim

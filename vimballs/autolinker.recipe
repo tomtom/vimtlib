@@ -1,0 +1,3 @@
+doc/autolinker.txt
+plugin/autolinker.vim
+autoload/**/*.vim

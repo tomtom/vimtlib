@@ -1,0 +1,3 @@
+doc/cfilehandler.txt
+plugin/cfilehandler.vim
+autoload/cfilehandler.vim

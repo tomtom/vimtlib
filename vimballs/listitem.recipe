@@ -1,0 +1,3 @@
+doc/listitem.txt
+plugin/listitem.vim
+autoload/**/*.vim

@@ -1,0 +1,3 @@
+doc/likelycomplete.txt
+plugin/likelycomplete.vim
+autoload/**/*.vim

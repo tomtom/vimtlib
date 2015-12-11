@@ -1,0 +1,3 @@
+doc/zeal.txt
+plugin/zeal.vim
+autoload/zeal.vim

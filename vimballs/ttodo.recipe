@@ -1,0 +1,6 @@
+doc/ttodo.txt
+plugin/ttodo.vim
+autoload/**/*.vim
+ftplugin/**/*.vim
+ftdetect/**/*.vim
+syntax/**/*.vim
